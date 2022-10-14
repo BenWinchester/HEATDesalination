@@ -1,0 +1,31 @@
+---
+################################################################################
+# plants.yaml - The desalination plant input information.                      #
+#                                                                              #
+# Author: Ben Winchester                                                       #
+# Copyright: Ben Winchester, 2022                                              #
+# Date created: 14/10/2022                                                     #
+# License: Open source                                                         #
+################################################################################
+
+desalination_plants:
+  - name: med
+    operating_hours: 10  # Number of operating hours per day
+    plant_disabled:
+      requirements:
+        electricity: 30000  # [Wh] Electricity requirements per hour
+        hot_water:
+          temperature: 0  # [degC] Temperature of the hot-water input
+          volume: 0  # [l] Volume requirements per hour
+      outputs:
+        brine: 0  # [l] Volume produced per hour
+        clean_water: 0  # [l] Volume produced per hour
+    plant_operating:
+      requirements:
+        electricity: 330000  # [Wh] Electricity requirements per hour
+        hot_water:
+          temperature: 80  # [degC] Temperature of the hot-water input
+          volume: 15480  # [l] Volume requirements per hour
+      outputs:
+        brine: 52200  # [l] Volume produced per hour
+        clean_water: 25200  # [l] Volume produced per hour
