@@ -92,6 +92,7 @@ THERMAL_PERFORMANCE_CURVE: str = "thermal_performance_curve"
 #   Keyword for parsing zeroth-order coefficient.
 ZEROTH_ORDER: str = "zeroth_order"
 
+
 class SolarPanelType(enum.Enum):
     """
     Denotes the type of solar panel being modelled.
@@ -690,7 +691,6 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                 f"Solar thermal panel {solar_inputs.get(NAME, '<not supplied>')} is missing an electric performance curve.",
             ) from None
 
-
         try:
             electric_performance_curve = PerformanceCurve(
                 electric_performance_inputs[ZEROTH_ORDER],
@@ -705,7 +705,6 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
             raise
 
         return cls(electric_performance_curve, solar_inputs, thermal_performance_curve)
-
 
     def calculate_performance(
         self,
