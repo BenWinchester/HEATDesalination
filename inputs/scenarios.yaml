@@ -1,0 +1,16 @@
+---
+################################################################################
+# scenarios.yaml - The scenarios being modelled.                               #
+#                                                                              #
+# Author: Ben Winchester                                                       #
+# Copyright: Ben Winchester, 2022                                              #
+# Date created: 14/10/2022                                                     #
+# License: Open source                                                         #
+################################################################################
+
+scenarios:
+  - name: default
+    plant: med  # The name of the desalination plant to include, cannot be `off`
+    pv: mono_si  # The name of the PV panel to include, `off` if not included
+    pv_t: abora_aH72SK  # The PV-T collector to include, `off` if not included
+    solar_thermal: fpc  # The solar-thermal collector to include or `off`
