@@ -26,7 +26,7 @@ import math
 from logging import Logger
 from typing import Any, Dict, Optional, Tuple
 
-from .__utils__ import NAME, reduced_temperature, ZERO_CELCIUS_OFFSET
+from .__utils__ import InputFileError, NAME, reduced_temperature, ZERO_CELCIUS_OFFSET
 
 
 __all__ = (
@@ -372,13 +372,7 @@ class SolarPanel(abc.ABC):  # pylint: disable=too-few-public-methods
         logger: Logger,
         mass_flow_rate: float,
         solar_irradiance: float,
-    ) -> Tuple[
-        Optional[float],
-        Optional[float],
-        Optional[float],
-        Optional[float],
-        Optional[float],
-    ]:
+    ) -> Tuple[Optional[float], Optional[float], Optional[float], Optional[float],]:
         """
         Abstract method for calculation of collector performance.
 
@@ -438,10 +432,10 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
         area: float,
         land_use: float,
         name: str,
-        pv_unit: Optional[float],
-        reference_efficiency: Optional[float],
-        reference_temperature: Optional[float],
-        thermal_coefficient: Optional[float],
+        pv_unit: float,
+        reference_efficiency: float,
+        reference_temperature: float,
+        thermal_coefficient: float,
     ) -> None:
         """
         Instantiate a :class:`PVPanel` instance.
@@ -515,13 +509,7 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
         logger: Logger,
         mass_flow_rate: float,
         solar_irradiance: float,
-    ) -> Tuple[
-        Optional[float],
-        Optional[float],
-        Optional[float],
-        Optional[float],
-        Optional[float],
-    ]:
+    ) -> Tuple[Optional[float], Optional[float], Optional[float], Optional[float],]:
         """
         Calcuates the electrical performance of the collector.
 
@@ -663,7 +651,8 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
             )
             raise InputFileError(
                 "solar generation inputs",
-                f"Solar thermal panel {solar_inputs.get(NAME, '<not supplied>')} is missing a thermal performance curve.",
+                f"Solar thermal panel {solar_inputs.get(NAME, '<not supplied>')} "
+                "is missing a thermal performance curve.",
             ) from None
 
         try:
@@ -688,7 +677,8 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
             )
             raise InputFileError(
                 "solar generation inputs",
-                f"Solar thermal panel {solar_inputs.get(NAME, '<not supplied>')} is missing an electric performance curve.",
+                f"Solar thermal panel {solar_inputs.get(NAME, '<not supplied>')} is "
+                "missing an electric performance curve.",
             ) from None
 
         try:
@@ -714,13 +704,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         logger: Logger,
         mass_flow_rate: float,
         solar_irradiance: float,
-    ) -> Tuple[
-        Optional[float],
-        Optional[float],
-        Optional[float],
-        Optional[float],
-        Optional[float],
-    ]:
+    ) -> Tuple[Optional[float], Optional[float], Optional[float], Optional[float],]:
         """
         Calculates the performance characteristics of the hybrid PV-T collector.
 
@@ -802,7 +786,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         return (
             electrical_efficiency,
             negative_root,
-            reduced_temperature,
+            reduced_collector_temperature,
             thermal_efficiency,
         )
 
@@ -883,13 +867,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
         logger: Logger,
         mass_flow_rate: float,
         solar_irradiance: float,
-    ) -> Tuple[
-        Optional[float],
-        Optional[float],
-        Optional[float],
-        Optional[float],
-        Optional[float],
-    ]:
+    ) -> Tuple[Optional[float], Optional[float], Optional[float], Optional[float],]:
         """
         Calculates the performance characteristics of the solar-thermal collector.
 
@@ -999,7 +977,8 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
             )
             raise InputFileError(
                 "solar generation inputs",
-                f"Solar thermal panel {solar_inputs.get(NAME, '<not supplied>')} is missing a performance curve.",
+                f"Solar thermal panel {solar_inputs.get(NAME, '<not supplied>')} is "
+                "missing a performance curve.",
             ) from None
 
         try:

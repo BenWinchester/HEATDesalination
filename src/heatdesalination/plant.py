@@ -174,18 +174,14 @@ class DesalinationPlant:
 
         try:
             plant_outputs = {
-                True: {
-                    PlantOutputs(
-                        input_data[PLANT_OPERATING][OUTPUTS][BRINE],
-                        input_data[PLANT_OPERATING][OUTPUTS][CLEAN_WATER],
-                    )
-                },
-                False: {
-                    PlantOutputs(
-                        input_data[PLANT_DISABLED][OUTPUTS][BRINE],
-                        input_data[PLANT_DISABLED][OUTPUTS][CLEAN_WATER],
-                    )
-                },
+                True: PlantOutputs(
+                    input_data[PLANT_OPERATING][OUTPUTS][BRINE],
+                    input_data[PLANT_OPERATING][OUTPUTS][CLEAN_WATER],
+                ),
+                False: PlantOutputs(
+                    input_data[PLANT_DISABLED][OUTPUTS][BRINE],
+                    input_data[PLANT_DISABLED][OUTPUTS][CLEAN_WATER],
+                ),
             }
         except KeyError as exception:
             logger.error(
@@ -195,24 +191,16 @@ class DesalinationPlant:
 
         try:
             plant_requirements = {
-                True: {
-                    PlantRequirements(
-                        input_data[PLANT_OPERATING][REQUIREMENTS][ELECTRICITY],
-                        input_data[PLANT_OPERATING][REQUIREMENTS][HOT_WATER][
-                            TEMPERATURE
-                        ],
-                        input_data[PLANT_OPERATING][REQUIREMENTS][HOT_WATER][VOLUME],
-                    )
-                },
-                False: {
-                    PlantRequirements(
-                        input_data[PLANT_DISABLED][REQUIREMENTS][ELECTRICITY],
-                        input_data[PLANT_OPERATING][REQUIREMENTS][HOT_WATER][
-                            TEMPERATURE
-                        ],
-                        input_data[PLANT_OPERATING][REQUIREMENTS][HOT_WATER][VOLUME],
-                    )
-                },
+                True: PlantRequirements(
+                    input_data[PLANT_OPERATING][REQUIREMENTS][ELECTRICITY],
+                    input_data[PLANT_OPERATING][REQUIREMENTS][HOT_WATER][TEMPERATURE],
+                    input_data[PLANT_OPERATING][REQUIREMENTS][HOT_WATER][VOLUME],
+                ),
+                False: PlantRequirements(
+                    input_data[PLANT_DISABLED][REQUIREMENTS][ELECTRICITY],
+                    input_data[PLANT_OPERATING][REQUIREMENTS][HOT_WATER][TEMPERATURE],
+                    input_data[PLANT_OPERATING][REQUIREMENTS][HOT_WATER][VOLUME],
+                ),
             }
         except KeyError as exception:
             logger.error(
@@ -249,7 +237,7 @@ class DesalinationPlant:
         """
 
         if self._operating is not None:
-            return self._operating.get(hour)
+            return self._operating[hour]
 
         # If the map does not exist, compute and save it.
         if self.start_hour < self.end_hour:

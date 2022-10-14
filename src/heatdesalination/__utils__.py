@@ -14,7 +14,7 @@ __utils__.py - The utility module for the HEATDeslination program.
 
 """
 
-__all__ = ("NAME", "reduced_temperature")
+__all__ = ("InputFileError", "NAME", "reduced_temperature")
 
 # NAME:
 #   Keyword for parsing the name of the object.
@@ -23,6 +23,24 @@ NAME: str = "name"
 # ZERO_CELCIUS_OFFSET:
 #   Keyword for the offset of Kelvin to Celcius.
 ZERO_CELCIUS_OFFSET: float = 273.15
+
+
+class InputFileError(Exception):
+    """Raised when there is an error in an input file."""
+
+    def __init__(self, input_file: str, msg: str) -> None:
+        """
+        Instantiate a :class:`InputFileError` instance.
+        Inputs:
+            - input_file:
+                The name of the input file which contained the invalid data.
+            - msg:
+                The error message to append.
+        """
+
+        super().__init__(
+            f"Error parsing input file '{input_file}', invalid data in file: {msg}"
+        )
 
 
 def reduced_temperature(
