@@ -21,6 +21,9 @@ import sys
 
 from typing import Any, List
 
+from .argparser import parse_args
+from .fileparser import parse_input_files
+
 
 def main(args: List[Any]) -> None:
     """
@@ -33,7 +36,10 @@ def main(args: List[Any]) -> None:
     """
 
     # Parse the command-line arguments.
+    parsed_args = parse_args(args)
+
     # Parse the various input files.
+    parse_input_files(parsed_args.location, parsed_args.start_hour)
 
     # IF: Simulation
     #     THEN: Carry out a simulation based on the input conditions and exit.
