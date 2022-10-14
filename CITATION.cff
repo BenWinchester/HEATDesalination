@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Winchester
+    given-names: Benedict
+    orcid: https://orcid.org/0000-0002-2880-1243
+    given-names: Jenny
+    orcid: https://orcid.org/0000-0003-1048-1330
+  - family-names: Markides
+    given-names: Christos N.
+    orcid: https://orcid.org/0000-0002-4219-1867
+title: HEATDesalination
+version: v1.0
+date-released: 2022-10-14
+url: "https://github.com/BenWinchester/HEATDesalination"
