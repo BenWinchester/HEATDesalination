@@ -21,6 +21,7 @@ import sys
 
 from typing import Any, List
 
+
 def main(args: List[Any]) -> None:
     """
     Main module responsible for the flow of the HEATDesalination program.
@@ -40,6 +41,7 @@ def main(args: List[Any]) -> None:
     #     THEN: Carry out an optimisation and exit.
     # Raise an error stating that the code didn't run.
     #
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
