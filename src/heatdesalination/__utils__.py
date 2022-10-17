@@ -15,21 +15,118 @@ __utils__.py - The utility module for the HEATDeslination program.
 """
 
 import dataclasses
+import logging
+import os
 
 from logging import Logger
 from typing import Any, Dict, List, Union
 
 import yaml
 
-__all__ = ("InputFileError", "NAME", "read_yaml", "reduced_temperature", "Scenario")
+__all__ = (
+    "AVERAGE_IRRADIANCE_DAY",
+    "InputFileError",
+    "MAXIMUM_IRRADIANCE_DAY",
+    "NAME",
+    "read_yaml",
+    "reduced_temperature",
+    "Scenario",
+)
+
+# AMBIENT_TEMPERATURE:
+#   Keyword for the ambient temperature.
+AMBIENT_TEMPERATURE: str = "ambient_temperature"
+
+# AUTO_GENERATED_FILES_DIRECTORY:
+#   Name of the directory into which auto-generated files should be saved.
+AUTO_GENERATED_FILES_DIRECTORY: str = "auto_generated"
+
+# AVERAGE_IRRADIANCE_DAY:
+#   Keyword for saving the average weather profiles for the location.
+AVERAGE_IRRADIANCE_DAY: str = "average_weather_conditions"
+
+# LOGGER_DIRECTORY:
+#   Directory for storing logs.
+LOGGER_DIRECTORY: str = "logs"
+
+# MAXIMUM_IRRADIANCE_DAY:
+#   Keyword for saving the weather conditions for the day of maximum irradiance.
+MAXIMUM_IRRADIANCE_DAY: str = "maximum_irradiance_weather_conditions"
+
+# MINIMUM_IRRADIANCE_DAY:
+#   Keyword for saving the weather conditions for the day of minimum irradiance.
+MINIMUM_IRRADIANCE_DAY: str = "minimum_irradiance_weather_conditions"
 
 # NAME:
 #   Keyword for parsing the name of the object.
 NAME: str = "name"
 
+# OPTIMUM_TILT_ANGLE:
+#   Keyword for the optimum tilt angle of the panel.
+OPTIMUM_TILT_ANGLE: str = "optimum_tilt_angle"
+
+# SOLAR_ELEVATION:
+#   Keyword for the solar elevation.
+SOLAR_ELEVATION: str = "solar_elevation"
+
+# SOLAR_IRRADIANCE:
+#   Keyword for the solar irradiance.
+SOLAR_IRRADIANCE: str = "irradiance"
+
+# WIND_SPEED:
+#   Keyword for the wind speed.
+WIND_SPEED: str = "wind_speed"
+
 # ZERO_CELCIUS_OFFSET:
 #   Keyword for the offset of Kelvin to Celcius.
 ZERO_CELCIUS_OFFSET: float = 273.15
+
+
+def get_logger(logger_name: str, verbose: bool = False) -> logging.Logger:
+    """
+    Set-up and return a logger.
+    Inputs:
+        - logger_name:
+            The name for the logger, which is also used to denote the filename with a
+            "<logger_name>.log" format.
+        - verbose:
+            Whether the log level should be verbose (True) or standard (False).
+    Outputs:
+        - The logger for the component.
+    """
+
+    # Create a logger and logging directory.
+    logger = logging.getLogger(logger_name)
+    logger.setLevel(logging.DEBUG if verbose else logging.INFO)
+    os.makedirs(LOGGER_DIRECTORY, exist_ok=True)
+
+    # Create a formatter.
+    formatter = logging.Formatter(
+        "%(asctime)s: %(name)s: %(levelname)s: %(message)s",
+        datefmt="%d/%m/%Y %I:%M:%S %p",
+    )
+
+    # Create a console handler.
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.ERROR)
+    console_handler.setFormatter(formatter)
+
+    # Delete the existing log if there is one already.
+    if os.path.isfile(os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log")):
+        os.remove(os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log"))
+
+    # Create a file handler.
+    file_handler = logging.FileHandler(
+        os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log")
+    )
+    file_handler.setLevel(logging.DEBUG if verbose else logging.INFO)
+    file_handler.setFormatter(formatter)
+
+    # Add the file handler to the logger.
+    logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
+
+    return logger
 
 
 class InputFileError(Exception):
