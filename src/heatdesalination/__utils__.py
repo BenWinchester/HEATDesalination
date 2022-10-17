@@ -26,6 +26,9 @@ import yaml
 __all__ = (
     "AVERAGE_IRRADIANCE_DAY",
     "InputFileError",
+    "LATITUDE",
+    "LOGGER_DIRECTORY",
+    "LONGITUDE",
     "MAXIMUM_IRRADIANCE_DAY",
     "NAME",
     "read_yaml",
@@ -45,9 +48,17 @@ AUTO_GENERATED_FILES_DIRECTORY: str = "auto_generated"
 #   Keyword for saving the average weather profiles for the location.
 AVERAGE_IRRADIANCE_DAY: str = "average_weather_conditions"
 
+# LATITUDE:
+#   Keyword for latitude.
+LATITUDE: str = "latitude"
+
 # LOGGER_DIRECTORY:
 #   Directory for storing logs.
 LOGGER_DIRECTORY: str = "logs"
+
+# LONGITUDE:
+#   Keyword for longitude.
+LONGITUDE: str = "longitude"
 
 # MAXIMUM_IRRADIANCE_DAY:
 #   Keyword for saving the weather conditions for the day of maximum irradiance.
