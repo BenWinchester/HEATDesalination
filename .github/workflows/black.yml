@@ -1,7 +1,7 @@
 ---
 name: Black
 
-on: [pull_request]
+on: pull_request
 
 jobs:
   build:
@@ -20,4 +20,4 @@ jobs:
           pip install black
       - name: Analysing the code with black
         run: |
-          python -m black src/clover --check --diff
+          python -m black src/heatdesalination --check --diff
