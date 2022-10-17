@@ -52,7 +52,9 @@ SCENARIO_INPUTS: str = "scenarios.yaml"
 SOLAR_THERMAL: str = "solar_thermal"
 
 
-def parse_input_files(location: str, logger: Logger, scenario_name: str, start_hour: int):
+def parse_input_files(
+    location: str, logger: Logger, scenario_name: str, start_hour: int
+):
     """
     Parses the various input files.
 
@@ -85,7 +87,10 @@ def parse_input_files(location: str, logger: Logger, scenario_name: str, start_h
 
     # Parse the scenario.
     scenario_inputs = read_yaml(os.path.join(INPUTS_DIRECTORY, SCENARIO_INPUTS), logger)
-    scenarios = [Scenario(entry[PLANT], entry[PV], entry[PV_T], entry[SOLAR_THERMAL]) for entry in scenario_inputs]
+    scenarios = [
+        Scenario(entry[PLANT], entry[PV], entry[PV_T], entry[SOLAR_THERMAL])
+        for entry in scenario_inputs
+    ]
     try:
         scenario = [entry for entry in scenarios if entry.name == scenario_name][0]
     except IndexError:
@@ -101,7 +106,9 @@ def parse_input_files(location: str, logger: Logger, scenario_name: str, start_h
         for entry in desalination_inputs
     ]
     try:
-        desalination_plant = [entry for entry in desalination_plants if entry.name == scenario.plant][0]
+        desalination_plant = [
+            entry for entry in desalination_plants if entry.name == scenario.plant
+        ][0]
     except IndexError:
         logger.error("Could not find plant '%s' in input file.", scenario.plant)
         raise
