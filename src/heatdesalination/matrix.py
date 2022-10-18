@@ -21,6 +21,7 @@ configuration.
 
 from typing import Dict, Optional, Tuple
 
+from .__utils__ import Scenario
 from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel
 
 
@@ -33,6 +34,7 @@ def solve_matrix(
     ambient_temperature: Dict[int, float],
     hybrid_pvt_panel: Optional[HybridPVTPanel],
     pv_panel: Optional[PVPanel],
+    scenario: Scenario,
     solar_irradiance: Dict[int, float],
     solar_thermal_collector: Optional[SolarThermalPanel],
     *,
@@ -48,10 +50,14 @@ def solve_matrix(
             The :class:`HybridPVTPanel` to use for the run if appropriate.
         - pv_panel:
             The :class:`PVPanel` to use for the run if appropriate.
+        - scenario:
+            The :class:`Scenario` to use for the run.
         - solar_irradiance:
             The solar irradiance profile.
         - solar_thermal_collector:
             The :class:`SolarThermalPanel` to use for the run if appropriate.
+
+    Outputs:
 
     """
 
