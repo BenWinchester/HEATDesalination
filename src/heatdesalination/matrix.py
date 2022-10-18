@@ -18,3 +18,51 @@ system which consists of solar-thermal and PV-T collectors depending on the
 configuration.
 
 """
+
+from typing import Dict, Optional, Tuple
+
+from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel
+
+
+# Temperature precision:
+#   The precision required when solving the matrix equation for the system temperatures.
+TEMPERATURE_PRECISION: float = 1.44
+
+
+def solve_matrix(
+    ambient_temperature: Dict[int, float],
+    hybrid_pvt_panel: Optional[HybridPVTPanel],
+    pv_panel: Optional[PVPanel],
+    solar_irradiance: Dict[int, float],
+    solar_thermal_collector: Optional[SolarThermalPanel],
+    *,
+    time_index: int,
+) -> Tuple[float]:
+    """
+    Solve the matrix equation for the performance of the solar system.
+
+    Inputs:
+        - ambient_temperature:
+            The ambient temperature profile.
+        - hybrid_pvt_panel:
+            The :class:`HybridPVTPanel` to use for the run if appropriate.
+        - pv_panel:
+            The :class:`PVPanel` to use for the run if appropriate.
+        - solar_irradiance:
+            The solar irradiance profile.
+        - solar_thermal_collector:
+            The :class:`SolarThermalPanel` to use for the run if appropriate.
+
+    """
+
+    # Set up variables to track for a valid solution being found.
+
+    # Iterate until a valid solution is found within the hard-coded precision.
+    while not (solution_found := False):
+        # Calculate the various coefficients which go into the matrix.
+
+        # Solve the matrix.
+
+        # Check whether the solution is valid given the hard-coded precision specified.
+
+        solution_found = True
