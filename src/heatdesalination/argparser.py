@@ -97,6 +97,13 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
     #############################
 
     simulation_arguments.add_argument(
+        "--simulation",
+        "-sim",
+        action="store_true",
+        default=False,
+        help="Run a simulation.",
+    )
+    simulation_arguments.add_argument(
         "--pv-system-size",
         "-pv",
         help="The number of PV panels to use.",

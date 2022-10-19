@@ -21,6 +21,8 @@ import sys
 
 from typing import Any, List
 
+from heatdesalination.__utils__ import get_logger
+
 from .argparser import parse_args
 from .fileparser import parse_input_files
 
@@ -37,16 +39,23 @@ def main(args: List[Any]) -> None:
 
     # Parse the command-line arguments.
     parsed_args = parse_args(args)
+    logger = get_logger(f"{parsed_args.location}_heat_desalination")
 
     # Parse the various input files.
-    parse_input_files(parsed_args.location, parsed_args.start_hour)
+    parse_input_files(
+        parsed_args.location, logger, parsed_args.scenario, parsed_args.start_hour
+    )
 
-    # IF: Simulation
-    #     THEN: Carry out a simulation based on the input conditions and exit.
-    # IF: Optimisation
-    #     THEN: Carry out an optimisation and exit.
-    # Raise an error stating that the code didn't run.
-    #
+    if parsed_args.simulation:
+        run_simulation()
+    elif parsed_args.optimisation:
+        run_optimisation()
+    else:
+        logger.error("Neither simulation or optimisation was specified. Quitting.")
+        raise Exception(
+            "Simultion or optimisation must be specified. Run with `--help` for more "
+            "information."
+        )
 
 
 if __name__ == "__main__":
