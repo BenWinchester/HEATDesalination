@@ -10,22 +10,22 @@
 
 desalination_plants:
   - name: med
-    operating_hours: 10  # Number of operating hours per day
+    operating_hours: !!int 10  # Number of operating hours per day
     plant_disabled:
       requirements:
-        electricity: 30000  # [Wh] Electricity requirements per hour
+        electricity: !!float 30000  # [Wh] Electricity requirements per hour
         hot_water:
-          temperature: 0  # [degC] Temperature of the hot-water input
-          volume: 0  # [l] Volume requirements per hour
+          temperature: !!float 0  # [degC] Temperature of the hot-water input
+          volume: !!float 0  # [l] Volume requirements per hour
       outputs:
-        brine: 0  # [l] Volume produced per hour
-        clean_water: 0  # [l] Volume produced per hour
+        brine: !!float 0  # [l] Volume produced per hour
+        clean_water: !!float 0  # [l] Volume produced per hour
     plant_operating:
       requirements:
-        electricity: 330000  # [Wh] Electricity requirements per hour
+        electricity: !!float 330000  # [Wh] Electricity requirements per hour
         hot_water:
-          temperature: 80  # [degC] Temperature of the hot-water input
-          volume: 15480  # [l] Volume requirements per hour
+          temperature: !!float 80  # [degC] Temperature of the hot-water input
+          volume: !!float 15480  # [l] Volume requirements per hour
       outputs:
-        brine: 52200  # [l] Volume produced per hour
-        clean_water: 25200  # [l] Volume produced per hour
+        brine: !!float 52200  # [l] Volume produced per hour
+        clean_water: !!float 25200  # [l] Volume produced per hour

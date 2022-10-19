@@ -10,7 +10,8 @@
 
 scenarios:
   - name: default
-    plant: med  # The name of the desalination plant to include, cannot be `off`
-    pv: mono_si  # The name of the PV panel to include, `off` if not included
-    pv_t: abora_aH72SK  # The PV-T collector to include, `off` if not included
-    solar_thermal: fpc  # The solar-thermal collector to include or `off`
+    htf_heat_capacity: !!float 4120  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: !!str mono_si  # The name of the PV panel to include or "off"
+    pv_t: !!str abora_aH72SK  # The PV-T collector to include or "off"
+    solar_thermal: !!str fpc  # The solar-thermal collector to include or "off"

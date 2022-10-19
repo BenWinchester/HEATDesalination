@@ -11,25 +11,24 @@
 solar_collectors:
   - name: !!str dusol_ds60275_m
     type: !!str pv
-    area: !!float 1.638 # [m^2]
-    land_use: !!float 1.638 # [m^2]
+    area: !!float 1.638  # [m^2]
+    land_use: !!float 1.638  # [m^2]
     reference_efficiency: !!float 0.1692
-    reference_temperature: !!float 25 # [degC]
+    reference_temperature: !!float 25  # [degC]
     thermal_coefficiency: !!float
-    pv_unit: !!float 0.275 # [kWp]
+    pv_unit: !!float 0.275   # [kWp]
   - name: !!str abora_h72sk
     type: !!str pv_t
-    area: !!float 1.9602 # [m^2]
-    land_use: !!float 1.9602 # [m^2]
-    max_mass_flow_rate: !!float 1000 # [NaN]
-    min_mass_flow_rate: !!float 20 # [l/h]
-    nominal_mass_flow_rate: !!float 60 # [l/h]
+    area: !!float 1.9602  # [m^2]
+    land_use: !!float 1.9602  # [m^2]
+    max_mass_flow_rate: !!float 1000  # [NaN]
+    min_mass_flow_rate: !!float 20  # [l/h]
+    nominal_mass_flow_rate: !!float 60  # [l/h]
     electrical_performance_curve:
-      zeroth_order: 
+      zeroth_order:
       first_order:
       second_order:
     thermal_performance_curve:
       zeroth_order:
       first_order:
       second_order:
-
