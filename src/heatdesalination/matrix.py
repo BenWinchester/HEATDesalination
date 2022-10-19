@@ -36,7 +36,7 @@ __all__ = ("solve_matrix",)
 TEMPERATURE_PRECISION: float = 0.1
 
 
-def _calculate_collectors_input_temperature(
+def _collectors_input_temperature(
     collector_system_output_temperature: float,
     heat_exchanger_efficiency: float,
     htf_heat_capacity: float,
@@ -68,7 +68,7 @@ def _calculate_collectors_input_temperature(
     ) * (tank_temperature - collector_system_output_temperature)
 
 
-def _calculate_solar_system_output_temperatures(
+def _solar_system_output_temperatures(
     ambient_temperature: float,
     collector_system_input_temperature: float,
     hybrid_pvt_panel: Optional[HybridPVTPanel],
@@ -163,7 +163,7 @@ def _calculate_solar_system_output_temperatures(
     )
 
 
-def _calculate_tank_temperature(
+def _tank_temperature(
     buffer_tank: HotWaterTank,
     collector_system_output_temperature: float,
     heat_exchanger_efficiency: float,
@@ -274,7 +274,7 @@ def solve_matrix(
     solar_thermal_mass_flow_rate: Optional[float],
     tank_ambient_temperature: float,
     tank_replacement_water_temperature: float,
-) -> Tuple[float]:
+) -> Tuple[float, float, Optional[float], Optional[float], float]:
     """
     Solve the matrix equation for the performance of the solar system.
 
@@ -369,7 +369,7 @@ def solve_matrix(
             collector_system_output_temperature,
             pvt_htf_output_temperature,
             solar_thermal_htf_output_temperature,
-        ) = _calculate_solar_system_output_temperatures(
+        ) = _solar_system_output_temperatures(
             ambient_temperature,
             best_guess_collector_htf_input_temperature,
             hybrid_pvt_panel,
@@ -382,7 +382,7 @@ def solve_matrix(
         )
 
         # Calculate the tank temperature based on these parameters.
-        tank_temperature: float = _calculate_tank_temperature(
+        tank_temperature: float = _tank_temperature(
             buffer_tank,
             collector_system_output_temperature,
             scenario.heat_exchanger_efficiency,
@@ -397,7 +397,7 @@ def solve_matrix(
         )
 
         # Solve for the input temperature.
-        collector_input_temperature: float = _calculate_collectors_input_temperature(
+        collector_input_temperature: float = _collectors_input_temperature(
             collector_system_output_temperature,
             scenario.heat_exchanger_efficiency,
             scenario.htf_heat_capacity,

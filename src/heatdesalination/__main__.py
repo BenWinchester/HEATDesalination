@@ -21,10 +21,11 @@ import sys
 
 from typing import Any, List
 
-from heatdesalination.__utils__ import get_logger
 
+from .__utils__ import get_logger
 from .argparser import parse_args
 from .fileparser import parse_input_files
+from .simulator import run_simulation
 
 
 def main(args: List[Any]) -> None:
@@ -47,7 +48,20 @@ def main(args: List[Any]) -> None:
     )
 
     if parsed_args.simulation:
-        run_simulation()
+        run_simulation(
+            ambient_temperatures,
+            buffer_tank,
+            desalination_plant,
+            scenario.htf_mass_flow_rate,
+            hybrid_pvt_panel,
+            logger,
+            pv_panel,
+            parsed_args.pvt_system_size,
+            scenario,
+            solar_irradiances,
+            solar_thermal_collector,
+            parsed_args.solar_thermal_system_size,
+        )
     elif parsed_args.optimisation:
         run_optimisation()
     else:

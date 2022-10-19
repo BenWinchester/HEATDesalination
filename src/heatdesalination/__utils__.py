@@ -169,9 +169,8 @@ class FlowRateError(Exception):
 
         """
 
-        super().__init__(
-            f"Flow-rate mismatch for collector '{collector_name}': {msg}"
-        )
+        super().__init__(f"Flow-rate mismatch for collector '{collector_name}': {msg}")
+
 
 class InputFileError(Exception):
     """Raised when there is an error in an input file."""
@@ -195,7 +194,10 @@ class InputFileError(Exception):
 
 def read_yaml(
     filepath: str, logger: Logger
-) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
+) -> Union[
+    Dict[str, Union[bool, float, int, str]],
+    List[Dict[str, Union[bool, float, int, str]]],
+]:
     """
     Reads a YAML file and returns the contents.
     """
@@ -203,9 +205,10 @@ def read_yaml(
     # Process the new-location data.
     try:
         with open(filepath, "r", encoding="UTF-8") as filedata:
-            file_contents: Union[Dict[str, Any], List[Dict[str, Any]]] = yaml.safe_load(
-                filedata
-            )
+            file_contents: Union[
+                Dict[str, Union[bool, float, int, str]],
+                List[Dict[str, Union[bool, float, int, str]]],
+            ] = yaml.safe_load(filedata)
     except FileNotFoundError:
         logger.error(
             "The file specified, %s, could not be found. "

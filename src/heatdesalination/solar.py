@@ -186,7 +186,7 @@ class PerformanceCurve:
         return self.second_order_coefficient
 
 
-def _calculate_thermal_performance(
+def _thermal_performance(
     ambient_temperature: float,
     area: float,
     htf_heat_capacity: float,
@@ -756,7 +756,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                 "litres/hour.",
             )
 
-        _, negative_root = _calculate_thermal_performance(
+        _, negative_root = _thermal_performance(
             ambient_temperature,
             self.area,
             htf_heat_capacity,
@@ -921,7 +921,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
                 "litres/hour.",
             )
 
-        _, negative_root = _calculate_thermal_performance(
+        _, negative_root = _thermal_performance(
             ambient_temperature,
             self.area,
             htf_heat_capacity,

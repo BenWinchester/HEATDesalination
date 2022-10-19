@@ -27,6 +27,14 @@ __all__ = ("parse_input_files",)
 #   The name of the desalination plant inputs file.
 DESALINATION_PLANT_INPUTS: str = "plants.yaml"
 
+# HEAT_EXCHANGER_EFFICIENCY:
+#   Keyword for parsing the heat capacity of the heat exchangers.
+HEAT_EXCHANGER_EFFICIENCY: str = "heat_exchanger_efficiency"
+
+# HTF_HEAT_CAPACITY:
+#   Keyword for parsing the htf heat capacity.
+HTF_HEAT_CAPACITY: str = "htf_heat_capacity"
+
 # INPUTS_DIRECTORY:
 #   The name of the inputs directory.
 INPUTS_DIRECTORY: str = "inputs"
@@ -88,7 +96,14 @@ def parse_input_files(
     # Parse the scenario.
     scenario_inputs = read_yaml(os.path.join(INPUTS_DIRECTORY, SCENARIO_INPUTS), logger)
     scenarios = [
-        Scenario(entry[PLANT], entry[PV], entry[PV_T], entry[SOLAR_THERMAL])
+        Scenario(
+            entry[HEAT_EXCHANGER_EFFICIENCY],
+            entry[HTF_HEAT_CAPACITY],
+            entry[PLANT],
+            entry[PV],
+            entry[PV_T],
+            entry[SOLAR_THERMAL],
+        )
         for entry in scenario_inputs
     ]
     try:
