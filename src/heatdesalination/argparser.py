@@ -57,9 +57,16 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
 
     parser = argparse.ArgumentParser()
 
+    required_arguments = parser.add_argument_group("required arguments")
+    simulation_arguments = parser.add_argument_group("simulation-only arguments")
+
+    ######################
+    # Required arguments #
+    ######################
+
     # Location/Weather:
     #   The weather information to use.
-    parser.add_argument(
+    required_arguments.add_argument(
         "--location",
         "--weather",
         "-l",
@@ -70,7 +77,7 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
 
     # Scenario:
     #   The scenario to use for the modelling.
-    parser.add_argument(
+    required_arguments.add_argument(
         "--scenario",
         help="The scenario to use for the modelling.",
         type=int,
@@ -78,10 +85,33 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
 
     # Start hour:
     #   The start hour at which to being modelling.
-    parser.add_argument(
+    required_arguments.add_argument(
         "--start-hour",
         "--start",
         help="The start time for the desalination plant to begin operation.",
+        type=int,
+    )
+
+    #############################
+    # Simulation-only arguments #
+    #############################
+
+    simulation_arguments.add_argument(
+        "--pv-system-size",
+        "-pv",
+        help="The number of PV panels to use.",
+        type=int,
+    )
+    simulation_arguments.add_argument(
+        "--pv-t-system-size",
+        "-pv-t",
+        help="The number of PV-T collectors to use.",
+        type=int,
+    )
+    simulation_arguments.add_argument(
+        "--solar-thermal-system-size",
+        "-st",
+        help="The number of solar-thermal collectors to use.",
         type=int,
     )
 

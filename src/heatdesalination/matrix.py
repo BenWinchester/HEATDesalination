@@ -19,56 +19,413 @@ configuration.
 
 """
 
-from typing import Dict, Optional, Tuple
+from logging import Logger
+from typing import Optional, Tuple
 
-from .__utils__ import Scenario
+
+from .__utils__ import InputFileError, Scenario
+from .plant import DesalinationPlant
 from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel
+from .storage.storage_utils import HotWaterTank
+
+__all__ = ("solve_matrix",)
 
 
 # Temperature precision:
 #   The precision required when solving the matrix equation for the system temperatures.
-TEMPERATURE_PRECISION: float = 1.44
+TEMPERATURE_PRECISION: float = 0.1
+
+
+def _calculate_collectors_input_temperature(
+    collector_system_output_temperature: float,
+    heat_exchanger_efficiency: float,
+    htf_heat_capacity: float,
+    tank_temperature: float,
+    tank_water_heat_capacity: float,
+) -> float:
+    """
+    Calculates the input temperature for the collectors based on tank outputs etc.
+
+    Inputs:
+        - collector_system_output_temperature:
+            The output temperature from the solar system overall, measured in Kelvin.
+        - heat_exchanger_efficiency:
+            The efficiency of the heat exchanger.
+        - htf_heat_capacity:
+            The heat capacity of the HTF, measured in Joules per kilogram Kelvin.
+        - tank_temperature:
+            The temperature of the contents of the hot-water tank, measured in Kelvin.
+        - tank_water_heat_capacity:
+            The heat capacity of the water within the hot-water tank.
+
+    Outputs:
+        The input temperature of the HTF to the collectors.
+
+    """
+
+    return collector_system_output_temperature + (
+        tank_water_heat_capacity * heat_exchanger_efficiency / htf_heat_capacity
+    ) * (tank_temperature - collector_system_output_temperature)
+
+
+def _calculate_solar_system_output_temperatures(
+    ambient_temperature: float,
+    collector_system_input_temperature: float,
+    hybrid_pvt_panel: Optional[HybridPVTPanel],
+    logger: Logger,
+    pvt_mass_flow_rate: Optional[float],
+    scenario: Scenario,
+    solar_irradiance: float,
+    solar_thermal_collector: Optional[SolarThermalPanel],
+    solar_thermal_mass_flow_rate: Optional[float],
+) -> Tuple[float, float, float]:
+    """
+    Calculates the output temperatures of the PV-T, solar-thermal and overall solar.
+
+    Inputs:
+        - ambient_temperature:
+            The ambient temperature, measured in Kelvin.
+        - collector_system_input_temperature:
+            The intput temperature to the collector system, measured in Kelvin.
+        - hybrid_pvt_panel:
+            The :class:`HybridPVTPanel` to use for the run if appropriate.
+        - logger:
+            The :class:`logging.Logger` to use for the run.
+        - pvt_mass_flow_rate:
+            The mass flow rate of HTF through the PV-T collectors, measured in kg/s.
+        - scenario:
+            The :class:`Scenario` to use for the run.
+        - solar_irradiance:
+            The solar irradiance, measured in Watts per meter squared.
+        - solar_thermal_collector:
+            The :class:`SolarThermalPanel` to use for the run if appropriate.
+        - solar_thermal_mass_flow_rate:
+            The mass flow rate of HTF through the solar-thermal collectors, measured in
+            kg/s.
+
+    Outputs:
+        - collector_system_output_temperature:
+            The output temperature from the solar system overall, measured in Kelvin.
+        - pvt_htf_output_temperature:
+            The output temperature from the PV-T collectors, measured in Kelvin;
+        - solar_thermal_htf_output_temperature:
+            The output temperature from the solar-thermal collectors, measured in
+            Kelvin.
+
+    """
+
+    if scenario.pv_t:
+        pvt_htf_output_temperature: Optional[
+            float
+        ] = hybrid_pvt_panel.calculate_performance(
+            ambient_temperature,
+            scenario.htf_heat_capacity,
+            collector_system_input_temperature,
+            logger,
+            pvt_mass_flow_rate,
+            solar_irradiance,
+        )
+    else:
+        pvt_htf_output_temperature = None
+
+    if scenario.solar_thermal:
+        solar_thermal_htf_output_temperature: Optional[
+            float
+        ] = solar_thermal_collector.calculate_performance(
+            ambient_temperature,
+            scenario.htf_heat_capacity,
+            pvt_htf_output_temperature
+            if pvt_htf_output_temperature is not None
+            else collector_system_input_temperature,
+            logger,
+            solar_thermal_mass_flow_rate,
+            solar_irradiance,
+        )
+    else:
+        solar_thermal_htf_output_temperature = None
+
+    # Determine the output temperature from the whole solar collector system.
+    if solar_thermal_htf_output_temperature is not None:
+        collector_system_output_temperature: float = (
+            solar_thermal_htf_output_temperature
+        )
+    elif pvt_htf_output_temperature is not None:
+        collector_system_output_temperature = pvt_htf_output_temperature
+    else:
+        raise InputFileError(
+            "scenario", "Neither PV-T or solar-thermal were requested."
+        )
+
+    return (
+        collector_system_output_temperature,
+        pvt_htf_output_temperature,
+        solar_thermal_htf_output_temperature,
+    )
+
+
+def _calculate_tank_temperature(
+    buffer_tank: HotWaterTank,
+    collector_system_output_temperature: float,
+    heat_exchanger_efficiency: float,
+    htf_heat_capacity: float,
+    htf_mass_flow_rate: float,
+    load_mass_flow_rate: float,
+    logger: Logger,
+    previous_tank_temperature: float,
+    tank_ambient_temperature: float,
+    tank_replacement_water_temperature: float,
+    tank_water_heat_capacity: float,
+    time_interval: int = 3600,
+) -> float:
+    """
+    Calculate the temperature of the buffer tank.
+
+    Inputs:
+        - buffer_tank:
+            The :class:`HotWaterTank` to use as a buffer tank for the run.
+        - collector_system_output_temperature:
+            The temperature of the HTF leaving the collector system.
+        - heat_exchanger_efficiency:
+            The efficiency of the heat exchanger.
+        - htf_heat_capacity:
+            The heat capacity of the HTF, measured in Joules per kilogram Kelvin.
+        - htf_mass_flow_rate:
+            The mass flow rate of the HTF, measured in kilograms per second.
+        - load_mass_flow_rate:
+            The mass flow rate of the load, measuted in kilograms per second.
+        - logger:
+            The :class:`logging.Logger` to use for the run.
+        - previous_tank_temperature:
+            The temperature of the hot-water tank at the previous time step.
+        - tank_ambient_temperature:
+            The ambient temperature of air surrounding the hot-water tank.
+        - tank_replacement_water_temperature:
+            The temperature in Kelvin of the replacement water used to replace water
+            withdrawn from the hot-water tank.
+        - tank_water_heat_capacity:
+            The heat capacity of the water within the hot-water tank.
+        - time_interval:
+            The time interval being considered, measured in seconds.
+
+    Outputs:
+        The temperature of the buffer tank.
+
+    """
+
+    # Heat remaining in the tank from the previous time step.
+    tank_heat_capacity_term: float = (
+        buffer_tank.mass * buffer_tank.heat_capacity
+    )  # [J/K]
+    logger.debug("Tank heat-capacity term: %s J/K", f"{tank_heat_capacity_term:.3g}")
+
+    # Heat transfer through the heat exhcanger between the tank and HTF.
+    heat_exchanger_term: float = (
+        htf_mass_flow_rate  # [kg/s]
+        * htf_heat_capacity  # [J/kgK]
+        * heat_exchanger_efficiency
+        * time_interval  # [s]
+    )  # [J/K]
+    logger.debug("Heat exhcnager term: %s J/K", f"{heat_exchanger_term:.3g}")
+
+    # Heat transfer due to the applied load.
+    hot_water_load_term: float = (
+        load_mass_flow_rate  # [kg/s]
+        * tank_water_heat_capacity  # [J/kgK]
+        * time_interval  # [s]
+    )  # [J/K]
+    logger.debug("Hot water load term: %s J/K", f"{hot_water_load_term:.3g}")
+
+    # Heat transfer to and from the environment around the tank.
+    environment_heat_transfer_term: float = (
+        buffer_tank.heat_transfer_coefficient * time_interval  #  [W/K]  # [s]
+    )  # [J/K]
+    logger.debug(
+        "Tank environment heat-transfer coefficient: %s J/K",
+        f"{environment_heat_transfer_term:.3g}",
+    )
+
+    # Calculate and return the tank temperature.
+    return (
+        tank_heat_capacity_term * previous_tank_temperature
+        + heat_exchanger_term * collector_system_output_temperature
+        + hot_water_load_term * tank_replacement_water_temperature
+        + environment_heat_transfer_term * tank_ambient_temperature
+    ) / (
+        tank_heat_capacity_term
+        + heat_exchanger_term
+        + hot_water_load_term
+        + environment_heat_transfer_term
+    )
 
 
 def solve_matrix(
-    ambient_temperature: Dict[int, float],
+    ambient_temperature: float,
+    buffer_tank: HotWaterTank,
+    htf_mass_flow_rate: float,
     hybrid_pvt_panel: Optional[HybridPVTPanel],
+    load_mass_flow_rate: float,
+    logger: Logger,
+    previous_tank_temperature: float,
     pv_panel: Optional[PVPanel],
+    pvt_mass_flow_rate: Optional[float],
     scenario: Scenario,
-    solar_irradiance: Dict[int, float],
+    solar_irradiance: float,
     solar_thermal_collector: Optional[SolarThermalPanel],
-    *,
-    time_index: int,
+    solar_thermal_mass_flow_rate: Optional[float],
+    tank_ambient_temperature: float,
+    tank_replacement_water_temperature: float,
 ) -> Tuple[float]:
     """
     Solve the matrix equation for the performance of the solar system.
 
     Inputs:
         - ambient_temperature:
-            The ambient temperature profile.
+            The ambient temperature.
+        - buffer_tank:
+            The :class:`HotWaterTank` to use as a buffer tank for the run.
+        - htf_mass_flow_rate:
+            The mass flow rate of the HTF, measured in kilograms per second.
         - hybrid_pvt_panel:
             The :class:`HybridPVTPanel` to use for the run if appropriate.
+        - load_mass_flow_rate:
+            The mass flow rate of the load, measuted in kilograms per second.
+        - logger:
+            The :class:`logging.Logger` to use for the run.
+        - previous_tank_temperature:
+            The temperature of the hot-water tank at the previous time step.
         - pv_panel:
             The :class:`PVPanel` to use for the run if appropriate.
+        - pvt_mass_flow_rate:
+            The mass flow rate of the HTF through the PV-T collectors, measured in
+            kilograms per second.
         - scenario:
             The :class:`Scenario` to use for the run.
         - solar_irradiance:
-            The solar irradiance profile.
+            The solar irradiance.
         - solar_thermal_collector:
             The :class:`SolarThermalPanel` to use for the run if appropriate.
+        - solar_thermal_mass_flow_rate:
+            The mass flow rate of the HTF through the solar-thermal collectors, measured
+            in kilograms per second.
+        - tank_ambient_temperature:
+            The ambient temperature of air surrounding the hot-water tank, measured in
+            Kelvin.
+        - tank_replacement_water_temperature:
+            The temperature of the water which will replace any hot water consumed from
+            the tank during the time interval.
 
     Outputs:
+        - collector_input_temperature:
+            The input temperature to the collector system.
+        - collector_system_output_temperature:
+            The output temperature from the solar collector system as a whole, measured
+            in degrees Kelvin.
+        - pvt_htf_output_temperature:
+            The output temperature from the PV-T panels, if present, measured in degrees
+            Kelvin.
+        - solar_thermal_htf_output_temperature:
+            The output temperature from the solar-thermal collectors, if present,
+            measured in degrees Kelvin.
+        - tank_temperature:
+            The temperature of the tank, measured in degrees Kelvin.
 
     """
 
     # Set up variables to track for a valid solution being found.
+    if scenario.pv and pv_panel is None:
+        logger.error("No PV panel provided despite PV being on in the scenario.")
+        raise InputFileError(
+            "scenario OR solar",
+            "No PV panel provided despite PV modelling being requested.",
+        )
+    if scenario.pv_t and hybrid_pvt_panel is None or pvt_mass_flow_rate is None:
+        logger.error("No PV-T panel provided despite PV-T being on in the scenario.")
+        raise InputFileError(
+            "scenario OR solar",
+            "No PV-T panel provided despite PV modelling being requested.",
+        )
+    if (
+        scenario.solar_thermal
+        and solar_thermal_collector is None
+        and solar_thermal_mass_flow_rate is None
+    ):
+        logger.error(
+            "No solar-thermal collector provided despite solar-thermal being on in the "
+            "scenario."
+        )
+        raise InputFileError(
+            "scenario OR solar",
+            "No solar-thermal collector provided despite PV modelling being requested.",
+        )
+
+    best_guess_collector_htf_input_temperature: float = ambient_temperature
+    best_guess_tank_temperature: float = previous_tank_temperature
+    solution_found: bool = False
 
     # Iterate until a valid solution is found within the hard-coded precision.
-    while not (solution_found := False):
+    while not solution_found:
         # Calculate the various coefficients which go into the matrix.
+        (
+            collector_system_output_temperature,
+            pvt_htf_output_temperature,
+            solar_thermal_htf_output_temperature,
+        ) = _calculate_solar_system_output_temperatures(
+            ambient_temperature,
+            best_guess_collector_htf_input_temperature,
+            hybrid_pvt_panel,
+            logger,
+            pvt_mass_flow_rate,
+            scenario,
+            solar_irradiance,
+            solar_thermal_collector,
+            solar_thermal_mass_flow_rate,
+        )
 
-        # Solve the matrix.
+        # Calculate the tank temperature based on these parameters.
+        tank_temperature: float = _calculate_tank_temperature(
+            buffer_tank,
+            collector_system_output_temperature,
+            scenario.heat_exchanger_efficiency,
+            scenario.htf_heat_capacity,
+            htf_mass_flow_rate,
+            load_mass_flow_rate,
+            logger,
+            previous_tank_temperature,
+            tank_ambient_temperature,
+            tank_replacement_water_temperature,
+            buffer_tank.heat_capacity,
+        )
+
+        # Solve for the input temperature.
+        collector_input_temperature: float = _calculate_collectors_input_temperature(
+            collector_system_output_temperature,
+            scenario.heat_exchanger_efficiency,
+            scenario.htf_heat_capacity,
+            tank_temperature,
+            buffer_tank.heat_capacity,
+        )
 
         # Check whether the solution is valid given the hard-coded precision specified.
+        if all(
+            {
+                abs(
+                    collector_input_temperature
+                    - best_guess_collector_htf_input_temperature
+                ),
+                abs(tank_temperature - best_guess_tank_temperature),
+            }
+            < TEMPERATURE_PRECISION
+        ):
+            solution_found = True
 
-        solution_found = True
+        best_guess_collector_htf_input_temperature = collector_input_temperature
+        best_guess_tank_temperature = tank_temperature
+
+    # Return the outputs.
+    return (
+        collector_input_temperature,
+        collector_system_output_temperature,
+        pvt_htf_output_temperature,
+        solar_thermal_htf_output_temperature,
+        tank_temperature,
+    )

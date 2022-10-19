@@ -333,6 +333,7 @@ def main(latitude: float, longitude: float, output: Optional[str] = None) -> Non
     with open(
         filepath := f"{os.path.join(AUTO_GENERATED_FILES_DIRECTORY, output_name)}.json",
         "w",
+        encoding="UTF-8",
     ) as output_file:
         json.dump(output_data, output_file, indent=4)
 

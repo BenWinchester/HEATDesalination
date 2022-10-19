@@ -91,13 +91,13 @@ class PlantRequirements:
     Represents the requirements of the plant.
 
     .. attribute:: electricity
-        The electricity required by the plant.
+        The electricity required by the plant, measured in kWh/h.
 
     .. attribute:: hot_water_temperature
-        The temperature of hot water required.
+        The temperature of hot water required, measured in degrees Celcius.
 
     .. attribute:: hot_water_volume
-        The volume of hot water required.
+        The volume of hot water required, measured in kilograms per second.
 
     """
 

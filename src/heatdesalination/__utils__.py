@@ -15,6 +15,7 @@ __utils__.py - The utility module for the HEATDeslination program.
 """
 
 import dataclasses
+import enum
 import logging
 import os
 
@@ -24,6 +25,8 @@ from typing import Any, Dict, List, Union
 import yaml
 
 __all__ = (
+    "AMBIENT_TEMPERATURE",
+    "AREA",
     "AVERAGE_IRRADIANCE_DAY",
     "InputFileError",
     "LATITUDE",
@@ -33,12 +36,17 @@ __all__ = (
     "NAME",
     "read_yaml",
     "reduced_temperature",
+    "ResourceType",
     "Scenario",
 )
 
 # AMBIENT_TEMPERATURE:
 #   Keyword for the ambient temperature.
 AMBIENT_TEMPERATURE: str = "ambient_temperature"
+
+# AREA:
+#   Keyword for the area of the panel.
+AREA: str = "area"
 
 # AUTO_GENERATED_FILES_DIRECTORY:
 #   Name of the directory into which auto-generated files should be saved.
@@ -47,6 +55,11 @@ AUTO_GENERATED_FILES_DIRECTORY: str = "auto_generated"
 # AVERAGE_IRRADIANCE_DAY:
 #   Keyword for saving the average weather profiles for the location.
 AVERAGE_IRRADIANCE_DAY: str = "average_weather_conditions"
+
+# HEAT_CAPACITY_OF_WATER:
+#   The heat capacity of water, measured in Joules per kilogram Kelvin.
+HEAT_CAPACITY_OF_WATER: float = 4120
+
 
 # LATITUDE:
 #   Keyword for latitude.
@@ -167,7 +180,7 @@ def read_yaml(
 
     # Process the new-location data.
     try:
-        with open(filepath, "r") as filedata:
+        with open(filepath, "r", encoding="UTF-8") as filedata:
             file_contents: Union[Dict[str, Any], List[Dict[str, Any]]] = yaml.safe_load(
                 filedata
             )
@@ -207,10 +220,37 @@ def reduced_temperature(
     return (average_temperature - ambient_temperature) / solar_irradiance
 
 
+class ResourceType(enum.Enum):
+    """
+    Specifies the type of load being investigated.
+
+    - CLEAN_WATER:
+        Represents water which has not been heated or which is contained in a tank for
+        which the temperature does not need to be considered.
+
+    - ELECTRICITY:
+        Represents an electric load or resource.
+
+    - HOT_WATER:
+        Represents water which has been heated.
+
+    """
+
+    CLEAN_WATER = "clean_water"
+    ELECTRICITY = "electricity"
+    HOT_WATER = "hot_water"
+
+
 @dataclasses.dataclass
 class Scenario:
     """
     Represents the scenario being modelled.
+
+    .. attribute:: heat_exchanger_efficiency
+        The efficiency of the heat exchanger.
+
+    .. attribute:: htf_heat_capacity
+        The heat capacity of the HTF.
 
     .. attribute:: plant
         The name of the desalination plant being modelled.
@@ -235,6 +275,8 @@ class Scenario:
 
     """
 
+    heat_exchanger_efficiency: float
+    htf_heat_capacity: float
     plant: str
     _pv: Union[bool, str]
     _pv_t: Union[bool, str]

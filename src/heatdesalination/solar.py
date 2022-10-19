@@ -26,7 +26,13 @@ import math
 from logging import Logger
 from typing import Any, Dict, Optional, Tuple
 
-from .__utils__ import InputFileError, NAME, reduced_temperature, ZERO_CELCIUS_OFFSET
+from .__utils__ import (
+    AREA,
+    InputFileError,
+    NAME,
+    reduced_temperature,
+    ZERO_CELCIUS_OFFSET,
+)
 
 
 __all__ = (
@@ -35,10 +41,6 @@ __all__ = (
     "PVPanel",
     "SolarThermalPanel",
 )
-
-# AREA:
-#   Keyword for the area of the panel.
-AREA: str = "area"
 
 # ELECTRIC_PERFORMANCE_CURVE:
 #   Keyword for the electric performance curve.
