@@ -28,6 +28,7 @@ from typing import Any, Dict, Optional, Tuple
 
 from .__utils__ import (
     AREA,
+    FlowRateError,
     InputFileError,
     NAME,
     reduced_temperature,
@@ -783,8 +784,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
             + self.thermal_performance_curve.c_2 * reduced_collector_temperature
         )
 
-        # Determine the fractional electric performance.
-
+        # Return the output information.
         return (
             electrical_efficiency,
             negative_root,

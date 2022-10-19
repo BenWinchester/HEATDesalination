@@ -28,6 +28,7 @@ __all__ = (
     "AMBIENT_TEMPERATURE",
     "AREA",
     "AVERAGE_IRRADIANCE_DAY",
+    "FlowRateError",
     "InputFileError",
     "LATITUDE",
     "LOGGER_DIRECTORY",
@@ -153,17 +154,38 @@ def get_logger(logger_name: str, verbose: bool = False) -> logging.Logger:
     return logger
 
 
+class FlowRateError(Exception):
+    """Raised when there is a mismatch in the flow rates.."""
+
+    def __init__(self, collector_name: str, msg: str) -> None:
+        """
+        Instantiate a :class:`FlowRateError` instance.
+
+        Inputs:
+            - collector_name:
+                The name of the collector for which a flow-rate mismatch has occurred.
+            - msg:
+                The error message to append.
+
+        """
+
+        super().__init__(
+            f"Flow-rate mismatch for collector '{collector_name}': {msg}"
+        )
+
 class InputFileError(Exception):
     """Raised when there is an error in an input file."""
 
     def __init__(self, input_file: str, msg: str) -> None:
         """
         Instantiate a :class:`InputFileError` instance.
+
         Inputs:
             - input_file:
                 The name of the input file which contained the invalid data.
             - msg:
                 The error message to append.
+
         """
 
         super().__init__(
