@@ -247,7 +247,8 @@ def main(latitude: float, longitude: float, output: Optional[str] = None) -> Non
         )
     except (TypeError, ValueError):
         logger.error(
-            "PVGIS did not return an output. Check your internet connection and that you supplied valid latitude and longitude parameters."
+            "PVGIS did not return an output. Check your internet connection and that "
+            "you supplied valid latitude and longitude parameters."
         )
         raise
     except HTTPError:
