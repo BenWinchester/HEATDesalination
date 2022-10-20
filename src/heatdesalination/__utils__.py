@@ -27,18 +27,18 @@ import yaml
 __all__ = (
     "AMBIENT_TEMPERATURE",
     "AREA",
-    "AVERAGE_IRRADIANCE_DAY",
     "FlowRateError",
     "InputFileError",
     "LATITUDE",
     "LOGGER_DIRECTORY",
     "LONGITUDE",
-    "MAXIMUM_IRRADIANCE_DAY",
     "NAME",
+    "ProfileType",
     "read_yaml",
     "reduced_temperature",
     "ResourceType",
     "Scenario",
+    "TIMEZONE",
 )
 
 # AMBIENT_TEMPERATURE:
@@ -52,10 +52,6 @@ AREA: str = "area"
 # AUTO_GENERATED_FILES_DIRECTORY:
 #   Name of the directory into which auto-generated files should be saved.
 AUTO_GENERATED_FILES_DIRECTORY: str = "auto_generated"
-
-# AVERAGE_IRRADIANCE_DAY:
-#   Keyword for saving the average weather profiles for the location.
-AVERAGE_IRRADIANCE_DAY: str = "average_weather_conditions"
 
 # HEAT_CAPACITY_OF_WATER:
 #   The heat capacity of water, measured in Joules per kilogram Kelvin.
@@ -74,14 +70,6 @@ LOGGER_DIRECTORY: str = "logs"
 #   Keyword for longitude.
 LONGITUDE: str = "longitude"
 
-# MAXIMUM_IRRADIANCE_DAY:
-#   Keyword for saving the weather conditions for the day of maximum irradiance.
-MAXIMUM_IRRADIANCE_DAY: str = "maximum_irradiance_weather_conditions"
-
-# MINIMUM_IRRADIANCE_DAY:
-#   Keyword for saving the weather conditions for the day of minimum irradiance.
-MINIMUM_IRRADIANCE_DAY: str = "minimum_irradiance_weather_conditions"
-
 # NAME:
 #   Keyword for parsing the name of the object.
 NAME: str = "name"
@@ -97,6 +85,10 @@ SOLAR_ELEVATION: str = "solar_elevation"
 # SOLAR_IRRADIANCE:
 #   Keyword for the solar irradiance.
 SOLAR_IRRADIANCE: str = "irradiance"
+
+# TIMEZONE:
+#   Keyword for parsing timezone.
+TIMEZONE: str = "timezone"
 
 # WIND_SPEED:
 #   Keyword for the wind speed.
@@ -192,6 +184,26 @@ class InputFileError(Exception):
         )
 
 
+class ProfileType(enum.Enum):
+    """
+    Denotes which profile type is being considered.
+
+    - AVERAGE:
+        Denotes that the average profiles are being considered.
+
+    - MAXIMUM:
+        Denotes that the maximum profils are being considered.
+
+    - MINIMUM:
+        Denotes that the minimum profiles are being considered.
+
+    """
+
+    AVERAGE: str = "average_weather_conditions"
+    MAXIMUM: str = "maximum_irradiance_weather_conditions"
+    MINIMUM: str = "minimum_irradiance_weather_conditions"
+
+
 def read_yaml(
     filepath: str, logger: Logger
 ) -> Union[
@@ -277,6 +289,9 @@ class Scenario:
     .. attribute:: htf_heat_capacity
         The heat capacity of the HTF.
 
+    .. attribute:: name
+        The name of the scenario.
+
     .. attribute:: plant
         The name of the desalination plant being modelled.
 
@@ -302,6 +317,7 @@ class Scenario:
 
     heat_exchanger_efficiency: float
     htf_heat_capacity: float
+    name: str
     plant: str
     _pv: Union[bool, str]
     _pv_t: Union[bool, str]

@@ -17,8 +17,20 @@ fileparser.py - The file parser module for the HEATDeslination program.
 import os
 
 from logging import Logger
+from typing import Dict
 
-from .__utils__ import Scenario, read_yaml
+import json
+
+from .__utils__ import (
+    AMBIENT_TEMPERATURE,
+    AUTO_GENERATED_FILES_DIRECTORY,
+    NAME,
+    SOLAR_IRRADIANCE,
+    ProfileType,
+    read_yaml,
+    Scenario,
+    TIMEZONE
+)
 from .plant import DesalinationPlant
 
 __all__ = ("parse_input_files",)
@@ -26,6 +38,10 @@ __all__ = ("parse_input_files",)
 # DESLINATION_PLANT_INPUTS:
 #   The name of the desalination plant inputs file.
 DESALINATION_PLANT_INPUTS: str = "plants.yaml"
+
+# DESALINATION_PLANTS:
+#   Keyword for desalination plants.
+DESALINATION_PLANTS: str = "desalination_plants"
 
 # HEAT_EXCHANGER_EFFICIENCY:
 #   Keyword for parsing the heat capacity of the heat exchangers.
@@ -54,6 +70,10 @@ PV_T: str = "pv_t"
 # SCENARIO_INPUTS:
 #   Keyword for scenario inputs file.
 SCENARIO_INPUTS: str = "scenarios.yaml"
+
+# SCENARIOS:
+#   Keyword for scenario information.
+SCENARIOS: str = "scenarios"
 
 # SOLAR_THERMAL:
 #   Keyword for parsing the solar-thermal collector name.
@@ -99,12 +119,13 @@ def parse_input_files(
         Scenario(
             entry[HEAT_EXCHANGER_EFFICIENCY],
             entry[HTF_HEAT_CAPACITY],
+            entry[NAME],
             entry[PLANT],
             entry[PV],
             entry[PV_T],
             entry[SOLAR_THERMAL],
         )
-        for entry in scenario_inputs
+        for entry in scenario_inputs[SCENARIOS]
     ]
     try:
         scenario = [entry for entry in scenarios if entry.name == scenario_name][0]
@@ -118,7 +139,7 @@ def parse_input_files(
     )
     desalination_plants = [
         DesalinationPlant.from_dict(entry, logger, start_hour)
-        for entry in desalination_inputs
+        for entry in desalination_inputs[DESALINATION_PLANTS]
     ]
     try:
         desalination_plant = [
@@ -129,4 +150,43 @@ def parse_input_files(
         raise
 
     # Parse the solar panels.
+
     # Parse the weather data.
+    with open(
+        os.path.join(AUTO_GENERATED_FILES_DIRECTORY, f"{location}.json"),
+        "r",
+        encoding="UTF-8",
+    ) as f:
+        weather_data = json.load(f)
+
+    ambient_temperatures: Dict[ProfileType, Dict[int, float]] = {}
+    solar_irradiances: Dict[ProfileType, Dict[int, float]] = {}
+    time_difference: int = weather_data[TIMEZONE]
+
+    import pdb
+
+    pdb.set_trace()
+
+    for profile_type in ProfileType:
+        ambient_temperatures[profile_type] = {
+            (int(key) + time_difference) % 24: value
+            for key, value in weather_data[profile_type.value][
+                AMBIENT_TEMPERATURE
+            ].items()
+        }
+        solar_irradiances[profile_type] = {
+            (int(key) + time_difference) % 24: value
+            for key, value in weather_data[profile_type.value][SOLAR_IRRADIANCE].items()
+        }
+
+    # Return the information.
+    return (
+        ambient_temperatures,
+        buffer_tank,
+        desalination_plant,
+        hybrid_pvt_panel,
+        pv_panel,
+        scenario,
+        solar_irradiances,
+        solar_thermal_collector,
+    )

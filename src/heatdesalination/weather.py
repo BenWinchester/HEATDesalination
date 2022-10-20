@@ -37,12 +37,10 @@ from requests import HTTPError
 from .__utils__ import (
     AMBIENT_TEMPERATURE,
     AUTO_GENERATED_FILES_DIRECTORY,
-    AVERAGE_IRRADIANCE_DAY,
     get_logger,
     LATITUDE,
     LONGITUDE,
-    MAXIMUM_IRRADIANCE_DAY,
-    MINIMUM_IRRADIANCE_DAY,
+    ProfileType,
     OPTIMUM_TILT_ANGLE,
     SOLAR_IRRADIANCE,
     WIND_SPEED,
@@ -309,14 +307,14 @@ def main(latitude: float, longitude: float, output: Optional[str] = None) -> Non
 
     # Generate the output data structure.
     output_data = {
-        AVERAGE_IRRADIANCE_DAY: average_profile.to_dict(),
+        ProfileType.AVERAGE.value: average_profile.to_dict(),
         LATITUDE: latitude,
         LONGITUDE: longitude,
-        MAXIMUM_IRRADIANCE_DAY: {
+        ProfileType.MAXIMUM.value: {
             key: {time.hour: value for time, value in entry.items()}
             for key, entry in max_profile.to_dict().items()
         },
-        MINIMUM_IRRADIANCE_DAY: {
+        ProfileType.MINIMUM.value: {
             key: {time.hour: value for time, value in entry.items()}
             for key, entry in min_profile.to_dict().items()
         },

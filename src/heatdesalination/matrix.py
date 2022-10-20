@@ -24,7 +24,6 @@ from typing import Optional, Tuple
 
 
 from .__utils__ import InputFileError, Scenario
-from .plant import DesalinationPlant
 from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel
 from .storage.storage_utils import HotWaterTank
 

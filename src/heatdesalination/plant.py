@@ -23,6 +23,8 @@ import dataclasses
 from logging import Logger
 from typing import Any, Dict, Optional
 
+from .__utils__ import NAME
+
 # BRINE:
 #   Keyword for the brine outputs from the plant.
 BRINE: str = "brine"
@@ -45,7 +47,7 @@ OPERATING_HOURS: str = "operating_hours"
 
 # OUTPUTS:
 #   Keyword for plant outputs.
-OUTPUTS: str = "output"
+OUTPUTS: str = "outputs"
 
 # PLANT_DISABLED:
 #   Keyword for when the plant is disabled, i.e., not operating.
@@ -113,6 +115,9 @@ class DesalinationPlant:
     .. attribute:: end_hour
         The time at which the plant stops operating.
 
+    .. attribute:: name
+        The name of the desalination plant.
+
     .. attribute:: operating
         A map between the time of day and whether the plant is in operation.
 
@@ -130,6 +135,7 @@ class DesalinationPlant:
 
     def __init__(
         self,
+        name: str,
         operating_hours: int,
         plant_outputs: Dict[bool, PlantOutputs],
         plant_requirements: Dict[bool, PlantRequirements],
@@ -139,18 +145,36 @@ class DesalinationPlant:
         Instante the desalination plant instance.
 
         Inputs:
+            - name:
+                The name of the desalination plant.
             - operating_hours:
                 The number of hours a day that the plant is in operation.
+            - plant_outputs:
+                The outputs from the desalination plant.
+            - plant_reqiurements:
+                The requirements for the desalination plant.
             - start_hour:
                 The start time for operation of the plant.
 
         """
 
         self.end_hour: int = start_hour + operating_hours
+        self.name: str = name
         self.plant_outputs: Dict[bool, PlantOutputs] = plant_outputs
         self.plant_requirements: Dict[bool, PlantRequirements] = plant_requirements
         self.start_hour: int = start_hour
         self._operating: Optional[Dict[int, bool]] = None
+
+    def __repr__(self) -> str:
+        """
+        Return the default representation of the plant.
+
+        Outputs:
+            The default representation of the desalination plant.
+
+        """
+
+        return f"DesalinationPlant(name={self.name})"
 
     @classmethod
     def from_dict(
@@ -209,6 +233,7 @@ class DesalinationPlant:
             raise
 
         return cls(
+            input_data[NAME],
             input_data[OPERATING_HOURS],
             plant_outputs,
             plant_requirements,

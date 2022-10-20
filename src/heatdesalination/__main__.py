@@ -23,7 +23,7 @@ from typing import Any, List
 
 
 from .__utils__ import get_logger
-from .argparser import parse_args
+from .argparser import parse_args, validate_args
 from .fileparser import parse_input_files
 from .simulator import run_simulation
 
@@ -40,10 +40,20 @@ def main(args: List[Any]) -> None:
 
     # Parse the command-line arguments.
     parsed_args = parse_args(args)
+    validate_args(parsed_args)
     logger = get_logger(f"{parsed_args.location}_heat_desalination")
 
     # Parse the various input files.
-    parse_input_files(
+    (
+        ambient_temperatures,
+        buffer_tank,
+        desalination_plant,
+        hybrid_pvt_panel,
+        pv_panel,
+        scenario,
+        solar_irradiances,
+        solar_thermal_collector,
+    ) = parse_input_files(
         parsed_args.location, logger, parsed_args.scenario, parsed_args.start_hour
     )
 

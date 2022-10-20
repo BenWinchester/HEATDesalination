@@ -19,7 +19,10 @@ import argparse
 
 from typing import Any, List
 
-__all__ = ("parse_args",)
+__all__ = (
+    "parse_args",
+    "validate_args",
+)
 
 
 class MissingParametersError(Exception):
@@ -80,7 +83,7 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
     required_arguments.add_argument(
         "--scenario",
         help="The scenario to use for the modelling.",
-        type=int,
+        type=str,
     )
 
     # Start hour:
@@ -123,3 +126,27 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
     )
 
     return parser.parse_args(args)
+
+
+def validate_args(parsed_args: argparse.Namespace) -> None:
+    """
+    Validates the command-line arguments.
+
+    Inputs:
+        - parsed_args:
+            The parsed command-line arguments.
+
+    Raises:
+        - Exception:
+            Raised if the arguments are invalid.
+
+    """
+
+    if parsed_args.location is None:
+        raise Exception("Location must be specified.")
+    if parsed_args.scenario is None:
+        raise Exception("Scenario must be specified.")
+    if parsed_args.start_hour is None:
+        raise Exception(
+            "Start hour for desalination plant operation must be specified."
+        )
