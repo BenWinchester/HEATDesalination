@@ -29,7 +29,7 @@ from .__utils__ import (
     ProfileType,
     read_yaml,
     Scenario,
-    TIMEZONE
+    TIMEZONE,
 )
 from .plant import DesalinationPlant
 

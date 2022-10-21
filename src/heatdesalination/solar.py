@@ -67,6 +67,10 @@ MIN_MASS_FLOW_RATE: str = "min_mass_flow_rate"
 #   Keyword for the nominal mass flow rate of HTF through the panel.
 NOMINAL_MASS_FLOW_RATE: str = "nominal_mass_flow_rate"
 
+# PV_MODULE_CHARACTERISTICS:
+#   Keyword for module characteristics.
+PV_MODULE_CHARACTERISTICS: str = "pv_module_characteristics"
+
 # PV_UNIT:
 #   Keyword for the unit of power outputted per PV panel.
 PV_UNIT: str = "pv_unit"
@@ -184,6 +188,27 @@ class PerformanceCurve:
         """
 
         return self.second_order_coefficient
+
+
+@dataclasses.dataclass
+class PVModuleCharacteristics:
+    """
+    Represents characteristcs of the PV module.
+
+    .. attribute:: reference_efficiency
+        Denotes the reference efficiency of the PV module.
+
+    .. attribute:: reference_temperature
+        Denotes the reference temperature of the PV module.
+
+    .. attribute:: thermal_coefficient
+        Denotes the thermal coefficiency of the PV module.
+
+    """
+
+    reference_efficiency: float
+    reference_temperature: float
+    thermal_coefficient: float
 
 
 def _thermal_performance(
@@ -579,7 +604,8 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
 
     def __init__(
         self,
-        electric_performance_curve: PerformanceCurve,
+        electric_performance_curve: Optional[PerformanceCurve],
+        pv_module_characteristics: Optional[PVModuleCharacteristics],
         solar_inputs: Dict[str, Any],
         thermal_performance_curve: PerformanceCurve,
     ) -> None:
@@ -607,6 +633,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         self.electric_performance_curve: PerformanceCurve = electric_performance_curve
         self.max_mass_flow_rate = solar_inputs[MAX_MASS_FLOW_RATE]
         self.min_mass_flow_rate = solar_inputs[MIN_MASS_FLOW_RATE]
+        self.pv_module_characteristics = pv_module_characteristics
         self.thermal_performance_curve: PerformanceCurve = thermal_performance_curve
 
     def __repr__(self) -> str:
@@ -671,33 +698,49 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
             )
             raise
 
-        try:
+        if ELECTRIC_PERFORMANCE_CURVE in solar_inputs:
             electric_performance_inputs = solar_inputs[ELECTRIC_PERFORMANCE_CURVE]
-        except KeyError:
-            logger.error(
+            try:
+                electric_performance_curve: Optional[PerformanceCurve] = PerformanceCurve(
+                    electric_performance_inputs[ZEROTH_ORDER],
+                    electric_performance_inputs[FIRST_ORDER],
+                    electric_performance_inputs[SECOND_ORDER],
+                )
+            except KeyError as exception:
+                logger.error(
+                    "Missing electric performance curve input(s): %s",
+                    str(exception),
+                )
+                raise
+        else:
+            electric_performance_curve = None
+            logger.info(
                 "No performance curve defined for solar-thermal panel '%s'.",
                 solar_inputs["name"],
             )
-            raise InputFileError(
-                "solar generation inputs",
-                f"Solar thermal panel {solar_inputs.get(NAME, '<not supplied>')} is "
-                "missing an electric performance curve.",
-            ) from None
 
-        try:
-            electric_performance_curve = PerformanceCurve(
-                electric_performance_inputs[ZEROTH_ORDER],
-                electric_performance_inputs[FIRST_ORDER],
-                electric_performance_inputs[SECOND_ORDER],
+        if PV_MODULE_CHARACTERISTICS in solar_inputs:
+            pv_module_characteristics_inputs = solar_inputs[PV_MODULE_CHARACTERISTICS]
+            try:
+                pv_module_characteristics: Optional[PVModuleCharacteristics] = PVModuleCharacteristics(
+                    pv_module_characteristics_inputs[REFERENCE_EFFICIENCY],
+                    pv_module_characteristics_inputs[REFERENCE_TEMPERATURE],
+                    pv_module_characteristics_inputs[THERMAL_COEFFICIENT],
+                )
+            except KeyError as exception:
+                logger.error(
+                    "Missing electric performance curve input(s): %s",
+                    str(exception),
+                )
+                raise
+        else:
+            logger.info(
+                "No performance curve defined for solar-thermal panel '%s'.",
+                solar_inputs["name"],
             )
-        except KeyError as exception:
-            logger.error(
-                "Missing electric performance curve input(s): %s",
-                str(exception),
-            )
-            raise
+            pv_module_characteristics = None
 
-        return cls(electric_performance_curve, solar_inputs, thermal_performance_curve)
+        return cls(electric_performance_curve, pv_module_characteristics, solar_inputs, thermal_performance_curve)
 
     def calculate_performance(
         self,
@@ -773,11 +816,30 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         )
 
         # Compute the efficiencies of the collector.
-        electrical_efficiency = (
-            self.electric_performance_curve.eta_0
-            + self.electric_performance_curve.c_1 * reduced_collector_temperature
-            + self.electric_performance_curve.c_2 * reduced_collector_temperature
-        )
+        if self.electric_performance_curve is not None:
+            electrical_efficiency = (
+                self.electric_performance_curve.eta_0
+                + self.electric_performance_curve.c_1 * reduced_collector_temperature
+                + self.electric_performance_curve.c_2 * reduced_collector_temperature
+            )
+        elif self.pv_module_characteristics is not None:
+            electrical_efficiency = (
+                self.pv_module_characteristics.reference_efficiency
+                * (
+                    1
+                    - self.pv_module_characteristics.thermal_coefficient
+                    * (
+                        reduced_collector_temperature
+                        - self.pv_module_characteristics.reference_temperature
+                    )
+                )
+            )
+        else:
+            raise Exception(
+                f"PV-T collector {self.name} had neither PV module characteristics or "
+                "an electric performance curve."
+            )
+
         thermal_efficiency = (
             self.thermal_performance_curve.eta_0
             + self.thermal_performance_curve.c_1 * reduced_collector_temperature
