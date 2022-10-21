@@ -113,7 +113,7 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
         # Set up required mocks for instantiation.
         self.ambient_temperature = 40
         self.input_temperature = 30
-        self.mass_flow_rate = 60
+        self.mass_flow_rate = 100
         self.logger = mock.Mock()
         self.test_logger = mock.Mock()
         self.solar_irradiance = 950
@@ -139,6 +139,21 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
             self.mass_flow_rate / 3600,
             self.solar_irradiance,
         )
+
+        average_temperature = 0.5 * (self.input_temperature + output_temperature)
+        if pvt_panel.pv_module_characteristics is not None:
+            electrical_efficiency_by_equation = (
+                pvt_panel.pv_module_characteristics.reference_efficiency
+                * (
+                    1
+                    - pvt_panel.pv_module_characteristics.thermal_coefficient
+                    * (
+                        average_temperature
+                        - pvt_panel.pv_module_characteristics._reference_temperature
+                    )
+                )
+            )
+            self.assertEqual(electrical_efficiency, electrical_efficiency_by_equation)
 
 
 class TestSolarThermalPanelPerformance(unittest.TestCase):
