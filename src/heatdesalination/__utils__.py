@@ -55,7 +55,7 @@ AUTO_GENERATED_FILES_DIRECTORY: str = "auto_generated"
 
 # HEAT_CAPACITY_OF_WATER:
 #   The heat capacity of water, measured in Joules per kilogram Kelvin.
-HEAT_CAPACITY_OF_WATER: float = 4120
+HEAT_CAPACITY_OF_WATER: float = 4182
 
 
 # LATITUDE:

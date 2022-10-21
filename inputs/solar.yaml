@@ -18,7 +18,7 @@ solar_collectors:
     land_use: !!float 1.638  # [m^2]
     reference_efficiency: !!float 0.1692
     reference_temperature: !!float 25  # [degC]
-    thermal_coefficienct: !!float 0.0044  # [%/degC]
+    thermal_coefficient: !!float 0.0044  # [%/degC]
     pv_unit: !!float 0.275   # [kWp]
   - name: !!str dusol_ds60280_m
     type: !!str pv
@@ -26,7 +26,7 @@ solar_collectors:
     land_use: !!float 1.638  # [m^2]
     reference_efficiency: !!float 0.1723
     reference_temperature: !!float 25  # [degC]
-    thermal_coefficienct: !!float 0.0044  # [%/degC]
+    thermal_coefficient: !!float 0.0044  # [%/degC]
     pv_unit: !!float 0.275   # [kWp]
   - name: !!str dusol_ds60280_m
     type: !!str pv
@@ -34,7 +34,7 @@ solar_collectors:
     land_use: !!float 1.65  # [m^2]
     reference_efficiency: !!float 0.1754
     reference_temperature: !!float 25  # [degC]
-    thermal_coefficienct: !!float 0.0044  # [%/degC]
+    thermal_coefficient: !!float 0.0044  # [%/degC]
     pv_unit: !!float 0.275   # [kWp]
   - name: !!str dusol_ds60280_m
     type: !!str pv
@@ -42,7 +42,7 @@ solar_collectors:
     land_use: !!float 1.638  # [m^2]
     reference_efficiency: !!float 0.1784
     reference_temperature: !!float 25  # [degC]
-    thermal_coefficienct: !!float 0.0044  # [%/degC]
+    thermal_coefficient: !!float 0.0044  # [%/degC]
     pv_unit: !!float 0.275   # [kWp]
 
   ###################
@@ -65,7 +65,7 @@ solar_collectors:
       thermal_coefficient: !!float 0.0036  # [%/degC]
     thermal_performance_curve:
       zeroth_order: !!float 0.700
-      first_order: !!float -5.98  # [W/degC]
+      first_order: !!float 5.98  # [W/degC]
       second_order: !!float 0
 
     # Dualsun datasheet:
@@ -82,10 +82,10 @@ solar_collectors:
     pv_module_characteristics:
       reference_efficiency: !!float 0.213  # Between 0 and 1
       reference_temperature: !!float 25  # [degC]
-      thermal_coefficienct: !!float 0.0034  # [%/degC]
+      thermal_coefficient: !!float 0.0034  # [%/degC]
     thermal_performance_curve:
       zeroth_order: !!float 0.633
-      first_order: !!float -11.5  # [W/m^2K]
+      first_order: !!float 11.5  # [W/m^2K]
       second_order: !!float 0
   - name: !!str dualsun_spring_insulated
     type: !!str pv_t
@@ -97,10 +97,10 @@ solar_collectors:
     pv_module_characteristics:
       reference_efficiency: !!float 0.213  # Between 0 and 1
       reference_temperature: !!float 25  # [degC]
-      thermal_coefficienct: !!float 0.0034  # [%/degC]
+      thermal_coefficient: !!float 0.0034  # [%/degC]
     thermal_performance_curve:
       zeroth_order: !!float 0.621
-      first_order: !!float -7.4  # [W/m^2K]
+      first_order: !!float 7.4  # [W/m^2K]
       second_order: !!float 0
 
   #########################

@@ -199,16 +199,28 @@ class PVModuleCharacteristics:
         Denotes the reference efficiency of the PV module.
 
     .. attribute:: reference_temperature
-        Denotes the reference temperature of the PV module.
+        Denotes the reference temperature of the PV module, measured in degrees Kelvin.
 
     .. attribute:: thermal_coefficient
-        Denotes the thermal coefficiency of the PV module.
+        Denotes the thermal coefficienct of the PV module.
 
     """
 
     reference_efficiency: float
-    reference_temperature: float
+    _reference_temperature: float
     thermal_coefficient: float
+
+    @property
+    def reference_temperature(self) -> float:
+        """
+        Return the reference temperature in degrees Kelvin.
+
+        Outputs:
+            The reference temperature in degrees Kelvin.
+
+        """
+
+        return self._reference_temperature + ZERO_CELCIUS_OFFSET
 
 
 def _thermal_performance(
@@ -269,7 +281,7 @@ def _thermal_performance(
 
     Inputs:
         - ambient_temperature:
-            The ambient temperature, measured in degrees Celsius.
+            The ambient temperature, measured in degrees Kelvin.
         - area:
             The area of the collector, in meters squared.
         - htf_heat_capacity:
@@ -277,7 +289,7 @@ def _thermal_performance(
             per kilogram Kelvin (J/kgK).
         - input_temperature:
             The input temperature of the HTF entering the collector, measured in
-            in degrees Celsius.
+            in degrees Kelvin.
         - mass_flow_rate:
             The mass-flow rate of HTF passing through the collector, measured in
             kilograms per second.
@@ -290,16 +302,28 @@ def _thermal_performance(
     Outputs:
         Both roots from the equation:
         - positive_root:
-            The positive root taken from solving the quadratic equation.
+            The positive root taken from solving the quadratic equation, measured in
+            Kelvin.
         - negative_root:
-            The negative root taken from solving the quadratic equation.
+            The negative root taken from solving the quadratic equation, measured in
+            Kelvin.
 
     """
 
-    # Compute the various terms of the equation
-    a: float = performance_curve.c_2 * area  # pylint: disable=invalid-name
+    # If noly a linear calculation is required, solve linearly.
+    if performance_curve.c_2 == 0:
+        return None, (
+            2 * performance_curve.eta_0 * area * solar_irradiance
+            + 2 * mass_flow_rate * htf_heat_capacity * input_temperature
+            + performance_curve.c_1
+            * area
+            * (input_temperature - 2 * ambient_temperature)
+        ) / (2 * mass_flow_rate * htf_heat_capacity - performance_curve.c_1 * area)
 
-    b: float = (  # pylint: disable=invalid-name
+    # Compute the various terms of the equation
+    a: float = performance_curve.c_2 * area
+
+    b: float = (
         +2 * performance_curve.c_1 * area
         + 2
         * performance_curve.c_2
@@ -308,7 +332,7 @@ def _thermal_performance(
         - 4 * mass_flow_rate * htf_heat_capacity
     )
 
-    c: float = (  # pylint: disable=invalid-name
+    c: float = (
         4 * performance_curve.eta_0 * area * solar_irradiance
         + 4 * mass_flow_rate * htf_heat_capacity * input_temperature
         + 2
@@ -324,10 +348,8 @@ def _thermal_performance(
     # the collector
     positive_root: float = (  # pylint: disable=unused-variable
         -b + math.sqrt(b**2 - 4 * a * c)
-    ) / (2 * a) - ZERO_CELCIUS_OFFSET
-    negative_root: float = (-b - math.sqrt(b**2 - 4 * a * c)) / (
-        2 * a
-    ) - ZERO_CELCIUS_OFFSET
+    ) / (2 * a)
+    negative_root: float = (-b - math.sqrt(b**2 - 4 * a * c)) / (2 * a)
 
     return positive_root, negative_root
 
@@ -406,13 +428,13 @@ class SolarPanel(abc.ABC):  # pylint: disable=too-few-public-methods
 
         Inputs:
             - ambient_temperature:
-                The ambient temperature, measured in degrees Celsius.
+                The ambient temperature, measured in degrees Kelvin.
             - htf_heat_capacity:
                 The heat capacity of the HTF entering the collector, measured in Joules
                 per kilogram Kelvin (J/kgK).
             - input_temperature:
                 The input temperature of the HTF entering the collector, measured in
-                in degrees Celsius.
+                in degrees Kelvin.
             - logger:
                 The :class:`logging.Logger` to use for the run.
             - mass_flow_rate:
@@ -447,7 +469,7 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
 
     .. attribute:: reference_temperature
         The reference temperature of the PV layer of the panel, measured in degrees
-        Celsius.
+        Kelvin.
 
     .. attribute:: thermal_coefficient
         The thermal coefficient of performance of the PV layer of the panel, measured in
@@ -498,8 +520,20 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
 
         self.pv_unit: float = pv_unit
         self.reference_efficiency: Optional[float] = reference_efficiency
-        self.reference_temperature: Optional[float] = reference_temperature
+        self._reference_temperature: Optional[float] = reference_temperature
         self.thermal_coefficient: Optional[float] = thermal_coefficient
+
+    @property
+    def reference_temperature(self) -> float:
+        """
+        Return the reference temperature in degrees Kelvin.
+
+        Outputs:
+            The reference temperature in degrees Kelvin.
+
+        """
+
+        return self._reference_temperature + ZERO_CELCIUS_OFFSET
 
     @classmethod
     def from_dict(cls, logger: Logger, solar_inputs: Dict[str, Any]) -> Any:
@@ -543,13 +577,13 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
 
         Inputs:
             - ambient_temperature:
-                The ambient temperature, measured in degrees Celsius.
+                The ambient temperature, measured in degrees Kelvin.
             - htf_heat_capacity:
                 The heat capacity of the HTF entering the collector, measured in Joules
                 per kilogram Kelvin (J/kgK).
             - input_temperature:
                 The input temperature of the HTF entering the collector, measured in
-                in degrees Celsius.
+                in degrees Kelvin.
             - logger:
                 The :class:`logging.Logger` to use for the run.
             - mass_flow_rate:
@@ -631,10 +665,34 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         )
 
         self.electric_performance_curve: PerformanceCurve = electric_performance_curve
-        self.max_mass_flow_rate = solar_inputs[MAX_MASS_FLOW_RATE]
-        self.min_mass_flow_rate = solar_inputs[MIN_MASS_FLOW_RATE]
+        self._max_mass_flow_rate = solar_inputs[MAX_MASS_FLOW_RATE]
+        self._min_mass_flow_rate = solar_inputs[MIN_MASS_FLOW_RATE]
         self.pv_module_characteristics = pv_module_characteristics
         self.thermal_performance_curve: PerformanceCurve = thermal_performance_curve
+
+    @property
+    def max_mass_flow_rate(self) -> float:
+        """
+        Return the maximum mass flow rate in kg/s.
+
+        Outputs:
+            The maximum mass flow rate of HTF through the collectors in kg/s.
+
+        """
+
+        return self._max_mass_flow_rate / 3600
+
+    @property
+    def min_mass_flow_rate(self) -> float:
+        """
+        Return the minimum mass flow rate in kg/s.
+
+        Outputs:
+            The minimum mass flow rate of HTF through the collectors in kg/s.
+
+        """
+
+        return self._min_mass_flow_rate / 3600
 
     def __repr__(self) -> str:
         """
@@ -701,7 +759,9 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         if ELECTRIC_PERFORMANCE_CURVE in solar_inputs:
             electric_performance_inputs = solar_inputs[ELECTRIC_PERFORMANCE_CURVE]
             try:
-                electric_performance_curve: Optional[PerformanceCurve] = PerformanceCurve(
+                electric_performance_curve: Optional[
+                    PerformanceCurve
+                ] = PerformanceCurve(
                     electric_performance_inputs[ZEROTH_ORDER],
                     electric_performance_inputs[FIRST_ORDER],
                     electric_performance_inputs[SECOND_ORDER],
@@ -722,7 +782,9 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         if PV_MODULE_CHARACTERISTICS in solar_inputs:
             pv_module_characteristics_inputs = solar_inputs[PV_MODULE_CHARACTERISTICS]
             try:
-                pv_module_characteristics: Optional[PVModuleCharacteristics] = PVModuleCharacteristics(
+                pv_module_characteristics: Optional[
+                    PVModuleCharacteristics
+                ] = PVModuleCharacteristics(
                     pv_module_characteristics_inputs[REFERENCE_EFFICIENCY],
                     pv_module_characteristics_inputs[REFERENCE_TEMPERATURE],
                     pv_module_characteristics_inputs[THERMAL_COEFFICIENT],
@@ -740,7 +802,12 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
             )
             pv_module_characteristics = None
 
-        return cls(electric_performance_curve, pv_module_characteristics, solar_inputs, thermal_performance_curve)
+        return cls(
+            electric_performance_curve,
+            pv_module_characteristics,
+            solar_inputs,
+            thermal_performance_curve,
+        )
 
     def calculate_performance(
         self,
@@ -759,13 +826,13 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
 
         Inputs:
             - ambient_temperature:
-                The ambient temperature, measured in degrees Celsius.
+                The ambient temperature, measured in degrees Kelvin.
             - htf_heat_capacity:
                 The heat capacity of the HTF entering the collector, measured in Joules
                 per kilogram Kelvin (J/kgK).
             - input_temperature:
                 The input temperature of the HTF entering the PV-T collector, measured
-                in degrees Celsius.
+                in degrees Kelvin.
             - logger:
                 The :class:`logging.Logger` to use for the run.
             - mass_flow_rate:
@@ -779,7 +846,8 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
             - electrical_efficiency:
                 The electrical efficiency of the PV panel.
             - output_temperature:
-                The output temperature of the HTF leaving the collector.
+                The output temperature of the HTF leaving the collector, measured in degrees
+                Celcius.
             - reduced_temperature:
                 The reduced temperature of the collector.
             - thermal_efficiency:
@@ -829,7 +897,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                     1
                     - self.pv_module_characteristics.thermal_coefficient
                     * (
-                        reduced_collector_temperature
+                        average_temperature
                         - self.pv_module_characteristics.reference_temperature
                     )
                 )
@@ -849,7 +917,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         # Return the output information.
         return (
             electrical_efficiency,
-            negative_root,
+            negative_root - ZERO_CELCIUS_OFFSET,
             reduced_collector_temperature,
             thermal_efficiency,
         )
@@ -899,10 +967,46 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
         )
 
         self.area = solar_inputs[AREA]
-        self.max_mass_flow_rate = solar_inputs[MAX_MASS_FLOW_RATE]
-        self.min_mass_flow_rate = solar_inputs[MIN_MASS_FLOW_RATE]
-        self.nominal_mass_flow_rate = solar_inputs.get(NOMINAL_MASS_FLOW_RATE)
+        self._max_mass_flow_rate = solar_inputs[MAX_MASS_FLOW_RATE]
+        self._min_mass_flow_rate = solar_inputs[MIN_MASS_FLOW_RATE]
+        self._nominal_mass_flow_rate = solar_inputs.get(NOMINAL_MASS_FLOW_RATE)
         self.thermal_performance_curve = performance_curve
+
+    @property
+    def max_mass_flow_rate(self) -> float:
+        """
+        Return the maximum mass flow rate in kg/s.
+
+        Outputs:
+            The maximum mass flow rate of HTF through the collectors in kg/s.
+
+        """
+
+        return self._max_mass_flow_rate / 3600
+
+    @property
+    def min_mass_flow_rate(self) -> float:
+        """
+        Return the minimum mass flow rate in kg/s.
+
+        Outputs:
+            The minimum mass flow rate of HTF through the collectors in kg/s.
+
+        """
+
+        return self._min_mass_flow_rate / 3600
+
+    @property
+    def nominal_mass_flow_rate(self) -> float:
+        """
+        Return the nominal mass flow rate in kg/s.
+
+        Outputs:
+            The nominal mass flow rate of HTF through the collectors in kg/s.
+
+        """
+
+        return self._nominal_mass_flow_rate / 3600
 
     def __repr__(self) -> str:
         """
@@ -916,10 +1020,13 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
         return (
             "SolarThermalPanel("
             + f"area={self.area}"
-            + f", max_mass_flow_rate={self.max_mass_flow_rate}"
-            + f", min_mass_flow_rate={self.min_mass_flow_rate}"
+            + f", max_mass_flow_rate={self.max_mass_flow_rate:.2g} kg/s"
+            + f" ({self._max_mass_flow_rate:.2g} l/h)"
+            + f", min_mass_flow_rate={self.min_mass_flow_rate:.2g} kg/s"
+            + f" ({self._min_mass_flow_rate:.2g} l/h)"
             + f", name={self.name}"
-            + f", nominal_mass_flow_rate={self.nominal_mass_flow_rate}"
+            + f", nominal_mass_flow_rate={self.nominal_mass_flow_rate:.2g} kg/s"
+            + f" ({self._nominal_mass_flow_rate:.2g} l/h)"
             + ")"
         )
 
@@ -937,25 +1044,23 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
 
         Inputs:
             - ambient_temperature:
-                The ambient temperature, measured in degrees Celsius.
+                The ambient temperature, measured in degrees Kelvin.
             - htf_heat_capacity:
                 The heat capacity of the HTF entering the collector, measured in Joules
                 per kilogram Kelvin (J/kgK).
             - input_temperature:
                 The input temperature of the HTF entering the PV-T collector, measured
-                in degrees Celsius.
+                in degrees Kelvin.
             - logger:
                 The :class:`logging.Logger` to use for the run.
             - mass_flow_rate:
                 The mass-flow rate of HTF passing through the collector, measured in
-                kilograms per hour.
+                kilograms per second.
             - solar_irradiance:
                 The solar irradiance incident on the surface of the collector, measured
                 in Watts per meter squared.
 
         Outputs:
-            - `None`:
-                There is no electrical component to the collector.
             - `None`:
                 There is no electrical component to the collector.
             - output_temperature:
@@ -994,21 +1099,23 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
         )
 
         # Compute temperature quantities.
-        average_temperature = 0.5 * (negative_root + input_temperature)
+        average_temperature = 0.5 * (negative_root + input_temperature)  # [K]
         reduced_collector_temperature = reduced_temperature(
             ambient_temperature, average_temperature, solar_irradiance
-        )
+        )  # [K/G]
 
         # Compute the thermal efficiency of the collector.
         thermal_efficiency = (
             self.thermal_performance_curve.eta_0
             + self.thermal_performance_curve.c_1 * reduced_collector_temperature
-            + self.thermal_performance_curve.c_2 * reduced_collector_temperature
+            + self.thermal_performance_curve.c_2
+            * solar_irradiance
+            * reduced_collector_temperature**2
         )
 
         return (
             None,
-            negative_root,
+            negative_root - ZERO_CELCIUS_OFFSET,
             reduced_collector_temperature,
             thermal_efficiency,
         )
