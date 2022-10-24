@@ -14,7 +14,9 @@ test_solar.py - Tests for the solar module.
 
 import unittest
 
+from typing import Any, Dict
 from unittest import mock
+
 from ...__utils__ import (
     HEAT_CAPACITY_OF_WATER,
     ZERO_CELCIUS_OFFSET,
@@ -90,7 +92,7 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
     def setUp(self) -> None:
         """Sets up functionality in common across test cases."""
 
-        self.input_data = {
+        self.linear_input_data = {
             "name": "abora_h72sk",
             "type": "pv_t",
             "area": 1.9602,
@@ -110,6 +112,26 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
             },
         }
 
+        self.quadratic_input_data = {
+            "name": "dualsun_spring_uninsulated",
+            "type": "pv_t",
+            "area": 1.876,
+            "land_use": 1.876,
+            "max_mass_flow_rate": 1000.0,
+            "min_mass_flow_rate": 20.0,
+            "nominal_mass_flow_rate": 60.0,
+            "pv_module_characteristics": {
+                "reference_efficiency": 0.213,
+                "reference_temperature": 25.0,
+                "thermal_coefficient": 0.0034,
+            },
+            "thermal_performance_curve": {
+                "zeroth_order": 0.633,
+                "first_order": -11.5,
+                "second_order": 0.0,
+            },
+        }
+
         # Set up required mocks for instantiation.
         self.ambient_temperature = 40
         self.input_temperature = 30
@@ -120,12 +142,10 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
 
         super().setUp()
 
-    def test_calculate_performance(self) -> None:
-        """Tests the calculate performance method."""
+    def _calculate_performance(self, input_data: Dict[str, Any]) -> None:
+        """Wrapper for the calculate-performance method."""
 
-        pvt_panel: HybridPVTPanel = HybridPVTPanel.from_dict(
-            self.logger, self.input_data
-        )
+        pvt_panel: HybridPVTPanel = HybridPVTPanel.from_dict(self.logger, input_data)
         (
             electrical_efficiency,
             output_temperature,
@@ -169,12 +189,12 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
             * (average_temperature - self.ambient_temperature) ** 2
             / self.solar_irradiance
         )
-        self.assertEqual(efficiency_by_equation, thermal_efficiency)
+        self.assertAlmostEqual(efficiency_by_equation, thermal_efficiency)
 
         reduced_collector_temperature_by_equation = (
             average_temperature - self.ambient_temperature
         ) / self.solar_irradiance
-        self.assertEqual(
+        self.assertAlmostEqual(
             reduced_collector_temperature_by_equation, reduced_collector_temperature
         )
 
@@ -184,9 +204,19 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
             * (output_temperature - self.input_temperature)
         ) / (pvt_panel.area * self.solar_irradiance)
 
-        self.assertEqual(
+        self.assertAlmostEqual(
             round(efficiency_by_equation, 8), round(efficiency_by_output, 8)
         )
+
+    def test_calculate_performance_linear_curve(self) -> None:
+        """Tests the calculate-performance method with a linear performance curve."""
+
+        self._calculate_performance(self.linear_input_data)
+
+    def test_calculate_performance_quadratic_curve(self) -> None:
+        """Tests the calculate-performance method with a quadratic performance curve."""
+
+        self._calculate_performance(self.quadratic_input_data)
 
 
 class TestSolarThermalPanelPerformance(unittest.TestCase):
