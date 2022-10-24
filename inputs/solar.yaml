@@ -114,7 +114,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 50
     thermal_performance_curve:
       first_order: !!float -3.53
-      second_order: !!float 0.0047
+      second_order: !!float -0.0047
       zeroth_order: !!float 0.694
     type: !!str solar_thermal
   - area: !!float 2.278
@@ -125,7 +125,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 125
     thermal_performance_curve:
       first_order: !!float -4.05
-      second_order: !!float 0.0062
+      second_order: !!float -0.0062
       zeroth_order: !!float 0.716
     type: !!str solar_thermal
   - area: !!float 1.887
@@ -136,7 +136,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 100
     thermal_performance_curve:
       first_order: !!float -3.93
-      second_order: !!float 0.0066
+      second_order: !!float -0.0066
       zeroth_order: !!float 0.702
     type: !!str solar_thermal
   - area: !!float 3.03
@@ -147,7 +147,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 120
     thermal_performance_curve:
       first_order: !!float -3.91
-      second_order: !!float 0.0048
+      second_order: !!float -0.0048
       zeroth_order: !!float 0.793
     type: !!str solar_thermal
   - area: !!float 2.14
@@ -158,7 +158,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 70
     thermal_performance_curve:
       first_order: !!float -4
-      second_order: !!float 0.006
+      second_order: !!float -0.006
       zeroth_order: !!float 0.75
     type: !!str solar_thermal
   - area: !!float 2.141
@@ -169,7 +169,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 70
     thermal_performance_curve:
       first_order: !!float -4.12
-      second_order: !!float 0.0056
+      second_order: !!float -0.0056
       zeroth_order: !!float 0.768
     type: !!str solar_thermal
   - area: !!float 2.325
@@ -180,7 +180,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 130
     thermal_performance_curve:
       first_order: !!float -3.77
-      second_order: !!float 0.0025
+      second_order: !!float -0.0025
       zeroth_order: !!float 0.702
     type: !!str solar_thermal
   - area: !!float 1.775
@@ -191,7 +191,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 100
     thermal_performance_curve:
       first_order: !!float -3.57
-      second_order: !!float 0.0065
+      second_order: !!float -0.0065
       zeroth_order: !!float 0.719
     type: !!str solar_thermal
   - area: !!float 1.887
@@ -202,7 +202,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 100
     thermal_performance_curve:
       first_order: !!float -3.93
-      second_order: !!float 0.0066
+      second_order: !!float -0.0066
       zeroth_order: !!float 0.702
     type: !!str solar_thermal
   - area: !!float 2.325
@@ -213,7 +213,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 130
     thermal_performance_curve:
       first_order: !!float -3.77
-      second_order: !!float 0.0025
+      second_order: !!float -0.0025
       zeroth_order: !!float 0.702
     type: !!str solar_thermal
   - area: !!float 2.39
@@ -224,7 +224,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -3.09
-      second_order: !!float 0.0095
+      second_order: !!float -0.0095
       zeroth_order: !!float 0.778
     type: !!str solar_thermal
   - area: !!float 2
@@ -235,7 +235,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -2.81
-      second_order: !!float 0.0102
+      second_order: !!float -0.0102
       zeroth_order: !!float 0.699
     type: !!str solar_thermal
   - area: !!float 2.4
@@ -246,7 +246,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -5.32
-      second_order: !!float 0.0211
+      second_order: !!float -0.0211
       zeroth_order: !!float 0.728
     type: !!str solar_thermal
   - area: !!float 1.9
@@ -257,7 +257,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -3.31
-      second_order: !!float 0.0136
+      second_order: !!float -0.0136
       zeroth_order: !!float 0.727
     type: !!str solar_thermal
   - area: !!float 2.4
@@ -268,7 +268,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -3.78
-      second_order: !!float 0.0009
+      second_order: !!float -0.0009
       zeroth_order: !!float 0.755
     type: !!str solar_thermal
   - area: !!float 2.44
@@ -279,7 +279,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 90
     thermal_performance_curve:
       first_order: !!float -3.61
-      second_order: !!float 0.0138
+      second_order: !!float -0.0138
       zeroth_order: !!float 0.784
     type: !!str solar_thermal
   - area: !!float 1.94
@@ -290,7 +290,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -3.51
-      second_order: !!float 0.0111
+      second_order: !!float -0.0111
       zeroth_order: !!float 0.766
     type: !!str solar_thermal
   - area: !!float 2.06
@@ -301,7 +301,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -4.09
-      second_order: !!float 0.0040
+      second_order: !!float -0.0040
       zeroth_order: !!float 0.780
     type: !!str solar_thermal
   - area: !!float 2.22
@@ -312,7 +312,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -3.35
-      second_order: !!float 0.0150
+      second_order: !!float -0.0150
       zeroth_order: !!float 0.714
     type: !!str solar_thermal
   - area: !!float 2.22
@@ -323,7 +323,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -3.63
-      second_order: !!float 0.0106
+      second_order: !!float -0.0106
       zeroth_order: !!float 0.710
     type: !!str solar_thermal
   - area: !!float 0.896
@@ -334,7 +334,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -3.25
-      second_order: !!float 0.0075
+      second_order: !!float -0.0075
       zeroth_order: !!float 0.684
     type: !!str solar_thermal
   - area: !!float 2.3
@@ -345,7 +345,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -3.15
-      second_order: !!float 0.0150
+      second_order: !!float -0.0150
       zeroth_order: !!float 0.702
     type: !!str solar_thermal
   - area: !!float 2.31
@@ -356,7 +356,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -3.47
-      second_order: !!float 0.0126
+      second_order: !!float -0.0126
       zeroth_order: !!float 0.725
     type: !!str solar_thermal
   - area: !!float 2.64
@@ -367,7 +367,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -2.99
-      second_order: !!float 0.0176
+      second_order: !!float -0.0176
       zeroth_order: !!float 0.751
     type: !!str solar_thermal
   - area: !!float 2.18
@@ -378,7 +378,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -2.96
-      second_order: !!float 0.0140
+      second_order: !!float -0.0140
       zeroth_order: !!float 0.720
     type: !!str solar_thermal
   - area: !!float 1.92
@@ -389,7 +389,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 150
     thermal_performance_curve:
       first_order: !!float -3.78
-      second_order: !!float 0.0110
+      second_order: !!float -0.0110
       zeroth_order: !!float 0.705
     type: !!str solar_thermal
   - area: !!float 2.35
@@ -400,7 +400,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 60
     thermal_performance_curve:
       first_order: !!float -3.45
-      second_order: !!float 0.0083
+      second_order: !!float -0.0083
       zeroth_order: !!float 0.770
     type: !!str solar_thermal
   - area: !!float 2.38
@@ -411,7 +411,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -3.22
-      second_order: !!float 0.0134
+      second_order: !!float -0.0134
       zeroth_order: !!float 0.743
     type: !!str solar_thermal
   - area: !!float 2.169965517
@@ -422,7 +422,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 97.85714286
     thermal_performance_curve:
       first_order: !!float -3.619626844
-      second_order: !!float 0.009328034801
+      second_order: !!float -0.009328034801
       zeroth_order: !!float 0.7334194095
     type: !!str solar_thermal
 
@@ -438,7 +438,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 30
     thermal_performance_curve:
       first_order: !!float -1.26
-      second_order: !!float 0.0014
+      second_order: !!float -0.0014
       zeroth_order: !!float 0.398
     type: !!str solar_thermal
   - area: !!float 0.516
@@ -449,7 +449,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 30
     thermal_performance_curve:
       first_order: !!float -1.47
-      second_order: !!float 0.0038
+      second_order: !!float -0.0038
       zeroth_order: !!float 0.34
     type: !!str solar_thermal
   - area: !!float 1.21
@@ -460,7 +460,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 30
     thermal_performance_curve:
       first_order: !!float -1.43
-      second_order: !!float 0.0005
+      second_order: !!float -0.0005
       zeroth_order: !!float 0.394
     type: !!str solar_thermal
   - area: !!float 1.21
@@ -471,7 +471,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 30
     thermal_performance_curve:
       first_order: !!float -1.29
-      second_order: !!float 0.0014
+      second_order: !!float -0.0014
       zeroth_order: !!float 0.398
     type: !!str solar_thermal
   - area: !!float 3.018
@@ -482,7 +482,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 200
     thermal_performance_curve:
       first_order: !!float -1.14
-      second_order: !!float 0.0012
+      second_order: !!float -0.0012
       zeroth_order: !!float 0.608
     type: !!str solar_thermal
   - area: !!float 1.006
@@ -493,7 +493,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 200
     thermal_performance_curve:
       first_order: !!float -1.17
-      second_order: !!float 0.004
+      second_order: !!float -0.004
       zeroth_order: !!float 0.6
     type: !!str solar_thermal
   - area: !!float 1.332
@@ -504,7 +504,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 125
     thermal_performance_curve:
       first_order: !!float -0.84
-      second_order: !!float 0.0039
+      second_order: !!float -0.0039
       zeroth_order: !!float 0.534
     type: !!str solar_thermal
   - area: !!float 2.019
@@ -515,7 +515,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 72
     thermal_performance_curve:
       first_order: !!float -0.93
-      second_order: !!float 0.0033
+      second_order: !!float -0.0033
       zeroth_order: !!float 0.541
     type: !!str solar_thermal
   - area: !!float 1.601
@@ -526,7 +526,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 120
     thermal_performance_curve:
       first_order: !!float -0.75
-      second_order: !!float 0.0041
+      second_order: !!float -0.0041
       zeroth_order: !!float 0.572
     type: !!str solar_thermal
   - area: !!float 2.481
@@ -537,7 +537,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 240
     thermal_performance_curve:
       first_order: !!float -0.51
-      second_order: !!float 0.0114
+      second_order: !!float -0.0114
       zeroth_order: !!float 0.414
     type: !!str solar_thermal
   - area: !!float 1.654
@@ -548,7 +548,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 160
     thermal_performance_curve:
       first_order: !!float -1.32
-      second_order: !!float 0.0033
+      second_order: !!float -0.0033
       zeroth_order: !!float 0.424
     type: !!str solar_thermal
   - area: !!float 3.01
@@ -559,7 +559,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 180
     thermal_performance_curve:
       first_order: !!float -1.21
-      second_order: !!float 0.0005
+      second_order: !!float -0.0005
       zeroth_order: !!float 0.544
     type: !!str solar_thermal
   - area: !!float 2.007
@@ -570,7 +570,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 120
     thermal_performance_curve:
       first_order: !!float -1.14
-      second_order: !!float 0.0021
+      second_order: !!float -0.0021
       zeroth_order: !!float 0.544
     type: !!str solar_thermal
   - area: !!float 2.401
@@ -581,7 +581,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 180
     thermal_performance_curve:
       first_order: !!float -1.22
-      second_order: !!float 0.0051
+      second_order: !!float -0.0051
       zeroth_order: !!float 0.373
     type: !!str solar_thermal
   - area: !!float 3.012
@@ -592,7 +592,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 180
     thermal_performance_curve:
       first_order: !!float -1.21
-      second_order: !!float 0.0013
+      second_order: !!float -0.0013
       zeroth_order: !!float 0.542
     type: !!str solar_thermal
   - area: !!float 1.004
@@ -603,7 +603,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 120
     thermal_performance_curve:
       first_order: !!float -1.51
-      second_order: !!float 0.0001
+      second_order: !!float -0.0001
       zeroth_order: !!float 0.552
     type: !!str solar_thermal
   - area: None
@@ -625,7 +625,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -0.39
-      second_order: !!float 0.0050
+      second_order: !!float -0.0050
       zeroth_order: !!float 0.42
     type: !!str solar_thermal
   - area: None
@@ -636,7 +636,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 75
     thermal_performance_curve:
       first_order: !!float -1.03
-      second_order: !!float 0.0052
+      second_order: !!float -0.0052
       zeroth_order: !!float 0.55
     type: !!str solar_thermal
   - area: !!float 1.87
@@ -647,7 +647,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 120
     thermal_performance_curve:
       first_order: !!float -1.01
-      second_order: !!float 0.0104
+      second_order: !!float -0.0104
       zeroth_order: !!float 0.44
     type: !!str solar_thermal
   - area: !!float 1.88
@@ -658,7 +658,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 120
     thermal_performance_curve:
       first_order: !!float -0.88
-      second_order: !!float 0.0120
+      second_order: !!float -0.0120
       zeroth_order: !!float 0.39
     type: !!str solar_thermal
   - area: !!float 2.91
@@ -669,7 +669,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -1.21
-      second_order: !!float 0.0040
+      second_order: !!float -0.0040
       zeroth_order: !!float 0.54
     type: !!str solar_thermal
   - area: !!float 2.84
@@ -680,7 +680,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 200
     thermal_performance_curve:
       first_order: !!float -0.93
-      second_order: !!float 0.0040
+      second_order: !!float -0.0040
       zeroth_order: !!float 0.63
     type: !!str solar_thermal
   - area: None
@@ -691,7 +691,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 54
     thermal_performance_curve:
       first_order: !!float -1.24
-      second_order: !!float 0.0040
+      second_order: !!float -0.0040
       zeroth_order: !!float 0.43
     type: !!str solar_thermal
   - area: !!float 1.1
@@ -713,7 +713,7 @@ solar_collectors:
     nominal_mass_flow_rate: None
     thermal_performance_curve:
       first_order: !!float -0.63
-      second_order: !!float 0.0096
+      second_order: !!float -0.0096
       zeroth_order: !!float 0.53
     type: !!str solar_thermal
   - area: !!float 2
@@ -724,7 +724,7 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 200
     thermal_performance_curve:
       first_order: !!float -1.17
-      second_order: !!float 0.0040
+      second_order: !!float -0.0040
       zeroth_order: !!float 0.60
     type: !!str solar_thermal
   - area: !!float 1.876863636
@@ -735,6 +735,6 @@ solar_collectors:
     nominal_mass_flow_rate: !!float 123.7391304
     thermal_performance_curve:
       first_order: !!float -1.075591267
-      second_order: !!float 0.004223480543
+      second_order: !!float -0.004223480543
       zeroth_order: !!float 0.4906945674
     type: !!str solar_thermal

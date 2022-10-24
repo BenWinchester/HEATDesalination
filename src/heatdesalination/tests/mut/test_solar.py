@@ -108,7 +108,7 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
             "thermal_performance_curve": {
                 "zeroth_order": 0.7,
                 "first_order": -5.98,
-                "second_order": 0.0,
+                "second_order": -0.0,
             },
         }
 
@@ -128,7 +128,7 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
             "thermal_performance_curve": {
                 "zeroth_order": 0.633,
                 "first_order": -11.5,
-                "second_order": 0.0,
+                "second_order": -0.0,
             },
         }
 
@@ -234,7 +234,7 @@ class TestSolarThermalPanelPerformance(unittest.TestCase):
             "nominal_mass_flow_rate": 97.85714286,
             "thermal_performance_curve": {
                 "first_order": -3.619626844,
-                "second_order": -0.009328034801,
+                "second_order": --0.009328034801,
                 "zeroth_order": 0.7334194095,
             },
             "type": "solar_thermal",
