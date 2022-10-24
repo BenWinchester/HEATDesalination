@@ -424,7 +424,7 @@ class CleanWaterTank(
 
 @dataclasses.dataclass
 class HotWaterTank(
-    CleanWaterTank, label="hot_water_tank", resource_type=ResourceType.HOT_WATER
+    _BaseStorage, label="hot_water_tank", resource_type=ResourceType.HOT_WATER
 ):
     """
     Represents a hot-water tank.
@@ -573,3 +573,15 @@ class HotWaterTank(
             else HEAT_CAPACITY_OF_WATER,
             storage_data[HEAT_LOSS_COEFFICIENT],
         )
+
+    @property
+    def mass(self) -> float:
+        """
+        Return the mass of the tank.
+
+        Outputs:
+            The mass of the hot-water tank.
+
+        """
+
+        return self.capacity

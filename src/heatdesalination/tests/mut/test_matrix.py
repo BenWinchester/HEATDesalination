@@ -16,8 +16,9 @@ import unittest
 
 from unittest import mock
 
-from heatdesalination.__utils__ import HEAT_CAPACITY_OF_WATER, InputFileError, Scenario
+from heatdesalination.__utils__ import HEAT_CAPACITY_OF_WATER, ZERO_CELCIUS_OFFSET, InputFileError, Scenario
 from heatdesalination.solar import HybridPVTPanel, SolarThermalPanel
+from heatdesalination.storage.storage_utils import HotWaterTank
 
 from ...matrix import (
     _collectors_input_temperature,
@@ -284,10 +285,64 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
 class TestTankTemperature(unittest.TestCase):
     """Tests the `_tank_temperature` helper function."""
 
-    def setUp(self) -> None:
-        """Sets up functionality in common across test cases."""
+    def test_mainline(self) -> None:
+        """
+        Tests the mainline case.
 
-        super().setUp()
+        The equation for the temperature of the tank is
+
+        """
+
+        buffer_tank: HotWaterTank = HotWaterTank.from_dict(
+            {
+                "name": "hot_water_tank",
+                "area": 1900,
+                "capacity": 30000,
+                "cycle_lifetime": 1500,
+                "heat_loss_coefficient": 1.9,
+                "leakage": 0.0,
+                "maximum_charge": 1.0,
+                "minimum_charge": 0.0,
+                "resource_type": "hot_water",
+            }
+        )
+        logger = mock.MagicMock()
+
+        tank_temperature = _tank_temperature(
+            buffer_tank,
+            (collector_system_output_temperature := 85 + ZERO_CELCIUS_OFFSET),
+            (heat_exchanger_efficiency := 0.4),
+            (htf_heat_capacity := HEAT_CAPACITY_OF_WATER),
+            (htf_mass_flow_rate := 4),
+            (load_mass_flow_rate := 4),
+            logger,
+            (previous_tank_temperature := 75 + ZERO_CELCIUS_OFFSET),
+            (tank_ambient_temperature := 15 + ZERO_CELCIUS_OFFSET),
+            (tank_replacement_water_temperature := 10 + ZERO_CELCIUS_OFFSET),
+            (tank_water_heat_capacity := HEAT_CAPACITY_OF_WATER),
+            time_interval=(time_interval := 3600),
+        )
+
+        # Re-compute the LHS and RHS of the equation before rearranging.
+        lhs = (
+            buffer_tank.capacity
+            * tank_water_heat_capacity
+            * (tank_temperature - previous_tank_temperature)
+            / time_interval
+        )
+        rhs = (
+            htf_mass_flow_rate
+            * htf_heat_capacity
+            * heat_exchanger_efficiency
+            * (collector_system_output_temperature - tank_temperature)
+            + load_mass_flow_rate
+            * htf_heat_capacity
+            * (tank_replacement_water_temperature - tank_temperature)
+            + buffer_tank.heat_transfer_coefficient
+            * (tank_ambient_temperature - tank_temperature)
+        )
+
+        self.assertAlmostEqual(lhs, rhs)
 
 
 class TestSolveMatrix(unittest.TestCase):

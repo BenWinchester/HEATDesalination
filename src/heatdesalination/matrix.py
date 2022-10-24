@@ -208,7 +208,7 @@ def _tank_temperature(
         - buffer_tank:
             The :class:`HotWaterTank` to use as a buffer tank for the run.
         - collector_system_output_temperature:
-            The temperature of the HTF leaving the collector system.
+            The temperature of the HTF leaving the collector system, measured in Kelvin.
         - heat_exchanger_efficiency:
             The efficiency of the heat exchanger.
         - htf_heat_capacity:
@@ -220,9 +220,11 @@ def _tank_temperature(
         - logger:
             The :class:`logging.Logger` to use for the run.
         - previous_tank_temperature:
-            The temperature of the hot-water tank at the previous time step.
+            The temperature of the hot-water tank at the previous time step, measured in
+            Kelvin.
         - tank_ambient_temperature:
-            The ambient temperature of air surrounding the hot-water tank.
+            The ambient temperature of air surrounding the hot-water tank, measured in
+            Kelvin.
         - tank_replacement_water_temperature:
             The temperature in Kelvin of the replacement water used to replace water
             withdrawn from the hot-water tank.
@@ -232,7 +234,7 @@ def _tank_temperature(
             The time interval being considered, measured in seconds.
 
     Outputs:
-        The temperature of the buffer tank.
+        The temperature of the buffer tank, measured in Kelvin.
 
     """
 
