@@ -129,7 +129,7 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
         (
             electrical_efficiency,
             output_temperature,
-            reduced_temperature,
+            reduced_collector_temperature,
             thermal_efficiency,
         ) = pvt_panel.calculate_performance(
             self.ambient_temperature + ZERO_CELCIUS_OFFSET,
@@ -170,6 +170,13 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
             / self.solar_irradiance
         )
         self.assertEqual(efficiency_by_equation, thermal_efficiency)
+
+        reduced_collector_temperature_by_equation = (
+            average_temperature - self.ambient_temperature
+        ) / self.solar_irradiance
+        self.assertEqual(
+            reduced_collector_temperature_by_equation, reduced_collector_temperature
+        )
 
         efficiency_by_output: float = (
             (self.mass_flow_rate / 3600)
