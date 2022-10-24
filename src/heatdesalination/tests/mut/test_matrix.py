@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# type: ignore
 ########################################################################################
 # test_matrix.py - Tests for the matrix module.                                        #
 #                                                                                      #
@@ -457,15 +458,10 @@ class TestSolveMatrix(unittest.TestCase):
                 colector_ouptut_temp, mock_tank_temperature.call_args_list.pop(0)[0][1]
             )
 
-        for collector_input_temp, tank_temp in zip([
-            entry + ZERO_CELCIUS_OFFSET for entry in [80, 75, 70]
-        ], [entry + ZERO_CELCIUS_OFFSET for entry in [80, 70, 66]]):
+        for collector_input_temp, tank_temp in zip(
+            [entry + ZERO_CELCIUS_OFFSET for entry in [80, 75, 70]],
+            [entry + ZERO_CELCIUS_OFFSET for entry in [80, 70, 66]],
+        ):
             call_args = mock_collectors_input_temperature.call_args_list.pop(0)[0]
-            self.assertEqual(
-                collector_input_temp,
-                call_args[0]
-            )
-            self.assertEqual(
-                tank_temp,
-                call_args[3]
-            )
+            self.assertEqual(collector_input_temp, call_args[0])
+            self.assertEqual(tank_temp, call_args[3])

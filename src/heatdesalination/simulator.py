@@ -184,8 +184,13 @@ def run_simulation(
         (
             collector_input_temperature,
             collector_system_output_temperature,
+            pvt_electrical_efficiency,
             pvt_htf_output_temperature,
+            pvt_reduced_temperature,
+            pvt_thermal_efficiency,
             solar_thermal_htf_output_temperature,
+            solar_thermal_reduced_temperature,
+            solar_thermal_thermal_efficiency,
             tank_temperature,
         ) = solve_matrix(
             ambient_temperatures[hour],
@@ -195,7 +200,6 @@ def run_simulation(
             desalination_plant.requirements(hour).hot_water_volume,
             logger,
             tank_temperatures[hour - 1],
-            pv_panel,
             pvt_mass_flow_rate,
             scenario,
             solar_irradiances[hour],

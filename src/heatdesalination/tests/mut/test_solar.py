@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# type: ignore
 ########################################################################################
 # test_solar.py - Tests for the solar module.                                          #
 #                                                                                      #
