@@ -292,7 +292,6 @@ def solve_matrix(
     load_mass_flow_rate: float,
     logger: Logger,
     previous_tank_temperature: float,
-    pv_panel: Optional[PVPanel],
     pvt_mass_flow_rate: Optional[float],
     scenario: Scenario,
     solar_irradiance: float,
@@ -319,8 +318,6 @@ def solve_matrix(
             The :class:`logging.Logger` to use for the run.
         - previous_tank_temperature:
             The temperature of the hot-water tank at the previous time step.
-        - pv_panel:
-            The :class:`PVPanel` to use for the run if appropriate.
         - pvt_mass_flow_rate:
             The mass flow rate of the HTF through the PV-T collectors, measured in
             kilograms per second.
@@ -358,12 +355,6 @@ def solve_matrix(
     """
 
     # Set up variables to track for a valid solution being found.
-    if scenario.pv and pv_panel is None:
-        logger.error("No PV panel provided despite PV being on in the scenario.")
-        raise InputFileError(
-            "scenario OR solar",
-            "No PV panel provided despite PV modelling being requested.",
-        )
     if scenario.pv_t and hybrid_pvt_panel is None or pvt_mass_flow_rate is None:
         logger.error("No PV-T panel provided despite PV-T being on in the scenario.")
         raise InputFileError(
