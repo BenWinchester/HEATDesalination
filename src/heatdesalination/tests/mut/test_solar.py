@@ -140,6 +140,7 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
             self.solar_irradiance,
         )
 
+        # Check the electrical efficiency.
         average_temperature = 0.5 * (self.input_temperature + output_temperature)
         if pvt_panel.pv_module_characteristics is not None:
             electrical_efficiency_by_equation = (
@@ -149,11 +150,36 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
                     - pvt_panel.pv_module_characteristics.thermal_coefficient
                     * (
                         average_temperature
-                        - pvt_panel.pv_module_characteristics._reference_temperature
+                        - (
+                            pvt_panel.pv_module_characteristics.reference_temperature
+                            - ZERO_CELCIUS_OFFSET
+                        )
                     )
                 )
             )
             self.assertEqual(electrical_efficiency, electrical_efficiency_by_equation)
+
+        # Check the thermal efficiency.
+        efficiency_by_equation = (
+            pvt_panel.thermal_performance_curve.eta_0
+            + pvt_panel.thermal_performance_curve.c_1
+            * (average_temperature - self.ambient_temperature)
+            / self.solar_irradiance
+            + pvt_panel.thermal_performance_curve.c_2
+            * (average_temperature - self.ambient_temperature) ** 2
+            / self.solar_irradiance
+        )
+        self.assertEqual(efficiency_by_equation, thermal_efficiency)
+
+        efficiency_by_output: float = (
+            (self.mass_flow_rate / 3600)
+            * HEAT_CAPACITY_OF_WATER
+            * (output_temperature - self.input_temperature)
+        ) / (pvt_panel.area * self.solar_irradiance)
+
+        self.assertEqual(
+            round(efficiency_by_equation, 8), round(efficiency_by_output, 8)
+        )
 
 
 class TestSolarThermalPanelPerformance(unittest.TestCase):
