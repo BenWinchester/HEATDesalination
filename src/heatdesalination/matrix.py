@@ -299,7 +299,18 @@ def solve_matrix(
     solar_thermal_mass_flow_rate: Optional[float],
     tank_ambient_temperature: float,
     tank_replacement_water_temperature: float,
-) -> Tuple[float, float, Optional[float], Optional[float], float]:
+) -> Tuple[
+    float,
+    float,
+    Optional[float],
+    Optional[float],
+    Optional[float],
+    Optional[float],
+    Optional[float],
+    Optional[float],
+    Optional[float],
+    float,
+]:
     """
     Solve the matrix equation for the performance of the solar system.
 
@@ -343,28 +354,37 @@ def solve_matrix(
         - collector_system_output_temperature:
             The output temperature from the solar collector system as a whole, measured
             in degrees Kelvin.
+        - pvt_electrical_efficiency:
+            The electrical efficiency of the PV-T panels, if present, defined between 0
+            and 1.
         - pvt_htf_output_temperature:
             The output temperature from the PV-T panels, if present, measured in degrees
             Kelvin.
+        - pvt_reduced_temperature:
+            The reduced temperature of the PV-T collectors, if present.
+        - pvt_thermal_efficiency:
+            The thermal efficiency of the PV-T collectors, if present.
         - solar_thermal_htf_output_temperature:
             The output temperature from the solar-thermal collectors, if present,
             measured in degrees Kelvin.
+        - solar_thermal_reduced_temperature:
+            The reduced temperature of the solar-thermal collectors, if present.
+        - solar_thermal_thermal_efficiency:
+            The thermal efficiency of the solar-thermal collectors, if present.
         - tank_temperature:
             The temperature of the tank, measured in degrees Kelvin.
 
     """
 
     # Set up variables to track for a valid solution being found.
-    if scenario.pv_t and hybrid_pvt_panel is None or pvt_mass_flow_rate is None:
+    if scenario.pv_t and (hybrid_pvt_panel is None or pvt_mass_flow_rate is None):
         logger.error("No PV-T panel provided despite PV-T being on in the scenario.")
         raise InputFileError(
             "scenario OR solar",
             "No PV-T panel provided despite PV modelling being requested.",
         )
-    if (
-        scenario.solar_thermal
-        and solar_thermal_collector is None
-        and solar_thermal_mass_flow_rate is None
+    if scenario.solar_thermal and (
+        solar_thermal_collector is None or solar_thermal_mass_flow_rate is None
     ):
         logger.error(
             "No solar-thermal collector provided despite solar-thermal being on in the "
@@ -447,7 +467,12 @@ def solve_matrix(
     return (
         collector_input_temperature,
         collector_system_output_temperature,
+        pvt_electrical_efficiency,
         pvt_htf_output_temperature,
+        pvt_reduced_temperature,
+        pvt_thermal_efficiency,
         solar_thermal_htf_output_temperature,
+        solar_thermal_reduced_temperature,
+        solar_thermal_thermal_efficiency,
         tank_temperature,
     )

@@ -16,7 +16,12 @@ import unittest
 
 from unittest import mock
 
-from heatdesalination.__utils__ import HEAT_CAPACITY_OF_WATER, ZERO_CELCIUS_OFFSET, InputFileError, Scenario
+from heatdesalination.__utils__ import (
+    HEAT_CAPACITY_OF_WATER,
+    ZERO_CELCIUS_OFFSET,
+    InputFileError,
+    Scenario,
+)
 from heatdesalination.solar import HybridPVTPanel, SolarThermalPanel
 from heatdesalination.storage.storage_utils import HotWaterTank
 
@@ -351,4 +356,82 @@ class TestSolveMatrix(unittest.TestCase):
     def setUp(self) -> None:
         """Sets up functionality in common across test cases."""
 
+        self.ambient_temperature: float = 15 + ZERO_CELCIUS_OFFSET
+        self.buffer_tank = mock.MagicMock()
+        self.htf_mass_flow_rate: float = 4 + ZERO_CELCIUS_OFFSET
+        self.hybrid_pvt_panel = mock.MagicMock()
+        self.load_mass_flow_rate: float = 4 + ZERO_CELCIUS_OFFSET
+        self.logger = mock.MagicMock()
+        self.previous_tank_temperature: float = 75 + ZERO_CELCIUS_OFFSET
+        self.pvt_mass_flow_rate: float = 4 + ZERO_CELCIUS_OFFSET
+        self.scenario = Scenario(
+            0, 0, 0, (default := "default"), default, default, default
+        )
+        self.solar_irradiance = mock.MagicMock()
+        self.solar_thermal_collector = mock.MagicMock()
+        self.solar_thermal_mass_flow_rate: float = 4 + ZERO_CELCIUS_OFFSET
+        self.tank_ambient_temperature: float = 15 + ZERO_CELCIUS_OFFSET
+        self.tank_replacement_water_temperature: float = 10 + ZERO_CELCIUS_OFFSET
+
         super().setUp()
+
+    def _solve_matrix(
+        self, *, no_pvt: bool = False, no_solar_thermal: bool = False
+    ) -> None:
+        """Wrapper for the solve matrix function."""
+
+        solve_matrix(
+            self.ambient_temperature,
+            self.buffer_tank,
+            self.htf_mass_flow_rate,
+            None if no_pvt else self.hybrid_pvt_panel,
+            self.load_mass_flow_rate,
+            self.logger,
+            self.previous_tank_temperature,
+            self.pvt_mass_flow_rate,
+            self.scenario,
+            self.solar_irradiance,
+            None if no_solar_thermal else self.solar_thermal_collector,
+            self.solar_thermal_mass_flow_rate,
+            self.tank_ambient_temperature,
+            self.tank_replacement_water_temperature,
+        )
+
+    def test_missing_collectors(self) -> None:
+        """Tests the case where there are missing collectors."""
+
+        with self.assertRaises(InputFileError):
+            self._solve_matrix(no_pvt=True)
+        with self.assertRaises(InputFileError):
+            self._solve_matrix(no_solar_thermal=True)
+
+    def test_mainline(self) -> None:
+        """Tests the mainline case."""
+
+        (
+            collector_input_temperature,
+            collector_system_output_temperature,
+            pvt_electrical_efficiency,
+            pvt_htf_output_temperature,
+            pvt_reduced_temperature,
+            pvt_thermal_efficiency,
+            solar_thermal_htf_output_temperature,
+            solar_thermal_reduced_temperature,
+            solar_thermal_thermal_efficiency,
+            tank_temperature,
+        ) = solve_matrix(
+            self.ambient_temperature,
+            self.buffer_tank,
+            self.htf_mass_flow_rate,
+            self.hybrid_pvt_panel,
+            self.load_mass_flow_rate,
+            self.logger,
+            self.previous_tank_temperature,
+            self.pvt_mass_flow_rate,
+            self.scenario,
+            self.solar_irradiance,
+            self.solar_thermal_collector,
+            self.solar_thermal_mass_flow_rate,
+            self.tank_ambient_temperature,
+            self.tank_replacement_water_temperature,
+        )
