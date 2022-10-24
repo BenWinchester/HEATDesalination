@@ -12,6 +12,7 @@ test_matrix.py - Tests for the matrix module.
 
 """
 
+from typing import Tuple
 import unittest
 
 from unittest import mock
@@ -132,7 +133,7 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
 
     def _solar_system_output_temperatures_wrapper(
         self, *, pv_t: bool, solar_thermal: bool
-    ) -> None:
+    ) -> float:
         """
         Wrapper for the solar-system output-temperatures function.
 
@@ -377,10 +378,21 @@ class TestSolveMatrix(unittest.TestCase):
 
     def _solve_matrix(
         self, *, no_pvt: bool = False, no_solar_thermal: bool = False
-    ) -> None:
+    ) -> Tuple[
+        float,
+        float,
+        float | None,
+        float | None,
+        float | None,
+        float | None,
+        float | None,
+        float | None,
+        float | None,
+        float,
+    ]:
         """Wrapper for the solve matrix function."""
 
-        solve_matrix(
+        return solve_matrix(
             self.ambient_temperature,
             self.buffer_tank,
             self.htf_mass_flow_rate,
@@ -408,30 +420,52 @@ class TestSolveMatrix(unittest.TestCase):
     def test_mainline(self) -> None:
         """Tests the mainline case."""
 
-        (
-            collector_input_temperature,
-            collector_system_output_temperature,
-            pvt_electrical_efficiency,
-            pvt_htf_output_temperature,
-            pvt_reduced_temperature,
-            pvt_thermal_efficiency,
-            solar_thermal_htf_output_temperature,
-            solar_thermal_reduced_temperature,
-            solar_thermal_thermal_efficiency,
-            tank_temperature,
-        ) = solve_matrix(
+        with mock.patch(
+            "heatdesalination.matrix._solar_system_output_temperatures"
+        ) as mock_solar_system_output_temperatures, mock.patch(
+            "heatdesalination.matrix._tank_temperature",
+            side_effect=[entry + ZERO_CELCIUS_OFFSET for entry in [80, 70, 66]],
+        ) as mock_tank_temperature, mock.patch(
+            "heatdesalination.matrix._collectors_input_temperature",
+            side_effect=[entry + ZERO_CELCIUS_OFFSET for entry in [40, 30, 34]],
+        ) as mock_collectors_input_temperature, mock.patch(
+            "heatdesalination.matrix.TEMPERATURE_PRECISION", 5
+        ):
+            # Setup the return values for the mock solar-system output
+            mock_solar_system_output_temperatures.side_effect = [
+                (entry,) + (None,) * 7
+                for entry in [entry + ZERO_CELCIUS_OFFSET for entry in [80, 75, 70]]
+            ]
+
+            _ = self._solve_matrix()
+
+        # Check that the mocked functions were called as expected.
+        for best_guess_input in [
             self.ambient_temperature,
-            self.buffer_tank,
-            self.htf_mass_flow_rate,
-            self.hybrid_pvt_panel,
-            self.load_mass_flow_rate,
-            self.logger,
-            self.previous_tank_temperature,
-            self.pvt_mass_flow_rate,
-            self.scenario,
-            self.solar_irradiance,
-            self.solar_thermal_collector,
-            self.solar_thermal_mass_flow_rate,
-            self.tank_ambient_temperature,
-            self.tank_replacement_water_temperature,
-        )
+            40 + ZERO_CELCIUS_OFFSET,
+            30 + ZERO_CELCIUS_OFFSET,
+        ]:
+            self.assertEqual(
+                best_guess_input,
+                mock_solar_system_output_temperatures.call_args_list.pop(0)[0][1],
+            )
+
+        for colector_ouptut_temp in [
+            entry + ZERO_CELCIUS_OFFSET for entry in [80, 75, 70]
+        ]:
+            self.assertEqual(
+                colector_ouptut_temp, mock_tank_temperature.call_args_list.pop(0)[0][1]
+            )
+
+        for collector_input_temp, tank_temp in zip([
+            entry + ZERO_CELCIUS_OFFSET for entry in [80, 75, 70]
+        ], [entry + ZERO_CELCIUS_OFFSET for entry in [80, 70, 66]]):
+            call_args = mock_collectors_input_temperature.call_args_list.pop(0)[0]
+            self.assertEqual(
+                collector_input_temp,
+                call_args[0]
+            )
+            self.assertEqual(
+                tank_temp,
+                call_args[3]
+            )

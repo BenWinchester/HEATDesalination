@@ -211,7 +211,7 @@ def _parse_args(args: List[Any]) -> argparse.Namespace:
     return parser.parse_args(args)
 
 
-def main(latitude: float, longitude: float, output: Optional[str] = None) -> None:
+def main(latitude: float, longitude: float, output: str | None = None) -> None:
     """
     The main method for the weather module.
 

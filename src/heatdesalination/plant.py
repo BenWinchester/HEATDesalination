@@ -163,7 +163,7 @@ class DesalinationPlant:
         self.plant_outputs: Dict[bool, PlantOutputs] = plant_outputs
         self.plant_requirements: Dict[bool, PlantRequirements] = plant_requirements
         self.start_hour: int = start_hour
-        self._operating: Optional[Dict[int, bool]] = None
+        self._operating: Dict[int, bool] | None = None
 
     def __repr__(self) -> str:
         """

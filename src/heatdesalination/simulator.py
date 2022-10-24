@@ -92,21 +92,21 @@ def run_simulation(
     buffer_tank: HotWaterTank,
     desalination_plant: DesalinationPlant,
     htf_mass_flow_rate: float,
-    hybrid_pvt_panel: Optional[HybridPVTPanel],
+    hybrid_pvt_panel: HybridPVTPanel | None,
     logger: Logger,
-    pv_panel: Optional[PVPanel],
-    pvt_system_size: Optional[int],
+    pv_panel: PVPanel | None,
+    pvt_system_size: int | None,
     scenario: Scenario,
     solar_irradiances: Dict[int, float],
-    solar_thermal_collector: Optional[SolarThermalPanel],
-    solar_thermal_system_size: Optional[int],
+    solar_thermal_collector: SolarThermalPanel | None,
+    solar_thermal_system_size: int | None,
     *,
     disable_tqdm: bool = False,
 ) -> Tuple[
     Dict[int, float],
     Dict[int, float],
-    Optional[Dict[int, float]],
-    Optional[Dict[int, float]],
+    Dict[int, float] | None,
+    Dict[int, float] | None,
     Dict[int, float],
 ]:
     """
@@ -169,8 +169,8 @@ def run_simulation(
     # Set up maps for storing variables.
     collector_input_temperatures: Dict[int, float] = {}
     collector_system_output_temperatures: Dict[int, float] = {}
-    pvt_htf_output_temperatures: Dict[int, Optional[float]] = {}
-    solar_thermal_htf_output_temperatures: Dict[int, Optional[float]] = {}
+    pvt_htf_output_temperatures: Dict[int, float | None] = {}
+    solar_thermal_htf_output_temperatures: Dict[int, float | None] = {}
     tank_temperatures: DefaultDict[int, float] = defaultdict(float)
 
     # At each time step, call the matrix equation solver.

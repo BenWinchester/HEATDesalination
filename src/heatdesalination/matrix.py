@@ -70,22 +70,22 @@ def _collectors_input_temperature(
 def _solar_system_output_temperatures(
     ambient_temperature: float,
     collector_system_input_temperature: float,
-    hybrid_pvt_panel: Optional[HybridPVTPanel],
+    hybrid_pvt_panel: HybridPVTPanel | None,
     logger: Logger,
-    pvt_mass_flow_rate: Optional[float],
+    pvt_mass_flow_rate: float | None,
     scenario: Scenario,
     solar_irradiance: float,
-    solar_thermal_collector: Optional[SolarThermalPanel],
-    solar_thermal_mass_flow_rate: Optional[float],
+    solar_thermal_collector: SolarThermalPanel | None,
+    solar_thermal_mass_flow_rate: float | None,
 ) -> Tuple[
     float,
-    Optional[float],
-    Optional[float],
-    Optional[float],
-    Optional[float],
-    Optional[float],
-    Optional[float],
-    Optional[float],
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
 ]:
     """
     Calculates the output temperatures of the PV-T, solar-thermal and overall solar.
@@ -288,27 +288,27 @@ def solve_matrix(
     ambient_temperature: float,
     buffer_tank: HotWaterTank,
     htf_mass_flow_rate: float,
-    hybrid_pvt_panel: Optional[HybridPVTPanel],
+    hybrid_pvt_panel: HybridPVTPanel | None,
     load_mass_flow_rate: float,
     logger: Logger,
     previous_tank_temperature: float,
-    pvt_mass_flow_rate: Optional[float],
+    pvt_mass_flow_rate: float | None,
     scenario: Scenario,
     solar_irradiance: float,
-    solar_thermal_collector: Optional[SolarThermalPanel],
-    solar_thermal_mass_flow_rate: Optional[float],
+    solar_thermal_collector: SolarThermalPanel | None,
+    solar_thermal_mass_flow_rate: float | None,
     tank_ambient_temperature: float,
     tank_replacement_water_temperature: float,
 ) -> Tuple[
     float,
     float,
-    Optional[float],
-    Optional[float],
-    Optional[float],
-    Optional[float],
-    Optional[float],
-    Optional[float],
-    Optional[float],
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
     float,
 ]:
     """
@@ -449,14 +449,14 @@ def solve_matrix(
 
         # Check whether the solution is valid given the hard-coded precision specified.
         if all(
-            {
+            entry < TEMPERATURE_PRECISION
+            for entry in (
                 abs(
                     collector_input_temperature
                     - best_guess_collector_htf_input_temperature
                 ),
                 abs(tank_temperature - best_guess_tank_temperature),
-            }
-            < TEMPERATURE_PRECISION
+            )
         ):
             solution_found = True
 

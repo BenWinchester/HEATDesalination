@@ -20,7 +20,7 @@ import logging
 import os
 
 from logging import Logger
-from typing import Any, Dict, List, Union
+from typing import Dict, List
 
 import yaml
 
@@ -206,10 +206,7 @@ class ProfileType(enum.Enum):
 
 def read_yaml(
     filepath: str, logger: Logger
-) -> Union[
-    Dict[str, Union[bool, float, int, str]],
-    List[Dict[str, Union[bool, float, int, str]]],
-]:
+) -> Dict[str, bool | float | int | str] | List[Dict[str, bool | float | int | str]]:
     """
     Reads a YAML file and returns the contents.
     """
@@ -217,9 +214,8 @@ def read_yaml(
     # Process the new-location data.
     try:
         with open(filepath, "r", encoding="UTF-8") as filedata:
-            file_contents: Union[
-                Dict[str, Union[bool, float, int, str]],
-                List[Dict[str, Union[bool, float, int, str]]],
+            file_contents: Dict[str, bool | float | int | str] | List[
+                Dict[str, bool | float | int | str]
             ] = yaml.safe_load(filedata)
     except FileNotFoundError:
         logger.error(
@@ -319,9 +315,9 @@ class Scenario:
     htf_heat_capacity: float
     name: str
     plant: str
-    _pv: Union[bool, str]
-    _pv_t: Union[bool, str]
-    _solar_thermal: Union[bool, str]
+    _pv: bool | str
+    _pv_t: bool | str
+    _solar_thermal: bool | str
 
     @property
     def pv(self) -> bool:  # pylint: disable=invalid-name

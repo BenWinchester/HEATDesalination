@@ -422,7 +422,7 @@ class SolarPanel(abc.ABC):  # pylint: disable=too-few-public-methods
         logger: Logger,
         mass_flow_rate: float,
         solar_irradiance: float,
-    ) -> Tuple[Optional[float], Optional[float], Optional[float], Optional[float],]:
+    ) -> Tuple[float | None, float | None, float | None, float | None,]:
         """
         Abstract method for calculation of collector performance.
 
@@ -519,9 +519,9 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
         )
 
         self.pv_unit: float = pv_unit
-        self.reference_efficiency: Optional[float] = reference_efficiency
-        self._reference_temperature: Optional[float] = reference_temperature
-        self.thermal_coefficient: Optional[float] = thermal_coefficient
+        self.reference_efficiency: float | None = reference_efficiency
+        self._reference_temperature: float | None = reference_temperature
+        self.thermal_coefficient: float | None = thermal_coefficient
 
     @property
     def reference_temperature(self) -> float:
@@ -571,7 +571,7 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
         logger: Logger,
         mass_flow_rate: float,
         solar_irradiance: float,
-    ) -> Tuple[Optional[float], Optional[float], Optional[float], Optional[float],]:
+    ) -> Tuple[float | None, float | None, float | None, float | None,]:
         """
         Calcuates the electrical performance of the collector.
 
@@ -638,8 +638,8 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
 
     def __init__(
         self,
-        electric_performance_curve: Optional[PerformanceCurve],
-        pv_module_characteristics: Optional[PVModuleCharacteristics],
+        electric_performance_curve: PerformanceCurve | None,
+        pv_module_characteristics: PVModuleCharacteristics | None,
         solar_inputs: Dict[str, Any],
         thermal_performance_curve: PerformanceCurve,
     ) -> None:
@@ -759,9 +759,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         if ELECTRIC_PERFORMANCE_CURVE in solar_inputs:
             electric_performance_inputs = solar_inputs[ELECTRIC_PERFORMANCE_CURVE]
             try:
-                electric_performance_curve: Optional[
-                    PerformanceCurve
-                ] = PerformanceCurve(
+                electric_performance_curve: PerformanceCurve | None = PerformanceCurve(
                     electric_performance_inputs[ZEROTH_ORDER],
                     electric_performance_inputs[FIRST_ORDER],
                     electric_performance_inputs[SECOND_ORDER],
@@ -782,12 +780,12 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         if PV_MODULE_CHARACTERISTICS in solar_inputs:
             pv_module_characteristics_inputs = solar_inputs[PV_MODULE_CHARACTERISTICS]
             try:
-                pv_module_characteristics: Optional[
-                    PVModuleCharacteristics
-                ] = PVModuleCharacteristics(
-                    pv_module_characteristics_inputs[REFERENCE_EFFICIENCY],
-                    pv_module_characteristics_inputs[REFERENCE_TEMPERATURE],
-                    pv_module_characteristics_inputs[THERMAL_COEFFICIENT],
+                pv_module_characteristics: PVModuleCharacteristics | None = (
+                    PVModuleCharacteristics(
+                        pv_module_characteristics_inputs[REFERENCE_EFFICIENCY],
+                        pv_module_characteristics_inputs[REFERENCE_TEMPERATURE],
+                        pv_module_characteristics_inputs[THERMAL_COEFFICIENT],
+                    )
                 )
             except KeyError as exception:
                 logger.error(
@@ -817,7 +815,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         logger: Logger,
         mass_flow_rate: float,
         solar_irradiance: float,
-    ) -> Tuple[Optional[float], Optional[float], Optional[float], Optional[float],]:
+    ) -> Tuple[float | None, float | None, float | None, float | None,]:
         """
         Calculates the performance characteristics of the hybrid PV-T collector.
 
@@ -1038,7 +1036,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
         logger: Logger,
         mass_flow_rate: float,
         solar_irradiance: float,
-    ) -> Tuple[Optional[float], Optional[float], Optional[float], Optional[float],]:
+    ) -> Tuple[float | None, float | None, float | None, float | None,]:
         """
         Calculates the performance characteristics of the solar-thermal collector.
 
