@@ -65,7 +65,7 @@ solar_collectors:
       thermal_coefficient: !!float 0.0036  # [%/degC]
     thermal_performance_curve:
       zeroth_order: !!float 0.700
-      first_order: !!float 5.98  # [W/degC]
+      first_order: !!float -5.98  # [W/degC]
       second_order: !!float 0
 
     # Dualsun datasheet:
@@ -85,7 +85,7 @@ solar_collectors:
       thermal_coefficient: !!float 0.0034  # [%/degC]
     thermal_performance_curve:
       zeroth_order: !!float 0.633
-      first_order: !!float 11.5  # [W/m^2K]
+      first_order: !!float -11.5  # [W/m^2K]
       second_order: !!float 0
   - name: !!str dualsun_spring_insulated
     type: !!str pv_t
@@ -100,7 +100,7 @@ solar_collectors:
       thermal_coefficient: !!float 0.0034  # [%/degC]
     thermal_performance_curve:
       zeroth_order: !!float 0.621
-      first_order: !!float 7.4  # [W/m^2K]
+      first_order: !!float -7.4  # [W/m^2K]
       second_order: !!float 0
 
   #########################
@@ -113,7 +113,7 @@ solar_collectors:
     name: !!str fk_basic
     nominal_mass_flow_rate: !!float 50
     thermal_performance_curve:
-      first_order: !!float 3.53
+      first_order: !!float -3.53
       second_order: !!float 0.0047
       zeroth_order: !!float 0.694
     type: !!str solar_thermal
@@ -124,7 +124,7 @@ solar_collectors:
     name: !!str gaia_run_2_55_blue_s_c&g_energy_klb_2_5_regulus_kps11
     nominal_mass_flow_rate: !!float 125
     thermal_performance_curve:
-      first_order: !!float 4.05
+      first_order: !!float -4.05
       second_order: !!float 0.0062
       zeroth_order: !!float 0.716
     type: !!str solar_thermal
@@ -135,7 +135,7 @@ solar_collectors:
     name: !!str gaia_run_2_15_blue_s
     nominal_mass_flow_rate: !!float 100
     thermal_performance_curve:
-      first_order: !!float 3.93
+      first_order: !!float -3.93
       second_order: !!float 0.0066
       zeroth_order: !!float 0.702
     type: !!str solar_thermal
@@ -146,7 +146,7 @@ solar_collectors:
     name: !!str hewalex_ks_3200f
     nominal_mass_flow_rate: !!float 120
     thermal_performance_curve:
-      first_order: !!float 3.91
+      first_order: !!float -3.91
       second_order: !!float 0.0048
       zeroth_order: !!float 0.793
     type: !!str solar_thermal
@@ -157,7 +157,7 @@ solar_collectors:
     name: !!str thermital_tsol_25_4_flex
     nominal_mass_flow_rate: !!float 70
     thermal_performance_curve:
-      first_order: !!float 4
+      first_order: !!float -4
       second_order: !!float 0.006
       zeroth_order: !!float 0.75
     type: !!str solar_thermal
@@ -168,7 +168,7 @@ solar_collectors:
     name: !!str thermital_tsol_25_2_premium
     nominal_mass_flow_rate: !!float 70
     thermal_performance_curve:
-      first_order: !!float 4.12
+      first_order: !!float -4.12
       second_order: !!float 0.0056
       zeroth_order: !!float 0.768
     type: !!str solar_thermal
@@ -179,7 +179,7 @@ solar_collectors:
     name: !!str unical_titanium_xl
     nominal_mass_flow_rate: !!float 130
     thermal_performance_curve:
-      first_order: !!float 3.77
+      first_order: !!float -3.77
       second_order: !!float 0.0025
       zeroth_order: !!float 0.702
     type: !!str solar_thermal
@@ -190,7 +190,7 @@ solar_collectors:
     name: !!str unical_titanium
     nominal_mass_flow_rate: !!float 100
     thermal_performance_curve:
-      first_order: !!float 3.57
+      first_order: !!float -3.57
       second_order: !!float 0.0065
       zeroth_order: !!float 0.719
     type: !!str solar_thermal
@@ -201,7 +201,7 @@ solar_collectors:
     name: !!str c&g_energy_klb_2_0
     nominal_mass_flow_rate: !!float 100
     thermal_performance_curve:
-      first_order: !!float 3.93
+      first_order: !!float -3.93
       second_order: !!float 0.0066
       zeroth_order: !!float 0.702
     type: !!str solar_thermal
@@ -212,7 +212,7 @@ solar_collectors:
     name: !!str sunerg_h1tx+
     nominal_mass_flow_rate: !!float 130
     thermal_performance_curve:
-      first_order: !!float 3.77
+      first_order: !!float -3.77
       second_order: !!float 0.0025
       zeroth_order: !!float 0.702
     type: !!str solar_thermal
@@ -223,7 +223,7 @@ solar_collectors:
     name: !!str c20_(wagner__&_co)
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 3.09
+      first_order: !!float -3.09
       second_order: !!float 0.0095
       zeroth_order: !!float 0.778
     type: !!str solar_thermal
@@ -234,7 +234,7 @@ solar_collectors:
     name: !!str topson_f3_1_(wolf,_germany_t)
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 2.81
+      first_order: !!float -2.81
       second_order: !!float 0.0102
       zeroth_order: !!float 0.699
     type: !!str solar_thermal
@@ -245,7 +245,7 @@ solar_collectors:
     name: !!str t25s_(termicol,_spain)
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 5.32
+      first_order: !!float -5.32
       second_order: !!float 0.0211
       zeroth_order: !!float 0.728
     type: !!str solar_thermal
@@ -256,7 +256,7 @@ solar_collectors:
     name: !!str t8s_(termicol,_spain)
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 3.31
+      first_order: !!float -3.31
       second_order: !!float 0.0136
       zeroth_order: !!float 0.727
     type: !!str solar_thermal
@@ -267,7 +267,7 @@ solar_collectors:
     name: !!str t10s_(termicol,_spain)
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 3.78
+      first_order: !!float -3.78
       second_order: !!float 0.0009
       zeroth_order: !!float 0.755
     type: !!str solar_thermal
@@ -278,7 +278,7 @@ solar_collectors:
     name: !!str es2v_2_65_al_cu_(ensol,_poland)
     nominal_mass_flow_rate: !!float 90
     thermal_performance_curve:
-      first_order: !!float 3.61
+      first_order: !!float -3.61
       second_order: !!float 0.0138
       zeroth_order: !!float 0.784
     type: !!str solar_thermal
@@ -289,7 +289,7 @@ solar_collectors:
     name: !!str ksg_21_premium_gt_(galmet,_poland)
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 3.51
+      first_order: !!float -3.51
       second_order: !!float 0.0111
       zeroth_order: !!float 0.766
     type: !!str solar_thermal
@@ -300,7 +300,7 @@ solar_collectors:
     name: !!str rst_sol_4_niox_(reinhard_solartechnik,germany)
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 4.09
+      first_order: !!float -4.09
       second_order: !!float 0.0040
       zeroth_order: !!float 0.780
     type: !!str solar_thermal
@@ -311,7 +311,7 @@ solar_collectors:
     name: !!str fkf_240_alal_(sti_solar,_germany)
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 3.35
+      first_order: !!float -3.35
       second_order: !!float 0.0150
       zeroth_order: !!float 0.714
     type: !!str solar_thermal
@@ -322,7 +322,7 @@ solar_collectors:
     name: !!str fkf_240_cucu_(sti_solar,_germany)
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 3.63
+      first_order: !!float -3.63
       second_order: !!float 0.0106
       zeroth_order: !!float 0.710
     type: !!str solar_thermal
@@ -333,7 +333,7 @@ solar_collectors:
     name: !!str sti_fino_(sti_solar,_germany)
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 3.25
+      first_order: !!float -3.25
       second_order: !!float 0.0075
       zeroth_order: !!float 0.684
     type: !!str solar_thermal
@@ -344,7 +344,7 @@ solar_collectors:
     name: !!str solarplan_fk_26_wb_serie_b___807227
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 3.15
+      first_order: !!float -3.15
       second_order: !!float 0.0150
       zeroth_order: !!float 0.702
     type: !!str solar_thermal
@@ -355,7 +355,7 @@ solar_collectors:
     name: !!str solarplan_fk_25_rc_serie_c___807234
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 3.47
+      first_order: !!float -3.47
       second_order: !!float 0.0126
       zeroth_order: !!float 0.725
     type: !!str solar_thermal
@@ -366,7 +366,7 @@ solar_collectors:
     name: !!str sunex_typ_sx_2_85_al
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 2.99
+      first_order: !!float -2.99
       second_order: !!float 0.0176
       zeroth_order: !!float 0.751
     type: !!str solar_thermal
@@ -377,7 +377,7 @@ solar_collectors:
     name: !!str junkers__fkc_2s
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 2.96
+      first_order: !!float -2.96
       second_order: !!float 0.0140
       zeroth_order: !!float 0.720
     type: !!str solar_thermal
@@ -388,7 +388,7 @@ solar_collectors:
     name: !!str junkers_fcc_2s
     nominal_mass_flow_rate: !!float 150
     thermal_performance_curve:
-      first_order: !!float 3.78
+      first_order: !!float -3.78
       second_order: !!float 0.0110
       zeroth_order: !!float 0.705
     type: !!str solar_thermal
@@ -399,7 +399,7 @@ solar_collectors:
     name: !!str remasol_c_250_h
     nominal_mass_flow_rate: !!float 60
     thermal_performance_curve:
-      first_order: !!float 3.45
+      first_order: !!float -3.45
       second_order: !!float 0.0083
       zeroth_order: !!float 0.770
     type: !!str solar_thermal
@@ -410,7 +410,7 @@ solar_collectors:
     name: !!str stiebel_sol_27_basic
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 3.22
+      first_order: !!float -3.22
       second_order: !!float 0.0134
       zeroth_order: !!float 0.743
     type: !!str solar_thermal
@@ -421,7 +421,7 @@ solar_collectors:
     name: !!str mean_fpc
     nominal_mass_flow_rate: !!float 97.85714286
     thermal_performance_curve:
-      first_order: !!float 3.619626844
+      first_order: !!float -3.619626844
       second_order: !!float 0.009328034801
       zeroth_order: !!float 0.7334194095
     type: !!str solar_thermal
@@ -437,7 +437,7 @@ solar_collectors:
     name: !!str nmt_vhp
     nominal_mass_flow_rate: !!float 30
     thermal_performance_curve:
-      first_order: !!float 1.26
+      first_order: !!float -1.26
       second_order: !!float 0.0014
       zeroth_order: !!float 0.398
     type: !!str solar_thermal
@@ -448,7 +448,7 @@ solar_collectors:
     name: !!str fk_solinas_3_plus_kurz
     nominal_mass_flow_rate: !!float 30
     thermal_performance_curve:
-      first_order: !!float 1.47
+      first_order: !!float -1.47
       second_order: !!float 0.0038
       zeroth_order: !!float 0.34
     type: !!str solar_thermal
@@ -459,7 +459,7 @@ solar_collectors:
     name: !!str fk_solinas_3_plus_kurz
     nominal_mass_flow_rate: !!float 30
     thermal_performance_curve:
-      first_order: !!float 1.43
+      first_order: !!float -1.43
       second_order: !!float 0.0005
       zeroth_order: !!float 0.394
     type: !!str solar_thermal
@@ -470,7 +470,7 @@ solar_collectors:
     name: !!str fk_solinas_3
     nominal_mass_flow_rate: !!float 30
     thermal_performance_curve:
-      first_order: !!float 1.29
+      first_order: !!float -1.29
       second_order: !!float 0.0014
       zeroth_order: !!float 0.398
     type: !!str solar_thermal
@@ -481,7 +481,7 @@ solar_collectors:
     name: !!str enersol_hp_70_24_wikosun_hp_70_24_zewotherm_zx_70_24_sunstar_2470_germanstar_hp_70_24
     nominal_mass_flow_rate: !!float 200
     thermal_performance_curve:
-      first_order: !!float 1.14
+      first_order: !!float -1.14
       second_order: !!float 0.0012
       zeroth_order: !!float 0.608
     type: !!str solar_thermal
@@ -492,7 +492,7 @@ solar_collectors:
     name: !!str enersol_hp_70_8_wikosun_hp_70_8_zewotherm_zx_70_8_sunstar_0870_germanstar_hp_70_8
     nominal_mass_flow_rate: !!float 200
     thermal_performance_curve:
-      first_order: !!float 1.17
+      first_order: !!float -1.17
       second_order: !!float 0.004
       zeroth_order: !!float 0.6
     type: !!str solar_thermal
@@ -503,7 +503,7 @@ solar_collectors:
     name: !!str as_100_hp8
     nominal_mass_flow_rate: !!float 125
     thermal_performance_curve:
-      first_order: !!float 0.84
+      first_order: !!float -0.84
       second_order: !!float 0.0039
       zeroth_order: !!float 0.534
     type: !!str solar_thermal
@@ -514,7 +514,7 @@ solar_collectors:
     name: !!str hv12
     nominal_mass_flow_rate: !!float 72
     thermal_performance_curve:
-      first_order: !!float 0.93
+      first_order: !!float -0.93
       second_order: !!float 0.0033
       zeroth_order: !!float 0.541
     type: !!str solar_thermal
@@ -525,7 +525,7 @@ solar_collectors:
     name: !!str eurosun_df120_6
     nominal_mass_flow_rate: !!float 120
     thermal_performance_curve:
-      first_order: !!float 0.75
+      first_order: !!float -0.75
       second_order: !!float 0.0041
       zeroth_order: !!float 0.572
     type: !!str solar_thermal
@@ -536,7 +536,7 @@ solar_collectors:
     name: !!str zewotherm_zx_30
     nominal_mass_flow_rate: !!float 240
     thermal_performance_curve:
-      first_order: !!float 0.51
+      first_order: !!float -0.51
       second_order: !!float 0.0114
       zeroth_order: !!float 0.414
     type: !!str solar_thermal
@@ -547,7 +547,7 @@ solar_collectors:
     name: !!str zewotherm_zx_20
     nominal_mass_flow_rate: !!float 160
     thermal_performance_curve:
-      first_order: !!float 1.32
+      first_order: !!float -1.32
       second_order: !!float 0.0033
       zeroth_order: !!float 0.424
     type: !!str solar_thermal
@@ -558,7 +558,7 @@ solar_collectors:
     name: !!str olymp_sunstar_500
     nominal_mass_flow_rate: !!float 180
     thermal_performance_curve:
-      first_order: !!float 1.21
+      first_order: !!float -1.21
       second_order: !!float 0.0005
       zeroth_order: !!float 0.544
     type: !!str solar_thermal
@@ -569,7 +569,7 @@ solar_collectors:
     name: !!str olymp_sunstar_300
     nominal_mass_flow_rate: !!float 120
     thermal_performance_curve:
-      first_order: !!float 1.14
+      first_order: !!float -1.14
       second_order: !!float 0.0021
       zeroth_order: !!float 0.544
     type: !!str solar_thermal
@@ -580,7 +580,7 @@ solar_collectors:
     name: !!str atmosfera_cbk_a_58_30
     nominal_mass_flow_rate: !!float 180
     thermal_performance_curve:
-      first_order: !!float 1.22
+      first_order: !!float -1.22
       second_order: !!float 0.0051
       zeroth_order: !!float 0.373
     type: !!str solar_thermal
@@ -591,7 +591,7 @@ solar_collectors:
     name: !!str wikosun_df_65_30
     nominal_mass_flow_rate: !!float 180
     thermal_performance_curve:
-      first_order: !!float 1.21
+      first_order: !!float -1.21
       second_order: !!float 0.0013
       zeroth_order: !!float 0.542
     type: !!str solar_thermal
@@ -602,7 +602,7 @@ solar_collectors:
     name: !!str wikosun_df_65_10
     nominal_mass_flow_rate: !!float 120
     thermal_performance_curve:
-      first_order: !!float 1.51
+      first_order: !!float -1.51
       second_order: !!float 0.0001
       zeroth_order: !!float 0.552
     type: !!str solar_thermal
@@ -624,7 +624,7 @@ solar_collectors:
     name: !!str sunpur_10hp___sun5hp_(orange_energy)
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 0.39
+      first_order: !!float -0.39
       second_order: !!float 0.0050
       zeroth_order: !!float 0.42
     type: !!str solar_thermal
@@ -635,7 +635,7 @@ solar_collectors:
     name: !!str as_100_df_6_(augusta_solar,_germany)
     nominal_mass_flow_rate: !!float 75
     thermal_performance_curve:
-      first_order: !!float 1.03
+      first_order: !!float -1.03
       second_order: !!float 0.0052
       zeroth_order: !!float 0.55
     type: !!str solar_thermal
@@ -646,7 +646,7 @@ solar_collectors:
     name: !!str eurotherm_solar_pro_20r
     nominal_mass_flow_rate: !!float 120
     thermal_performance_curve:
-      first_order: !!float 1.01
+      first_order: !!float -1.01
       second_order: !!float 0.0104
       zeroth_order: !!float 0.44
     type: !!str solar_thermal
@@ -657,7 +657,7 @@ solar_collectors:
     name: !!str eurotherm_solar_20r
     nominal_mass_flow_rate: !!float 120
     thermal_performance_curve:
-      first_order: !!float 0.88
+      first_order: !!float -0.88
       second_order: !!float 0.0120
       zeroth_order: !!float 0.39
     type: !!str solar_thermal
@@ -668,7 +668,7 @@ solar_collectors:
     name: !!str eurotherm_solar_cpc_16r
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 1.21
+      first_order: !!float -1.21
       second_order: !!float 0.0040
       zeroth_order: !!float 0.54
     type: !!str solar_thermal
@@ -679,7 +679,7 @@ solar_collectors:
     name: !!str solarbayer_cpc_14_nero_brutto
     nominal_mass_flow_rate: !!float 200
     thermal_performance_curve:
-      first_order: !!float 0.93
+      first_order: !!float -0.93
       second_order: !!float 0.0040
       zeroth_order: !!float 0.63
     type: !!str solar_thermal
@@ -690,7 +690,7 @@ solar_collectors:
     name: !!str sunex_hp_22
     nominal_mass_flow_rate: !!float 54
     thermal_performance_curve:
-      first_order: !!float 1.24
+      first_order: !!float -1.24
       second_order: !!float 0.0040
       zeroth_order: !!float 0.43
     type: !!str solar_thermal
@@ -712,7 +712,7 @@ solar_collectors:
     name: !!str logasol_skr10_cpc_(buderus,_germany)
     nominal_mass_flow_rate: None
     thermal_performance_curve:
-      first_order: !!float 0.63
+      first_order: !!float -0.63
       second_order: !!float 0.0096
       zeroth_order: !!float 0.53
     type: !!str solar_thermal
@@ -723,7 +723,7 @@ solar_collectors:
     name: !!str germanstar_hp_70_16_(eurosun,_germany)
     nominal_mass_flow_rate: !!float 200
     thermal_performance_curve:
-      first_order: !!float 1.17
+      first_order: !!float -1.17
       second_order: !!float 0.0040
       zeroth_order: !!float 0.60
     type: !!str solar_thermal
@@ -734,7 +734,7 @@ solar_collectors:
     name: !!str mean_etc
     nominal_mass_flow_rate: !!float 123.7391304
     thermal_performance_curve:
-      first_order: !!float 1.075591267
+      first_order: !!float -1.075591267
       second_order: !!float 0.004223480543
       zeroth_order: !!float 0.4906945674
     type: !!str solar_thermal
