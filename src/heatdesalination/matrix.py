@@ -77,7 +77,16 @@ def _solar_system_output_temperatures(
     solar_irradiance: float,
     solar_thermal_collector: Optional[SolarThermalPanel],
     solar_thermal_mass_flow_rate: Optional[float],
-) -> Tuple[float, float, float]:
+) -> Tuple[
+    float,
+    Optional[float],
+    Optional[float],
+    Optional[float],
+    Optional[float],
+    Optional[float],
+    Optional[float],
+    Optional[float],
+]:
     """
     Calculates the output temperatures of the PV-T, solar-thermal and overall solar.
 
@@ -114,9 +123,12 @@ def _solar_system_output_temperatures(
     """
 
     if scenario.pv_t:
-        pvt_htf_output_temperature: Optional[
-            float
-        ] = hybrid_pvt_panel.calculate_performance(
+        (
+            pvt_electrical_efficiency,
+            pvt_htf_output_temperature,
+            pvt_reduced_temperature,
+            pvt_thermal_efficiency,
+        ) = hybrid_pvt_panel.calculate_performance(
             ambient_temperature,
             scenario.htf_heat_capacity,
             collector_system_input_temperature,
@@ -125,12 +137,18 @@ def _solar_system_output_temperatures(
             solar_irradiance,
         )
     else:
+        pvt_electrical_efficiency = None
         pvt_htf_output_temperature = None
+        pvt_reduced_temperature = None
+        pvt_thermal_efficiency = None
 
     if scenario.solar_thermal:
-        solar_thermal_htf_output_temperature: Optional[
-            float
-        ] = solar_thermal_collector.calculate_performance(
+        (
+            _,
+            solar_thermal_htf_output_temperature,
+            solar_thermal_reduced_temperature,
+            solar_thermal_thermal_efficiency,
+        ) = solar_thermal_collector.calculate_performance(
             ambient_temperature,
             scenario.htf_heat_capacity,
             pvt_htf_output_temperature
@@ -142,6 +160,8 @@ def _solar_system_output_temperatures(
         )
     else:
         solar_thermal_htf_output_temperature = None
+        solar_thermal_reduced_temperature = None
+        solar_thermal_thermal_efficiency = None
 
     # Determine the output temperature from the whole solar collector system.
     if solar_thermal_htf_output_temperature is not None:
@@ -157,8 +177,13 @@ def _solar_system_output_temperatures(
 
     return (
         collector_system_output_temperature,
+        pvt_electrical_efficiency,
         pvt_htf_output_temperature,
+        pvt_reduced_temperature,
+        pvt_thermal_efficiency,
         solar_thermal_htf_output_temperature,
+        solar_thermal_reduced_temperature,
+        solar_thermal_thermal_efficiency,
     )
 
 
@@ -366,8 +391,13 @@ def solve_matrix(
         # Calculate the various coefficients which go into the matrix.
         (
             collector_system_output_temperature,
+            pvt_electrical_efficiency,
             pvt_htf_output_temperature,
+            pvt_reduced_temperature,
+            pvt_thermal_efficiency,
             solar_thermal_htf_output_temperature,
+            solar_thermal_reduced_temperature,
+            solar_thermal_thermal_efficiency,
         ) = _solar_system_output_temperatures(
             ambient_temperature,
             best_guess_collector_htf_input_temperature,

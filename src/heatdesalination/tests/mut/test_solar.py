@@ -234,7 +234,7 @@ class TestSolarThermalPanelPerformance(unittest.TestCase):
             "nominal_mass_flow_rate": 97.85714286,
             "thermal_performance_curve": {
                 "first_order": -3.619626844,
-                "second_order": --0.009328034801,
+                "second_order": -0.009328034801,
                 "zeroth_order": 0.7334194095,
             },
             "type": "solar_thermal",
