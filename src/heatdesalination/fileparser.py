@@ -21,6 +21,14 @@ from typing import Dict
 
 import json
 
+from .solar import (
+    COLLECTOR_FROM_TYPE,
+    HybridPVTPanel,
+    PVPanel,
+    SolarPanelType,
+    SolarThermalPanel,
+)
+
 from .__utils__ import (
     AMBIENT_TEMPERATURE,
     AUTO_GENERATED_FILES_DIRECTORY,
@@ -75,9 +83,21 @@ SCENARIO_INPUTS: str = "scenarios.yaml"
 #   Keyword for scenario information.
 SCENARIOS: str = "scenarios"
 
+# SOLAR_COLLECTORS:
+#   Keyword for solar collectors.
+SOLAR_COLLECTORS: str = "solar_collectors"
+
+# SOLAR_INPUTS:
+#   The name of the solar-collectors input file.
+SOLAR_INPUTS: str = "solar.yaml"
+
 # SOLAR_THERMAL:
 #   Keyword for parsing the solar-thermal collector name.
 SOLAR_THERMAL: str = "solar_thermal"
+
+# TYPE:
+#   Keyword for the type of solar collector.
+TYPE: str = "type"
 
 
 def parse_input_files(
@@ -150,22 +170,81 @@ def parse_input_files(
         raise
 
     # Parse the solar panels.
+    solar_inputs = read_yaml(os.path.join(INPUTS_DIRECTORY, SOLAR_INPUTS), logger)
+    try:
+        solar_collectors = [
+            COLLECTOR_FROM_TYPE[SolarPanelType(entry[TYPE])].from_dict(logger, entry)
+            for entry in solar_inputs[SOLAR_COLLECTORS]
+        ]
+    except KeyError as exception:
+        logger.error(
+            "Could not parse all solar-panel inputs, potentially missing `type`: %s",
+            str(exception),
+        )
+        raise
+    except ValueError as exception:
+        logger.error("Invalid panel type: %s", str(exception))
+        raise
+
+    # Determine the PV, PV-T and solar-thermal panels selected based on the scenario.
+    if scenario.pv:
+        try:
+            pv_panel: PVPanel | None = [
+                entry
+                for entry in solar_collectors
+                if entry.name == scenario.pv_panel_name
+            ][0]
+        except IndexError:
+            logger.error(
+                "Could not find PV panel '%s' in input file.", scenario.pv_panel_name
+            )
+            raise
+    else:
+        pv_panel = None
+
+    if scenario.pv_t:
+        try:
+            hybrid_pvt_panel: HybridPVTPanel | None = [
+                entry
+                for entry in solar_collectors
+                if entry.name == scenario.pv_t_panel_name
+            ][0]
+        except IndexError:
+            logger.error(
+                "Could not find PV-T panel '%s' in input file.",
+                scenario.pv_t_panel_name,
+            )
+            raise
+    else:
+        hybrid_pvt_panel = None
+
+    if scenario.solar_thermal:
+        try:
+            solar_thermal_collector: SolarThermalPanel | None = [
+                entry
+                for entry in solar_collectors
+                if entry.name == scenario.solar_thermal_panel_name
+            ][0]
+        except IndexError:
+            logger.error(
+                "Could not find solar-thermal collector '%s' in input file.",
+                scenario.solar_thermal,
+            )
+            raise
+    else:
+        solar_thermal_collector = None
 
     # Parse the weather data.
     with open(
         os.path.join(AUTO_GENERATED_FILES_DIRECTORY, f"{location}.json"),
         "r",
         encoding="UTF-8",
-    ) as f:
-        weather_data = json.load(f)
+    ) as weather_data_file:
+        weather_data = json.load(weather_data_file)
 
     ambient_temperatures: Dict[ProfileType, Dict[int, float]] = {}
     solar_irradiances: Dict[ProfileType, Dict[int, float]] = {}
     time_difference: int = weather_data[TIMEZONE]
-
-    import pdb
-
-    pdb.set_trace()
 
     for profile_type in ProfileType:
         ambient_temperatures[profile_type] = {

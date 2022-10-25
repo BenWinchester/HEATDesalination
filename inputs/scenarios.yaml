@@ -13,6 +13,6 @@ scenarios:
     heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
     htf_heat_capacity: !!float 4182  # [J/kg*K]
     plant: !!str med  # The name of the desalination plant to include
-    pv: !!str mono_si  # The name of the PV panel to include or "off"
-    pv_t: !!str abora_aH72SK  # The PV-T collector to include or "off"
-    solar_thermal: !!str fpc  # The solar-thermal collector to include or "off"
+    pv: !!str dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_t: !!str abora_h72sk  # The PV-T collector to include or "off"
+    solar_thermal: !!str fk_basic  # The solar-thermal collector to include or "off"

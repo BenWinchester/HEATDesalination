@@ -417,8 +417,8 @@ class Scenario:
 
         """
 
-        if isinstance(self._pv_t, str):
-            return self._pv_t
+        if isinstance(self._solar_thermal, str):
+            return self._solar_thermal
 
         raise Exception(
             "Solar-thermal panel name requested but solar-thermal panels are not "

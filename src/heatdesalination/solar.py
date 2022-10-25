@@ -321,9 +321,9 @@ def _thermal_performance(
         ) / (2 * mass_flow_rate * htf_heat_capacity - performance_curve.c_1 * area)
 
     # Compute the various terms of the equation
-    a: float = performance_curve.c_2 * area
+    a: float = performance_curve.c_2 * area  # pylint: disable=invalid-name
 
-    b: float = (
+    b: float = (  # pylint: disable=invalid-name
         +2 * performance_curve.c_1 * area
         + 2
         * performance_curve.c_2
@@ -332,7 +332,7 @@ def _thermal_performance(
         - 4 * mass_flow_rate * htf_heat_capacity
     )
 
-    c: float = (
+    c: float = (  # pylint: disable=invalid-name
         4 * performance_curve.eta_0 * area * solar_irradiance
         + 4 * mass_flow_rate * htf_heat_capacity * input_temperature
         + 2
@@ -456,6 +456,24 @@ class SolarPanel(abc.ABC):  # pylint: disable=too-few-public-methods
 
         """
 
+    @classmethod
+    @abc.abstractmethod
+    def from_dict(
+        cls,
+        logger: Logger,
+        solar_inputs: Dict[str, Any],
+    ) -> Any:
+        """
+        Instantiate a :class:`SolarPanel` instance based on the input data.
+
+        Inputs:
+            - logger:
+                The :class:`logging.Logger` to use for the run.
+            - solar_inputs:
+                The solar input data specific to this panel.
+
+        """
+
 
 class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
     """
@@ -534,6 +552,26 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
         """
 
         return self._reference_temperature + ZERO_CELCIUS_OFFSET
+
+    def __repr__(self) -> str:
+        """
+        Return a nice-looking representation of the panel.
+
+        Outputs:
+            - A nice-looking representation of the panel.
+
+        """
+
+        return (
+            "PVPanel("
+            + f"name={self.name}"
+            + f", area={self.area:.2g}"
+            + f", reference_efficiency={self.reference_efficiency:.2g}"
+            + f", reference_temperature={self.reference_temperature:.2g} K"
+            + f" ({self._reference_temperature:.2g} degC"
+            + f", thermal_coefficient={self.thermal_coefficient:.2g}"
+            + ")"
+        )
 
     @classmethod
     def from_dict(cls, logger: Logger, solar_inputs: Dict[str, Any]) -> Any:
@@ -705,9 +743,11 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
 
         return (
             "HybridPVTPanel("
-            + f"max_mass_flow_rate={self.max_mass_flow_rate}"
-            + f", min_mass_flow_rate={self.min_mass_flow_rate}"
-            + f", name={self.name}"
+            + f"name={self.name}"
+            + f", max_mass_flow_rate={self.max_mass_flow_rate:.2g} kg/s"
+            + f" ({self._max_mass_flow_rate:.2g} l/h)"
+            + f", min_mass_flow_rate={self.min_mass_flow_rate:.2g} kg/s"
+            + f" ({self._min_mass_flow_rate:.2g} l/h)"
             + ")"
         )
 
@@ -1164,3 +1204,12 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
             raise
 
         return cls(performance_curve, solar_inputs)
+
+
+# COLLECTOR_FROM_TYPE:
+#   Mapping from collector type to collector.
+COLLECTOR_FROM_TYPE: Dict[str, SolarPanel] = {
+    SolarPanelType.PV: PVPanel,
+    SolarPanelType.PV_T: HybridPVTPanel,
+    SolarPanelType.SOLAR_THERMAL: SolarThermalPanel,
+}
