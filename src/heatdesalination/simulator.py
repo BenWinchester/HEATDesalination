@@ -64,7 +64,7 @@ def _tank_ambient_temperature(ambient_temperature: float) -> float:
             The ambient temperature.
 
     Outputs:
-        The temperature of the air surrounding the hot-water tank.
+        The temperature of the air surrounding the hot-water tank, measured in Kelvin.
 
     """
 
@@ -176,14 +176,17 @@ def run_simulation(
     solar_thermal_htf_output_temperatures: Dict[int, float | None] = {}
     solar_thermal_reduced_temperatures: Dict[int, float | None] = {}
     solar_thermal_thermal_efficiencies: Dict[int, float | None] = {}
-    tank_temperatures: DefaultDict[int, float] = defaultdict(float)
+    tank_temperatures: DefaultDict[int, float] = defaultdict(
+        lambda: _tank_ambient_temperature(ambient_temperatures[0])
+    )
 
     # At each time step, call the matrix equation solver.
     logger.info("Beginning hourly simulation.")
     for hour in tqdm(
         range(24),
         desc="simulation",
-        leave=disable_tqdm,
+        disable=disable_tqdm,
+        leave=False,
         unit="hour",
     ):
         (
@@ -230,7 +233,7 @@ def run_simulation(
 
     if scenario.pv:
         logger.info("Computing PV performance characteristics.")
-        pv_electrical_efficiencies: Dict[int, float] = {
+        pv_electrical_efficiencies: Dict[int, float] | None = {
             hour: pv_panel.calculate_performance(
                 ambient_temperatures[hour], logger, solar_irradiances[hour]
             )
@@ -238,6 +241,8 @@ def run_simulation(
                 range(24), desc="pv performance", leave=disable_tqdm, unit="hour"
             )
         }
+    else:
+        pv_electrical_efficiencies = None
 
     logger.info("Hourly simulation complete, returning outputs.")
     return (
@@ -251,5 +256,5 @@ def run_simulation(
         solar_thermal_htf_output_temperatures if scenario.solar_thermal else None,
         solar_thermal_reduced_temperatures if scenario.solar_thermal else None,
         solar_thermal_thermal_efficiencies if scenario.solar_thermal else None,
-        tank_temperatures,
+        {key: value for key, value in tank_temperatures.items() if 0 <= key < 24},
     )

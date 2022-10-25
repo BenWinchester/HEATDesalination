@@ -13,12 +13,17 @@ test_simulator.py - Tests for the simulation module.
 
 """
 
-from typing import Tuple
+from typing import Dict, Tuple
 import unittest
 
 from unittest import mock
 
-from heatdesalination.__utils__ import ZERO_CELCIUS_OFFSET
+from heatdesalination.__utils__ import (
+    HEAT_CAPACITY_OF_WATER,
+    ZERO_CELCIUS_OFFSET,
+    Scenario,
+)
+from heatdesalination.solar import PVPanel
 
 from ...simulator import (
     _collector_mass_flow_rate,
@@ -85,3 +90,176 @@ class TestTankReplacementTempearture(unittest.TestCase):
 
 class TestRunSimulation(unittest.TestCase):
     """Tests the `run_simulation` function."""
+
+    def setUp(self) -> None:
+        """Set up mocks in common across test cases."""
+
+        self.ambient_temperatures: Dict[int, float] = {
+            hour: mock.Mock() for hour in range(24)
+        }
+        self.buffer_tank = mock.MagicMock()
+        self.desalination_plant = mock.MagicMock()
+        self.htf_mass_flow_rate = mock.Mock()
+        self.hybrid_pvt_panel = mock.MagicMock()
+        self.logger = mock.MagicMock()
+        self.pvt_system_size = mock.Mock()
+        self.solar_irradiances: Dict[int, float] = {hour: 15 for hour in range(24)}
+        self.solar_thermal_collector = mock.MagicMock()
+        self.solar_thermal_system_size = mock.Mock()
+
+        # Setup the PV panel
+        pv_input_data = {
+            "name": "dusol_ds60275_m",
+            "type": "pv",
+            "area": 1.638,
+            "land_use": 1.638,
+            "reference_efficiency": 0.1692,
+            "reference_temperature": 25.0,
+            "thermal_coefficient": 0.0044,
+            "pv_unit": 0.275,
+        }
+
+        self.pv_panel: PVPanel = PVPanel.from_dict(self.logger, pv_input_data)
+        self.pv_panel.calculate_performance = mock.MagicMock(
+            side_effect=[0] * 8 + [0.3] * 8 + [0] * 8
+        )
+
+        # Setup the scenario
+        self.scenario = Scenario(
+            0.4,
+            HEAT_CAPACITY_OF_WATER,
+            (default_name := "default"),
+            "plant",
+            default_name,
+            default_name,
+            default_name,
+        )
+
+    def test_mainline(self) -> None:
+        """
+        Tests the mainline case.
+
+        The run-simulation function primarily acts as a for-loop, and so all that really
+        needs to be checked is that the other functions are called as expected.
+
+        """
+
+        # Setup return values and side effects.
+        solve_matrix_outputs = (
+            [(10, 10, 0, 10, 0, 0, 10, 0, 0, 40)] * 8
+            + [(20, 40, 0.125, 30, 0.02, 0.45, 40, 0.01, 0.8, 80)] * 8
+            + [(10, 10, 0, 10, 0, 0, 10, 0, 0, 40)] * 8
+        )
+
+        # Mock the various functions and methods.
+        with mock.patch(
+            "heatdesalination.simulator.solve_matrix", side_effect=solve_matrix_outputs
+        ) as mock_solve_matrix, mock.patch(
+            "heatdesalination.simulator._collector_mass_flow_rate",
+            side_effect=[5, 10],
+        ) as mock_collector_mass_flow_rate, mock.patch(
+            "heatdesalination.simulator._tank_ambient_temperature", return_value=15
+        ) as mock_tank_ambient_temperature, mock.patch(
+            "heatdesalination.simulator._tank_replacement_temperature", return_value=10
+        ) as mock_tank_replacement_temperature:
+            outputs = run_simulation(
+                self.ambient_temperatures,
+                self.buffer_tank,
+                self.desalination_plant,
+                self.htf_mass_flow_rate,
+                self.hybrid_pvt_panel,
+                self.logger,
+                self.pv_panel,
+                self.pvt_system_size,
+                self.scenario,
+                self.solar_irradiances,
+                self.solar_thermal_collector,
+                self.solar_thermal_system_size,
+                disable_tqdm=True,
+            )
+
+        # Check that all mocked functions were called as expected.
+        self.assertEqual(len(mock_collector_mass_flow_rate.call_args_list), 2)
+        self.assertEqual(len(mock_solve_matrix.call_args_list), 24)
+        # The tank ambient temperature is called before iteration.
+        self.assertEqual(len(mock_tank_ambient_temperature.call_args_list), 25)
+        self.assertEqual(len(mock_tank_replacement_temperature.call_args_list), 24)
+
+        # Check that all the outputs are as expected.
+        # Collector input temperatures:
+        self.assertEqual(
+            outputs[0],
+            {hour: 10 for hour in range(0, 8)}
+            | {hour: 20 for hour in range(8, 16)}
+            | {hour: 10 for hour in range(16, 24)},
+        )
+        # Collector output temperatures:
+        self.assertEqual(
+            outputs[1],
+            {hour: 10 for hour in range(0, 8)}
+            | {hour: 40 for hour in range(8, 16)}
+            | {hour: 10 for hour in range(16, 24)},
+        )
+        # PV efficiencies
+        self.assertEqual(
+            outputs[2],
+            {hour: 0 for hour in range(0, 8)}
+            | {hour: 0.3 for hour in range(8, 16)}
+            | {hour: 0 for hour in range(16, 24)},
+        )
+        # PV-T electrical efficiencies
+        self.assertEqual(
+            outputs[3],
+            {hour: 0 for hour in range(0, 8)}
+            | {hour: 0.125 for hour in range(8, 16)}
+            | {hour: 0 for hour in range(16, 24)},
+        )
+        # PV-T HTF output temperatures:
+        self.assertEqual(
+            outputs[4],
+            {hour: 10 for hour in range(0, 8)}
+            | {hour: 30 for hour in range(8, 16)}
+            | {hour: 10 for hour in range(16, 24)},
+        )
+        # PV-T reduced temperatures:
+        self.assertEqual(
+            outputs[5],
+            {hour: 0 for hour in range(0, 8)}
+            | {hour: 0.02 for hour in range(8, 16)}
+            | {hour: 0 for hour in range(16, 24)},
+        )
+        # PV-T thermal efficiencies:
+        self.assertEqual(
+            outputs[6],
+            {hour: 0 for hour in range(0, 8)}
+            | {hour: 0.45 for hour in range(8, 16)}
+            | {hour: 0 for hour in range(16, 24)},
+        )
+        # Solar-thermal output temperatures:
+        self.assertEqual(
+            outputs[7],
+            {hour: 10 for hour in range(0, 8)}
+            | {hour: 40 for hour in range(8, 16)}
+            | {hour: 10 for hour in range(16, 24)},
+        )
+        # Solar-thermal reduced temperatures:
+        self.assertEqual(
+            outputs[8],
+            {hour: 0 for hour in range(0, 8)}
+            | {hour: 0.01 for hour in range(8, 16)}
+            | {hour: 0 for hour in range(16, 24)},
+        )
+        # Solar-thermal thermal efficiency:
+        self.assertEqual(
+            outputs[9],
+            {hour: 0 for hour in range(0, 8)}
+            | {hour: 0.8 for hour in range(8, 16)}
+            | {hour: 0 for hour in range(16, 24)},
+        )
+        # Tank temperatures:
+        self.assertEqual(
+            outputs[10],
+            {hour: 40 for hour in range(0, 8)}
+            | {hour: 80 for hour in range(8, 16)}
+            | {hour: 40 for hour in range(16, 24)},
+        )
