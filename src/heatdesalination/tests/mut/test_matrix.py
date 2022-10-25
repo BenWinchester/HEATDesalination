@@ -199,11 +199,11 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
         # Check that the correct panel methods were called.
         self.pvt_panel.calculate_performance.assert_called_once_with(
             self.ambient_temperature,
+            self.logger,
+            self.solar_irradiance,
             HEAT_CAPACITY_OF_WATER,
             self.collector_system_input_temperature,
-            self.logger,
             self.pvt_mass_flow_rate,
-            self.solar_irradiance,
         )
         self.solar_thermal_panel.calculate_performance.assert_not_called()
 
@@ -236,19 +236,19 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
         # Check that the correct panel methods were called.
         self.pvt_panel.calculate_performance.assert_called_once_with(
             self.ambient_temperature,
+            self.logger,
+            self.solar_irradiance,
             HEAT_CAPACITY_OF_WATER,
             self.collector_system_input_temperature,
-            self.logger,
             self.pvt_mass_flow_rate,
-            self.solar_irradiance,
         )
         self.solar_thermal_panel.calculate_performance.assert_called_once_with(
             self.ambient_temperature,
+            self.logger,
+            self.solar_irradiance,
             HEAT_CAPACITY_OF_WATER,
             50,
-            self.logger,
             self.solar_thermal_mass_flow_rate,
-            self.solar_irradiance,
         )
 
     def test_solar_thermal_only(self) -> None:
@@ -281,11 +281,11 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
         self.pvt_panel.calculate_performance.assert_not_called()
         self.solar_thermal_panel.calculate_performance.assert_called_once_with(
             self.ambient_temperature,
+            self.logger,
+            self.solar_irradiance,
             HEAT_CAPACITY_OF_WATER,
             self.collector_system_input_temperature,
-            self.logger,
             self.solar_thermal_mass_flow_rate,
-            self.solar_irradiance,
         )
 
 

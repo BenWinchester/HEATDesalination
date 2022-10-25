@@ -72,6 +72,11 @@ class TestPVPanel(unittest.TestCase):
             "thermal_coefficient": 0.0044,
             "pv_unit": 0.275,
         }
+
+        self.ambient_temperature: float = ZERO_CELCIUS_OFFSET
+        self.logger = mock.MagicMock()
+        self.solar_irradiance: float = 1000
+
         super().setUp()
 
     def test_instantiate(self) -> None:
@@ -84,7 +89,7 @@ class TestPVPanel(unittest.TestCase):
         """Tests the calculate performance method."""
 
         pv_panel = PVPanel.from_dict(mock.MagicMock(), self.input_data)
-        pv_panel.calculate_performance()
+        pv_panel.calculate_performance(self.ambient_temperature, self.logger, self.solar_irradiance)
 
 
 class TestHybridPVTPanelPerformance(unittest.TestCase):
@@ -154,11 +159,11 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
             thermal_efficiency,
         ) = pvt_panel.calculate_performance(
             self.ambient_temperature + ZERO_CELCIUS_OFFSET,
+            self.logger,
+            self.solar_irradiance,
             HEAT_CAPACITY_OF_WATER,
             self.input_temperature + ZERO_CELCIUS_OFFSET,
-            self.logger,
             self.mass_flow_rate / 3600,
-            self.solar_irradiance,
         )
 
         # Check the electrical efficiency.
@@ -276,11 +281,11 @@ class TestSolarThermalPanelPerformance(unittest.TestCase):
             thermal_efficiency,
         ) = solar_thermal_panel.calculate_performance(
             self.ambient_temperature + ZERO_CELCIUS_OFFSET,
+            self.test_logger,
+            self.solar_irradiance,
             HEAT_CAPACITY_OF_WATER,
             self.input_temperature + ZERO_CELCIUS_OFFSET,
-            self.test_logger,
             solar_thermal_panel.nominal_mass_flow_rate,
-            self.solar_irradiance,
         )
 
         # Type-check the outputs

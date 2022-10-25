@@ -169,6 +169,7 @@ def run_simulation(
     # Set up maps for storing variables.
     collector_input_temperatures: Dict[int, float] = {}
     collector_system_output_temperatures: Dict[int, float] = {}
+    pvt_electrical_efficiencies: Dict[int, float] = {}
     pvt_htf_output_temperatures: Dict[int, float | None] = {}
     solar_thermal_htf_output_temperatures: Dict[int, float | None] = {}
     tank_temperatures: DefaultDict[int, float] = defaultdict(float)
@@ -212,17 +213,32 @@ def run_simulation(
         # Save these outputs in mappings.
         collector_input_temperatures[hour] = collector_input_temperature
         collector_system_output_temperatures[hour] = collector_system_output_temperature
+        pvt_electrical_efficiencies[hour] = pvt_electrical_efficiency
         pvt_htf_output_temperatures[hour] = pvt_htf_output_temperature
+        pvt_reduced_temperatures[hour] = pvt_reduced_temperature
+        pvt_thermal_efficiencies[hour] = pvt_thermal_efficiency
         solar_thermal_htf_output_temperatures[
             hour
         ] = solar_thermal_htf_output_temperature
+        solar_thermal_reduced_temperatures[hour] = solar_thermal_reduced_temperature
+        solar_thermal_thermal_efficiencies[hour] = solar_thermal_thermal_efficiency
         tank_temperatures[hour] = tank_temperature
+
+    logger.info("Computing PV performance characteristics.")
+    pv_electrical_efficiencies: Dict[int, float] = {
+        hour: pv_panel.calculate_performance(ambient_temperatures[hour], logger, solar_irradiances[hour]) for hour in tqdm(range(24), desc="pv performance", leave=disable_tqdm, unit="hour")
+    }
 
     logger.info("Hourly simulation complete, returning outputs.")
     return (
         collector_input_temperatures,
         collector_system_output_temperatures,
+        pvt_electrical_efficiencies if scenario.pv_t else None,
         pvt_htf_output_temperatures if scenario.pv_t else None,
+        pvt_reduced_temperatures if scenario.pv_t else None,
+        pvt_thermal_efficiencies if scenario.pv_t else None,
         solar_thermal_htf_output_temperatures if scenario.solar_thermal else None,
+        solar_thermal_reduced_temperatures if scenario.solar_thermal else None,
+        solar_thermal_thermal_efficiencies if scenario.solar_thermal else None,
         tank_temperatures,
     )

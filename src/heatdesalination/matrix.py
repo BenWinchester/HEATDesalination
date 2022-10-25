@@ -130,11 +130,11 @@ def _solar_system_output_temperatures(
             pvt_thermal_efficiency,
         ) = hybrid_pvt_panel.calculate_performance(
             ambient_temperature,
+            logger,
+            solar_irradiance,
             scenario.htf_heat_capacity,
             collector_system_input_temperature,
-            logger,
             pvt_mass_flow_rate,
-            solar_irradiance,
         )
     else:
         pvt_electrical_efficiency = None
@@ -150,13 +150,13 @@ def _solar_system_output_temperatures(
             solar_thermal_thermal_efficiency,
         ) = solar_thermal_collector.calculate_performance(
             ambient_temperature,
+            logger,
+            solar_irradiance,
             scenario.htf_heat_capacity,
             pvt_htf_output_temperature
             if pvt_htf_output_temperature is not None
             else collector_system_input_temperature,
-            logger,
             solar_thermal_mass_flow_rate,
-            solar_irradiance,
         )
     else:
         solar_thermal_htf_output_temperature = None

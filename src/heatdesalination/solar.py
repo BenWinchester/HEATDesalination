@@ -417,11 +417,11 @@ class SolarPanel(abc.ABC):  # pylint: disable=too-few-public-methods
     def calculate_performance(
         self,
         ambient_temperature: float,
-        htf_heat_capacity: float,
-        input_temperature: float,
         logger: Logger,
-        mass_flow_rate: float,
         solar_irradiance: float,
+        htf_heat_capacity: float | None,
+        input_temperature: float | None,
+        mass_flow_rate: float | None,
     ) -> Tuple[float | None, float | None, float | None, float | None,]:
         """
         Abstract method for calculation of collector performance.
@@ -566,11 +566,11 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
     def calculate_performance(
         self,
         ambient_temperature: float,
-        htf_heat_capacity: float,
-        input_temperature: float,
         logger: Logger,
-        mass_flow_rate: float,
         solar_irradiance: float,
+        htf_heat_capacity: float | None = None,
+        input_temperature: float | None = None,
+        mass_flow_rate: float | None = None,
     ) -> Tuple[float | None, float | None, float | None, float | None,]:
         """
         Calcuates the electrical performance of the collector.
@@ -810,11 +810,11 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
     def calculate_performance(
         self,
         ambient_temperature: float,
-        htf_heat_capacity: float,
-        input_temperature: float,
         logger: Logger,
-        mass_flow_rate: float,
         solar_irradiance: float,
+        htf_heat_capacity: float | None,
+        input_temperature: float | None,
+        mass_flow_rate: float | None,
     ) -> Tuple[float | None, float | None, float | None, float | None,]:
         """
         Calculates the performance characteristics of the hybrid PV-T collector.
@@ -1031,11 +1031,11 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
     def calculate_performance(
         self,
         ambient_temperature: float,
-        htf_heat_capacity: float,
-        input_temperature: float,
         logger: Logger,
-        mass_flow_rate: float,
         solar_irradiance: float,
+        htf_heat_capacity: float | None,
+        input_temperature: float | None,
+        mass_flow_rate: float | None,
     ) -> Tuple[float | None, float | None, float | None, float | None,]:
         """
         Calculates the performance characteristics of the solar-thermal collector.
