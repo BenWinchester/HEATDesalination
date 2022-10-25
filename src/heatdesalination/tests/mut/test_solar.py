@@ -89,7 +89,9 @@ class TestPVPanel(unittest.TestCase):
         """Tests the calculate performance method."""
 
         pv_panel = PVPanel.from_dict(mock.MagicMock(), self.input_data)
-        pv_panel.calculate_performance(self.ambient_temperature, self.logger, self.solar_irradiance)
+        pv_panel.calculate_performance(
+            self.ambient_temperature, self.logger, self.solar_irradiance
+        )
 
 
 class TestHybridPVTPanelPerformance(unittest.TestCase):
