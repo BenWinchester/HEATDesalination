@@ -78,7 +78,7 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
         self.logger = mock.MagicMock()
 
         # Setup the PV-T panel mock.
-        pvt_panel_inputs = {
+        pv_t_panel_inputs = {
             "name": "dualsun_spring_uninsulated",
             "type": "pv_t",
             "area": 1.876,
@@ -98,8 +98,8 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
                 "second_order": -0.0,
             },
         }
-        self.pvt_panel = HybridPVTPanel.from_dict(self.logger, pvt_panel_inputs)
-        self.pvt_panel.calculate_performance = mock.MagicMock(
+        self.pv_t_panel = HybridPVTPanel.from_dict(self.logger, pv_t_panel_inputs)
+        self.pv_t_panel.calculate_performance = mock.MagicMock(
             return_value=(0.125, 50, 0.002, 0.75)
         )
 
@@ -129,7 +129,7 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
         self.ambient_temperature: float = 40
         self.collector_system_input_temperature: float = 30
         self.heat_exchanger_efficiency: float = 0.4
-        self.pvt_mass_flow_rate: float = 0.005
+        self.pv_t_mass_flow_rate: float = 0.005
         self.solar_irradiance: float = 1000
         self.solar_thermal_mass_flow_rate: float = 0.001
 
@@ -156,9 +156,9 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
         return _solar_system_output_temperatures(
             self.ambient_temperature,
             self.collector_system_input_temperature,
-            self.pvt_panel,
+            self.pv_t_panel,
             self.logger,
-            self.pvt_mass_flow_rate,
+            self.pv_t_mass_flow_rate,
             scenario,
             self.solar_irradiance,
             self.solar_thermal_panel,
@@ -173,15 +173,15 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
                 pv_t=False, solar_thermal=False
             )
 
-    def test_pvt_only(self) -> None:
+    def test_pv_t_only(self) -> None:
         """Tests the PV-T only case."""
 
         (
             collector_system_output_temperature,
-            pvt_electrical_efficiency,
-            pvt_htf_output_temperature,
-            pvt_reduced_temperature,
-            pvt_thermal_efficiency,
+            pv_t_electrical_efficiency,
+            pv_t_htf_output_temperature,
+            pv_t_reduced_temperature,
+            pv_t_thermal_efficiency,
             solar_thermal_htf_output_temperature,
             solar_thermal_reduced_temperature,
             solar_thermal_thermal_efficiency,
@@ -191,34 +191,34 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
 
         # Check the correct numbers were returned.
         self.assertEqual(collector_system_output_temperature, 50)
-        self.assertEqual(pvt_electrical_efficiency, 0.125)
-        self.assertEqual(pvt_htf_output_temperature, 50)
-        self.assertEqual(pvt_reduced_temperature, 0.002)
-        self.assertEqual(pvt_thermal_efficiency, 0.75)
+        self.assertEqual(pv_t_electrical_efficiency, 0.125)
+        self.assertEqual(pv_t_htf_output_temperature, 50)
+        self.assertEqual(pv_t_reduced_temperature, 0.002)
+        self.assertEqual(pv_t_thermal_efficiency, 0.75)
         self.assertEqual(solar_thermal_htf_output_temperature, None)
         self.assertEqual(solar_thermal_reduced_temperature, None)
         self.assertEqual(solar_thermal_thermal_efficiency, None)
 
         # Check that the correct panel methods were called.
-        self.pvt_panel.calculate_performance.assert_called_once_with(
+        self.pv_t_panel.calculate_performance.assert_called_once_with(
             self.ambient_temperature,
             self.logger,
             self.solar_irradiance,
             HEAT_CAPACITY_OF_WATER,
             self.collector_system_input_temperature,
-            self.pvt_mass_flow_rate,
+            self.pv_t_mass_flow_rate,
         )
         self.solar_thermal_panel.calculate_performance.assert_not_called()
 
-    def test_pvt_and_solar_thermal(self) -> None:
+    def test_pv_t_and_solar_thermal(self) -> None:
         """Tests the PV-T only case."""
 
         (
             collector_system_output_temperature,
-            pvt_electrical_efficiency,
-            pvt_htf_output_temperature,
-            pvt_reduced_temperature,
-            pvt_thermal_efficiency,
+            pv_t_electrical_efficiency,
+            pv_t_htf_output_temperature,
+            pv_t_reduced_temperature,
+            pv_t_thermal_efficiency,
             solar_thermal_htf_output_temperature,
             solar_thermal_reduced_temperature,
             solar_thermal_thermal_efficiency,
@@ -228,22 +228,22 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
 
         # Check the correct numbers were returned.
         self.assertEqual(collector_system_output_temperature, 60)
-        self.assertEqual(pvt_electrical_efficiency, 0.125)
-        self.assertEqual(pvt_htf_output_temperature, 50)
-        self.assertEqual(pvt_reduced_temperature, 0.002)
-        self.assertEqual(pvt_thermal_efficiency, 0.75)
+        self.assertEqual(pv_t_electrical_efficiency, 0.125)
+        self.assertEqual(pv_t_htf_output_temperature, 50)
+        self.assertEqual(pv_t_reduced_temperature, 0.002)
+        self.assertEqual(pv_t_thermal_efficiency, 0.75)
         self.assertEqual(solar_thermal_htf_output_temperature, 60)
         self.assertEqual(solar_thermal_reduced_temperature, 0.001)
         self.assertEqual(solar_thermal_thermal_efficiency, 0.85)
 
         # Check that the correct panel methods were called.
-        self.pvt_panel.calculate_performance.assert_called_once_with(
+        self.pv_t_panel.calculate_performance.assert_called_once_with(
             self.ambient_temperature,
             self.logger,
             self.solar_irradiance,
             HEAT_CAPACITY_OF_WATER,
             self.collector_system_input_temperature,
-            self.pvt_mass_flow_rate,
+            self.pv_t_mass_flow_rate,
         )
         self.solar_thermal_panel.calculate_performance.assert_called_once_with(
             self.ambient_temperature,
@@ -259,10 +259,10 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
 
         (
             collector_system_output_temperature,
-            pvt_electrical_efficiency,
-            pvt_htf_output_temperature,
-            pvt_reduced_temperature,
-            pvt_thermal_efficiency,
+            pv_t_electrical_efficiency,
+            pv_t_htf_output_temperature,
+            pv_t_reduced_temperature,
+            pv_t_thermal_efficiency,
             solar_thermal_htf_output_temperature,
             solar_thermal_reduced_temperature,
             solar_thermal_thermal_efficiency,
@@ -272,16 +272,16 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
 
         # Check the correct numbers were returned.
         self.assertEqual(collector_system_output_temperature, 60)
-        self.assertEqual(pvt_electrical_efficiency, None)
-        self.assertEqual(pvt_htf_output_temperature, None)
-        self.assertEqual(pvt_reduced_temperature, None)
-        self.assertEqual(pvt_thermal_efficiency, None)
+        self.assertEqual(pv_t_electrical_efficiency, None)
+        self.assertEqual(pv_t_htf_output_temperature, None)
+        self.assertEqual(pv_t_reduced_temperature, None)
+        self.assertEqual(pv_t_thermal_efficiency, None)
         self.assertEqual(solar_thermal_htf_output_temperature, 60)
         self.assertEqual(solar_thermal_reduced_temperature, 0.001)
         self.assertEqual(solar_thermal_thermal_efficiency, 0.85)
 
         # Check that the correct panel methods were called.
-        self.pvt_panel.calculate_performance.assert_not_called()
+        self.pv_t_panel.calculate_performance.assert_not_called()
         self.solar_thermal_panel.calculate_performance.assert_called_once_with(
             self.ambient_temperature,
             self.logger,
@@ -364,11 +364,11 @@ class TestSolveMatrix(unittest.TestCase):
         self.ambient_temperature: float = 15 + ZERO_CELCIUS_OFFSET
         self.buffer_tank = mock.MagicMock()
         self.htf_mass_flow_rate: float = 4 + ZERO_CELCIUS_OFFSET
-        self.hybrid_pvt_panel = mock.MagicMock()
+        self.hybrid_pv_t_panel = mock.MagicMock()
         self.load_mass_flow_rate: float = 4 + ZERO_CELCIUS_OFFSET
         self.logger = mock.MagicMock()
         self.previous_tank_temperature: float = 75 + ZERO_CELCIUS_OFFSET
-        self.pvt_mass_flow_rate: float = 4 + ZERO_CELCIUS_OFFSET
+        self.pv_t_mass_flow_rate: float = 4 + ZERO_CELCIUS_OFFSET
         self.scenario = Scenario(
             (default := "default"), 0, default, 0, 0, default, default, default, default
         )
@@ -400,11 +400,11 @@ class TestSolveMatrix(unittest.TestCase):
             self.ambient_temperature,
             self.buffer_tank,
             self.htf_mass_flow_rate,
-            None if no_pvt else self.hybrid_pvt_panel,
+            None if no_pvt else self.hybrid_pv_t_panel,
             self.load_mass_flow_rate,
             self.logger,
             self.previous_tank_temperature,
-            self.pvt_mass_flow_rate,
+            self.pv_t_mass_flow_rate,
             self.scenario,
             self.solar_irradiance,
             None if no_solar_thermal else self.solar_thermal_collector,

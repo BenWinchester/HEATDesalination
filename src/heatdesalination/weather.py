@@ -235,7 +235,7 @@ def main(latitude: float, longitude: float, output: str | None = None) -> None:
     location_name, output_name = _get_location_name(latitude, longitude, logger=logger)
     logger.info("Location determined: %s", location_name)
     print(
-        f"Fetching weather information for {location_name} ({latitude:.2f}N, {longitude:.2f}E)"
+        f"Fetching weather information for {location_name} ({latitude:.2g}N, {longitude:.2g}E)"
     )
 
     # Call PVGIS to get the weather data for the location

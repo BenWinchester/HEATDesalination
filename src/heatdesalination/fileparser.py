@@ -159,7 +159,7 @@ def parse_input_files(
             The :class:`Battery` to use for the modelling.
         - desalination_plant:
             The :class:`DesalinationPlant` to use for the modelling.
-        - hybrid_pvt_panel:
+        - hybrid_pv_t_panel:
             The :class:`HybridPVTPanel` to use for the modelling.
         - pv_panel:
             The :class:`PVPanel` to use for the modelling.
@@ -248,7 +248,7 @@ def parse_input_files(
 
     if scenario.pv_t:
         try:
-            hybrid_pvt_panel: HybridPVTPanel | None = [
+            hybrid_pv_t_panel: HybridPVTPanel | None = [
                 entry
                 for entry in solar_collectors
                 if entry.name == scenario.pv_t_panel_name
@@ -260,7 +260,7 @@ def parse_input_files(
             )
             raise
     else:
-        hybrid_pvt_panel = None
+        hybrid_pv_t_panel = None
 
     if scenario.solar_thermal:
         try:
@@ -332,7 +332,7 @@ def parse_input_files(
         battery,
         buffer_tank,
         desalination_plant,
-        hybrid_pvt_panel,
+        hybrid_pv_t_panel,
         pv_panel,
         scenario,
         solar_irradiances,

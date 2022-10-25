@@ -100,9 +100,9 @@ class TestRunSimulation(unittest.TestCase):
         self.buffer_tank = mock.MagicMock()
         self.desalination_plant = mock.MagicMock()
         self.htf_mass_flow_rate = mock.Mock()
-        self.hybrid_pvt_panel = mock.MagicMock()
+        self.hybrid_pv_t_panel = mock.MagicMock()
         self.logger = mock.MagicMock()
-        self.pvt_system_size = mock.Mock()
+        self.pv_t_system_size = mock.Mock()
         self.solar_irradiances: Dict[int, float] = {hour: 15 for hour in range(24)}
         self.solar_thermal_collector = mock.MagicMock()
         self.solar_thermal_system_size = mock.Mock()
@@ -172,10 +172,10 @@ class TestRunSimulation(unittest.TestCase):
                 self.buffer_tank,
                 self.desalination_plant,
                 self.htf_mass_flow_rate,
-                self.hybrid_pvt_panel,
+                self.hybrid_pv_t_panel,
                 self.logger,
                 self.pv_panel,
-                self.pvt_system_size,
+                self.pv_t_system_size,
                 self.scenario,
                 self.solar_irradiances,
                 self.solar_thermal_collector,

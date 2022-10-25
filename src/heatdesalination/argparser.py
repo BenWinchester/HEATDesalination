@@ -100,6 +100,12 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
     #############################
 
     simulation_arguments.add_argument(
+        "--mass-flow-rate",
+        "-m",
+        help="The mass flow rate through the collector system in kilograms per second.",
+        type=float,
+    )
+    simulation_arguments.add_argument(
         "--simulation",
         "-sim",
         action="store_true",

@@ -70,9 +70,9 @@ def _collectors_input_temperature(
 def _solar_system_output_temperatures(
     ambient_temperature: float,
     collector_system_input_temperature: float,
-    hybrid_pvt_panel: HybridPVTPanel | None,
+    hybrid_pv_t_panel: HybridPVTPanel | None,
     logger: Logger,
-    pvt_mass_flow_rate: float | None,
+    pv_t_mass_flow_rate: float | None,
     scenario: Scenario,
     solar_irradiance: float,
     solar_thermal_collector: SolarThermalPanel | None,
@@ -95,11 +95,11 @@ def _solar_system_output_temperatures(
             The ambient temperature, measured in Kelvin.
         - collector_system_input_temperature:
             The intput temperature to the collector system, measured in Kelvin.
-        - hybrid_pvt_panel:
+        - hybrid_pv_t_panel:
             The :class:`HybridPVTPanel` to use for the run if appropriate.
         - logger:
             The :class:`logging.Logger` to use for the run.
-        - pvt_mass_flow_rate:
+        - pv_t_mass_flow_rate:
             The mass flow rate of HTF through the PV-T collectors, measured in kg/s.
         - scenario:
             The :class:`Scenario` to use for the run.
@@ -114,7 +114,7 @@ def _solar_system_output_temperatures(
     Outputs:
         - collector_system_output_temperature:
             The output temperature from the solar system overall, measured in Kelvin.
-        - pvt_htf_output_temperature:
+        - pv_t_htf_output_temperature:
             The output temperature from the PV-T collectors, measured in Kelvin;
         - solar_thermal_htf_output_temperature:
             The output temperature from the solar-thermal collectors, measured in
@@ -124,23 +124,23 @@ def _solar_system_output_temperatures(
 
     if scenario.pv_t:
         (
-            pvt_electrical_efficiency,
-            pvt_htf_output_temperature,
-            pvt_reduced_temperature,
-            pvt_thermal_efficiency,
-        ) = hybrid_pvt_panel.calculate_performance(
+            pv_t_electrical_efficiency,
+            pv_t_htf_output_temperature,
+            pv_t_reduced_temperature,
+            pv_t_thermal_efficiency,
+        ) = hybrid_pv_t_panel.calculate_performance(
             ambient_temperature,
             logger,
             solar_irradiance,
             scenario.htf_heat_capacity,
             collector_system_input_temperature,
-            pvt_mass_flow_rate,
+            pv_t_mass_flow_rate,
         )
     else:
-        pvt_electrical_efficiency = None
-        pvt_htf_output_temperature = None
-        pvt_reduced_temperature = None
-        pvt_thermal_efficiency = None
+        pv_t_electrical_efficiency = None
+        pv_t_htf_output_temperature = None
+        pv_t_reduced_temperature = None
+        pv_t_thermal_efficiency = None
 
     if scenario.solar_thermal:
         (
@@ -153,8 +153,8 @@ def _solar_system_output_temperatures(
             logger,
             solar_irradiance,
             scenario.htf_heat_capacity,
-            pvt_htf_output_temperature
-            if pvt_htf_output_temperature is not None
+            pv_t_htf_output_temperature
+            if pv_t_htf_output_temperature is not None
             else collector_system_input_temperature,
             solar_thermal_mass_flow_rate,
         )
@@ -168,8 +168,8 @@ def _solar_system_output_temperatures(
         collector_system_output_temperature: float = (
             solar_thermal_htf_output_temperature
         )
-    elif pvt_htf_output_temperature is not None:
-        collector_system_output_temperature = pvt_htf_output_temperature
+    elif pv_t_htf_output_temperature is not None:
+        collector_system_output_temperature = pv_t_htf_output_temperature
     else:
         raise InputFileError(
             "scenario", "Neither PV-T or solar-thermal were requested."
@@ -177,10 +177,10 @@ def _solar_system_output_temperatures(
 
     return (
         collector_system_output_temperature,
-        pvt_electrical_efficiency,
-        pvt_htf_output_temperature,
-        pvt_reduced_temperature,
-        pvt_thermal_efficiency,
+        pv_t_electrical_efficiency,
+        pv_t_htf_output_temperature,
+        pv_t_reduced_temperature,
+        pv_t_thermal_efficiency,
         solar_thermal_htf_output_temperature,
         solar_thermal_reduced_temperature,
         solar_thermal_thermal_efficiency,
@@ -288,11 +288,11 @@ def solve_matrix(
     ambient_temperature: float,
     buffer_tank: HotWaterTank,
     htf_mass_flow_rate: float,
-    hybrid_pvt_panel: HybridPVTPanel | None,
+    hybrid_pv_t_panel: HybridPVTPanel | None,
     load_mass_flow_rate: float,
     logger: Logger,
     previous_tank_temperature: float,
-    pvt_mass_flow_rate: float | None,
+    pv_t_mass_flow_rate: float | None,
     scenario: Scenario,
     solar_irradiance: float,
     solar_thermal_collector: SolarThermalPanel | None,
@@ -321,7 +321,7 @@ def solve_matrix(
             The :class:`HotWaterTank` to use as a buffer tank for the run.
         - htf_mass_flow_rate:
             The mass flow rate of the HTF, measured in kilograms per second.
-        - hybrid_pvt_panel:
+        - hybrid_pv_t_panel:
             The :class:`HybridPVTPanel` to use for the run if appropriate.
         - load_mass_flow_rate:
             The mass flow rate of the load, measuted in kilograms per second.
@@ -329,7 +329,7 @@ def solve_matrix(
             The :class:`logging.Logger` to use for the run.
         - previous_tank_temperature:
             The temperature of the hot-water tank at the previous time step.
-        - pvt_mass_flow_rate:
+        - pv_t_mass_flow_rate:
             The mass flow rate of the HTF through the PV-T collectors, measured in
             kilograms per second.
         - scenario:
@@ -354,15 +354,15 @@ def solve_matrix(
         - collector_system_output_temperature:
             The output temperature from the solar collector system as a whole, measured
             in degrees Kelvin.
-        - pvt_electrical_efficiency:
+        - pv_t_electrical_efficiency:
             The electrical efficiency of the PV-T panels, if present, defined between 0
             and 1.
-        - pvt_htf_output_temperature:
+        - pv_t_htf_output_temperature:
             The output temperature from the PV-T panels, if present, measured in degrees
             Kelvin.
-        - pvt_reduced_temperature:
+        - pv_t_reduced_temperature:
             The reduced temperature of the PV-T collectors, if present.
-        - pvt_thermal_efficiency:
+        - pv_t_thermal_efficiency:
             The thermal efficiency of the PV-T collectors, if present.
         - solar_thermal_htf_output_temperature:
             The output temperature from the solar-thermal collectors, if present,
@@ -377,7 +377,7 @@ def solve_matrix(
     """
 
     # Set up variables to track for a valid solution being found.
-    if scenario.pv_t and (hybrid_pvt_panel is None or pvt_mass_flow_rate is None):
+    if scenario.pv_t and (hybrid_pv_t_panel is None or pv_t_mass_flow_rate is None):
         logger.error("No PV-T panel provided despite PV-T being on in the scenario.")
         raise InputFileError(
             "scenario OR solar",
@@ -404,19 +404,19 @@ def solve_matrix(
         # Calculate the various coefficients which go into the matrix.
         (
             collector_system_output_temperature,
-            pvt_electrical_efficiency,
-            pvt_htf_output_temperature,
-            pvt_reduced_temperature,
-            pvt_thermal_efficiency,
+            pv_t_electrical_efficiency,
+            pv_t_htf_output_temperature,
+            pv_t_reduced_temperature,
+            pv_t_thermal_efficiency,
             solar_thermal_htf_output_temperature,
             solar_thermal_reduced_temperature,
             solar_thermal_thermal_efficiency,
         ) = _solar_system_output_temperatures(
             ambient_temperature,
             best_guess_collector_htf_input_temperature,
-            hybrid_pvt_panel,
+            hybrid_pv_t_panel,
             logger,
-            pvt_mass_flow_rate,
+            pv_t_mass_flow_rate,
             scenario,
             solar_irradiance,
             solar_thermal_collector,
@@ -467,10 +467,10 @@ def solve_matrix(
     return (
         collector_input_temperature,
         collector_system_output_temperature,
-        pvt_electrical_efficiency,
-        pvt_htf_output_temperature,
-        pvt_reduced_temperature,
-        pvt_thermal_efficiency,
+        pv_t_electrical_efficiency,
+        pv_t_htf_output_temperature,
+        pv_t_reduced_temperature,
+        pv_t_thermal_efficiency,
         solar_thermal_htf_output_temperature,
         solar_thermal_reduced_temperature,
         solar_thermal_thermal_efficiency,

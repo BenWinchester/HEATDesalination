@@ -157,13 +157,13 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
     def _calculate_performance(self, input_data: Dict[str, Any]) -> None:
         """Wrapper for the calculate-performance method."""
 
-        pvt_panel: HybridPVTPanel = HybridPVTPanel.from_dict(self.logger, input_data)
+        pv_t_panel: HybridPVTPanel = HybridPVTPanel.from_dict(self.logger, input_data)
         (
             electrical_efficiency,
             output_temperature,
             reduced_collector_temperature,
             thermal_efficiency,
-        ) = pvt_panel.calculate_performance(
+        ) = pv_t_panel.calculate_performance(
             self.ambient_temperature + ZERO_CELCIUS_OFFSET,
             self.logger,
             self.solar_irradiance,
@@ -174,16 +174,16 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
 
         # Check the electrical efficiency.
         average_temperature = 0.5 * (self.input_temperature + output_temperature)
-        if pvt_panel.pv_module_characteristics is not None:
+        if pv_t_panel.pv_module_characteristics is not None:
             electrical_efficiency_by_equation = (
-                pvt_panel.pv_module_characteristics.reference_efficiency
+                pv_t_panel.pv_module_characteristics.reference_efficiency
                 * (
                     1
-                    - pvt_panel.pv_module_characteristics.thermal_coefficient
+                    - pv_t_panel.pv_module_characteristics.thermal_coefficient
                     * (
                         average_temperature
                         - (
-                            pvt_panel.pv_module_characteristics.reference_temperature
+                            pv_t_panel.pv_module_characteristics.reference_temperature
                             - ZERO_CELCIUS_OFFSET
                         )
                     )
@@ -193,11 +193,11 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
 
         # Check the thermal efficiency.
         efficiency_by_equation = (
-            pvt_panel.thermal_performance_curve.eta_0
-            + pvt_panel.thermal_performance_curve.c_1
+            pv_t_panel.thermal_performance_curve.eta_0
+            + pv_t_panel.thermal_performance_curve.c_1
             * (average_temperature - self.ambient_temperature)
             / self.solar_irradiance
-            + pvt_panel.thermal_performance_curve.c_2
+            + pv_t_panel.thermal_performance_curve.c_2
             * (average_temperature - self.ambient_temperature) ** 2
             / self.solar_irradiance
         )
@@ -214,7 +214,7 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
             (self.mass_flow_rate / 3600)
             * HEAT_CAPACITY_OF_WATER
             * (output_temperature - self.input_temperature)
-        ) / (pvt_panel.area * self.solar_irradiance)
+        ) / (pv_t_panel.area * self.solar_irradiance)
 
         self.assertAlmostEqual(
             round(efficiency_by_equation, 8), round(efficiency_by_output, 8)

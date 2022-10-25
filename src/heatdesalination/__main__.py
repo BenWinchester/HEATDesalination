@@ -22,7 +22,7 @@ import sys
 from typing import Any, List
 
 
-from .__utils__ import get_logger
+from .__utils__ import ProfileType, get_logger
 from .argparser import parse_args, validate_args
 from .fileparser import parse_input_files
 from .simulator import run_simulation
@@ -49,7 +49,7 @@ def main(args: List[Any]) -> None:
         battery,
         buffer_tank,
         desalination_plant,
-        hybrid_pvt_panel,
+        hybrid_pv_t_panel,
         pv_panel,
         scenario,
         solar_irradiances,
@@ -59,20 +59,52 @@ def main(args: List[Any]) -> None:
     )
 
     if parsed_args.simulation:
-        run_simulation(
-            ambient_temperatures,
-            buffer_tank,
-            desalination_plant,
-            parsed_args.htf_mass_flow_rate,
-            hybrid_pvt_panel,
-            logger,
-            pv_panel,
-            parsed_args.pvt_system_size,
-            scenario,
-            solar_irradiances,
-            solar_thermal_collector,
-            parsed_args.solar_thermal_system_size,
-        )
+        # Raise exceptions if the arguments are invalid.
+        if scenario.pv_t and not parsed_args.pv_t_system_size:
+            logger.error(
+                "Must specify PV-T system size if PV-T collectors included in scenario."
+            )
+            raise Exception("Missing PV-T system size argument.")
+        if scenario.solar_thermal and not parsed_args.solar_thermal_system_size:
+            logger.error(
+                "Must specify solar-thermal system size if solar-thermal collectors "
+                "included in scenario."
+            )
+            raise Exception("Missing solar-thermal system size argument.")
+
+        # Run the simulation.
+        for profile_type in ProfileType:
+            (
+                collector_input_temperatures,
+                collector_system_output_temperatures,
+                pv_electrical_efficiencies,
+                pv_electrical_output_power,
+                pv_t_electrical_efficiencies,
+                pv_t_electrical_output_power,
+                pv_t_htf_output_temperatures,
+                pv_t_reduced_temperatures,
+                pv_t_thermal_efficiencies,
+                solar_thermal_htf_output_temperatures,
+                solar_thermal_reduced_temperatures,
+                solar_thermal_thermal_efficiencies,
+                tank_temperatures,
+            ) = run_simulation(
+                ambient_temperatures[profile_type],
+                buffer_tank,
+                desalination_plant,
+                parsed_args.mass_flow_rate,
+                hybrid_pv_t_panel,
+                logger,
+                pv_panel,
+                parsed_args.pv_t_system_size,
+                scenario,
+                solar_irradiances[profile_type],
+                solar_thermal_collector,
+                parsed_args.solar_thermal_system_size,
+            )
+            import pdb
+
+            pdb.set_trace()
     elif parsed_args.optimisation:
         run_optimisation()
     else:

@@ -92,10 +92,10 @@ def run_simulation(
     buffer_tank: HotWaterTank,
     desalination_plant: DesalinationPlant,
     htf_mass_flow_rate: float,
-    hybrid_pvt_panel: HybridPVTPanel | None,
+    hybrid_pv_t_panel: HybridPVTPanel | None,
     logger: Logger,
     pv_panel: PVPanel | None,
-    pvt_system_size: int | None,
+    pv_t_system_size: int | None,
     scenario: Scenario,
     solar_irradiances: Dict[int, float],
     solar_thermal_collector: SolarThermalPanel | None,
@@ -129,13 +129,13 @@ def run_simulation(
             The :class:`DesalinationPlant` for which the systme is being simulated.
         - htf_mass_flow_rate:
             The mass flow rate of the HTF through the collectors.
-        - hybrid_pvt_panel:
+        - hybrid_pv_t_panel:
             The :class:`HybridPVTPanel` associated with the run.
         - logger:
             The :class:`logging.Logger` for the run.
         - pv_panel:
             The :class:`PVPanel` associated with the system.
-        - pvt_system_size:
+        - pv_t_system_size:
             The size of the PV-T system installed.
         - scenario:
             The :class:`Scenario` for the run.
@@ -155,15 +155,15 @@ def run_simulation(
             The electrial efficiencies of the PV collectors at each time step.
         - pv_electrical_output_power:
             The electrial output power of the PV collectors at each time step.
-        - pvt_electrical_efficiencies:
+        - pv_t_electrical_efficiencies:
             The electrial efficiencies of the PV-T collectors at each time step.
-        - pvt_electrical_output_power:
+        - pv_t_electrical_output_power:
             The electrial output power of the PV-T collectors at each time step.
-        - pvt_htf_output_temperatures:
+        - pv_t_htf_output_temperatures:
             The output temperature from the PV-T collectors at each time step.
-        - pvt_reduced_temperatures:
+        - pv_t_reduced_temperatures:
             The reduced temperature of the PV-T collectors at each time step.
-        - pvt_thermal_efficiencies:
+        - pv_t_thermal_efficiencies:
             The thermal efficiency of the PV-T collectors at each time step.
         - solar_thermal_htf_output_temperatures:
             The output temperature from the solar-thermal collectors at each time step
@@ -178,13 +178,13 @@ def run_simulation(
     """
 
     # Determine the mass flow rate through each type of collector.
-    pvt_mass_flow_rate: float = _collector_mass_flow_rate(
-        htf_mass_flow_rate, pvt_system_size
+    pv_t_mass_flow_rate: float = _collector_mass_flow_rate(
+        htf_mass_flow_rate, pv_t_system_size
     )
     solar_thermal_mass_flow_rate: float = _collector_mass_flow_rate(
         htf_mass_flow_rate, solar_thermal_system_size
     )
-    logger.debug("PV-T mass-flow rate determined: %s", f"{pvt_mass_flow_rate:.3g}")
+    logger.debug("PV-T mass-flow rate determined: %s", f"{pv_t_mass_flow_rate:.3g}")
     logger.debug(
         "Solar-thermal mass-flow rate determined: %s",
         f"{solar_thermal_mass_flow_rate:.3g}",
@@ -193,11 +193,11 @@ def run_simulation(
     # Set up maps for storing variables.
     collector_input_temperatures: Dict[int, float] = {}
     collector_system_output_temperatures: Dict[int, float] = {}
-    pvt_electrical_efficiencies: Dict[int, float | None] = {}
-    pvt_electrical_output_power: Dict[int, float | None] = {}
-    pvt_htf_output_temperatures: Dict[int, float | None] = {}
-    pvt_reduced_temperatures: Dict[int, float | None] = {}
-    pvt_thermal_efficiencies: Dict[int, float | None] = {}
+    pv_t_electrical_efficiencies: Dict[int, float | None] = {}
+    pv_t_electrical_output_power: Dict[int, float | None] = {}
+    pv_t_htf_output_temperatures: Dict[int, float | None] = {}
+    pv_t_reduced_temperatures: Dict[int, float | None] = {}
+    pv_t_thermal_efficiencies: Dict[int, float | None] = {}
     solar_thermal_htf_output_temperatures: Dict[int, float | None] = {}
     solar_thermal_reduced_temperatures: Dict[int, float | None] = {}
     solar_thermal_thermal_efficiencies: Dict[int, float | None] = {}
@@ -217,10 +217,10 @@ def run_simulation(
         (
             collector_input_temperature,
             collector_system_output_temperature,
-            pvt_electrical_efficiency,
-            pvt_htf_output_temperature,
-            pvt_reduced_temperature,
-            pvt_thermal_efficiency,
+            pv_t_electrical_efficiency,
+            pv_t_htf_output_temperature,
+            pv_t_reduced_temperature,
+            pv_t_thermal_efficiency,
             solar_thermal_htf_output_temperature,
             solar_thermal_reduced_temperature,
             solar_thermal_thermal_efficiency,
@@ -229,11 +229,11 @@ def run_simulation(
             ambient_temperatures[hour],
             buffer_tank,
             htf_mass_flow_rate,
-            hybrid_pvt_panel,
+            hybrid_pv_t_panel,
             desalination_plant.requirements(hour).hot_water_volume,
             logger,
             tank_temperatures[hour - 1],
-            pvt_mass_flow_rate,
+            pv_t_mass_flow_rate,
             scenario,
             solar_irradiances[hour],
             solar_thermal_collector,
@@ -245,16 +245,16 @@ def run_simulation(
         # Save these outputs in mappings.
         collector_input_temperatures[hour] = collector_input_temperature
         collector_system_output_temperatures[hour] = collector_system_output_temperature
-        pvt_electrical_efficiencies[hour] = pvt_electrical_efficiency
-        pvt_electrical_output_power[hour] = electric_output(
-            pvt_electrical_efficiency,
+        pv_t_electrical_efficiencies[hour] = pv_t_electrical_efficiency
+        pv_t_electrical_output_power[hour] = electric_output(
+            pv_t_electrical_efficiency,
             pv_panel.pv_unit,
             pv_panel.reference_efficiency,
             solar_irradiances[hour],
         )
-        pvt_htf_output_temperatures[hour] = pvt_htf_output_temperature
-        pvt_reduced_temperatures[hour] = pvt_reduced_temperature
-        pvt_thermal_efficiencies[hour] = pvt_thermal_efficiency
+        pv_t_htf_output_temperatures[hour] = pv_t_htf_output_temperature
+        pv_t_reduced_temperatures[hour] = pv_t_reduced_temperature
+        pv_t_thermal_efficiencies[hour] = pv_t_thermal_efficiency
         solar_thermal_htf_output_temperatures[
             hour
         ] = solar_thermal_htf_output_temperature
@@ -294,11 +294,11 @@ def run_simulation(
         collector_system_output_temperatures,
         pv_electrical_efficiencies if scenario.pv else None,
         pv_electrical_output_power if scenario.pv else None,
-        pvt_electrical_efficiencies if scenario.pv_t else None,
-        pvt_electrical_output_power if scenario.pv_t else None,
-        pvt_htf_output_temperatures if scenario.pv_t else None,
-        pvt_reduced_temperatures if scenario.pv_t else None,
-        pvt_thermal_efficiencies if scenario.pv_t else None,
+        pv_t_electrical_efficiencies if scenario.pv_t else None,
+        pv_t_electrical_output_power if scenario.pv_t else None,
+        pv_t_htf_output_temperatures if scenario.pv_t else None,
+        pv_t_reduced_temperatures if scenario.pv_t else None,
+        pv_t_thermal_efficiencies if scenario.pv_t else None,
         solar_thermal_htf_output_temperatures if scenario.solar_thermal else None,
         solar_thermal_reduced_temperatures if scenario.solar_thermal else None,
         solar_thermal_thermal_efficiencies if scenario.solar_thermal else None,

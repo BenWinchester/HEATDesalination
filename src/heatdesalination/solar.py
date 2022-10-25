@@ -913,9 +913,9 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         ):
             raise FlowRateError(
                 self.name,
-                f"Flow rate of {mass_flow_rate:.2f} is out of bounds, range is "
-                + f"{self.min_mass_flow_rate:.2f} to {self.max_mass_flow_rate:.2f} "
-                "litres/hour.",
+                f"Flow rate of {mass_flow_rate:.2g} kg/s is out of bounds, range is "
+                + f"{self.min_mass_flow_rate:.2g} to {self.max_mass_flow_rate:.2g} "
+                "kilograms/second.",
             )
 
         _, negative_root = _thermal_performance(
@@ -1134,9 +1134,9 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
         ):
             raise FlowRateError(
                 self.name,
-                f"Flow rate of {mass_flow_rate:.2f} is out of bounds, range is "
-                + f"{self.min_mass_flow_rate:.2f} to {self.max_mass_flow_rate:.2f} "
-                "litres/hour.",
+                f"Flow rate of {mass_flow_rate:.2g} kg/s is out of bounds, range is "
+                + f"{self.min_mass_flow_rate:.2g} to {self.max_mass_flow_rate:.2g} "
+                "kilograms/second.",
             )
 
         _, negative_root = _thermal_performance(
