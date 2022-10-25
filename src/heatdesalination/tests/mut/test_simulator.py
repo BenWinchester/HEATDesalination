@@ -163,7 +163,10 @@ class TestRunSimulation(unittest.TestCase):
             "heatdesalination.simulator._tank_ambient_temperature", return_value=15
         ) as mock_tank_ambient_temperature, mock.patch(
             "heatdesalination.simulator._tank_replacement_temperature", return_value=10
-        ) as mock_tank_replacement_temperature:
+        ) as mock_tank_replacement_temperature, mock.patch(
+            "heatdesalination.simulator.electric_output",
+            side_effect=[0.3] * 24 + [0.2] * 24,
+        ):
             outputs = run_simulation(
                 self.ambient_temperatures,
                 self.buffer_tank,
@@ -209,58 +212,62 @@ class TestRunSimulation(unittest.TestCase):
             | {hour: 0.3 for hour in range(8, 16)}
             | {hour: 0 for hour in range(16, 24)},
         )
+        # PV output powers
+        self.assertEqual(outputs[3], {hour: 0.2 for hour in range(24)})
         # PV-T electrical efficiencies
         self.assertEqual(
-            outputs[3],
+            outputs[4],
             {hour: 0 for hour in range(0, 8)}
             | {hour: 0.125 for hour in range(8, 16)}
             | {hour: 0 for hour in range(16, 24)},
         )
+        # PV-T output powers
+        self.assertEqual(outputs[5], {hour: 0.3 for hour in range(24)})
         # PV-T HTF output temperatures:
         self.assertEqual(
-            outputs[4],
+            outputs[6],
             {hour: 10 for hour in range(0, 8)}
             | {hour: 30 for hour in range(8, 16)}
             | {hour: 10 for hour in range(16, 24)},
         )
         # PV-T reduced temperatures:
         self.assertEqual(
-            outputs[5],
+            outputs[7],
             {hour: 0 for hour in range(0, 8)}
             | {hour: 0.02 for hour in range(8, 16)}
             | {hour: 0 for hour in range(16, 24)},
         )
         # PV-T thermal efficiencies:
         self.assertEqual(
-            outputs[6],
+            outputs[8],
             {hour: 0 for hour in range(0, 8)}
             | {hour: 0.45 for hour in range(8, 16)}
             | {hour: 0 for hour in range(16, 24)},
         )
         # Solar-thermal output temperatures:
         self.assertEqual(
-            outputs[7],
+            outputs[9],
             {hour: 10 for hour in range(0, 8)}
             | {hour: 40 for hour in range(8, 16)}
             | {hour: 10 for hour in range(16, 24)},
         )
         # Solar-thermal reduced temperatures:
         self.assertEqual(
-            outputs[8],
+            outputs[10],
             {hour: 0 for hour in range(0, 8)}
             | {hour: 0.01 for hour in range(8, 16)}
             | {hour: 0 for hour in range(16, 24)},
         )
         # Solar-thermal thermal efficiency:
         self.assertEqual(
-            outputs[9],
+            outputs[11],
             {hour: 0 for hour in range(0, 8)}
             | {hour: 0.8 for hour in range(8, 16)}
             | {hour: 0 for hour in range(16, 24)},
         )
         # Tank temperatures:
         self.assertEqual(
-            outputs[10],
+            outputs[12],
             {hour: 40 for hour in range(0, 8)}
             | {hour: 80 for hour in range(8, 16)}
             | {hour: 40 for hour in range(16, 24)},

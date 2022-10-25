@@ -107,6 +107,14 @@ def run_simulation(
     Dict[int, float],
     Dict[int, float] | None,
     Dict[int, float] | None,
+    Dict[int, float] | None,
+    Dict[int, float] | None,
+    Dict[int, float] | None,
+    Dict[int, float] | None,
+    Dict[int, float] | None,
+    Dict[int, float] | None,
+    Dict[int, float] | None,
+    Dict[int, float] | None,
     Dict[int, float],
 ]:
     """
@@ -143,11 +151,27 @@ def run_simulation(
             The input temperature to the collector system at each time step.
         - collector_system_output_temperatures:
             The output temperature from the solar collectors at each time step.
+        - pv_electrical_efficiencies:
+            The electrial efficiencies of the PV collectors at each time step.
+        - pv_electrical_output_power:
+            The electrial output power of the PV collectors at each time step.
+        - pvt_electrical_efficiencies:
+            The electrial efficiencies of the PV-T collectors at each time step.
+        - pvt_electrical_output_power:
+            The electrial output power of the PV-T collectors at each time step.
         - pvt_htf_output_temperatures:
             The output temperature from the PV-T collectors at each time step.
+        - pvt_reduced_temperatures:
+            The reduced temperature of the PV-T collectors at each time step.
+        - pvt_thermal_efficiencies:
+            The thermal efficiency of the PV-T collectors at each time step.
         - solar_thermal_htf_output_temperatures:
             The output temperature from the solar-thermal collectors at each time step
             if present.
+        - solar_thermal_reduced_temperatures:
+            The reduced temperature of the solar-thermal collectors at each time step.
+        - solar_thermal_thermal_efficiencies:
+            The thermal efficiency of the solar-thermal collectors at each time step.
         - tank_temperatures:
             The temperature of the hot-water tank at each time step.
 
@@ -169,7 +193,8 @@ def run_simulation(
     # Set up maps for storing variables.
     collector_input_temperatures: Dict[int, float] = {}
     collector_system_output_temperatures: Dict[int, float] = {}
-    pvt_electrical_efficiencies: Dict[int, float] = {}
+    pvt_electrical_efficiencies: Dict[int, float | None] = {}
+    pvt_electrical_output_power: Dict[int, float | None] = {}
     pvt_htf_output_temperatures: Dict[int, float | None] = {}
     pvt_reduced_temperatures: Dict[int, float | None] = {}
     pvt_thermal_efficiencies: Dict[int, float | None] = {}
@@ -221,6 +246,12 @@ def run_simulation(
         collector_input_temperatures[hour] = collector_input_temperature
         collector_system_output_temperatures[hour] = collector_system_output_temperature
         pvt_electrical_efficiencies[hour] = pvt_electrical_efficiency
+        pvt_electrical_output_power[hour] = electric_output(
+            pvt_electrical_efficiency,
+            pv_panel.pv_unit,
+            pv_panel.reference_efficiency,
+            solar_irradiances[hour],
+        )
         pvt_htf_output_temperatures[hour] = pvt_htf_output_temperature
         pvt_reduced_temperatures[hour] = pvt_reduced_temperature
         pvt_thermal_efficiencies[hour] = pvt_thermal_efficiency
@@ -241,7 +272,7 @@ def run_simulation(
                 range(24), desc="pv performance", leave=disable_tqdm, unit="hour"
             )
         }
-        pv_electric_output_power: Dict[int, float] | None = {
+        pv_electrical_output_power: Dict[int, float] | None = {
             hour: electric_output(
                 pv_electrical_efficiencies[hour],
                 pv_panel.pv_unit,
@@ -252,7 +283,7 @@ def run_simulation(
         }
     else:
         pv_electrical_efficiencies = None
-        pv_electric_output_power = None
+        pv_electrical_output_power = None
 
     # Compute the output power from the various collectors.
     logger.info("Hourly simulation complete, compute the output power.")
@@ -261,8 +292,10 @@ def run_simulation(
     return (
         collector_input_temperatures,
         collector_system_output_temperatures,
-        pv_electrical_efficiencies,
+        pv_electrical_efficiencies if scenario.pv else None,
+        pv_electrical_output_power if scenario.pv else None,
         pvt_electrical_efficiencies if scenario.pv_t else None,
+        pvt_electrical_output_power if scenario.pv_t else None,
         pvt_htf_output_temperatures if scenario.pv_t else None,
         pvt_reduced_temperatures if scenario.pv_t else None,
         pvt_thermal_efficiencies if scenario.pv_t else None,
