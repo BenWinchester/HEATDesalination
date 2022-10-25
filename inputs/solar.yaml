@@ -27,7 +27,7 @@ solar_collectors:
     reference_efficiency: !!float 0.1723
     reference_temperature: !!float 25  # [degC]
     thermal_coefficient: !!float 0.0044  # [%/degC]
-    pv_unit: !!float 0.275   # [kWp]
+    pv_unit: !!float 0.280   # [kWp]
   - name: !!str dusol_ds60280_m
     type: !!str pv
     area: !!float 1.638  # [m^2]
@@ -35,7 +35,7 @@ solar_collectors:
     reference_efficiency: !!float 0.1754
     reference_temperature: !!float 25  # [degC]
     thermal_coefficient: !!float 0.0044  # [%/degC]
-    pv_unit: !!float 0.275   # [kWp]
+    pv_unit: !!float 0.285   # [kWp]
   - name: !!str dusol_ds60280_m
     type: !!str pv
     area: !!float 1.638  # [m^2]
@@ -43,15 +43,15 @@ solar_collectors:
     reference_efficiency: !!float 0.1784
     reference_temperature: !!float 25  # [degC]
     thermal_coefficient: !!float 0.0044  # [%/degC]
-    pv_unit: !!float 0.275   # [kWp]
+    pv_unit: !!float 0.290   # [kWp]
 
   ###################
   # PV-T Collectors #
   ###################
 
-    # Abora datasheet:
-    #     https://abora-solar.com/wp-content/uploads/2022/07/
-    # ... Panel-aH72SK_EN_v5_220718_compressed.pdf
+  # Abora datasheet:
+  #     https://abora-solar.com/wp-content/uploads/2022/07/
+  # ... Panel-aH72SK_EN_v5_220718_compressed.pdf
   - name: !!str abora_h72sk
     type: !!str pv_t
     area: !!float 1.9602  # [m^2]
@@ -60,6 +60,7 @@ solar_collectors:
     min_mass_flow_rate: !!float 20  # [l/h]
     nominal_mass_flow_rate: !!float 60  # [l/h]
     pv_module_characteristics:
+      nominal_power: !!float 0.350  # [W]
       reference_efficiency: !!float 0.178
       reference_temperature: !!float 25  # [degC]
       thermal_coefficient: !!float 0.0036  # [%/degC]
@@ -68,9 +69,9 @@ solar_collectors:
       first_order: !!float -5.98  # [W/degC]
       second_order: !!float 0
 
-    # Dualsun datasheet:
-    #     https://my.dualsun.com/wp-content/uploads/sites/2/2021/11/
-    # ... DualSun-EN-Datasheet-SPRING-400-Shingle-Black.pdf
+  # Dualsun datasheet:
+  #     https://my.dualsun.com/wp-content/uploads/sites/2/2021/11/
+  # ... DualSun-EN-Datasheet-SPRING-400-Shingle-Black.pdf
 
   - name: !!str dualsun_spring_uninsulated
     type: !!str pv_t
@@ -80,6 +81,7 @@ solar_collectors:
     min_mass_flow_rate: !!float 20  # [l/h]
     nominal_mass_flow_rate: !!float 60  # [l/h]
     pv_module_characteristics:
+      nominal_power: !!float 0.400  # [W]
       reference_efficiency: !!float 0.213  # Between 0 and 1
       reference_temperature: !!float 25  # [degC]
       thermal_coefficient: !!float 0.0034  # [%/degC]
@@ -95,6 +97,7 @@ solar_collectors:
     min_mass_flow_rate: !!float 20  # [l/h]
     nominal_mass_flow_rate: !!float 60  # [l/h]
     pv_module_characteristics:
+      nominal_power: !!float 0.400  # [W]
       reference_efficiency: !!float 0.213  # Between 0 and 1
       reference_temperature: !!float 25  # [degC]
       thermal_coefficient: !!float 0.0034  # [%/degC]

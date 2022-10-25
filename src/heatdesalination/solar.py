@@ -67,6 +67,10 @@ MIN_MASS_FLOW_RATE: str = "min_mass_flow_rate"
 #   Keyword for the nominal mass flow rate of HTF through the panel.
 NOMINAL_MASS_FLOW_RATE: str = "nominal_mass_flow_rate"
 
+# NOMINAL_POWER:
+#   Keyword for the nominal power of the panel.
+NOMINAL_POWER: str = "nominal_power"
+
 # PV_MODULE_CHARACTERISTICS:
 #   Keyword for module characteristics.
 PV_MODULE_CHARACTERISTICS: str = "pv_module_characteristics"
@@ -78,6 +82,10 @@ PV_UNIT: str = "pv_unit"
 # REFERENCE_EFFICIENCY:
 #   Keyword for the reference efficiency of a PV panel.
 REFERENCE_EFFICIENCY: str = "reference_efficiency"
+
+# REFERENCE_SOLAR_IRRADIANCE:
+#   The reference solar irradiance at which collectors are rated.
+REFERENCE_SOLAR_IRRADIANCE: float = 1000
 
 # REFERENCE_TEMPERATURE:
 #   Keyword for the reference temperature of a PV panel.
@@ -195,6 +203,9 @@ class PVModuleCharacteristics:
     """
     Represents characteristcs of the PV module.
 
+    .. attribute:: nominal_power
+        Denoste the nominal power of the PV module in kWp.
+
     .. attribute:: reference_efficiency
         Denotes the reference efficiency of the PV module.
 
@@ -206,6 +217,7 @@ class PVModuleCharacteristics:
 
     """
 
+    nominal_power: float
     reference_efficiency: float
     _reference_temperature: float
     thermal_coefficient: float
@@ -822,6 +834,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
             try:
                 pv_module_characteristics: PVModuleCharacteristics | None = (
                     PVModuleCharacteristics(
+                        pv_module_characteristics_inputs[NOMINAL_POWER],
                         pv_module_characteristics_inputs[REFERENCE_EFFICIENCY],
                         pv_module_characteristics_inputs[REFERENCE_TEMPERATURE],
                         pv_module_characteristics_inputs[THERMAL_COEFFICIENT],
@@ -1213,3 +1226,34 @@ COLLECTOR_FROM_TYPE: Dict[str, SolarPanel] = {
     SolarPanelType.PV_T: HybridPVTPanel,
     SolarPanelType.SOLAR_THERMAL: SolarThermalPanel,
 }
+
+
+def electric_output(
+    electrical_efficiency: float,
+    nominal_power: float,
+    reference_efficiency: float,
+    solar_irradiance: float,
+) -> float:
+    """
+    Compute the electric output power.
+
+    Inputs:
+        - electrical_efficiency:
+            The electrical efficiency of the collector.
+        - nominal_power:
+            The nominal output power from the collector, measured in kilo Watts.
+        - reference_efficiency:
+            The reference efficiency of the collector.
+        - solar_irradiance:
+            The solar irradiance, measured in Watts per meter squared.
+
+    Outputs:
+        The electric output power from the collector, measured in kiloWatts.
+
+    """
+
+    return (
+        (electrical_efficiency / reference_efficiency)
+        * (solar_irradiance / REFERENCE_SOLAR_IRRADIANCE)
+        * nominal_power
+    )

@@ -25,11 +25,13 @@ from ...__utils__ import (
 )
 
 from ...solar import (
+    REFERENCE_SOLAR_IRRADIANCE,
     HybridPVTPanel,
     PVPanel,
     PerformanceCurve,
     PVModuleCharacteristics,
     SolarThermalPanel,
+    electric_output,
 )
 
 
@@ -109,6 +111,7 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
             "min_mass_flow_rate": 20.0,
             "nominal_mass_flow_rate": 60.0,
             "pv_module_characteristics": {
+                "nominal_power": 0.400,
                 "reference_efficiency": 0.178,
                 "reference_temperature": 25.0,
                 "thermal_coefficient": 0.0036,
@@ -129,6 +132,7 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
             "min_mass_flow_rate": 20.0,
             "nominal_mass_flow_rate": 60.0,
             "pv_module_characteristics": {
+                "nominal_power": 0.400,
                 "reference_efficiency": 0.213,
                 "reference_temperature": 25.0,
                 "thermal_coefficient": 0.0034,
@@ -317,3 +321,36 @@ class TestSolarThermalPanelPerformance(unittest.TestCase):
         self.assertEqual(
             round(efficiency_by_equation, 8), round(efficiency_by_output, 8)
         )
+
+
+class TestElectricOutput(unittest.TestCase):
+    """Tests the electric output function."""
+
+    def test_mainline(self) -> None:
+        """
+        Tests the mainline case.
+
+        The electric power out is computed based on the fraction of the rated power that
+        should be expected:
+
+        power = (eta_el / eta_ref)  # Fraction of electrical efficiency expected
+                * (G / G_ref)       # Fraction of irradiance incident
+                * P_nominal         # Rated output power
+
+        """
+
+        electric_power_out = electric_output(
+            (electrical_efficiency := 0.13),
+            (nominal_power := 0.35),
+            (reference_efficiency := 0.125),
+            (solar_irradiance := 950),
+        )
+
+        electric_power_out_by_equation = (
+            (electrical_efficiency / reference_efficiency)
+            * (solar_irradiance / REFERENCE_SOLAR_IRRADIANCE)
+            * nominal_power
+        )
+
+        # Check that the calculation was carried out correctly.
+        self.assertEqual(electric_power_out, electric_power_out_by_equation)

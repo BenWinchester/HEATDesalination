@@ -46,6 +46,7 @@ def main(args: List[Any]) -> None:
     # Parse the various input files.
     (
         ambient_temperatures,
+        battery,
         buffer_tank,
         desalination_plant,
         hybrid_pvt_panel,
@@ -62,7 +63,7 @@ def main(args: List[Any]) -> None:
             ambient_temperatures,
             buffer_tank,
             desalination_plant,
-            scenario.htf_mass_flow_rate,
+            parsed_args.htf_mass_flow_rate,
             hybrid_pvt_panel,
             logger,
             pv_panel,

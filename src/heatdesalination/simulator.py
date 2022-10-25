@@ -27,7 +27,7 @@ from tqdm import tqdm
 from .__utils__ import ZERO_CELCIUS_OFFSET, Scenario
 from .matrix import solve_matrix
 from .plant import DesalinationPlant
-from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel
+from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel, electric_output
 from .storage.storage_utils import HotWaterTank
 
 
@@ -241,10 +241,23 @@ def run_simulation(
                 range(24), desc="pv performance", leave=disable_tqdm, unit="hour"
             )
         }
+        pv_electric_output_power: Dict[int, float] | None = {
+            hour: electric_output(
+                pv_electrical_efficiencies[hour],
+                pv_panel.pv_unit,
+                pv_panel.reference_efficiency,
+                solar_irradiance,
+            )
+            for hour, solar_irradiance in solar_irradiances.items()
+        }
     else:
         pv_electrical_efficiencies = None
+        pv_electric_output_power = None
 
-    logger.info("Hourly simulation complete, returning outputs.")
+    # Compute the output power from the various collectors.
+    logger.info("Hourly simulation complete, compute the output power.")
+
+    logger.info("Simulation complete, returning outputs.")
     return (
         collector_input_temperatures,
         collector_system_output_temperatures,

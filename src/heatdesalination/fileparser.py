@@ -17,9 +17,11 @@ fileparser.py - The file parser module for the HEATDeslination program.
 import os
 
 from logging import Logger
-from typing import Dict
+from typing import Dict, Tuple
 
 import json
+
+from .storage.storage_utils import Battery, HotWaterTank
 
 from .solar import (
     COLLECTOR_FROM_TYPE,
@@ -43,6 +45,14 @@ from .plant import DesalinationPlant
 
 __all__ = ("parse_input_files",)
 
+# BATTERIES:
+#   Keyword for batteries.
+BATTERIES: str = "batteries"
+
+# BATTERY:
+#   Keyword for battery.
+BATTERY: str = "battery"
+
 # DESLINATION_PLANT_INPUTS:
 #   The name of the desalination plant inputs file.
 DESALINATION_PLANT_INPUTS: str = "plants.yaml"
@@ -54,6 +64,14 @@ DESALINATION_PLANTS: str = "desalination_plants"
 # HEAT_EXCHANGER_EFFICIENCY:
 #   Keyword for parsing the heat capacity of the heat exchangers.
 HEAT_EXCHANGER_EFFICIENCY: str = "heat_exchanger_efficiency"
+
+# HOT_WATER_TANK:
+#   Keyword for hot-water tank.
+HOT_WATER_TANK: str = "hot_water_tank"
+
+# HOT_WATER_TANKS:
+#   Keyword for hot-water tanks.
+HOT_WATER_TANKS: str = "hot_water_tanks"
 
 # HTF_HEAT_CAPACITY:
 #   Keyword for parsing the htf heat capacity.
@@ -95,6 +113,10 @@ SOLAR_INPUTS: str = "solar.yaml"
 #   Keyword for parsing the solar-thermal collector name.
 SOLAR_THERMAL: str = "solar_thermal"
 
+# STORAGE_INPUTS:
+#   Keyword for storage inputs file.
+STORAGE_INPUTS: str = "storage.yaml"
+
 # TYPE:
 #   Keyword for the type of solar collector.
 TYPE: str = "type"
@@ -102,7 +124,17 @@ TYPE: str = "type"
 
 def parse_input_files(
     location: str, logger: Logger, scenario_name: str, start_hour: int
-):
+) -> Tuple[
+    Dict[ProfileType, Dict[int, float]],
+    Battery,
+    HotWaterTank,
+    DesalinationPlant,
+    HybridPVTPanel | None,
+    PVPanel | None,
+    Scenario,
+    Dict[ProfileType, Dict[int, float]],
+    SolarThermalPanel | None,
+]:
     """
     Parses the various input files.
 
@@ -118,18 +150,28 @@ def parse_input_files(
             The start hour for the plant's operation.
 
     Outputs:
+        - ambient_temperatures:
+            The ambient temperature keyed by profile type for:
+            - the day with maximum irradiance,
+            - the day with minimum irradiance,
+            - an average over all days.
+        - battery:
+            The :class:`Battery` to use for the modelling.
         - desalination_plant:
             The :class:`DesalinationPlant` to use for the modelling.
-        - pv_panels:
-            A `list` of :class:`PVPanel` instances available for modelling.
-        - pv_t:
-            A `list` of :class:`HybridPVTPanel` instances available for modelling.
+        - hybrid_pvt_panel:
+            The :class:`HybridPVTPanel` to use for the modelling.
+        - pv_panel:
+            The :class:`PVPanel` to use for the modelling.
         - scenario:
             The :class:`Scenario` to use for the mode
-        - solar_thermal:
-            A `list` of :class:`SolarThermalPanel` instances available for modelling.
-        - weather_data:
-            The weather data for the modelling.
+        - solar_irradiances:
+            The solar irradiance keyed by profile type for:
+            - the day with maximum irradiance,
+            - the day with minimum irradiance,
+            - an average over all days.
+        - solar_thermal_collector:
+            The :class:`SolarThermalCollector` to use for the modelling.
 
     """
 
@@ -137,7 +179,9 @@ def parse_input_files(
     scenario_inputs = read_yaml(os.path.join(INPUTS_DIRECTORY, SCENARIO_INPUTS), logger)
     scenarios = [
         Scenario(
+            entry[BATTERY],
             entry[HEAT_EXCHANGER_EFFICIENCY],
+            entry[HOT_WATER_TANK],
             entry[HTF_HEAT_CAPACITY],
             entry[NAME],
             entry[PLANT],
@@ -234,6 +278,30 @@ def parse_input_files(
     else:
         solar_thermal_collector = None
 
+    # Parse the batteries and buffer tank.
+    storage_inputs = read_yaml(os.path.join(INPUTS_DIRECTORY, STORAGE_INPUTS), logger)
+    batteries = [Battery.from_dict(entry) for entry in storage_inputs[BATTERIES]]
+    try:
+        battery: Battery = [
+            entry for entry in batteries if entry.name == scenario.battery
+        ][0]
+    except IndexError:
+        logger.error(
+            "Could not find battery '%s' in input file.",
+            scenario.solar_thermal,
+        )
+        raise
+    tanks = [HotWaterTank.from_dict(entry) for entry in storage_inputs[HOT_WATER_TANKS]]
+    try:
+        buffer_tank: HotWaterTank = [
+            entry for entry in tanks if entry.name == scenario.hot_water_tank
+        ][0]
+    except IndexError:
+        logger.error(
+            "Could not find hot-water tank '%s' in input file.",
+            scenario.solar_thermal,
+        )
+        raise
     # Parse the weather data.
     with open(
         os.path.join(AUTO_GENERATED_FILES_DIRECTORY, f"{location}.json"),
@@ -261,6 +329,7 @@ def parse_input_files(
     # Return the information.
     return (
         ambient_temperatures,
+        battery,
         buffer_tank,
         desalination_plant,
         hybrid_pvt_panel,

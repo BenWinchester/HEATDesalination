@@ -279,8 +279,14 @@ class Scenario:
     """
     Represents the scenario being modelled.
 
+    .. attribute:: battery
+        The name of the battery.
+
     .. attribute:: heat_exchanger_efficiency
         The efficiency of the heat exchanger.
+
+    .. attribute:: hot_water_tank
+        The name of the hot-water tank.
 
     .. attribute:: htf_heat_capacity
         The heat capacity of the HTF.
@@ -311,7 +317,9 @@ class Scenario:
 
     """
 
+    battery: str
     heat_exchanger_efficiency: float
+    hot_water_tank: str
     htf_heat_capacity: float
     name: str
     plant: str
