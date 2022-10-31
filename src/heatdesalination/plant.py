@@ -222,8 +222,8 @@ class DesalinationPlant:
                 ),
                 False: PlantRequirements(
                     input_data[PLANT_DISABLED][REQUIREMENTS][ELECTRICITY],
-                    input_data[PLANT_OPERATING][REQUIREMENTS][HOT_WATER][TEMPERATURE],
-                    input_data[PLANT_OPERATING][REQUIREMENTS][HOT_WATER][VOLUME],
+                    input_data[PLANT_DISABLED][REQUIREMENTS][HOT_WATER][TEMPERATURE],
+                    input_data[PLANT_DISABLED][REQUIREMENTS][HOT_WATER][VOLUME],
                 ),
             }
         except KeyError as exception:
@@ -294,7 +294,7 @@ class DesalinationPlant:
 
         """
 
-        return self.plant_outputs[self.operating(hour)]
+        return self.plant_outputs[self.operating(hour % 24)]
 
     def requirements(self, hour: int) -> PlantRequirements:
         """
@@ -309,4 +309,4 @@ class DesalinationPlant:
 
         """
 
-        return self.plant_requirements[self.operating(hour)]
+        return self.plant_requirements[self.operating(hour % 24)]
