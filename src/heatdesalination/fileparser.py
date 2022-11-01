@@ -314,7 +314,16 @@ def parse_input_files(
 
     ambient_temperatures: Dict[ProfileType, Dict[int, float]] = {}
     solar_irradiances: Dict[ProfileType, Dict[int, float]] = {}
-    time_difference: int = weather_data[TIMEZONE]
+    try:
+        time_difference: int = weather_data[TIMEZONE]
+    except KeyError:
+        logger.error(
+            "Missing timezone information for location %s, use key '%s' to include UTC "
+            "diff. in hours.",
+            location,
+            TIMEZONE,
+        )
+        raise
 
     # Sanitise the profile type information and extend to 25 hours.
     for profile_type in ProfileType:
