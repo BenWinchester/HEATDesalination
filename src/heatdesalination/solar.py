@@ -28,6 +28,8 @@ from typing import Any, Dict, Optional, Tuple
 
 from .__utils__ import (
     AREA,
+    COST,
+    CostableComponent,
     FlowRateError,
     InputFileError,
     NAME,
@@ -366,7 +368,7 @@ def _thermal_performance(
     return positive_root, negative_root
 
 
-class SolarPanel(abc.ABC):  # pylint: disable=too-few-public-methods
+class SolarPanel(abc.ABC, CostableComponent):  # pylint: disable=too-few-public-methods
     """
     Represents a solar panel being considered.
 
@@ -387,6 +389,7 @@ class SolarPanel(abc.ABC):  # pylint: disable=too-few-public-methods
     def __init__(
         self,
         area: float,
+        cost: float,
         land_use: float,
         name: str,
     ) -> None:
@@ -396,6 +399,8 @@ class SolarPanel(abc.ABC):  # pylint: disable=too-few-public-methods
         Inputs:
             - area:
                 The surface area of the panel in meters squared.
+            - cost:
+                The cost of the solar panel per unit panel.
             - land_use:
                 The land occupied by the panel in meters squared.
             - name:
@@ -407,6 +412,8 @@ class SolarPanel(abc.ABC):  # pylint: disable=too-few-public-methods
         self.area: float = area
         self.land_use: float = land_use
         self.name: str = name
+
+        super().__init__(cost)
 
     def __init_subclass__(cls, panel_type: SolarPanelType) -> None:
         """
@@ -510,6 +517,7 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
     def __init__(
         self,
         area: float,
+        cost: float,
         land_use: float,
         name: str,
         pv_unit: float,
@@ -523,11 +531,13 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
         Inputs:
             - area:
                 The surface area of the panel in meters squared.
+            - cost:
+                The cost of the :class:`PVPanel`.
             - land_use:
                 The land occupied by the panel in meters squared.
             - name:
-                The name to assign to the :class:`SolarPanel` in order to uniquely
-                identify it.
+                The name to assign to the :class:`PVPanel` in order to uniquely identify
+                it.
             - pv_unit:
                 The output power, in Watts, of the PV layer of the panel per unit panel
                 installed.
@@ -544,6 +554,7 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
 
         super().__init__(
             area,
+            cost,
             land_use,
             name,
         )
@@ -605,6 +616,7 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
 
         return cls(
             solar_inputs[AREA],
+            solar_inputs[COST],
             solar_inputs[LAND_USE],
             solar_inputs[NAME],
             solar_inputs[PV_UNIT],
@@ -710,6 +722,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
 
         super().__init__(
             solar_inputs[AREA],
+            solar_inputs[COST],
             solar_inputs[LAND_USE],
             solar_inputs[NAME],
         )
@@ -1017,6 +1030,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
 
         super().__init__(
             solar_inputs[AREA],
+            solar_inputs[COST],
             solar_inputs[LAND_USE],
             solar_inputs[NAME],
         )

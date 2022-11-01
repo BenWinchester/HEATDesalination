@@ -16,3 +16,7 @@ The optimisation module is responsible for determining the optimum system for su
 the needs of the desalination plant.
 
 """
+
+__all__ = ("run_optimiisation",)
+
+def run_optimisation()

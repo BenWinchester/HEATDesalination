@@ -25,8 +25,10 @@ from typing import Any, Dict
 
 from ..__utils__ import (
     AREA,
+    COST,
     HEAT_CAPACITY_OF_WATER,
     NAME,
+    CostableComponent,
     ResourceType,
 )
 
@@ -85,7 +87,7 @@ MAXIMUM_CHARGE: str = "maximum_charge"
 MINIMUM_CHARGE: str = "minimum_charge"
 
 
-class _BaseStorage:
+class _BaseStorage(CostableComponent):
     """
     Repsesents an abstract base storage unit.
 
@@ -123,6 +125,7 @@ class _BaseStorage:
     def __init__(
         self,
         capacity: float,
+        cost: float,
         cycle_lifetime: int,
         leakage: float,
         maximum_charge: float,
@@ -136,6 +139,8 @@ class _BaseStorage:
             - capacity:
                 The capacity which the :class:`_BaseStorage` can hold, measured in the
                 appropriate unit for the resource being stored.
+            - cost:
+                The cost of the :class:`_BaseStorage` instance.
             - cycle_lifetime:
                 The number of cycles for which the :class:`_BaseStorage` instance can
                 perform.
@@ -157,6 +162,8 @@ class _BaseStorage:
         self.maximum_charge: float = maximum_charge
         self.minimum_charge: float = minimum_charge
         self.name: str = name
+
+        super().__init__(cost)
 
     def __hash__(self) -> int:
         """
@@ -221,6 +228,7 @@ class _BaseStorage:
 
         return cls(
             storage_data[CAPACITY],
+            storage_data[COST],
             storage_data[CYCLE_LIFETIME],
             storage_data[LEAKAGE],
             storage_data[MAXIMUM_CHARGE],
@@ -254,6 +262,7 @@ class Battery(_BaseStorage, label="battery", resource_type=ResourceType.ELECTRIC
     def __init__(
         self,
         capacity: float,
+        cost: float,
         cycle_lifetime: int,
         leakage: float,
         maximum_charge: float,
@@ -271,6 +280,8 @@ class Battery(_BaseStorage, label="battery", resource_type=ResourceType.ELECTRIC
         Inputs:
             - capacity:
                 The capacity of the battery in kWh.
+            - cost:
+                The cost of the :class:`Battery` instance.
             - cycle_lifetime:
                 The number of cycles for which the :class:`Battery` instance can
                 perform.
@@ -297,7 +308,7 @@ class Battery(_BaseStorage, label="battery", resource_type=ResourceType.ELECTRIC
         """
 
         super().__init__(
-            capacity, cycle_lifetime, leakage, maximum_charge, minimum_charge, name
+            capacity, cost, cycle_lifetime, leakage, maximum_charge, minimum_charge, name
         )
         self.c_rate_charging: float = c_rate_charging
         self.c_rate_discharging: float = c_rate_discharging
@@ -364,6 +375,7 @@ class Battery(_BaseStorage, label="battery", resource_type=ResourceType.ELECTRIC
 
         return cls(
             storage_data[CAPACITY],
+            storage_data[COST],
             storage_data[CYCLE_LIFETIME],
             storage_data[LEAKAGE],
             storage_data[MAXIMUM_CHARGE],
@@ -448,6 +460,7 @@ class HotWaterTank(
     def __init__(
         self,
         capacity: int,
+        cost: float,
         cycle_lifetime: int,
         leakage: float,
         maximum_charge: float,
@@ -461,6 +474,10 @@ class HotWaterTank(
         Instantiate a :class:`CleanWaterTank`.
 
         Inputs:
+            - capacity:
+                The capacity of the :class:`HotWaterTank`.
+            - cost:
+                The cost of the :class:`HotWaterTank` instance.
             - cycle_lifetime:
                 The number of cycles for which the :class:`HotWaterTank` instance can
                 perform.
@@ -485,7 +502,7 @@ class HotWaterTank(
         """
 
         super().__init__(
-            capacity, cycle_lifetime, leakage, maximum_charge, minimum_charge, name
+            capacity, cost, cycle_lifetime, leakage, maximum_charge, minimum_charge, name
         )
         self.area = area
         self.heat_capacity = heat_capacity
@@ -519,6 +536,7 @@ class HotWaterTank(
             + f"name={self.name}, "
             + f"area={self.area} m^2, "
             + f"capacity={self.capacity} litres, "
+            + f"cost={self.cost} $/unit, "
             + f"cycle_lifetime={self.cycle_lifetime} cycles, "
             + f"heat_capacity={self.heat_capacity} J/kg*K, "
             + f"heat_loss_coefficient={self.heat_loss_coefficient} W/m^2K, "
@@ -562,6 +580,7 @@ class HotWaterTank(
 
         return cls(
             storage_data[CAPACITY],
+            storage_data[COST],
             storage_data[CYCLE_LIFETIME],
             storage_data[LEAKAGE],
             storage_data[MAXIMUM_CHARGE],

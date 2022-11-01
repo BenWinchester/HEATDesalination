@@ -106,11 +106,11 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
         type=float,
     )
     simulation_arguments.add_argument(
-        "--simulation",
-        "-sim",
-        action="store_true",
-        default=False,
-        help="Run a simulation.",
+        "--output",
+        "-o",
+        default="simulation_output",
+        help="The name of the output file.",
+        type=str,
     )
     simulation_arguments.add_argument(
         "--pv-system-size",
@@ -123,6 +123,13 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
         "-pv-t",
         help="The number of PV-T collectors to use.",
         type=int,
+    )
+    simulation_arguments.add_argument(
+        "--simulation",
+        "-sim",
+        action="store_true",
+        default=False,
+        help="Run a simulation.",
     )
     simulation_arguments.add_argument(
         "--solar-thermal-system-size",

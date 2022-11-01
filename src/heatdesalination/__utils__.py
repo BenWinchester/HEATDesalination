@@ -27,6 +27,8 @@ import yaml
 __all__ = (
     "AMBIENT_TEMPERATURE",
     "AREA",
+    "COST",
+    "CostableComponent",
     "FlowRateError",
     "InputFileError",
     "LATITUDE",
@@ -53,10 +55,13 @@ AREA: str = "area"
 #   Name of the directory into which auto-generated files should be saved.
 AUTO_GENERATED_FILES_DIRECTORY: str = "auto_generated"
 
+# COST:
+#   Keyword for the cost of a component.
+COST: str = "cost"
+
 # HEAT_CAPACITY_OF_WATER:
 #   The heat capacity of water, measured in Joules per kilogram Kelvin.
 HEAT_CAPACITY_OF_WATER: float = 4182
-
 
 # LATITUDE:
 #   Keyword for latitude.
@@ -97,6 +102,28 @@ WIND_SPEED: str = "wind_speed"
 # ZERO_CELCIUS_OFFSET:
 #   Keyword for the offset of Kelvin to Celcius.
 ZERO_CELCIUS_OFFSET: float = 273.15
+
+
+class CostableComponent:
+    """
+    Represents a costable component.
+
+    .. attribute:: cost
+        The cost of the component, per unit component.
+
+    """
+
+    def __init__(self, cost: float) -> None:
+        """
+        Instantiate the costable component.
+
+        Inputs:
+            - cost:
+                The cost of the component, per unit component.
+
+        """
+
+        self.cost = cost
 
 
 def get_logger(logger_name: str, verbose: bool = False) -> logging.Logger:
