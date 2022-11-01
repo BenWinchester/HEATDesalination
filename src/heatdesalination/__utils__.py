@@ -229,7 +229,7 @@ def read_yaml(
 
 def reduced_temperature(
     ambient_temperature: float, average_temperature: float, solar_irradiance: float
-) -> float:
+) -> float | None:
     """
     Computes the reduced temperature of the collector.
 
@@ -249,6 +249,10 @@ def reduced_temperature(
         The reduced temperature of the collector in Kelvin meter squared per Watt.
 
     """
+
+    # The reduced temperature cannot be computed when there is no solar irradiance
+    if solar_irradiance == 0:
+        return None
 
     return (average_temperature - ambient_temperature) / solar_irradiance
 
