@@ -15,6 +15,7 @@ solar_collectors:
   - name: !!str dusol_ds60275_m
     type: !!str pv
     area: !!float 1.638  # [m^2]
+    cost: !!float 100  # [USD/panel]
     land_use: !!float 1.638  # [m^2]
     reference_efficiency: !!float 0.1692
     reference_temperature: !!float 25  # [degC]
@@ -23,6 +24,7 @@ solar_collectors:
   - name: !!str dusol_ds60280_m
     type: !!str pv
     area: !!float 1.638  # [m^2]
+    cost: !!float 100  # [USD/panel]
     land_use: !!float 1.638  # [m^2]
     reference_efficiency: !!float 0.1723
     reference_temperature: !!float 25  # [degC]
@@ -31,6 +33,7 @@ solar_collectors:
   - name: !!str dusol_ds60280_m
     type: !!str pv
     area: !!float 1.638  # [m^2]
+    cost: !!float 100  # [USD/panel]
     land_use: !!float 1.65  # [m^2]
     reference_efficiency: !!float 0.1754
     reference_temperature: !!float 25  # [degC]
@@ -39,6 +42,7 @@ solar_collectors:
   - name: !!str dusol_ds60280_m
     type: !!str pv
     area: !!float 1.638  # [m^2]
+    cost: !!float 100  # [USD/panel]
     land_use: !!float 1.638  # [m^2]
     reference_efficiency: !!float 0.1784
     reference_temperature: !!float 25  # [degC]
@@ -55,6 +59,7 @@ solar_collectors:
   - name: !!str abora_h72sk
     type: !!str pv_t
     area: !!float 1.9602  # [m^2]
+    cost: !!float 350  # [USD/panel]
     land_use: !!float 1.9602  # [m^2]
     max_mass_flow_rate: !!float 1000  # [NaN]
     min_mass_flow_rate: !!float 20  # [l/h]
@@ -76,6 +81,7 @@ solar_collectors:
   - name: !!str dualsun_spring_uninsulated
     type: !!str pv_t
     area: !!float 1.876  # [m^2]
+    cost: !!float 300  # [USD/panel]
     land_use: !!float 1.876  # [m^2]
     max_mass_flow_rate: !!float 1000  # [NaN]
     min_mass_flow_rate: !!float 20  # [l/h]
@@ -92,6 +98,7 @@ solar_collectors:
   - name: !!str dualsun_spring_insulated
     type: !!str pv_t
     area: !!float 1.876  # [m^2]
+    cost: !!float 300  # [USD/panel]
     land_use: !!float 1.876  # [m^2]
     max_mass_flow_rate: !!float 1000  # [NaN]
     min_mass_flow_rate: !!float 20  # [l/h]
@@ -110,6 +117,8 @@ solar_collectors:
   # Flat-plate collectors #
   #########################
   - area: !!float 1.885
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
     land_use: !!float 2.106
     max_mass_flow_rate: !!float 180
     min_mass_flow_rate: !!float 15
@@ -121,6 +130,8 @@ solar_collectors:
       zeroth_order: !!float 0.694
     type: !!str solar_thermal
   - area: !!float 2.278
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
     land_use: !!float 2.516
     max_mass_flow_rate: !!float 250
     min_mass_flow_rate: !!float 60
@@ -132,6 +143,8 @@ solar_collectors:
       zeroth_order: !!float 0.716
     type: !!str solar_thermal
   - area: !!float 1.887
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
     land_use: !!float 2.11
     max_mass_flow_rate: !!float 200
     min_mass_flow_rate: !!float 50
@@ -143,6 +156,8 @@ solar_collectors:
       zeroth_order: !!float 0.702
     type: !!str solar_thermal
   - area: !!float 3.03
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
     land_use: !!float 3.215
     max_mass_flow_rate: !!float 220
     min_mass_flow_rate: !!float 70
@@ -154,6 +169,8 @@ solar_collectors:
       zeroth_order: !!float 0.793
     type: !!str solar_thermal
   - area: !!float 2.14
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
     land_use: !!float 2.301
     max_mass_flow_rate: !!float 1600
     min_mass_flow_rate: !!float 46
@@ -165,6 +182,8 @@ solar_collectors:
       zeroth_order: !!float 0.75
     type: !!str solar_thermal
   - area: !!float 2.141
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
     land_use: !!float 2.301
     max_mass_flow_rate: !!float 1000
     min_mass_flow_rate: !!float 30
@@ -176,6 +195,8 @@ solar_collectors:
       zeroth_order: !!float 0.768
     type: !!str solar_thermal
   - area: !!float 2.325
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
     land_use: !!float 2.575
     max_mass_flow_rate: !!float 185
     min_mass_flow_rate: !!float 100
@@ -187,6 +208,8 @@ solar_collectors:
       zeroth_order: !!float 0.702
     type: !!str solar_thermal
   - area: !!float 1.775
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
     land_use: !!float 1.998
     max_mass_flow_rate: !!float 150
     min_mass_flow_rate: !!float 75
@@ -198,6 +221,8 @@ solar_collectors:
       zeroth_order: !!float 0.719
     type: !!str solar_thermal
   - area: !!float 1.887
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
     land_use: !!float 2.11
     max_mass_flow_rate: !!float 200
     min_mass_flow_rate: !!float 50
@@ -209,6 +234,8 @@ solar_collectors:
       zeroth_order: !!float 0.702
     type: !!str solar_thermal
   - area: !!float 2.325
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
     land_use: !!float 2.575
     max_mass_flow_rate: !!float 185
     min_mass_flow_rate: !!float 100
@@ -220,6 +247,7 @@ solar_collectors:
       zeroth_order: !!float 0.702
     type: !!str solar_thermal
   - area: !!float 2.39
+    cost: !!float 4201  # [USD/collector]
     land_use: !!float 2.61
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -231,6 +259,7 @@ solar_collectors:
       zeroth_order: !!float 0.778
     type: !!str solar_thermal
   - area: !!float 2
+    cost: !!float 755  # [USD/collector]
     land_use: !!float 2.3
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -242,6 +271,7 @@ solar_collectors:
       zeroth_order: !!float 0.699
     type: !!str solar_thermal
   - area: !!float 2.4
+    cost: !!float 565  # [USD/collector]
     land_use: !!float 2.5
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -253,6 +283,7 @@ solar_collectors:
       zeroth_order: !!float 0.728
     type: !!str solar_thermal
   - area: !!float 1.9
+    cost: !!float 635  # [USD/collector]
     land_use: !!float 2.1
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -264,6 +295,7 @@ solar_collectors:
       zeroth_order: !!float 0.727
     type: !!str solar_thermal
   - area: !!float 2.4
+    cost: !!float 745  # [USD/collector]
     land_use: !!float 2.6
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -275,6 +307,7 @@ solar_collectors:
       zeroth_order: !!float 0.755
     type: !!str solar_thermal
   - area: !!float 2.44
+    cost: !!float 345  # [USD/collector]
     land_use: !!float 2.65
     max_mass_flow_rate: !!float 150
     min_mass_flow_rate: !!float 50
@@ -286,6 +319,7 @@ solar_collectors:
       zeroth_order: !!float 0.784
     type: !!str solar_thermal
   - area: !!float 1.94
+    cost: !!float 307  # [USD/collector]
     land_use: !!float 2.1
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -297,6 +331,7 @@ solar_collectors:
       zeroth_order: !!float 0.766
     type: !!str solar_thermal
   - area: !!float 2.06
+    cost: !!float 669  # [USD/collector]
     land_use: !!float 2.22
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -308,6 +343,7 @@ solar_collectors:
       zeroth_order: !!float 0.780
     type: !!str solar_thermal
   - area: !!float 2.22
+    cost: !!float 379  # [USD/collector]
     land_use: !!float 2.52
     max_mass_flow_rate: !!float 100.8
     min_mass_flow_rate: !!float 37.8
@@ -319,6 +355,7 @@ solar_collectors:
       zeroth_order: !!float 0.714
     type: !!str solar_thermal
   - area: !!float 2.22
+    cost: !!float 469  # [USD/collector]
     land_use: !!float 2.52
     max_mass_flow_rate: !!float 100.8
     min_mass_flow_rate: !!float 37.8
@@ -330,6 +367,7 @@ solar_collectors:
       zeroth_order: !!float 0.710
     type: !!str solar_thermal
   - area: !!float 0.896
+    cost: !!float 199  # [USD/collector]
     land_use: !!float 0.957
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -341,6 +379,7 @@ solar_collectors:
       zeroth_order: !!float 0.684
     type: !!str solar_thermal
   - area: !!float 2.3
+    cost: !!float 638  # [USD/collector]
     land_use: !!float 2.59
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -352,6 +391,7 @@ solar_collectors:
       zeroth_order: !!float 0.702
     type: !!str solar_thermal
   - area: !!float 2.31
+    cost: !!float 586  # [USD/collector]
     land_use: !!float 2.55
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -363,6 +403,7 @@ solar_collectors:
       zeroth_order: !!float 0.725
     type: !!str solar_thermal
   - area: !!float 2.64
+    cost: !!float 362  # [USD/collector]
     land_use: !!float 2.85
     max_mass_flow_rate: !!float 170
     min_mass_flow_rate: !!float 70
@@ -374,6 +415,7 @@ solar_collectors:
       zeroth_order: !!float 0.751
     type: !!str solar_thermal
   - area: !!float 2.18
+    cost: !!float 672  # [USD/collector]
     land_use: !!float 2.37
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -385,6 +427,7 @@ solar_collectors:
       zeroth_order: !!float 0.720
     type: !!str solar_thermal
   - area: !!float 1.92
+    cost: !!float 436  # [USD/collector]
     land_use: !!float 2.09
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -396,6 +439,7 @@ solar_collectors:
       zeroth_order: !!float 0.705
     type: !!str solar_thermal
   - area: !!float 2.35
+    cost: !!float 664  # [USD/collector]
     land_use: !!float 2.51
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -407,6 +451,7 @@ solar_collectors:
       zeroth_order: !!float 0.770
     type: !!str solar_thermal
   - area: !!float 2.38
+    cost: !!float 902  # [USD/collector]
     land_use: !!float 2.53
     max_mass_flow_rate: !!float 300
     min_mass_flow_rate: !!float 50
@@ -418,6 +463,7 @@ solar_collectors:
       zeroth_order: !!float 0.743
     type: !!str solar_thermal
   - area: !!float 2.169965517
+    cost: !!float 735  # [USD/collector]
     land_use: !!float 2.375310345
     max_mass_flow_rate: !!float 332.7733333
     min_mass_flow_rate: !!float 56.10666667
@@ -467,6 +513,7 @@ solar_collectors:
       zeroth_order: !!float 0.394
     type: !!str solar_thermal
   - area: !!float 1.21
+    cost: !!float 655  # [USD/collector]
     land_use: !!float 2.267
     max_mass_flow_rate: !!float 50
     min_mass_flow_rate: !!float 18
@@ -478,6 +525,8 @@ solar_collectors:
       zeroth_order: !!float 0.398
     type: !!str solar_thermal
   - area: !!float 3.018
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
     land_use: !!float 4.147
     max_mass_flow_rate: !!float 300
     min_mass_flow_rate: !!float 100
@@ -489,6 +538,8 @@ solar_collectors:
       zeroth_order: !!float 0.608
     type: !!str solar_thermal
   - area: !!float 1.006
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
     land_use: !!float 1.405
     max_mass_flow_rate: !!float 300
     min_mass_flow_rate: !!float 100
@@ -500,6 +551,8 @@ solar_collectors:
       zeroth_order: !!float 0.6
     type: !!str solar_thermal
   - area: !!float 1.332
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
     land_use: !!float 2.034
     max_mass_flow_rate: !!float 175
     min_mass_flow_rate: !!float 75
@@ -511,6 +564,8 @@ solar_collectors:
       zeroth_order: !!float 0.534
     type: !!str solar_thermal
   - area: !!float 2.019
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
     land_use: !!float 2.172
     max_mass_flow_rate: !!float 720
     min_mass_flow_rate: !!float 6
@@ -522,6 +577,8 @@ solar_collectors:
       zeroth_order: !!float 0.541
     type: !!str solar_thermal
   - area: !!float 1.601
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
     land_use: !!float 2.369
     max_mass_flow_rate: !!float 200
     min_mass_flow_rate: !!float 100
@@ -533,6 +590,8 @@ solar_collectors:
       zeroth_order: !!float 0.572
     type: !!str solar_thermal
   - area: !!float 2.481
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
     land_use: !!float 4.322
     max_mass_flow_rate: !!float 400
     min_mass_flow_rate: !!float 90
@@ -544,6 +603,8 @@ solar_collectors:
       zeroth_order: !!float 0.414
     type: !!str solar_thermal
   - area: !!float 1.654
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
     land_use: !!float 2.919
     max_mass_flow_rate: !!float 250
     min_mass_flow_rate: !!float 60
@@ -555,6 +616,8 @@ solar_collectors:
       zeroth_order: !!float 0.424
     type: !!str solar_thermal
   - area: !!float 3.01
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
     land_use: !!float 4.613
     max_mass_flow_rate: !!float 240
     min_mass_flow_rate: !!float 150
@@ -566,6 +629,8 @@ solar_collectors:
       zeroth_order: !!float 0.544
     type: !!str solar_thermal
   - area: !!float 2.007
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
     land_use: !!float 3.071
     max_mass_flow_rate: !!float 160
     min_mass_flow_rate: !!float 100
@@ -577,6 +642,10 @@ solar_collectors:
       zeroth_order: !!float 0.544
     type: !!str solar_thermal
   - area: !!float 2.401
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
     land_use: !!float 4.949
     max_mass_flow_rate: !!float 300
     min_mass_flow_rate: !!float 120
@@ -588,6 +657,8 @@ solar_collectors:
       zeroth_order: !!float 0.373
     type: !!str solar_thermal
   - area: !!float 3.012
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
     land_use: !!float 4.613
     max_mass_flow_rate: !!float 240
     min_mass_flow_rate: !!float 150
@@ -599,6 +670,8 @@ solar_collectors:
       zeroth_order: !!float 0.542
     type: !!str solar_thermal
   - area: !!float 1.004
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
     land_use: !!float 1.538
     max_mass_flow_rate: !!float 160
     min_mass_flow_rate: !!float 100
@@ -610,6 +683,8 @@ solar_collectors:
       zeroth_order: !!float 0.552
     type: !!str solar_thermal
   - area: None
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
     land_use: !!float 3.08
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -621,6 +696,7 @@ solar_collectors:
       zeroth_order: None
     type: !!str solar_thermal
   - area: None
+    cost: !!float 797  # [USD/collector]
     land_use: !!float 1.73
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -632,6 +708,7 @@ solar_collectors:
       zeroth_order: !!float 0.42
     type: !!str solar_thermal
   - area: None
+    cost: !!float 878  # [USD/collector]
     land_use: !!float 1.51
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -643,6 +720,7 @@ solar_collectors:
       zeroth_order: !!float 0.55
     type: !!str solar_thermal
   - area: !!float 1.87
+    cost: !!float 599  # [USD/collector]
     land_use: !!float 3.1
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -654,6 +732,7 @@ solar_collectors:
       zeroth_order: !!float 0.44
     type: !!str solar_thermal
   - area: !!float 1.88
+    cost: !!float 420  # [USD/collector]
     land_use: !!float 3.1
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -665,6 +744,7 @@ solar_collectors:
       zeroth_order: !!float 0.39
     type: !!str solar_thermal
   - area: !!float 2.91
+    cost: !!float 549  # [USD/collector]
     land_use: !!float 3.43
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -676,6 +756,7 @@ solar_collectors:
       zeroth_order: !!float 0.54
     type: !!str solar_thermal
   - area: !!float 2.84
+    cost: !!float 1287  # [USD/collector]
     land_use: !!float 3.26
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -687,6 +768,7 @@ solar_collectors:
       zeroth_order: !!float 0.63
     type: !!str solar_thermal
   - area: None
+    cost: !!float 664  # [USD/collector]
     land_use: !!float 3.61
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -698,6 +780,7 @@ solar_collectors:
       zeroth_order: !!float 0.43
     type: !!str solar_thermal
   - area: !!float 1.1
+    cost: !!float 702  # [USD/collector]
     land_use: !!float 2.05
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -709,6 +792,7 @@ solar_collectors:
       zeroth_order: !!float 0.45
     type: !!str solar_thermal
   - area: None
+    cost: !!float 494  # [USD/collector]
     land_use: !!float 1.22
     max_mass_flow_rate: None
     min_mass_flow_rate: None
@@ -720,6 +804,7 @@ solar_collectors:
       zeroth_order: !!float 0.53
     type: !!str solar_thermal
   - area: !!float 2
+    cost: !!float 1701  # [USD/collector]
     land_use: !!float 2.78
     max_mass_flow_rate: !!float 300
     min_mass_flow_rate: !!float 100

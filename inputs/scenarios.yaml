@@ -17,4 +17,4 @@ scenarios:
     plant: !!str med  # The name of the desalination plant to include
     pv: off # dusol_ds60275_m  # The name of the PV panel to include or "off"
     pv_t: !!str abora_h72sk  # The PV-T collector to include or "off"
-    solar_thermal: !!str fk_basic  # The solar-thermal collector or "off"
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
