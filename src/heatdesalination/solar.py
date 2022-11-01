@@ -898,7 +898,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                 The electrical efficiency of the PV panel.
             - output_temperature:
                 The output temperature of the HTF leaving the collector, measured in degrees
-                Celcius.
+                Kelvin.
             - reduced_temperature:
                 The reduced temperature of the collector.
             - thermal_efficiency:
@@ -934,6 +934,10 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
             ambient_temperature, average_temperature, solar_irradiance
         )
 
+        # If the reduced temperature is None, performance cannot be computed.
+        if reduced_collector_temperature is None:
+            return (None, negative_root, None, None)
+
         # Compute the efficiencies of the collector.
         if self.electric_performance_curve is not None:
             electrical_efficiency = (
@@ -968,7 +972,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         # Return the output information.
         return (
             electrical_efficiency,
-            negative_root - ZERO_CELCIUS_OFFSET,
+            negative_root,
             reduced_collector_temperature,
             thermal_efficiency,
         )
@@ -1115,7 +1119,8 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
             - `None`:
                 There is no electrical component to the collector.
             - output_temperature:
-                The output temperature of the HTF leaving the collector.
+                The output temperature of the HTF leaving the collector, measured in
+                degrees Kelvin.
             - reduced_temperature:
                 The reduced temperature of the collector.
             - thermal_efficiency:
@@ -1155,6 +1160,10 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
             ambient_temperature, average_temperature, solar_irradiance
         )  # [K/G]
 
+        # If the reduced temperature is None, the performance cannot be computed.
+        if reduced_collector_temperature is None:
+            return (None, negative_root, None, None)
+
         # Compute the thermal efficiency of the collector.
         thermal_efficiency = (
             self.thermal_performance_curve.eta_0
@@ -1166,7 +1175,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
 
         return (
             None,
-            negative_root - ZERO_CELCIUS_OFFSET,
+            negative_root,
             reduced_collector_temperature,
             thermal_efficiency,
         )

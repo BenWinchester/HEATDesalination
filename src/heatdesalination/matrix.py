@@ -23,7 +23,7 @@ from logging import Logger
 from typing import Optional, Tuple
 
 
-from .__utils__ import InputFileError, Scenario
+from .__utils__ import ZERO_CELCIUS_OFFSET, InputFileError, Scenario
 from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel
 from .storage.storage_utils import HotWaterTank
 
@@ -316,7 +316,7 @@ def solve_matrix(
 
     Inputs:
         - ambient_temperature:
-            The ambient temperature.
+            The ambient temperature measured in Kelvin.
         - buffer_tank:
             The :class:`HotWaterTank` to use as a buffer tank for the run.
         - htf_mass_flow_rate:
@@ -350,7 +350,7 @@ def solve_matrix(
 
     Outputs:
         - collector_input_temperature:
-            The input temperature to the collector system.
+            The input temperature to the collector system, measured in degrees Celcius.
         - collector_system_output_temperature:
             The output temperature from the solar collector system as a whole, measured
             in degrees Kelvin.

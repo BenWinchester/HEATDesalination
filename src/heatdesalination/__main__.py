@@ -23,9 +23,9 @@ from typing import Any, List
 
 
 from .__utils__ import ProfileType, get_logger
-from .argparser import parse_args, validate_args
+from .argparser import MissingParametersError, parse_args, validate_args
 from .fileparser import parse_input_files
-from .simulator import run_simulation
+from .simulator import determine_steady_state_simulation, run_simulation
 
 
 def main(args: List[Any]) -> None:
@@ -60,17 +60,24 @@ def main(args: List[Any]) -> None:
 
     if parsed_args.simulation:
         # Raise exceptions if the arguments are invalid.
+        missing_parameters: List[str] = []
         if scenario.pv_t and not parsed_args.pv_t_system_size:
             logger.error(
                 "Must specify PV-T system size if PV-T collectors included in scenario."
             )
-            raise Exception("Missing PV-T system size argument.")
+            missing_parameters.append("PV-T system size")
         if scenario.solar_thermal and not parsed_args.solar_thermal_system_size:
             logger.error(
                 "Must specify solar-thermal system size if solar-thermal collectors "
                 "included in scenario."
             )
-            raise Exception("Missing solar-thermal system size argument.")
+            missing_parameters.append("Solar-thermal system size")
+        if not parsed_args.mass_flow_rate:
+            logger.error("Must specify HTF mass flow rate if running a simulation.")
+            missing_parameters.append("HTF mass flow rate")
+
+        if len(missing_parameters) > 0:
+            raise MissingParametersError(", ".join(missing_parameters))
 
         # Run the simulation.
         for profile_type in ProfileType:
@@ -88,7 +95,7 @@ def main(args: List[Any]) -> None:
                 solar_thermal_reduced_temperatures,
                 solar_thermal_thermal_efficiencies,
                 tank_temperatures,
-            ) = run_simulation(
+            ) = determine_steady_state_simulation(
                 ambient_temperatures[profile_type],
                 buffer_tank,
                 desalination_plant,

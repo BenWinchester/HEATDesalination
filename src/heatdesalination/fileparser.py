@@ -36,6 +36,7 @@ from .__utils__ import (
     AUTO_GENERATED_FILES_DIRECTORY,
     NAME,
     SOLAR_IRRADIANCE,
+    ZERO_CELCIUS_OFFSET,
     ProfileType,
     read_yaml,
     Scenario,
@@ -151,7 +152,8 @@ def parse_input_files(
 
     Outputs:
         - ambient_temperatures:
-            The ambient temperature keyed by profile type for:
+            The ambient temperature measured in degrees Kelvin keyed by profile type
+            for:
             - the day with maximum irradiance,
             - the day with minimum irradiance,
             - an average over all days.
@@ -314,9 +316,10 @@ def parse_input_files(
     solar_irradiances: Dict[ProfileType, Dict[int, float]] = {}
     time_difference: int = weather_data[TIMEZONE]
 
+    # Sanitise the profile type information and extend to 25 hours.
     for profile_type in ProfileType:
         ambient_temperatures[profile_type] = {
-            (int(key) + time_difference) % 24: value
+            (int(key) + time_difference) % 24: value + ZERO_CELCIUS_OFFSET
             for key, value in weather_data[profile_type.value][
                 AMBIENT_TEMPERATURE
             ].items()
