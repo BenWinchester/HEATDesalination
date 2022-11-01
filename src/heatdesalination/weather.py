@@ -287,7 +287,7 @@ def main(latitude: float, longitude: float, output: str | None = None) -> None:
     max_profile = daily_weather_profiles[max_day]
 
     min_day = cumulative_irradiance_to_day[min(cumulative_irradiance_to_day)]
-    min_profile = daily_weather_profiles[max_day]
+    min_profile = daily_weather_profiles[min_day]
 
     # Determine the average profiles.
     unindexed_profiles = [
