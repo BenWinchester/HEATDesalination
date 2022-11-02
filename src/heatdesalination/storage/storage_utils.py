@@ -308,13 +308,30 @@ class Battery(_BaseStorage, label="battery", resource_type=ResourceType.ELECTRIC
         """
 
         super().__init__(
-            capacity, cost, cycle_lifetime, leakage, maximum_charge, minimum_charge, name
+            capacity,
+            cost,
+            cycle_lifetime,
+            leakage,
+            maximum_charge,
+            minimum_charge,
+            name,
         )
         self.c_rate_charging: float = c_rate_charging
         self.c_rate_discharging: float = c_rate_discharging
         self.conversion_in: float = conversion_in
         self.conversion_out: float = conversion_out
         self.lifetime_loss: float = lifetime_loss
+
+    def __hash__(self) -> int:
+        """
+        Return a unique hash identifying the :class:`_BaseStorage` instance.
+
+        Outputs:
+            - Return a unique hash identifying the :class:`_BaseStorage` instance.
+
+        """
+
+        return hash(self.name)
 
     def __str__(self) -> str:
         """
@@ -502,11 +519,28 @@ class HotWaterTank(
         """
 
         super().__init__(
-            capacity, cost, cycle_lifetime, leakage, maximum_charge, minimum_charge, name
+            capacity,
+            cost,
+            cycle_lifetime,
+            leakage,
+            maximum_charge,
+            minimum_charge,
+            name,
         )
         self.area = area
         self.heat_capacity = heat_capacity
         self.heat_loss_coefficient = heat_loss_coefficient
+
+    def __hash__(self) -> int:
+        """
+        Return a unique hash identifying the :class:`_BaseStorage` instance.
+
+        Outputs:
+            - Return a unique hash identifying the :class:`_BaseStorage` instance.
+
+        """
+
+        return hash(self.name)
 
     @property
     def heat_transfer_coefficient(self) -> float:

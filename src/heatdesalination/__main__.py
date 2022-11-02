@@ -20,14 +20,15 @@ and optimise the desalination systems.
 import os
 import sys
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 
-import pandas as pd
+from tqdm import tqdm
 
-from .__utils__ import ZERO_CELCIUS_OFFSET, ProfileType, get_logger
+from .__utils__ import ProfileType, Solution, get_logger
 from .argparser import MissingParametersError, parse_args, validate_args
 from .fileparser import parse_input_files
-from .simulator import determine_steady_state_simulation, run_simulation
+from .optimiser import run_optimisation
+from .simulator import determine_steady_state_simulation
 
 # SIMULATION_OUTPUTS_DIRECTORY:
 #   The outputs dierctory for simulations.
@@ -35,24 +36,9 @@ SIMULATION_OUTPUTS_DIRECTORY: str = "simulation_outputs"
 
 
 def save_simulation(
-    ambient_temperature: Dict[int, float],
     output: str,
     profile_type: ProfileType,
-    simulation_outputs: Tuple[
-        Dict[int, float],
-        Dict[int, float],
-        Dict[int, float] | None,
-        Dict[int, float] | None,
-        Dict[int, float] | None,
-        Dict[int, float] | None,
-        Dict[int, float] | None,
-        Dict[int, float] | None,
-        Dict[int, float] | None,
-        Dict[int, float] | None,
-        Dict[int, float] | None,
-        Dict[int, float] | None,
-        Dict[int, float],
-    ],
+    simulation_outputs: Solution,
     solar_irradiance: Dict[int, float],
 ) -> None:
     """
@@ -66,61 +52,9 @@ def save_simulation(
 
     """
 
-    # Unpack the outputs
-    (
-        collector_input_temperatures,
-        collector_system_output_temperatures,
-        pv_electrical_efficiencies,
-        pv_electrical_output_power,
-        pv_t_electrical_efficiencies,
-        pv_t_electrical_output_power,
-        pv_t_htf_output_temperatures,
-        pv_t_reduced_temperatures,
-        pv_t_thermal_efficiencies,
-        solar_thermal_htf_output_temperatures,
-        solar_thermal_reduced_temperatures,
-        solar_thermal_thermal_efficiencies,
-        tank_temperatures,
-    ) = simulation_outputs
-
     # Assemble the CSV datafile structure
-    output_data = pd.DataFrame.from_dict(
-        {
-            "Ambient temperature / degC": {
-                key: value - ZERO_CELCIUS_OFFSET
-                for key, value in ambient_temperature.items()
-            },
-            "Solar irradiance / W/m^2": solar_irradiance,
-            "Collector system input temperature / degC": {
-                key: value - ZERO_CELCIUS_OFFSET
-                for key, value in collector_input_temperatures.items()
-            },
-            "Collector system output temperature / degC": {
-                key: value - ZERO_CELCIUS_OFFSET
-                for key, value in collector_system_output_temperatures.items()
-            },
-            "PV-T collector output temperature / degC": {
-                key: value - ZERO_CELCIUS_OFFSET
-                for key, value in pv_t_htf_output_temperatures.items()
-            },
-            "Solar-thermal collector output temperature / degC": {
-                key: value - ZERO_CELCIUS_OFFSET
-                for key, value in solar_thermal_htf_output_temperatures.items()
-            },
-            "Tank temperature / degC": {
-                key: value - ZERO_CELCIUS_OFFSET
-                for key, value in tank_temperatures.items()
-            },
-            "PV electric efficiencies": pv_electrical_efficiencies,
-            "PV electric output power / W": pv_electrical_output_power,
-            "PV-T electric efficiencies": pv_t_electrical_efficiencies,
-            "PV-T electric output power / W": pv_t_electrical_output_power,
-            "PV-T reduced temperature / degC/W/m^2": pv_t_reduced_temperatures,
-            "PV-T thermal efficiency": pv_t_thermal_efficiencies,
-            "Solar-thermal reduced temperature / degC/W/m^2": solar_thermal_reduced_temperatures,
-            "Solar-thermal thermal efficiency": solar_thermal_thermal_efficiencies,
-        }
-    ).sort_index()
+    output_data = simulation_outputs.to_dataframe()
+    output_data["Solar irradiance / W/m^2"] = solar_irradiance
 
     # Write to the output file.
     os.makedirs(SIMULATION_OUTPUTS_DIRECTORY, exist_ok=True)
@@ -155,6 +89,7 @@ def main(args: List[Any]) -> None:
         buffer_tank,
         desalination_plant,
         hybrid_pv_t_panel,
+        optimisations,
         pv_panel,
         scenario,
         solar_irradiances,
@@ -201,14 +136,31 @@ def main(args: List[Any]) -> None:
                 parsed_args.solar_thermal_system_size,
             )
             save_simulation(
-                ambient_temperatures[profile_type],
                 parsed_args.output,
                 profile_type,
                 simulation_outputs,
                 solar_irradiances[profile_type],
             )
     elif parsed_args.optimisation:
-        run_optimisation()
+        for optimisation_parameters in tqdm(
+            optimisations, desc="optimisations", leave=True, unit="opt."
+        ):
+            for profile_type in tqdm(
+                ProfileType, desc="profile type", leave=False, unit="profile"
+            ):
+                run_optimisation(
+                    ambient_temperatures[profile_type],
+                    battery,
+                    buffer_tank,
+                    desalination_plant,
+                    hybrid_pv_t_panel,
+                    logger,
+                    optimisation_parameters,
+                    pv_panel,
+                    scenario,
+                    solar_irradiances[profile_type],
+                    solar_thermal_collector,
+                )
     else:
         logger.error("Neither simulation or optimisation was specified. Quitting.")
         raise Exception(

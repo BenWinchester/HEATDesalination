@@ -17,7 +17,7 @@ fileparser.py - The file parser module for the HEATDeslination program.
 import os
 
 from logging import Logger
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple
 
 import json
 
@@ -37,6 +37,7 @@ from .__utils__ import (
     NAME,
     SOLAR_IRRADIANCE,
     ZERO_CELCIUS_OFFSET,
+    OptimisationParameters,
     ProfileType,
     read_yaml,
     Scenario,
@@ -81,6 +82,14 @@ HTF_HEAT_CAPACITY: str = "htf_heat_capacity"
 # INPUTS_DIRECTORY:
 #   The name of the inputs directory.
 INPUTS_DIRECTORY: str = "inputs"
+
+# OPTIMISATION_INPUTS:
+#   The name of the optimisation inputs file.
+OPTIMISATION_INPUTS: str = "optimisations.yaml"
+
+# OPTIMISATIONS:
+#   Keyword for the optimisations.
+OPTIMISATIONS: str = "optimisations"
 
 # PLANT:
 #   Keyword for parsing the desalination plant name.
@@ -131,6 +140,7 @@ def parse_input_files(
     HotWaterTank,
     DesalinationPlant,
     HybridPVTPanel | None,
+    List[OptimisationParameters],
     PVPanel | None,
     Scenario,
     Dict[ProfileType, Dict[int, float]],
@@ -163,6 +173,9 @@ def parse_input_files(
             The :class:`DesalinationPlant` to use for the modelling.
         - hybrid_pv_t_panel:
             The :class:`HybridPVTPanel` to use for the modelling.
+        - optimisations:
+            The `list` of :class:`OptimisationParameters` instances describing the
+            optimisations that should be carried out.
         - pv_panel:
             The :class:`PVPanel` to use for the modelling.
         - scenario:
@@ -213,6 +226,19 @@ def parse_input_files(
         ][0]
     except IndexError:
         logger.error("Could not find plant '%s' in input file.", scenario.plant)
+        raise
+
+    # Parse the optimisation inputs
+    optimisation_inputs = read_yaml(
+        os.path.join(INPUTS_DIRECTORY, OPTIMISATION_INPUTS), logger
+    )
+    try:
+        optimisations: List[OptimisationParameters] = [
+            OptimisationParameters.from_dict(logger, entry)
+            for entry in optimisation_inputs[OPTIMISATIONS]
+        ]
+    except KeyError:
+        logger.error("Missing information in optimisation inputs file.")
         raise
 
     # Parse the solar panels.
@@ -345,6 +371,7 @@ def parse_input_files(
         buffer_tank,
         desalination_plant,
         hybrid_pv_t_panel,
+        optimisations,
         pv_panel,
         scenario,
         solar_irradiances,

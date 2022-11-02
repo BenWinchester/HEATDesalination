@@ -15,6 +15,6 @@ scenarios:
     hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
     htf_heat_capacity: !!float 4182  # [J/kg*K]
     plant: !!str med  # The name of the desalination plant to include
-    pv: off # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv: off  # dusol_ds60275_m  # The name of the PV panel to include or "off"
     pv_t: !!str abora_h72sk  # The PV-T collector to include or "off"
     solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"

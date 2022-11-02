@@ -20,11 +20,11 @@ profiles.
 
 from collections import defaultdict
 from logging import Logger
-from typing import DefaultDict, Dict, Tuple
+from typing import DefaultDict, Dict
 
 from tqdm import tqdm
 
-from .__utils__ import ZERO_CELCIUS_OFFSET, Scenario
+from .__utils__ import Scenario, Solution, ZERO_CELCIUS_OFFSET
 from .matrix import solve_matrix
 from .plant import DesalinationPlant
 from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel, electric_output
@@ -110,21 +110,7 @@ def run_simulation(
     *,
     disable_tqdm: bool = False,
     tank_start_temperature: float,
-) -> Tuple[
-    Dict[int, float],
-    Dict[int, float],
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float],
-]:
+) -> Solution:
     """
     Runs a simulation for the intergrated system specified.
 
@@ -159,52 +145,37 @@ def run_simulation(
             The default tank temperature to use for running for consistency.
 
     Outputs:
-        - collector_input_temperatures:
-            The input temperature to the collector system at each time step.
-        - collector_system_output_temperatures:
-            The output temperature from the solar collectors at each time step.
-        - pv_electrical_efficiencies:
-            The electrial efficiencies of the PV collectors at each time step.
-        - pv_electrical_output_power:
-            The electrial output power of the PV collectors at each time step.
-        - pv_t_electrical_efficiencies:
-            The electrial efficiencies of the PV-T collectors at each time step.
-        - pv_t_electrical_output_power:
-            The electrial output power of the PV-T collectors at each time step.
-        - pv_t_htf_output_temperatures:
-            The output temperature from the PV-T collectors at each time step.
-        - pv_t_reduced_temperatures:
-            The reduced temperature of the PV-T collectors at each time step.
-        - pv_t_thermal_efficiencies:
-            The thermal efficiency of the PV-T collectors at each time step.
-        - solar_thermal_htf_output_temperatures:
-            The output temperature from the solar-thermal collectors at each time step
-            if present.
-        - solar_thermal_reduced_temperatures:
-            The reduced temperature of the solar-thermal collectors at each time step.
-        - solar_thermal_thermal_efficiencies:
-            The thermal efficiency of the solar-thermal collectors at each time step.
-        - tank_temperatures:
-            The temperature of the hot-water tank at each time step.
+        The steady-state solution.
 
     """
 
     # Determine the mass flow rate through each type of collector.
-    pv_t_mass_flow_rate: float = _collector_mass_flow_rate(
-        htf_mass_flow_rate, pv_t_system_size
-    )
-    solar_thermal_mass_flow_rate: float = _collector_mass_flow_rate(
-        htf_mass_flow_rate, solar_thermal_system_size
-    )
-    logger.debug("PV-T mass-flow rate determined: %s", f"{pv_t_mass_flow_rate:.3g}")
-    logger.debug(
-        "Solar-thermal mass-flow rate determined: %s",
-        f"{solar_thermal_mass_flow_rate:.3g}",
-    )
+    if scenario.pv_t and pv_t_system_size > 0:
+        pv_t_mass_flow_rate: float | None = _collector_mass_flow_rate(
+            htf_mass_flow_rate, pv_t_system_size
+        )
+        logger.debug("PV-T mass-flow rate determined: %s", f"{pv_t_mass_flow_rate:.3g}")
+    else:
+        pv_t_mass_flow_rate = None
+        logger.debug("No PV-T mass flow rate because disabled or zero size.")
+
+    if scenario.solar_thermal and solar_thermal_system_size > 0:
+        solar_thermal_mass_flow_rate: float = _collector_mass_flow_rate(
+            htf_mass_flow_rate, solar_thermal_system_size
+        )
+        logger.debug(
+            "Solar-thermal mass-flow rate determined: %s",
+            f"{solar_thermal_mass_flow_rate:.3g}",
+        )
+    else:
+        solar_thermal_mass_flow_rate = None
+        logger.debug("No solar-thermal mass flow rate because disabled or zero size.")
 
     # Set up maps for storing variables.
     collector_input_temperatures: Dict[int, float] = {}
     collector_system_output_temperatures: Dict[int, float] = {}
+    hot_water_demand_temperatures: Dict[int, float | None] = {}
+    hot_water_demand_volumes: Dict[int, float | None] = {}
     pv_t_electrical_efficiencies: Dict[int, float | None] = {}
     pv_t_electrical_output_power: Dict[int, float | None] = {}
     pv_t_htf_output_temperatures: Dict[int, float | None] = {}
@@ -242,7 +213,11 @@ def run_simulation(
             buffer_tank,
             htf_mass_flow_rate,
             hybrid_pv_t_panel,
-            desalination_plant.requirements(hour).hot_water_volume,
+            (
+                hot_water_demand_volume := desalination_plant.requirements(
+                    hour
+                ).hot_water_volume
+            ),
             logger,
             tank_temperatures[hour - 1],
             pv_t_mass_flow_rate,
@@ -257,10 +232,14 @@ def run_simulation(
         # Save these outputs in mappings.
         collector_input_temperatures[hour] = collector_input_temperature
         collector_system_output_temperatures[hour] = collector_system_output_temperature
+        hot_water_demand_temperatures[hour] = desalination_plant.requirements(
+            hour
+        ).hot_water_temperature
+        hot_water_demand_volumes[hour] = hot_water_demand_volume
         pv_t_electrical_efficiencies[hour] = pv_t_electrical_efficiency
         pv_t_electrical_output_power[hour] = (
             electric_output(
-                pv_t_electrical_efficiency,
+                pv_t_electrical_efficiency if pv_t_electrical_efficiency is not None else 0,
                 hybrid_pv_t_panel.pv_module_characteristics.nominal_power,
                 hybrid_pv_t_panel.pv_module_characteristics.reference_efficiency,
                 solar_irradiances[hour],
@@ -312,9 +291,12 @@ def run_simulation(
     logger.info("Hourly simulation complete, compute the output power.")
 
     logger.info("Simulation complete, returning outputs.")
-    return (
+    return Solution(
+        ambient_temperatures,
         collector_input_temperatures,
         collector_system_output_temperatures,
+        hot_water_demand_temperatures,
+        hot_water_demand_volumes,
         pv_electrical_efficiencies if scenario.pv else None,
         pv_electrical_output_power if scenario.pv else None,
         pv_t_electrical_efficiencies if scenario.pv_t else None,
@@ -348,21 +330,7 @@ def determine_steady_state_simulation(
     solar_thermal_system_size: int | None,
     *,
     disable_tqdm: bool = False,
-) -> Tuple[
-    Dict[int, float],
-    Dict[int, float],
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float] | None,
-    Dict[int, float],
-]:
+) -> Solution:
     """
     Determines steady-state simulation conditions.
 
@@ -402,33 +370,7 @@ def determine_steady_state_simulation(
             Whether to disable the progress bar.
 
     Outputs:
-        - collector_input_temperatures:
-            The input temperature to the collector system at each time step.
-        - collector_system_output_temperatures:
-            The output temperature from the solar collectors at each time step.
-        - pv_electrical_efficiencies:
-            The electrial efficiencies of the PV collectors at each time step.
-        - pv_electrical_output_power:
-            The electrial output power of the PV collectors at each time step.
-        - pv_t_electrical_efficiencies:
-            The electrial efficiencies of the PV-T collectors at each time step.
-        - pv_t_electrical_output_power:
-            The electrial output power of the PV-T collectors at each time step.
-        - pv_t_htf_output_temperatures:
-            The output temperature from the PV-T collectors at each time step.
-        - pv_t_reduced_temperatures:
-            The reduced temperature of the PV-T collectors at each time step.
-        - pv_t_thermal_efficiencies:
-            The thermal efficiency of the PV-T collectors at each time step.
-        - solar_thermal_htf_output_temperatures:
-            The output temperature from the solar-thermal collectors at each time step
-            if present.
-        - solar_thermal_reduced_temperatures:
-            The reduced temperature of the solar-thermal collectors at each time step.
-        - solar_thermal_thermal_efficiencies:
-            The thermal efficiency of the solar-thermal collectors at each time step.
-        - tank_temperatures:
-            The temperature of the hot-water tank at each time step.
+        - The steady-state solution.
 
     """
 
@@ -451,6 +393,7 @@ def determine_steady_state_simulation(
         solar_thermal_collector,
         solar_thermal_system_size,
         tank_start_temperature=tank_start_temperature,
+        disable_tqdm=disable_tqdm,
     )
 
     tank_temperatures = solution[-1]

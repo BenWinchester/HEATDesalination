@@ -20,9 +20,12 @@ import logging
 import os
 
 from logging import Logger
-from typing import Dict, List
+from typing import Any, Dict, List, NamedTuple, Tuple
 
 import yaml
+
+import numpy as np
+import pandas as pd
 
 __all__ = (
     "AMBIENT_TEMPERATURE",
@@ -40,6 +43,7 @@ __all__ = (
     "reduced_temperature",
     "ResourceType",
     "Scenario",
+    "Solution",
     "TIMEZONE",
 )
 
@@ -55,13 +59,33 @@ AREA: str = "area"
 #   Name of the directory into which auto-generated files should be saved.
 AUTO_GENERATED_FILES_DIRECTORY: str = "auto_generated"
 
+# BOUNDS:
+#   Keyword for the bounds on the optimisation.
+BOUNDS: str = "bounds"
+
+# CONSTRAINTS:
+#   Keyword for the constraints on the optimisation.
+CONSTRAINTS: str = "constraints"
+
 # COST:
 #   Keyword for the cost of a component.
 COST: str = "cost"
 
+# CRITERION:
+#   Keyword for the criterion on the optimisation.
+CRITERION: str = "criterion"
+
+# FIXED:
+#   Keyword for the fixed capacity of an optimisable component.
+FIXED: str = "fixed"
+
 # HEAT_CAPACITY_OF_WATER:
 #   The heat capacity of water, measured in Joules per kilogram Kelvin.
 HEAT_CAPACITY_OF_WATER: float = 4182
+
+# INITIAL_GUESS:
+#   Keyword for the initial guess.
+INITIAL_GUESS: str = "initial_guess"
 
 # LATITUDE:
 #   Keyword for latitude.
@@ -74,6 +98,14 @@ LOGGER_DIRECTORY: str = "logs"
 # LONGITUDE:
 #   Keyword for longitude.
 LONGITUDE: str = "longitude"
+
+# MAX:
+#   Keyword for max value for optimisation.
+MAX: str = "max"
+
+# MIN:
+#   Keyword for min value for optimisation.
+MIN: str = "min"
 
 # NAME:
 #   Keyword for parsing the name of the object.
@@ -209,6 +241,326 @@ class InputFileError(Exception):
         super().__init__(
             f"Error parsing input file '{input_file}', invalid data in file: {msg}"
         )
+
+
+class OptimisableComponent(enum.Enum):
+    """
+    Keeps track of components that can be optimised.
+
+    - BUFFER_TANK_CAPACITY:
+        The capacity in kg of the buffer tank.
+    - MASS_FLOW_RATE:
+        The HTF mass flow rate.
+    - PV:
+        The PV-panel capacity.
+    - PV_T:
+        The PV-T system size.
+    - START_HOUR:
+        The start hour for the plant.
+    - SOLAR_THERMAL:
+        The solar-thermal system size.
+    - STORAGE:
+        The battery capacity.
+
+    """
+
+    BUFFER_TANK_CAPACITY: str = "buffer_tank_capacity"
+    MASS_FLOW_RATE: str = "mass_flow_rate"
+    PV: str = "pv"
+    PV_T: str = "pv_t"
+    START_HOUR: str = "start_hour"
+    SOLAR_THERMAL: str = "st"
+    STORAGE: str = "storage"
+
+
+class OptimisationMode(enum.Enum):
+    """
+    The mode of optimisation being carried out.
+
+    - MAXIMISE:
+        Maximise the target criterion.
+
+    - MINIMISE:
+        Minimise the target criterion.
+
+    """
+
+    MAXIMISE: str = "maximise"
+    MINIMISE: str = "minimise"
+
+
+@dataclasses.dataclass
+class OptimisationParameters:
+    """
+    Contains optimisation parameters.
+
+    .. attribute:: bounds
+        Bounds associated with the optimisation, stored as a mapping.
+
+    .. attribute:: constraints
+        Constraints associated with the optimisation, stored as a mappin.
+
+    .. attribute:: maximise
+        Whether to maximise the target_criterion (True) or minimise it (False).
+
+    .. attribute:: minimise
+        Whether to minimise the target criterion (True) or maximise it (False).
+
+    .. attribute:: target_criterion
+        The target criterion.
+
+    """
+
+    bounds: Dict[OptimisableComponent, Dict[str, float | None]]
+    constraints: Dict[str, Dict[str, float | None]]
+    _criterion: Dict[str, OptimisationMode]
+
+    @property
+    def fixed_buffer_tank_capacity_value(self) -> float | None:
+        """
+        The initial guess for the `buffer_tank_capacity` if provided, else `None`.
+
+        Outputs:
+            - An initial guess for the buffer tank value or `None` if not provided.
+
+        """
+
+        return self.bounds[OptimisableComponent.BUFFER_TANK_CAPACITY].get(FIXED, None)
+
+    @property
+    def fixed_mass_flow_rate_value(self) -> float | None:
+        """
+        The initial guess for the `mass_flow_rate` if provided, else `None`.
+
+        Outputs:
+            - An initial guess for the mass-flow rate or `None` if not provided.
+
+        """
+
+        return self.bounds[OptimisableComponent.MASS_FLOW_RATE].get(FIXED, None)
+
+    @property
+    def fixed_pv_value(self) -> float | None:
+        """
+        The initial guess for the `pv` if provided, else `None`.
+
+        Outputs:
+            - An initial guess for number of PV collectors installed or `None` if not
+              provided.
+
+        """
+
+        return self.bounds[OptimisableComponent.PV].get(FIXED, None)
+
+    @property
+    def fixed_pv_t_value(self) -> float | None:
+        """
+        The initial guess for the `pv_t` if provided, else `None`.
+
+        Outputs:
+            - An initial guess for number of PV-T collectors installed or `None` if not
+              provided.
+
+        """
+
+        return self.bounds[OptimisableComponent.PV_T].get(FIXED, None)
+
+    @property
+    def fixed_st_value(self) -> float | None:
+        """
+        The initial guess for the `st` if provided, else `None`.
+
+        Outputs:
+            - An initial guess for number of solar-thermal collectors installed or
+              `None` if not provided.
+
+        """
+
+        return self.bounds[OptimisableComponent.SOLAR_THERMAL].get(FIXED, None)
+
+    @property
+    def fixed_start_hour_value(self) -> float | None:
+        """
+        The initial guess for the `start_hour` if provided, else `None`.
+
+        Outputs:
+            - An initial guess for the start hour of the plant operation or `None` if
+              not provided.
+
+        """
+
+        return self.bounds[OptimisableComponent.START_HOUR].get(FIXED, None)
+
+    @property
+    def fixed_storage_value(self) -> float | None:
+        """
+        The initial guess for the `storage` if provided, else `None`.
+
+        Outputs:
+            - An initial guess for number of batteries installed or `None` if not
+              provided.
+
+        """
+
+        return self.bounds[OptimisableComponent.STORAGE].get(FIXED, None)
+
+    def get_initial_guess_vector_and_bounds(
+        self,
+    ) -> Tuple[np.ndarray, List[Tuple[float, float]]]:
+        """
+        Fetch the initial guess vector and bounds for the various parameters.
+
+        Each entry which is optimisable should have a `min`, `max` and `initial_guess`
+        entry. These are then returned for use within the optimisation.
+
+        Outputs:
+            - The initial guess vector,
+            - A list of the bounds as (min, max) tuples.
+
+        """
+
+        # Instantiate variables.
+        initial_guess_vector = []
+        bounds = []
+
+        # Append variables in the required order.
+        if self.fixed_buffer_tank_capacity_value is None:
+            initial_guess_vector.append(
+                self.bounds[(component := OptimisableComponent.BUFFER_TANK_CAPACITY)][
+                    INITIAL_GUESS
+                ]
+            )
+            bounds.append((self.bounds[component][MIN], self.bounds[component][MAX]))
+        if self.fixed_mass_flow_rate_value is None:
+            initial_guess_vector.append(
+                self.bounds[(component := OptimisableComponent.MASS_FLOW_RATE)][
+                    INITIAL_GUESS
+                ]
+            )
+            bounds.append((self.bounds[component][MIN], self.bounds[component][MAX]))
+        if self.fixed_pv_value is None:
+            initial_guess_vector.append(
+                self.bounds[(component := OptimisableComponent.PV)][INITIAL_GUESS]
+            )
+            bounds.append((self.bounds[component][MIN], self.bounds[component][MAX]))
+        if self.fixed_pv_t_value is None:
+            initial_guess_vector.append(
+                self.bounds[(component := OptimisableComponent.PV_T)][INITIAL_GUESS]
+            )
+            bounds.append((self.bounds[component][MIN], self.bounds[component][MAX]))
+        if self.fixed_st_value is None:
+            initial_guess_vector.append(
+                self.bounds[(component := OptimisableComponent.SOLAR_THERMAL)][
+                    INITIAL_GUESS
+                ]
+            )
+            bounds.append((self.bounds[component][MIN], self.bounds[component][MAX]))
+        if self.fixed_start_hour_value is None:
+            initial_guess_vector.append(
+                self.bounds[(component := OptimisableComponent.START_HOUR)][
+                    INITIAL_GUESS
+                ]
+            )
+            bounds.append((self.bounds[component][MIN], self.bounds[component][MAX]))
+        if self.fixed_storage_value is None:
+            initial_guess_vector.append(
+                self.bounds[(component := OptimisableComponent.STORAGE)][INITIAL_GUESS]
+            )
+            bounds.append((self.bounds[component][MIN], self.bounds[component][MAX]))
+
+        return initial_guess_vector, bounds
+
+    @property
+    def maximise(self) -> bool:
+        """
+        Returns whether to maximise the target criterion.
+
+        """
+
+        if len(self._criterion) > 1:
+            raise InputFileError(
+                "optimisations.yaml",
+                "Only one optimisation criterion can be specified.",
+            )
+
+        return list(self._criterion.values())[0] == OptimisationMode.MAXIMISE
+
+    @property
+    def minimise(self) -> bool:
+        """
+        Returns whether to minimise the target criterion.
+
+        """
+
+        return not self.maximise
+
+    @property
+    def target_criterion(self) -> str:
+        """
+        Return the target criterion name.
+
+        Outputs:
+            The target criterion name.
+
+        """
+
+        if len(self._criterion) > 1:
+            raise InputFileError(
+                "optimisations.yaml",
+                "Only one optimisation criterion can be specified.",
+            )
+
+        return str(list(self._criterion.keys())[0])
+
+    @classmethod
+    def from_dict(cls, logger: Logger, optimisation_inputs: Dict[str, Any]) -> Any:
+        """
+        Instantiate a :class:`OptimisationParameters` instance based on the input data.
+
+        Inputs:
+            - logger:
+                The logger to use for the run.
+            - optimisation_inputs:
+                The optimisation inputs for this entry.
+
+        Outputs:
+            A :class:`OptimisationParameters` instance.
+
+        """
+
+        try:
+            bounds = {
+                OptimisableComponent(key): value
+                for key, value in optimisation_inputs[BOUNDS].items()
+            }
+        except KeyError:
+            logger.error("Missing bounds information under keyword '%s'.", BOUNDS)
+            raise InputFileError(
+                "optimisation inputs", "Missing bounds information."
+            ) from None
+        except ValueError:
+            logger.error(
+                "Invalid component bounds specified, check optimisation inputs."
+            )
+            raise
+
+        try:
+            criterion = {
+                key: OptimisationMode(value)
+                for key, value in optimisation_inputs[CRITERION].items()
+            }
+        except KeyError:
+            logger.error("Missing criterion information under keyword '%s'.", CRITERION)
+            raise InputFileError(
+                "optimisation inputs", "Missing criterion information."
+            ) from None
+        except ValueError:
+            logger.error(
+                "Invalid optimisation mode specified, check optimisation inputs."
+            )
+            raise
+
+        return cls(bounds, optimisation_inputs[CONSTRAINTS], criterion)
 
 
 class ProfileType(enum.Enum):
@@ -463,3 +815,153 @@ class Scenario:
             "Solar-thermal panel name requested but solar-thermal panels are not "
             "activated in the scenario."
         )
+
+
+class Solution(NamedTuple):
+    """
+    Represents a steady-state solution for the system.
+
+    .. attribute:: ambient_temperatures
+        The ambient temperature at each time step.
+
+    .. attribute:: collector_input_temperatures
+        The input temperature to the collector system at each time step.
+
+    .. attribute:: collector_system_output_temperatures
+        The output temperature from the solar collectors at each time step.
+
+    .. attribute:: hot_water_demand_temperature
+        The temperature of the hot-water demand at each time step.
+
+    .. attribute:: hot_water_demand_volume
+        The volume of the hot-water demand at each time step.
+
+    .. attribute:: pv_electrical_efficiencies
+        The electrial efficiencies of the PV collectors at each time step.
+
+    .. attribute:: pv_electrical_output_power
+        The electrial output power of the PV collectors at each time step.
+
+    .. attribute:: pv_t_electrical_efficiencies
+        The electrial efficiencies of the PV-T collectors at each time step.
+
+    .. attribute:: pv_t_electrical_output_power
+        The electrial output power of the PV-T collectors at each time step.
+
+    .. attribute:: pv_t_htf_output_temperatures
+        The output temperature from the PV-T collectors at each time step.
+
+    .. attribute:: pv_t_reduced_temperatures
+        The reduced temperature of the PV-T collectors at each time step.
+
+    .. attribute:: pv_t_thermal_efficiencies
+        The thermal efficiency of the PV-T collectors at each time step.
+
+    .. attribute:: solar_thermal_htf_output_temperatures
+        The output temperature from the solar-thermal collectors at each time step
+        if present.
+
+    .. attribute:: solar_thermal_reduced_temperatures
+        The reduced temperature of the solar-thermal collectors at each time step.
+
+    .. attribute:: solar_thermal_thermal_efficiencies
+        The thermal efficiency of the solar-thermal collectors at each time step.
+
+    .. attribute:: tank_temperatures
+        The temperature of the hot-water tank at each time step.
+
+    """
+
+    ambient_temperatures: Dict[int, float]
+    collector_input_temperatures: Dict[int, float]
+    collector_system_output_temperatures: Dict[int, float]
+    hot_water_demand_temperature: Dict[int, float | None]
+    hot_water_demand_volume: Dict[int, float | None]
+    pv_electrical_efficiencies: Dict[int, float | None]
+    pv_electrical_output_power: Dict[int, float | None]
+    pv_t_electrical_efficiencies: Dict[int, float | None]
+    pv_t_electrical_output_power: Dict[int, float | None]
+    pv_t_htf_output_temperatures: Dict[int, float]
+    pv_t_reduced_temperatures: Dict[int, float | None]
+    pv_t_thermal_efficiencies: Dict[int, float | None]
+    solar_thermal_htf_output_temperatures: Dict[int, float]
+    solar_thermal_reduced_temperatures: Dict[int, float | None]
+    solar_thermal_thermal_efficiencies: Dict[int, float | None]
+    tank_temperatures: Dict[int, float]
+
+    @property
+    def renewable_heating_fraction(self) -> Dict[int, float]:
+        """
+        Calculate and return the renewable heating fraction.
+
+        `None` is used if the value cannot be defined, e.g., there is no tank demand
+        temperature.
+
+        Outputs:
+            A mapping containing the renewable heating fraction at each time step.
+
+        """
+
+        return {
+            hour: (
+                (
+                    (self.tank_temperatures[hour] - self.ambient_temperatures[hour])
+                    / (
+                        self.hot_water_demand_temperature[hour]
+                        - self.ambient_temperatures[hour]
+                    )
+                )
+                if demand_temperature is not None
+                else None
+            )
+            for hour, demand_temperature in self.hot_water_demand_temperature.items()
+        }
+
+    def to_dataframe(self) -> pd.DataFrame:
+        """
+        Return a :class:`pandas.DataFrame` containing the solution information.
+
+        Outputs:
+            A dataframe containing the information associated with the solution.
+
+        """
+
+        return pd.DataFrame.from_dict(
+            {
+                "Ambient temperature / degC": {
+                    key: value - ZERO_CELCIUS_OFFSET
+                    for key, value in self.ambient_temperatures.items()
+                },
+                "Collector system input temperature / degC": {
+                    key: value - ZERO_CELCIUS_OFFSET
+                    for key, value in self.collector_input_temperatures.items()
+                },
+                "Collector system output temperature / degC": {
+                    key: value - ZERO_CELCIUS_OFFSET
+                    for key, value in self.collector_system_output_temperatures.items()
+                },
+                "Hot-water demand temperature / degC": self.hot_water_demand_temperature,
+                "Hot-water demand volume / kg/s": self.hot_water_demand_volume,
+                "PV-T collector output temperature / degC": {
+                    key: value - ZERO_CELCIUS_OFFSET
+                    for key, value in self.pv_t_htf_output_temperatures.items()
+                },
+                "Renewable heating fraction": self.renewable_heating_fraction,
+                "Solar-thermal collector output temperature / degC": {
+                    key: value - ZERO_CELCIUS_OFFSET
+                    for key, value in self.solar_thermal_htf_output_temperatures.items()
+                },
+                "Tank temperature / degC": {
+                    key: value - ZERO_CELCIUS_OFFSET
+                    for key, value in self.tank_temperatures.items()
+                },
+                "PV electric efficiencies": self.pv_electrical_efficiencies,
+                "PV electric output power / W": self.pv_electrical_output_power,
+                "PV-T electric efficiencies": self.pv_t_electrical_efficiencies,
+                "PV-T electric output power / W": self.pv_t_electrical_output_power,
+                "PV-T reduced temperature / degC/W/m^2": self.pv_t_reduced_temperatures,
+                "PV-T thermal efficiency": self.pv_t_thermal_efficiencies,
+                "Solar-thermal reduced temperature / degC/W/m^2": self.solar_thermal_reduced_temperatures,
+                "Solar-thermal thermal efficiency": self.solar_thermal_thermal_efficiencies,
+            }
+        ).sort_index()

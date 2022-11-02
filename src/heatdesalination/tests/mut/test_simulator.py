@@ -13,7 +13,7 @@ test_simulator.py - Tests for the simulation module.
 
 """
 
-from typing import Dict, Tuple
+from typing import Dict
 import unittest
 
 from unittest import mock

@@ -122,7 +122,7 @@ def _solar_system_output_temperatures(
 
     """
 
-    if scenario.pv_t:
+    if scenario.pv_t and pv_t_mass_flow_rate is not None:
         (
             pv_t_electrical_efficiency,
             pv_t_htf_output_temperature,
@@ -142,7 +142,7 @@ def _solar_system_output_temperatures(
         pv_t_reduced_temperature = None
         pv_t_thermal_efficiency = None
 
-    if scenario.solar_thermal:
+    if scenario.solar_thermal and solar_thermal_mass_flow_rate is not None:
         (
             _,
             solar_thermal_htf_output_temperature,
@@ -377,15 +377,13 @@ def solve_matrix(
     """
 
     # Set up variables to track for a valid solution being found.
-    if scenario.pv_t and (hybrid_pv_t_panel is None or pv_t_mass_flow_rate is None):
+    if scenario.pv_t and hybrid_pv_t_panel is None:
         logger.error("No PV-T panel provided despite PV-T being on in the scenario.")
         raise InputFileError(
             "scenario OR solar",
             "No PV-T panel provided despite PV modelling being requested.",
         )
-    if scenario.solar_thermal and (
-        solar_thermal_collector is None or solar_thermal_mass_flow_rate is None
-    ):
+    if scenario.solar_thermal and (solar_thermal_collector is None):
         logger.error(
             "No solar-thermal collector provided despite solar-thermal being on in the "
             "scenario."

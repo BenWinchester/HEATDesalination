@@ -62,6 +62,7 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
 
     required_arguments = parser.add_argument_group("required arguments")
     simulation_arguments = parser.add_argument_group("simulation-only arguments")
+    optimisation_arguments = parser.add_argument_group("optimisation-only arguments")
 
     ######################
     # Required arguments #
@@ -138,6 +139,18 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
         type=int,
     )
 
+    ###############################
+    # Optimisation-only arguments #
+    ###############################
+
+    optimisation_arguments.add_argument(
+        "--optimisation",
+        "-opt",
+        action="store_true",
+        default=False,
+        help="Run an optimisation.",
+    )
+
     return parser.parse_args(args)
 
 
@@ -159,7 +172,12 @@ def validate_args(parsed_args: argparse.Namespace) -> None:
         raise Exception("Location must be specified.")
     if parsed_args.scenario is None:
         raise Exception("Scenario must be specified.")
-    if parsed_args.start_hour is None:
+    if parsed_args.simulation and parsed_args.optimisation:
+        raise Exception("Cannot run an optimisation and a simulation.")
+    if not parsed_args.simulation and not parsed_args.optimisation:
+        raise Exception("Must run either a simulation or an optimisation.")
+    if parsed_args.start_hour is None and parsed_args.simulation:
         raise Exception(
-            "Start hour for desalination plant operation must be specified."
+            "Start hour for desalination plant operation must be specified if running "
+            "a simulation."
         )

@@ -15,8 +15,8 @@ desalination_plants:
       requirements:
         electricity: !!float 30  # [kW] Electricity requirements
         hot_water:
-          temperature: !!float 0  # [degC] Temperature of the hot-water input
-          volume: !!float 0  # [kg/s] Volume requirements per hour
+          temperature: null  # [degC] Temperature of the hot-water input
+          volume: 0  # [kg/s] Volume requirements per hour
       outputs:
         brine: !!float 0  # [kg/s] Volume produced per hour
         clean_water: !!float 0  # [kg/s] Volume produced per hour

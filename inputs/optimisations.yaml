@@ -1,0 +1,95 @@
+---
+################################################################################
+# optimisations.yaml - The optimisation input information.                     #
+#                                                                              #
+# Author: Ben Winchester                                                       #
+# Copyright: Ben Winchester, 2022                                              #
+# Date created: 01/11/2022                                                     #
+# License: Open source                                                         #
+################################################################################
+
+# Each optimisation listed under the top-level header `optimisations` contains
+# inforamtion on the bounds, constraints and the criterion which is being
+# optimised for.
+#
+# Valid bounds:
+# - buffer_tank_capacity:
+#     The capacity in kg of the buffer tank.
+# - mass_flow_rate:
+#     The HTF mass flow rate.
+# - pv:
+#     The PV-panel capacity.
+# - pv_t:
+#     The PV-T system size.
+# - start_hour:
+#     The start hour for the plant.
+# - st:
+#     The solar-thermal system size.
+# - storage:
+#     The battery capacity.
+#
+# Valid constraints/criteria:
+# - auxiliary_heating_fraction:
+#     The fraction of the heating demand that was met using auxiliary heating.
+# - lcue:
+#     The levilised cost of used electricity.
+# - renewable_heating_fraction:
+#     The fraction of the heating which was met using renewables.
+# - renewable_electricity_fraction:
+#     The fraction of the electricity which was met using renewables.
+# - total_cost:
+#     The total cost of the system components whose sizes were optimisable.
+# - unmet_electricity_fraction:
+#     The fraction of the electricity demand which was unmet.
+#
+# Each "bounds" entry can contain either `max` and `min` information, providing
+# the maximum and minimum bounds on the parameter being optimised, or `fixed` if
+# the parameter is should not be optimised. E.G.,
+# bounds:
+#   - pv:
+#       initial_guess: 20
+#       min: 5
+#       max: null
+#   - htf_mass_flow_rate:
+#       fixed: 4
+# which would correspond to the PV collectors being optimised with a minimum of
+# 5 collectors and no upper-bound, and with the htf mass flow rate being fixed
+# at 4 kg/s through the system overall.
+#
+
+optimisations:
+  - bounds:
+      buffer_tank_capacity:
+        initial_guess: 30000  # [kg] or [litres]
+        min: 15000  # [kg] or [litres]
+        max: 100000  # [kg] or [litres]
+      mass_flow_rate:
+        initial_guess: 8  # [kg/s]
+        min: 2
+        max: 20
+      pv:
+        initial_guess: 100  # Number of PV collectors
+        min: 0
+        max: null
+      pv_t:
+        initial_guess: 100  # Number of PV-T collectors
+        min: 0
+        max: null
+      st:
+        initial_guess: 100  # Number of solar-thermal collectors
+        min: 0
+        max: null
+      start_hour:
+        initial_guess: 10  # [o'clock] using 24-hour clock
+        min: 0
+        max: 23
+      storage:
+        initial_guess: 5  # [kWh]
+        min: 5
+        max: null
+    constraints: null
+    #   - auxiliary_heating_fraction:
+    #       min: null
+    #       max: 0.5
+    criterion:
+      total_cost: minimise
