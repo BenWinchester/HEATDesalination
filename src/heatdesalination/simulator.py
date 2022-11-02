@@ -239,7 +239,9 @@ def run_simulation(
         pv_t_electrical_efficiencies[hour] = pv_t_electrical_efficiency
         pv_t_electrical_output_power[hour] = (
             electric_output(
-                pv_t_electrical_efficiency if pv_t_electrical_efficiency is not None else 0,
+                pv_t_electrical_efficiency
+                if pv_t_electrical_efficiency is not None
+                else 0,
                 hybrid_pv_t_panel.pv_module_characteristics.nominal_power,
                 hybrid_pv_t_panel.pv_module_characteristics.reference_efficiency,
                 solar_irradiances[hour],

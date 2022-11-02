@@ -60,17 +60,19 @@
 optimisations:
   - bounds:
       buffer_tank_capacity:
-        initial_guess: 30000  # [kg] or [litres]
-        min: 15000  # [kg] or [litres]
-        max: 100000  # [kg] or [litres]
+        fixed: 15000
+        # initial_guess: 30000  # [kg] or [litres]
+        # min: 15000  # [kg] or [litres]
+        # max: 100000  # [kg] or [litres]
       mass_flow_rate:
         initial_guess: 8  # [kg/s]
         min: 2
         max: 20
       pv:
-        initial_guess: 100  # Number of PV collectors
-        min: 0
-        max: null
+        fixed: 0
+        # initial_guess: 100  # Number of PV collectors
+        # min: 0
+        # max: null
       pv_t:
         initial_guess: 100  # Number of PV-T collectors
         min: 0
@@ -92,4 +94,4 @@ optimisations:
     #       min: null
     #       max: 0.5
     criterion:
-      total_cost: minimise
+      auxiliary_heating_fraction: minimise

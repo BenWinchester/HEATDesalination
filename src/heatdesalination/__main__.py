@@ -148,7 +148,7 @@ def main(args: List[Any]) -> None:
             for profile_type in tqdm(
                 ProfileType, desc="profile type", leave=False, unit="profile"
             ):
-                run_optimisation(
+                result = run_optimisation(
                     ambient_temperatures[profile_type],
                     battery,
                     buffer_tank,
@@ -161,6 +161,9 @@ def main(args: List[Any]) -> None:
                     solar_irradiances[profile_type],
                     solar_thermal_collector,
                 )
+                import pdb
+
+                pdb.set_trace()
     else:
         logger.error("Neither simulation or optimisation was specified. Quitting.")
         raise Exception(

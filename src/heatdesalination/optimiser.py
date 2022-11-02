@@ -21,7 +21,7 @@ __all__ = ("run_optimisation",)
 
 import abc
 from logging import Logger
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import numpy
 
@@ -212,8 +212,11 @@ class RenewableHeatingFraction(Criterion, criterion_name="renewable_heating_frac
 
         """
 
-        return sum(solution.renewable_heating_fraction) / len(
-            solution.renewable_heating_fraction
+        # Determine times for which the renewable heating fraction is not None.
+        non_none_renewable_heating_fraction = [entry for entry in solution.renewable_heating_fraction.values() if entry is not None]
+
+        return sum(non_none_renewable_heating_fraction) / len(
+            non_none_renewable_heating_fraction
         )
 
 
@@ -245,7 +248,9 @@ class AuxiliaryHeatingFraction(Criterion, criterion_name="auxiliary_heating_frac
 
         """
 
-        return 1 - super().calculate_value_map[RenewableHeatingFraction.name](solution)
+        return 1 - super().calculate_value_map[RenewableHeatingFraction.name](
+            component_sizes, solution
+        )
 
 
 class TotalCost(Criterion, criterion_name="total_cost"):
@@ -487,7 +492,7 @@ def run_optimisation(
     solar_thermal_collector: SolarThermalPanel,
     *,
     disable_tqdm: bool = True,
-):
+) -> Any:
     """
     Determine the optimum system conditions.
 
@@ -560,7 +565,7 @@ def run_optimisation(
     )
 
     # Optimise the system.
-    result = optimize.minimize(
+    return optimize.minimize(
         _simulate_and_calculate_criterion,
         initial_guess_vector,
         additional_arguments,
