@@ -127,6 +127,7 @@ class PlantRequirements:
 
         return self._hot_water_temperature + ZERO_CELCIUS_OFFSET
 
+
 class DesalinationPlant:
     """
     Represents a desalination plant.

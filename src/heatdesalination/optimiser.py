@@ -213,7 +213,11 @@ class RenewableHeatingFraction(Criterion, criterion_name="renewable_heating_frac
         """
 
         # Determine times for which the renewable heating fraction is not None.
-        non_none_renewable_heating_fraction = [entry for entry in solution.renewable_heating_fraction.values() if entry is not None]
+        non_none_renewable_heating_fraction = [
+            entry
+            for entry in solution.renewable_heating_fraction.values()
+            if entry is not None
+        ]
 
         return sum(non_none_renewable_heating_fraction) / len(
             non_none_renewable_heating_fraction
