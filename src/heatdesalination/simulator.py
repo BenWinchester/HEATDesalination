@@ -103,6 +103,7 @@ def run_simulation(
     hybrid_pv_t_panel: HybridPVTPanel | None,
     logger: Logger,
     pv_panel: PVPanel | None,
+    pv_system_size: int | None,
     pv_t_system_size: int | None,
     scenario: Scenario,
     solar_irradiances: Dict[int, float],
@@ -130,6 +131,8 @@ def run_simulation(
             The :class:`logging.Logger` for the run.
         - pv_panel:
             The :class:`PVPanel` associated with the system.
+        - pv_system_size:
+            The size of the PV system installed.
         - pv_t_system_size:
             The size of the PV-T system installed.
         - scenario:
@@ -240,7 +243,8 @@ def run_simulation(
                 * (
                     desalination_plant.requirements(hour).hot_water_temperature
                     - tank_temperature  # [K]
-                ) / 1000 # [W/kW]
+                )
+                / 1000  # [W/kW]
             )  # [kW]
             electricity_demand: float = desalination_plant.requirements(  # [kW]
                 hour
@@ -286,6 +290,7 @@ def run_simulation(
         solar_thermal_thermal_efficiencies[hour] = solar_thermal_thermal_efficiency
         tank_temperatures[hour] = tank_temperature
 
+    # Compute the PV performance characteristics.
     if scenario.pv:
         logger.info("Computing PV performance characteristics.")
         pv_electrical_efficiencies: Dict[int, float] | None = {
@@ -312,12 +317,21 @@ def run_simulation(
             )
             for hour, solar_irradiance in solar_irradiances.items()
         }
+        pv_system_electrical_output_power: Dict[int, float] | None = {
+            hour: value * pv_system_size
+            for hour, value in pv_electrical_output_power.items()
+        }
     else:
         pv_electrical_efficiencies = None
         pv_electrical_output_power = None
+        pv_system_electrical_output_power = None
 
     # Compute the output power from the various collectors.
     logger.info("Hourly simulation complete, compute the output power.")
+    pv_t_system_electrical_output_power: Dict[int, float] = {
+        hour: value * pv_t_system_size
+        for hour, value in pv_t_electrical_output_power.items()
+    }
 
     logger.info("Simulation complete, returning outputs.")
     return Solution(
@@ -329,10 +343,12 @@ def run_simulation(
         hot_water_demand_volumes,
         pv_electrical_efficiencies if scenario.pv else None,
         pv_electrical_output_power if scenario.pv else None,
+        pv_system_electrical_output_power if scenario.pv else None,
         pv_t_electrical_efficiencies if scenario.pv_t else None,
         pv_t_electrical_output_power if scenario.pv_t else None,
         pv_t_htf_output_temperatures if scenario.pv_t else None,
         pv_t_reduced_temperatures if scenario.pv_t else None,
+        pv_t_system_electrical_output_power if scenario.pv_t else None,
         pv_t_thermal_efficiencies if scenario.pv_t else None,
         solar_thermal_htf_output_temperatures if scenario.solar_thermal else None,
         solar_thermal_reduced_temperatures if scenario.solar_thermal else None,
@@ -353,6 +369,7 @@ def determine_steady_state_simulation(
     hybrid_pv_t_panel: HybridPVTPanel | None,
     logger: Logger,
     pv_panel: PVPanel | None,
+    pv_system_size: int | None,
     pv_t_system_size: int | None,
     scenario: Scenario,
     solar_irradiances: Dict[int, float],
@@ -384,6 +401,8 @@ def determine_steady_state_simulation(
             The :class:`logging.Logger` for the run.
         - pv_panel:
             The :class:`PVPanel` associated with the system.
+        - pv_system_size:
+            The size of the PV system installed.
         - pv_t_system_size:
             The size of the PV-T system installed.
         - scenario:
@@ -417,6 +436,7 @@ def determine_steady_state_simulation(
         hybrid_pv_t_panel,
         logger,
         pv_panel,
+        pv_system_size,
         pv_t_system_size,
         scenario,
         solar_irradiances,
@@ -453,6 +473,7 @@ def determine_steady_state_simulation(
                 hybrid_pv_t_panel,
                 logger,
                 pv_panel,
+                pv_system_size,
                 pv_t_system_size,
                 scenario,
                 solar_irradiances,

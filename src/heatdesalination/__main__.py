@@ -129,6 +129,7 @@ def main(args: List[Any]) -> None:
                 hybrid_pv_t_panel,
                 logger,
                 pv_panel,
+                parsed_args.pv_system_size,
                 parsed_args.pv_t_system_size,
                 scenario,
                 solar_irradiances[profile_type],

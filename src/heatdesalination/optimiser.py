@@ -453,6 +453,7 @@ def _simulate_and_calculate_criterion(
             hybrid_pv_t_panel,
             logger,
             pv_panel,
+            pv_panel_system_size,
             pv_t_system_size,
             scenario,
             solar_irradiances,

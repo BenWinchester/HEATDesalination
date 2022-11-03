@@ -845,22 +845,30 @@ class Solution(NamedTuple):
         The volume of the hot-water demand at each time step.
 
     .. attribute:: pv_electrical_efficiencies
-        The electrial efficiencies of the PV collectors at each time step.
+        The electrical efficiencies of the PV collectors at each time step.
 
     .. attribute:: pv_electrical_output_power
-        The electrial output power of the PV collectors at each time step.
+        The electrcial output power of the PV collectors at each time step.
+
+    .. attribute:: pv_system_electrical_output_power
+        The electrcial output power from all of the installed PV collectors at each time
+        step, measured in kWh.
 
     .. attribute:: pv_t_electrical_efficiencies
-        The electrial efficiencies of the PV-T collectors at each time step.
+        The electrical efficiencies of the PV-T collectors at each time step.
 
     .. attribute:: pv_t_electrical_output_power
-        The electrial output power of the PV-T collectors at each time step.
+        The electrical output power of the PV-T collectors at each time step.
 
     .. attribute:: pv_t_htf_output_temperatures
         The output temperature from the PV-T collectors at each time step.
 
     .. attribute:: pv_t_reduced_temperatures
         The reduced temperature of the PV-T collectors at each time step.
+
+    .. attribute:: pv_t_system_electrical_output_power
+        The electrcial output power from all of the installed PV-T collectors at each
+        time step, measured in kWh.
 
     .. attribute:: pv_t_thermal_efficiencies
         The thermal efficiency of the PV-T collectors at each time step.
@@ -888,10 +896,12 @@ class Solution(NamedTuple):
     hot_water_demand_volume: Dict[int, float | None]
     pv_electrical_efficiencies: Dict[int, float | None]
     pv_electrical_output_power: Dict[int, float | None]
+    pv_system_electrical_output_power: Dict[int, float | None]
     pv_t_electrical_efficiencies: Dict[int, float | None]
     pv_t_electrical_output_power: Dict[int, float | None]
     pv_t_htf_output_temperatures: Dict[int, float]
     pv_t_reduced_temperatures: Dict[int, float | None]
+    pv_t_system_electrical_output_power: Dict[int, float | None]
     pv_t_thermal_efficiencies: Dict[int, float | None]
     solar_thermal_htf_output_temperatures: Dict[int, float]
     solar_thermal_reduced_temperatures: Dict[int, float | None]
@@ -966,10 +976,12 @@ class Solution(NamedTuple):
                     for key, value in self.tank_temperatures.items()
                 },
                 "PV electric efficiencies": self.pv_electrical_efficiencies,
-                "PV electric output power / W": self.pv_electrical_output_power,
+                "PV electric output power / kW": self.pv_electrical_output_power,
+                "Total PV electric power produced / kW": self.pv_system_electrical_output_power,
                 "PV-T electric efficiencies": self.pv_t_electrical_efficiencies,
-                "PV-T electric output power / W": self.pv_t_electrical_output_power,
+                "PV-T electric output power / kW": self.pv_t_electrical_output_power,
                 "PV-T reduced temperature / degC/W/m^2": self.pv_t_reduced_temperatures,
+                "Total PV-T electric power produced / kW": self.pv_t_system_electrical_output_power,
                 "PV-T thermal efficiency": self.pv_t_thermal_efficiencies,
                 "Solar-thermal reduced temperature / degC/W/m^2": self.solar_thermal_reduced_temperatures,
                 "Solar-thermal thermal efficiency": self.solar_thermal_thermal_efficiencies,
