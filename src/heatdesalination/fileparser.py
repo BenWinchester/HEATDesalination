@@ -67,6 +67,10 @@ DESALINATION_PLANTS: str = "desalination_plants"
 #   Keyword for parsing the heat capacity of the heat exchangers.
 HEAT_EXCHANGER_EFFICIENCY: str = "heat_exchanger_efficiency"
 
+# HEAT_PUMP_EFFICIENCY:
+#   Keyword for parsing the system efficiency of the installed heat pump.
+HEAT_PUMP_EFFICIENCY: str = "heat_pump_efficiency"
+
 # HOT_WATER_TANK:
 #   Keyword for hot-water tank.
 HOT_WATER_TANK: str = "hot_water_tank"
@@ -196,6 +200,7 @@ def parse_input_files(
         Scenario(
             entry[BATTERY],
             entry[HEAT_EXCHANGER_EFFICIENCY],
+            entry[HEAT_PUMP_EFFICIENCY],
             entry[HOT_WATER_TANK],
             entry[HTF_HEAT_CAPACITY],
             entry[NAME],

@@ -668,6 +668,10 @@ class Scenario:
     .. attribute:: heat_exchanger_efficiency
         The efficiency of the heat exchanger.
 
+    .. attribute:: heat_pump_efficiency
+        The system efficiency of the heat pump installed, expressed as a fraction of the
+        Carnot efficiency.
+
     .. attribute:: hot_water_tank
         The name of the hot-water tank.
 
@@ -702,6 +706,7 @@ class Scenario:
 
     battery: str
     heat_exchanger_efficiency: float
+    heat_pump_efficiency: float
     hot_water_tank: str
     htf_heat_capacity: float
     name: str
@@ -830,6 +835,9 @@ class Solution(NamedTuple):
     .. attribute:: collector_system_output_temperatures
         The output temperature from the solar collectors at each time step.
 
+    .. attribute:: electricity_demands
+        The electricity demands placed on the system in kWh at each time step.
+
     .. attribute:: hot_water_demand_temperature
         The temperature of the hot-water demand at each time step.
 
@@ -875,6 +883,7 @@ class Solution(NamedTuple):
     ambient_temperatures: Dict[int, float]
     collector_input_temperatures: Dict[int, float]
     collector_system_output_temperatures: Dict[int, float]
+    electricity_demands: Dict[int, float]
     hot_water_demand_temperature: Dict[int, float | None]
     hot_water_demand_volume: Dict[int, float | None]
     pv_electrical_efficiencies: Dict[int, float | None]
@@ -940,6 +949,7 @@ class Solution(NamedTuple):
                     key: value - ZERO_CELCIUS_OFFSET
                     for key, value in self.collector_system_output_temperatures.items()
                 },
+                "Electricity demand / kWh": self.electricity_demands,
                 "Hot-water demand temperature / degC": self.hot_water_demand_temperature,
                 "Hot-water demand volume / kg/s": self.hot_water_demand_volume,
                 "PV-T collector output temperature / degC": {

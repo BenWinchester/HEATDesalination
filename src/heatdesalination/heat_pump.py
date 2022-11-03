@@ -106,5 +106,5 @@ def calculate_heat_pump_electricity_consumption(
     """
 
     return heat_demand / _coefficient_of_performance(
-        condensation_temperature, evaporation_temperature
+        condensation_temperature, evaporation_temperature, system_efficiency
     )

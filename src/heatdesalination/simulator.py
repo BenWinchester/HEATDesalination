@@ -25,6 +25,7 @@ from typing import DefaultDict, Dict
 from tqdm import tqdm
 
 from .__utils__ import Scenario, Solution, ZERO_CELCIUS_OFFSET
+from .heat_pump import calculate_heat_pump_electricity_consumption
 from .matrix import solve_matrix
 from .plant import DesalinationPlant
 from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel, electric_output
@@ -174,6 +175,7 @@ def run_simulation(
     # Set up maps for storing variables.
     collector_input_temperatures: Dict[int, float] = {}
     collector_system_output_temperatures: Dict[int, float] = {}
+    electricity_demands: DefaultDict[int, float] = defaultdict(float)
     hot_water_demand_temperatures: Dict[int, float | None] = {}
     hot_water_demand_volumes: Dict[int, float | None] = {}
     pv_t_electrical_efficiencies: Dict[int, float | None] = {}
@@ -229,9 +231,34 @@ def run_simulation(
             _tank_replacement_temperature(hour),
         )
 
+        # Determine the electricity demands of the plant including any auxiliary
+        # heating.
+        if desalination_plant.operating(hour):
+            auxiliary_heating_demand = (
+                desalination_plant.requirements(hour).hot_water_volume  # [kg/s]
+                * buffer_tank.heat_capacity  # [J/kg*K]
+                * (
+                    desalination_plant.requirements(hour).hot_water_temperature
+                    - tank_temperature  # [K]
+                ) / 1000 # [W/kW]
+            )  # [kW]
+            electricity_demand: float = desalination_plant.requirements(  # [kW]
+                hour
+            ).electricity + (
+                calculate_heat_pump_electricity_consumption(
+                    desalination_plant.requirements(hour).hot_water_temperature,
+                    ambient_temperatures[hour],
+                    auxiliary_heating_demand,
+                    scenario.heat_pump_efficiency,
+                )
+            )
+        else:
+            electricity_demand = desalination_plant.requirements(hour).electricity
+
         # Save these outputs in mappings.
         collector_input_temperatures[hour] = collector_input_temperature
         collector_system_output_temperatures[hour] = collector_system_output_temperature
+        electricity_demands[hour] = electricity_demand
         hot_water_demand_temperatures[hour] = desalination_plant.requirements(
             hour
         ).hot_water_temperature
@@ -297,6 +324,7 @@ def run_simulation(
         ambient_temperatures,
         collector_input_temperatures,
         collector_system_output_temperatures,
+        electricity_demands,
         hot_water_demand_temperatures,
         hot_water_demand_volumes,
         pv_electrical_efficiencies if scenario.pv else None,
@@ -398,7 +426,7 @@ def determine_steady_state_simulation(
         disable_tqdm=disable_tqdm,
     )
 
-    tank_temperatures = solution[-1]
+    tank_temperatures = solution.tank_temperatures
     try:
         convergence_distance = abs(tank_temperatures[23] - tank_start_temperature)
     except KeyError:
@@ -435,7 +463,7 @@ def determine_steady_state_simulation(
             )
 
             # Update the progress bar based on the convergence of the tank temperatures
-            tank_temperatures = solution[-1]
+            tank_temperatures = solution.tank_temperatures
             pbar.update(
                 round(
                     convergence_distance
