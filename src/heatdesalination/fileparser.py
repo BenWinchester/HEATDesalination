@@ -17,7 +17,7 @@ fileparser.py - The file parser module for the HEATDeslination program.
 import os
 
 from logging import Logger
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple
 
 import json
 
@@ -37,6 +37,7 @@ from .__utils__ import (
     NAME,
     SOLAR_IRRADIANCE,
     ZERO_CELCIUS_OFFSET,
+    OptimisationParameters,
     ProfileType,
     read_yaml,
     Scenario,
@@ -66,6 +67,10 @@ DESALINATION_PLANTS: str = "desalination_plants"
 #   Keyword for parsing the heat capacity of the heat exchangers.
 HEAT_EXCHANGER_EFFICIENCY: str = "heat_exchanger_efficiency"
 
+# HEAT_PUMP_EFFICIENCY:
+#   Keyword for parsing the system efficiency of the installed heat pump.
+HEAT_PUMP_EFFICIENCY: str = "heat_pump_efficiency"
+
 # HOT_WATER_TANK:
 #   Keyword for hot-water tank.
 HOT_WATER_TANK: str = "hot_water_tank"
@@ -81,6 +86,14 @@ HTF_HEAT_CAPACITY: str = "htf_heat_capacity"
 # INPUTS_DIRECTORY:
 #   The name of the inputs directory.
 INPUTS_DIRECTORY: str = "inputs"
+
+# OPTIMISATION_INPUTS:
+#   The name of the optimisation inputs file.
+OPTIMISATION_INPUTS: str = "optimisations.yaml"
+
+# OPTIMISATIONS:
+#   Keyword for the optimisations.
+OPTIMISATIONS: str = "optimisations"
 
 # PLANT:
 #   Keyword for parsing the desalination plant name.
@@ -131,6 +144,7 @@ def parse_input_files(
     HotWaterTank,
     DesalinationPlant,
     HybridPVTPanel | None,
+    List[OptimisationParameters],
     PVPanel | None,
     Scenario,
     Dict[ProfileType, Dict[int, float]],
@@ -163,6 +177,9 @@ def parse_input_files(
             The :class:`DesalinationPlant` to use for the modelling.
         - hybrid_pv_t_panel:
             The :class:`HybridPVTPanel` to use for the modelling.
+        - optimisations:
+            The `list` of :class:`OptimisationParameters` instances describing the
+            optimisations that should be carried out.
         - pv_panel:
             The :class:`PVPanel` to use for the modelling.
         - scenario:
@@ -183,6 +200,7 @@ def parse_input_files(
         Scenario(
             entry[BATTERY],
             entry[HEAT_EXCHANGER_EFFICIENCY],
+            entry[HEAT_PUMP_EFFICIENCY],
             entry[HOT_WATER_TANK],
             entry[HTF_HEAT_CAPACITY],
             entry[NAME],
@@ -213,6 +231,19 @@ def parse_input_files(
         ][0]
     except IndexError:
         logger.error("Could not find plant '%s' in input file.", scenario.plant)
+        raise
+
+    # Parse the optimisation inputs
+    optimisation_inputs = read_yaml(
+        os.path.join(INPUTS_DIRECTORY, OPTIMISATION_INPUTS), logger
+    )
+    try:
+        optimisations: List[OptimisationParameters] = [
+            OptimisationParameters.from_dict(logger, entry)
+            for entry in optimisation_inputs[OPTIMISATIONS]
+        ]
+    except KeyError:
+        logger.error("Missing information in optimisation inputs file.")
         raise
 
     # Parse the solar panels.
@@ -314,7 +345,16 @@ def parse_input_files(
 
     ambient_temperatures: Dict[ProfileType, Dict[int, float]] = {}
     solar_irradiances: Dict[ProfileType, Dict[int, float]] = {}
-    time_difference: int = weather_data[TIMEZONE]
+    try:
+        time_difference: int = weather_data[TIMEZONE]
+    except KeyError:
+        logger.error(
+            "Missing timezone information for location %s, use key '%s' to include UTC "
+            "diff. in hours.",
+            location,
+            TIMEZONE,
+        )
+        raise
 
     # Sanitise the profile type information and extend to 25 hours.
     for profile_type in ProfileType:
@@ -336,6 +376,7 @@ def parse_input_files(
         buffer_tank,
         desalination_plant,
         hybrid_pv_t_panel,
+        optimisations,
         pv_panel,
         scenario,
         solar_irradiances,

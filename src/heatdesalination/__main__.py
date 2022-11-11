@@ -17,15 +17,54 @@ and optimise the desalination systems.
 
 """
 
+import os
 import sys
 
-from typing import Any, List
+from typing import Any, Dict, List
 
+from tqdm import tqdm
 
-from .__utils__ import ProfileType, get_logger
+from .__utils__ import ProfileType, Solution, get_logger
 from .argparser import MissingParametersError, parse_args, validate_args
 from .fileparser import parse_input_files
-from .simulator import determine_steady_state_simulation, run_simulation
+from .optimiser import run_optimisation
+from .simulator import determine_steady_state_simulation
+
+# SIMULATION_OUTPUTS_DIRECTORY:
+#   The outputs dierctory for simulations.
+SIMULATION_OUTPUTS_DIRECTORY: str = "simulation_outputs"
+
+
+def save_simulation(
+    output: str,
+    profile_type: ProfileType,
+    simulation_outputs: Solution,
+    solar_irradiance: Dict[int, float],
+) -> None:
+    """
+    Save the outputs from the simulation run.
+
+    Inputs:
+        - simulation_outputs:
+            Outputs from the simulation.
+        - output:
+            The name of the output file to use.
+
+    """
+
+    # Assemble the CSV datafile structure
+    output_data = simulation_outputs.to_dataframe()
+    output_data["Solar irradiance / W/m^2"] = solar_irradiance
+
+    # Write to the output file.
+    os.makedirs(SIMULATION_OUTPUTS_DIRECTORY, exist_ok=True)
+    with open(
+        f"{os.path.join(SIMULATION_OUTPUTS_DIRECTORY, output)}_{profile_type.value}"
+        ".csv",
+        "w",
+        encoding="UTF-8",
+    ) as output_file:
+        output_data.to_csv(output_file)
 
 
 def main(args: List[Any]) -> None:
@@ -50,6 +89,7 @@ def main(args: List[Any]) -> None:
         buffer_tank,
         desalination_plant,
         hybrid_pv_t_panel,
+        optimisations,
         pv_panel,
         scenario,
         solar_irradiances,
@@ -81,21 +121,7 @@ def main(args: List[Any]) -> None:
 
         # Run the simulation.
         for profile_type in ProfileType:
-            (
-                collector_input_temperatures,
-                collector_system_output_temperatures,
-                pv_electrical_efficiencies,
-                pv_electrical_output_power,
-                pv_t_electrical_efficiencies,
-                pv_t_electrical_output_power,
-                pv_t_htf_output_temperatures,
-                pv_t_reduced_temperatures,
-                pv_t_thermal_efficiencies,
-                solar_thermal_htf_output_temperatures,
-                solar_thermal_reduced_temperatures,
-                solar_thermal_thermal_efficiencies,
-                tank_temperatures,
-            ) = determine_steady_state_simulation(
+            simulation_outputs = determine_steady_state_simulation(
                 ambient_temperatures[profile_type],
                 buffer_tank,
                 desalination_plant,
@@ -103,17 +129,42 @@ def main(args: List[Any]) -> None:
                 hybrid_pv_t_panel,
                 logger,
                 pv_panel,
+                parsed_args.pv_system_size,
                 parsed_args.pv_t_system_size,
                 scenario,
                 solar_irradiances[profile_type],
                 solar_thermal_collector,
                 parsed_args.solar_thermal_system_size,
             )
-            import pdb
-
-            pdb.set_trace()
+            save_simulation(
+                parsed_args.output,
+                profile_type,
+                simulation_outputs,
+                solar_irradiances[profile_type],
+            )
     elif parsed_args.optimisation:
-        run_optimisation()
+        for optimisation_parameters in tqdm(
+            optimisations, desc="optimisations", leave=True, unit="opt."
+        ):
+            for profile_type in tqdm(
+                ProfileType, desc="profile type", leave=False, unit="profile"
+            ):
+                result = run_optimisation(
+                    ambient_temperatures[profile_type],
+                    battery,
+                    buffer_tank,
+                    desalination_plant,
+                    hybrid_pv_t_panel,
+                    logger,
+                    optimisation_parameters,
+                    pv_panel,
+                    scenario,
+                    solar_irradiances[profile_type],
+                    solar_thermal_collector,
+                )
+                import pdb
+
+                pdb.set_trace()
     else:
         logger.error("Neither simulation or optimisation was specified. Quitting.")
         raise Exception(

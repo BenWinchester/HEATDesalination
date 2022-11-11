@@ -15,6 +15,7 @@ batteries:
     c_rate_discharging: !!float 0.33  # Discharge rate
     conversion_in: !!float 0.95  # Conversion efficiency (0.0 - 1.0)
     conversion_out: !!float 0.95  # Conversion efficiency (0.0 - 1.0)
+    cost: !!float 400  # [USD/kWh]
     cycle_lifetime: !!float 1500  # Expected number of cycles over lifetime
     maximum_charge: !!float 0.9  # State of charge (0.0 - 1.0)
     minimum_charge: !!float 0.4  # State of charge (0.0 - 1.0)
@@ -24,6 +25,7 @@ hot_water_tanks:
   - name: !!str hot_water_tank
     area: !!float 1900  # [m^2]
     capacity: !!float 30000  # [kg or litres]
+    cost: !!float 4.15  # [USD/litre]
     cycle_lifetime: !!float 1500  # Expected number of cycles over lifetime
     heat_loss_coefficient: !!float 1.9  # [W/m^2*K]
     leakage: !!float 0  # Fractional leakage per hour

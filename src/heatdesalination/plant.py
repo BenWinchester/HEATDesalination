@@ -21,9 +21,9 @@ the system.
 import dataclasses
 
 from logging import Logger
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
-from .__utils__ import NAME
+from .__utils__ import NAME, ZERO_CELCIUS_OFFSET
 
 # BRINE:
 #   Keyword for the brine outputs from the plant.
@@ -96,16 +96,36 @@ class PlantRequirements:
         The electricity required by the plant, measured in kWh/h.
 
     .. attribute:: hot_water_temperature
-        The temperature of hot water required, measured in degrees Celcius.
+        The temperature of hot water required, measured in degrees Kelvin, or `None` if
+        no hot water is required.
 
     .. attribute:: hot_water_volume
         The volume of hot water required, measured in kilograms per second.
 
     """
 
+    # Private attributes:
+    #   .. attribute:: _hot_water_temperature
+    #       The hot-water demand temperature in degrees Celcius.
+
     electricity: float
-    hot_water_temperature: float
+    _hot_water_temperature: float | None
     hot_water_volume: float
+
+    @property
+    def hot_water_temperature(self) -> float | None:
+        """
+        The hot-water demand temperature, measured in degrees Kelvin.
+
+        Outputs:
+            The temperature in degrees Kelvin.
+
+        """
+
+        if self._hot_water_temperature is None:
+            return self._hot_water_temperature
+
+        return self._hot_water_temperature + ZERO_CELCIUS_OFFSET
 
 
 class DesalinationPlant:
@@ -120,6 +140,9 @@ class DesalinationPlant:
 
     .. attribute:: operating
         A map between the time of day and whether the plant is in operation.
+
+    .. attribute:: operating_hours
+        The number of hours a day that the plant is operating.
 
     .. attribute:: plant_outputs
         The outputs of the plant when in operation (True) and not in operation (False).
@@ -158,8 +181,11 @@ class DesalinationPlant:
 
         """
 
-        self.end_hour: int = start_hour + operating_hours
+        self._end_hour: int | None = (
+            (start_hour + operating_hours) % 24 if start_hour is not None else None
+        )
         self.name: str = name
+        self.operating_hours = operating_hours
         self.plant_outputs: Dict[bool, PlantOutputs] = plant_outputs
         self.plant_requirements: Dict[bool, PlantRequirements] = plant_requirements
         self.start_hour: int = start_hour
@@ -264,14 +290,17 @@ class DesalinationPlant:
         if self._operating is not None:
             return self._operating[hour]
 
+        # Save the end-hour information.
+        self._end_hour = self.start_hour + self.operating_hours
+
         # If the map does not exist, compute and save it.
-        if self.start_hour < self.end_hour:
+        if self.start_hour < self._end_hour:
             self._operating = {
-                hour: self.start_hour <= hour < self.end_hour for hour in range(24)
+                hour: self.start_hour <= hour < self._end_hour for hour in range(24)
             }
-        elif self.start_hour > self.end_hour:
+        elif self.start_hour > self._end_hour:
             self._operating = {
-                hour: hour < self.end_hour or hour >= self.start_hour
+                hour: hour < self._end_hour or hour >= self.start_hour
                 for hour in range(24)
             }
         else:
@@ -310,3 +339,11 @@ class DesalinationPlant:
         """
 
         return self.plant_requirements[self.operating(hour % 24)]
+
+    def reset_operating_hours(self) -> None:
+        """
+        Resets the internal operating hours variable.
+
+        """
+
+        self._operating = None
