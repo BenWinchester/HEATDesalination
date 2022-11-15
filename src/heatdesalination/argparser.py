@@ -95,11 +95,23 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
         help="The start time for the desalination plant to begin operation.",
         type=int,
     )
+    required_arguments.add_argument(
+        "--system-lifetime",
+        "-sl",
+        help="The lifetime of the installed system, measured in years.",
+        type=int,
+    )
 
     #############################
     # Simulation-only arguments #
     #############################
 
+    simulation_arguments.add_argument(
+        "--battery-capacity",
+        "-b",
+        help="The capacity of the installed storage system, measured in kWh.",
+        type=float,
+    )
     simulation_arguments.add_argument(
         "--mass-flow-rate",
         "-m",

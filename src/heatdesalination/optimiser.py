@@ -324,6 +324,7 @@ def _simulate_and_calculate_criterion(
     parameter_vector: numpy.ndarray,
     ambient_temperatures: Dict[int, float],
     battery: Battery,
+    battery_capacity: int | None,
     buffer_tank: HotWaterTank,
     buffer_tank_capacity: float | None,
     desalination_plant: DesalinationPlant,
@@ -340,12 +341,15 @@ def _simulate_and_calculate_criterion(
     solar_thermal_collector: SolarThermalPanel | None,
     solar_thermal_system_size: int | None,
     storage_size: int | None,
+    system_lifetime: int,
     disable_tqdm: bool = False,
 ) -> float:
     """
     Runs the simulation function and computes the requested criterion.
 
     The parameter vector, in order, contains, if specified:
+    - battery_capacity:
+        The capacity in kWh of the batteries.
     - buffer_tank_capacity:
         The capacity in kg of the buffer tank.
     - htf_mass_flow_rate:
@@ -366,6 +370,9 @@ def _simulate_and_calculate_criterion(
             The ambient temperature at each time step, measured in Kelvin.
         - battery:
             The :class:`Battery` associated with the system.
+        - battery_capacity:
+            The capacity of the batteries installed if this should not be optimised or
+            `None` if the capacity of the batteries should be optimised.
         - buffer_tank:
             The :class:`HotWaterTank` associated with the system.
         - buffer_tank_capacity:
@@ -399,6 +406,8 @@ def _simulate_and_calculate_criterion(
         - solar_thermal_system_size:
             The size of the solar-thermal system if this should not be optimised, or
             `None` if it should be optimised.
+        - system_lifetime:
+            The lifetime of the system measured in years.
         - disable_tqdm:
             Whether to disable the progress bar.
 
@@ -408,6 +417,9 @@ def _simulate_and_calculate_criterion(
     parameter_list: List[float] = parameter_vector.tolist()
 
     # Setup input parameters from the vector.
+    battery_capacity: float = (
+        battery_capacity if battery_capacity is not None else parameter_list.pop(0)
+    )
     buffer_tank_capacity: float = (
         buffer_tank_capacity
         if buffer_tank_capacity is not None
@@ -447,6 +459,7 @@ def _simulate_and_calculate_criterion(
     try:
         steady_state_solution = determine_steady_state_simulation(
             ambient_temperatures,
+            battery_capacity,
             buffer_tank,
             desalination_plant,
             htf_mass_flow_rate,
@@ -459,6 +472,7 @@ def _simulate_and_calculate_criterion(
             solar_irradiances,
             solar_thermal_collector,
             solar_thermal_system_size,
+            system_lifetime,
             disable_tqdm=disable_tqdm,
         )
     except FlowRateError:
@@ -495,6 +509,7 @@ def run_optimisation(
     scenario: Scenario,
     solar_irradiances: Dict[int, float],
     solar_thermal_collector: SolarThermalPanel,
+    system_lifetime: int,
     *,
     disable_tqdm: bool = True,
 ) -> Any:
@@ -524,6 +539,8 @@ def run_optimisation(
             The solar irradiances at each time step, measured in Kelvin.
         - solar_thermal_collector:
             The :class:`SolarThermalCollector` associated with the run.
+        - system_lifetime:
+            The lifetime of the system, measured in years.
         - disable_tqdm:
             Whether to disable the progress bar.
 
@@ -541,15 +558,20 @@ def run_optimisation(
         algorithm = "Nelder-Mead"
 
     # Construct an initial guess vector and additional arguments.
-    (
-        initial_guess_vector,
-        bounds,
-    ) = optimisation_parameters.get_initial_guess_vector_and_bounds()
+    try:
+        (
+            initial_guess_vector,
+            bounds,
+        ) = optimisation_parameters.get_initial_guess_vector_and_bounds()
+    except KeyError as error:
+        logger.error("Missing optimisation parameters: %s", str(error))
+        raise
 
     # Determine the additional arguments vector required.
     additional_arguments = (
         ambient_temperatures,
         battery,
+        optimisation_parameters.fixed_battery_capacity_value,
         buffer_tank,
         optimisation_parameters.fixed_buffer_tank_capacity_value,
         desalination_plant,
@@ -566,6 +588,7 @@ def run_optimisation(
         solar_thermal_collector,
         optimisation_parameters.fixed_st_value,
         optimisation_parameters.fixed_storage_value,
+        system_lifetime,
         disable_tqdm,
     )
 

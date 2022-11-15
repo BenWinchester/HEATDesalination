@@ -101,6 +101,11 @@ def main(args: List[Any]) -> None:
     if parsed_args.simulation:
         # Raise exceptions if the arguments are invalid.
         missing_parameters: List[str] = []
+        if scenario.battery and not parsed_args.battery_capacity:
+            logger.error(
+                "Must specify battery capacity if batteries included in scenario."
+            )
+            missing_parameters.append("PV-T system size")
         if scenario.pv_t and not parsed_args.pv_t_system_size:
             logger.error(
                 "Must specify PV-T system size if PV-T collectors included in scenario."
@@ -123,6 +128,7 @@ def main(args: List[Any]) -> None:
         for profile_type in ProfileType:
             simulation_outputs = determine_steady_state_simulation(
                 ambient_temperatures[profile_type],
+                parsed_args.battery_capacity,
                 buffer_tank,
                 desalination_plant,
                 parsed_args.mass_flow_rate,
@@ -135,6 +141,7 @@ def main(args: List[Any]) -> None:
                 solar_irradiances[profile_type],
                 solar_thermal_collector,
                 parsed_args.solar_thermal_system_size,
+                parsed_args.system_lifetime,
             )
             save_simulation(
                 parsed_args.output,
@@ -161,6 +168,7 @@ def main(args: List[Any]) -> None:
                     scenario,
                     solar_irradiances[profile_type],
                     solar_thermal_collector,
+                    parsed_args.system_lifetime,
                 )
                 import pdb
 

@@ -363,6 +363,7 @@ def run_simulation(
 
 def determine_steady_state_simulation(
     ambient_temperatures: Dict[int, float],
+    battery_capacity: int | None,
     buffer_tank: HotWaterTank,
     desalination_plant: DesalinationPlant,
     htf_mass_flow_rate: float,
@@ -375,6 +376,7 @@ def determine_steady_state_simulation(
     solar_irradiances: Dict[int, float],
     solar_thermal_collector: SolarThermalPanel | None,
     solar_thermal_system_size: int | None,
+    system_lifetime: int,
     *,
     disable_tqdm: bool = False,
 ) -> Solution:
@@ -389,6 +391,9 @@ def determine_steady_state_simulation(
     Inputs:
         - ambient_temperatures:
             The ambient temperature at each time step, measured in Kelvin.
+        - battery_capacity:
+            The capacity in kWh of electrical storage installed, or `None` if none is
+            installed.
         - buffer_tank:
             The :class:`HotWaterTank` associated with the system.
         - desalination_plant:
@@ -413,6 +418,8 @@ def determine_steady_state_simulation(
             The :class:`SolarThermalCollector` associated with the run.
         - solar_thermal_system_size:
             The size of the solar-thermal system.
+        - system_lifetime:
+            The lifetime of the system in years.
         - default_tank_temperature:
             The default tank temperature to use for running for consistency.
         - disable_tqdm:
@@ -480,7 +487,7 @@ def determine_steady_state_simulation(
                 solar_thermal_collector,
                 solar_thermal_system_size,
                 disable_tqdm=disable_tqdm,
-                tank_start_temperature=tank_start_temperature,  # The final tank temperature
+                tank_start_temperature=tank_start_temperature,
             )
 
             # Update the progress bar based on the convergence of the tank temperatures
@@ -494,5 +501,15 @@ def determine_steady_state_simulation(
             )
             convergence_distance = abs(tank_temperatures[23] - tank_start_temperature)
             tank_start_temperature = tank_temperatures[23]
+
+    # Determine the storage profile (approx) based on the storage size.
+    _determine_storage_profile(battery_capacity, solution)
+
+    # Degrate PV, PV-T and ST performance profiles as well as the battery capacity
+    # depending on installation lifetime.
+    _calculate_component_degradatino(solution, system_lifetime)
+
+    # Determine how much electricity was needed from the grid.
+    _calculate_grid_electricity(solution)
 
     return solution

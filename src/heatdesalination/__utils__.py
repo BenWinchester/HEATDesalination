@@ -247,23 +247,33 @@ class OptimisableComponent(enum.Enum):
     """
     Keeps track of components that can be optimised.
 
+    - BATTERY_CAPACITY:
+        The capacity of the electrical storage system in kWh.
+
     - BUFFER_TANK_CAPACITY:
         The capacity in kg of the buffer tank.
+
     - MASS_FLOW_RATE:
         The HTF mass flow rate.
+
     - PV:
         The PV-panel capacity.
+
     - PV_T:
         The PV-T system size.
+
     - START_HOUR:
         The start hour for the plant.
+
     - SOLAR_THERMAL:
         The solar-thermal system size.
+
     - STORAGE:
         The battery capacity.
 
     """
 
+    BATTERY_CAPACITY: str = "battery_capacity"
     BUFFER_TANK_CAPACITY: str = "buffer_tank_capacity"
     MASS_FLOW_RATE: str = "mass_flow_rate"
     PV: str = "pv"
@@ -314,6 +324,18 @@ class OptimisationParameters:
     bounds: Dict[OptimisableComponent, Dict[str, float | None]]
     constraints: Dict[str, Dict[str, float | None]]
     _criterion: Dict[str, OptimisationMode]
+
+    @property
+    def fixed_battery_capacity_value(self) -> float | None:
+        """
+        The initial guess for the `battery_capacity` if provided, else `None`.
+
+        Outputs:
+            - An initial guess for the battery capacity or `None` if not provided.
+
+        """
+
+        return self.bounds[OptimisableComponent.BATTERY_CAPACITY].get(FIXED, None)
 
     @property
     def fixed_buffer_tank_capacity_value(self) -> float | None:
@@ -424,6 +446,13 @@ class OptimisationParameters:
         bounds = []
 
         # Append variables in the required order.
+        if self.fixed_battery_capacity_value is None:
+            initial_guess_vector.append(
+                self.bounds[(component := OptimisableComponent.BATTERY_CAPACITY)][
+                    INITIAL_GUESS
+                ]
+            )
+            bounds.append((self.bounds[component][MIN], self.bounds[component][MAX]))
         if self.fixed_buffer_tank_capacity_value is None:
             initial_guess_vector.append(
                 self.bounds[(component := OptimisableComponent.BUFFER_TANK_CAPACITY)][
