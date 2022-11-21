@@ -38,6 +38,7 @@ __all__ = (
     "LOGGER_DIRECTORY",
     "LONGITUDE",
     "NAME",
+    "ProfileDegradation",
     "ProfileType",
     "read_yaml",
     "reduced_temperature",
@@ -592,6 +593,21 @@ class OptimisationParameters:
         return cls(bounds, optimisation_inputs[CONSTRAINTS], criterion)
 
 
+class ProfileDegradation(enum.Enum):
+    """
+    Denotes whether a profile is degraded.
+
+    - DEGRADED:
+        Denotes that the profile has been degraded.
+
+    - UNDEGRADED:
+        Denotes that the profile has not been degraded.
+
+    """
+
+    DEGRADED: str =  "degraded"
+    UNDEGRADED: str = "undegraded"
+
 class ProfileType(enum.Enum):
     """
     Denotes which profile type is being considered.
@@ -716,6 +732,9 @@ class Scenario:
     .. attribute:: pv
         Whether PV panels are being included.
 
+    .. attribute:: pv_degradation_rate
+        The annual degradation rate of the PV panels.
+
     .. attribute:: pv_panel_name
         The name of the PV panel being considered.
 
@@ -740,6 +759,7 @@ class Scenario:
     htf_heat_capacity: float
     name: str
     plant: str
+    pv_degradation_rate: float
     _pv: bool | str
     _pv_t: bool | str
     _solar_thermal: bool | str
@@ -874,20 +894,24 @@ class Solution(NamedTuple):
         The volume of the hot-water demand at each time step.
 
     .. attribute:: pv_electrical_efficiencies
-        The electrical efficiencies of the PV collectors at each time step.
+        The electrical efficiencies of the PV collectors at each time step for each year
+        of the simulation.
 
     .. attribute:: pv_electrical_output_power
-        The electrcial output power of the PV collectors at each time step.
+        The electrcial output power of the PV collectors at each time step for each year
+        of the simulation.
 
     .. attribute:: pv_system_electrical_output_power
         The electrcial output power from all of the installed PV collectors at each time
-        step, measured in kWh.
+        step, measured in kWh, for each year of the simulation.
 
     .. attribute:: pv_t_electrical_efficiencies
-        The electrical efficiencies of the PV-T collectors at each time step.
+        The electrical efficiencies of the PV-T collectors at each time step for each
+        year of the simulation.
 
     .. attribute:: pv_t_electrical_output_power
-        The electrical output power of the PV-T collectors at each time step.
+        The electrical output power of the PV-T collectors at each time step for each
+        year of the simulation.
 
     .. attribute:: pv_t_htf_output_temperatures
         The output temperature from the PV-T collectors at each time step.
@@ -897,7 +921,7 @@ class Solution(NamedTuple):
 
     .. attribute:: pv_t_system_electrical_output_power
         The electrcial output power from all of the installed PV-T collectors at each
-        time step, measured in kWh.
+        time step, measured in kWh, for each year of the simulation.
 
     .. attribute:: pv_t_thermal_efficiencies
         The thermal efficiency of the PV-T collectors at each time step.
@@ -915,6 +939,22 @@ class Solution(NamedTuple):
     .. attribute:: tank_temperatures
         The temperature of the hot-water tank at each time step.
 
+    .. attribute:: battery_electricity_suppy_profile
+        The amount of energy supplied by the batteries at each hour of the day for each
+        year of the simulation.
+
+    .. attribute:: battery_storage_profile
+        The energy stored in the batteries at each hour of the day for each year of the
+        simulation.
+
+    .. attribute:: collector_electricity_supply_profile
+        The amount of energy supplied by the solar collectors at each hour of the day
+        for each year of the simulation.
+
+    .. attribute:: grid_electricity_supply_profile
+        The electricity supplied by the grid to the system at each hour of the day for
+        each year of the simulation.
+
     """
 
     ambient_temperatures: Dict[int, float]
@@ -923,19 +963,23 @@ class Solution(NamedTuple):
     electricity_demands: Dict[int, float]
     hot_water_demand_temperature: Dict[int, float | None]
     hot_water_demand_volume: Dict[int, float | None]
-    pv_electrical_efficiencies: Dict[int, float | None]
-    pv_electrical_output_power: Dict[int, float | None]
-    pv_system_electrical_output_power: Dict[int, float | None]
-    pv_t_electrical_efficiencies: Dict[int, float | None]
-    pv_t_electrical_output_power: Dict[int, float | None]
+    pv_electrical_efficiencies: Dict[int, Dict[int, float | None]]
+    pv_electrical_output_power: Dict[int, Dict[int, float | None]]
+    pv_system_electrical_output_power: Dict[int, Dict[int, float | None]]
+    pv_t_electrical_efficiencies: Dict[int, Dict[int, float | None]]
+    pv_t_electrical_output_power: Dict[int, Dict[int, float | None]]
     pv_t_htf_output_temperatures: Dict[int, float]
     pv_t_reduced_temperatures: Dict[int, float | None]
-    pv_t_system_electrical_output_power: Dict[int, float | None]
+    pv_t_system_electrical_output_power: Dict[int, Dict[int, float | None]]
     pv_t_thermal_efficiencies: Dict[int, float | None]
     solar_thermal_htf_output_temperatures: Dict[int, float]
     solar_thermal_reduced_temperatures: Dict[int, float | None]
     solar_thermal_thermal_efficiencies: Dict[int, float | None]
     tank_temperatures: Dict[int, float]
+    battery_electricity_suppy_profile: Dict[int, Dict[int, float | None]] = None
+    battery_storage_profile: Dict[int, Dict[int, float | None]] = None
+    collector_electricity_supply_profile: Dict[int, Dict[int, float | None]] = None
+    grid_electricity_supply_profile: Dict[int, Dict[int, float | None]] = None
 
     @property
     def renewable_heating_fraction(self) -> Dict[int, float]:

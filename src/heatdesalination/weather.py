@@ -325,17 +325,21 @@ def main(
     # Generate the output data structure.
     output_data = {
         ProfileType.AVERAGE.value: {
-            key: {(time + timezone) % 24: value for time, value in entry.items()}
+            key: {int(time + timezone) % 24: value for time, value in entry.items()}
             for key, entry in average_profile_dict.items()
         },
         LATITUDE: latitude,
         LONGITUDE: longitude,
         ProfileType.MAXIMUM.value: {
-            key: {(time.hour + timezone) % 24: value for time, value in entry.items()}
+            key: {
+                int(time.hour + timezone) % 24: value for time, value in entry.items()
+            }
             for key, entry in max_profile.to_dict().items()
         },
         ProfileType.MINIMUM.value: {
-            key: {(time.hour + timezone) % 24: value for time, value in entry.items()}
+            key: {
+                int(time.hour + timezone) % 24: value for time, value in entry.items()
+            }
             for key, entry in min_profile.to_dict().items()
         },
         OPTIMUM_TILT_ANGLE: (

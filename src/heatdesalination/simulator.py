@@ -22,9 +22,11 @@ from collections import defaultdict
 from logging import Logger
 from typing import DefaultDict, Dict
 
+import math
+
 from tqdm import tqdm
 
-from .__utils__ import Scenario, Solution, ZERO_CELCIUS_OFFSET
+from .__utils__ import ProfileDegradation, Scenario, Solution, ZERO_CELCIUS_OFFSET
 from .heat_pump import calculate_heat_pump_electricity_consumption
 from .matrix import solve_matrix
 from .plant import DesalinationPlant
@@ -38,6 +40,93 @@ __all__ = ("run_simulation",)
 # Temperature precision:
 #   The precision required when solving for a steady-state solution.
 STEADY_STATE_TEMPERATURE_PRECISION: float = 0.001
+
+
+def _calculate_collector_degradation(
+    scenario: Scenario, solution: Solution, system_lifetime: int
+) -> None:
+    """
+    Calculate the average degradation rate for collectors.
+
+    Collectors degrade fractionally based on time. Hence, the fraction of the
+    degradation which has occurred as an average over their lifetime will require
+    integration of the function
+        (1 - d)^n
+    where d is the degradation rate and n the number of years.
+
+    Inegrating this yields:
+        ((1 - d)^N - 1) / log(1 - d)
+
+    which is evaluated in this function.
+
+    Inputs:
+        - scenario:
+            The scenario for the run.
+        - solution:
+            The solution from the system.
+        - system_lifetime:
+            The lifetime of the system.
+
+    """
+
+    # Helper function for carrying out repeated degradation flow.
+    def _degrade(
+        profile: Dict[int, float | None], rate: float
+    ) -> Dict[int, float | None]:
+        return {
+            key: (value * rate) if value is not None else None
+            for key, value in profile.items()
+        }
+
+    # Compute the average degradation rate.
+    average_degradation_rate = (
+        (1 - scenario.pv_degradation_rate) ** system_lifetime - 1
+    ) / (math.log(1 - scenario.pv_degradation_rate) * system_lifetime)
+
+    # Degrade the PV and PV-T electrical profiles.
+    if scenario.pv:
+        solution.pv_electrical_efficiencies[
+            ProfileDegradation.DEGRADED.value
+        ] = _degrade(
+            solution.pv_electrical_efficiencies[ProfileDegradation.UNDEGRADED.value],
+            average_degradation_rate,
+        )
+        solution.pv_electrical_output_power[
+            ProfileDegradation.DEGRADED.value
+        ] = _degrade(
+            solution.pv_electrical_output_power[ProfileDegradation.UNDEGRADED.value],
+            average_degradation_rate,
+        )
+        solution.pv_system_electrical_output_power[
+            ProfileDegradation.DEGRADED.value
+        ] = _degrade(
+            solution.pv_system_electrical_output_power[
+                ProfileDegradation.UNDEGRADED.value
+            ],
+            average_degradation_rate,
+        )
+
+    if scenario.pv_t:
+        solution.pv_t_electrical_efficiencies[
+            ProfileDegradation.DEGRADED.value
+        ] = _degrade(
+            solution.pv_t_electrical_efficiencies[ProfileDegradation.UNDEGRADED.value],
+            average_degradation_rate,
+        )
+        solution.pv_t_electrical_output_power[
+            ProfileDegradation.DEGRADED.value
+        ] = _degrade(
+            solution.pv_t_electrical_output_power[ProfileDegradation.UNDEGRADED.value],
+            average_degradation_rate,
+        )
+        solution.pv_t_system_electrical_output_power[
+            ProfileDegradation.DEGRADED.value
+        ] = _degrade(
+            solution.pv_t_system_electrical_output_power[
+                ProfileDegradation.UNDEGRADED.value
+            ],
+            average_degradation_rate,
+        )
 
 
 def _collector_mass_flow_rate(htf_mass_flow_rate: float, system_size: int) -> float:
@@ -341,14 +430,26 @@ def run_simulation(
         electricity_demands,
         hot_water_demand_temperatures,
         hot_water_demand_volumes,
-        pv_electrical_efficiencies if scenario.pv else None,
-        pv_electrical_output_power if scenario.pv else None,
-        pv_system_electrical_output_power if scenario.pv else None,
-        pv_t_electrical_efficiencies if scenario.pv_t else None,
-        pv_t_electrical_output_power if scenario.pv_t else None,
+        {ProfileDegradation.UNDEGRADED.value: pv_electrical_efficiencies}
+        if scenario.pv
+        else None,
+        {ProfileDegradation.UNDEGRADED.value: pv_electrical_output_power}
+        if scenario.pv
+        else None,
+        {ProfileDegradation.UNDEGRADED.value: pv_system_electrical_output_power}
+        if scenario.pv
+        else None,
+        {ProfileDegradation.UNDEGRADED.value: pv_t_electrical_efficiencies}
+        if scenario.pv_t
+        else None,
+        {ProfileDegradation.UNDEGRADED.value: pv_t_electrical_output_power}
+        if scenario.pv_t
+        else None,
         pv_t_htf_output_temperatures if scenario.pv_t else None,
         pv_t_reduced_temperatures if scenario.pv_t else None,
-        pv_t_system_electrical_output_power if scenario.pv_t else None,
+        {ProfileDegradation.UNDEGRADED.value: pv_t_system_electrical_output_power}
+        if scenario.pv_t
+        else None,
         pv_t_thermal_efficiencies if scenario.pv_t else None,
         solar_thermal_htf_output_temperatures if scenario.solar_thermal else None,
         solar_thermal_reduced_temperatures if scenario.solar_thermal else None,
@@ -502,14 +603,11 @@ def determine_steady_state_simulation(
             convergence_distance = abs(tank_temperatures[23] - tank_start_temperature)
             tank_start_temperature = tank_temperatures[23]
 
-    # Determine the storage profile (approx) based on the storage size.
-    _determine_storage_profile(battery_capacity, solution)
+    # Determine the degraded profiles.
+    _calculate_collector_degradation(scenario, solution, system_lifetime)
 
-    # Degrate PV, PV-T and ST performance profiles as well as the battery capacity
-    # depending on installation lifetime.
-    _calculate_component_degradatino(solution, system_lifetime)
+    import pdb
 
-    # Determine how much electricity was needed from the grid.
-    _calculate_grid_electricity(solution)
+    pdb.set_trace()
 
     return solution

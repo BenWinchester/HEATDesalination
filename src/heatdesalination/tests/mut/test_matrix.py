@@ -148,6 +148,7 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
             HEAT_CAPACITY_OF_WATER,
             default_name,
             "plant",
+            0,
             default_name,
             default_name if pv_t else False,
             default_name if solar_thermal else False,

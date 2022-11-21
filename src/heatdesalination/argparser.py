@@ -193,3 +193,5 @@ def validate_args(parsed_args: argparse.Namespace) -> None:
             "Start hour for desalination plant operation must be specified if running "
             "a simulation."
         )
+    if parsed_args.system_lifetime is None:
+        raise Exception("Must provide system lifetime for the operation of the plant.")

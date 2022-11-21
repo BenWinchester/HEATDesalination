@@ -103,6 +103,10 @@ PLANT: str = "plant"
 #   Keyword for parsing the PV panel name.
 PV: str = "pv"
 
+# PV_DEGRADATION_RATE:
+#   Keyword for parsing the annual degradation rate of the PV panels.
+PV_DEGRADATION_RATE: str = "pv_degradation_rate"
+
 # PV_T:
 #   Keyword for parsing the PV-T panel name.
 PV_T: str = "pv_t"
@@ -205,6 +209,7 @@ def parse_input_files(
             entry[HTF_HEAT_CAPACITY],
             entry[NAME],
             entry[PLANT],
+            entry[PV_DEGRADATION_RATE],
             entry[PV],
             entry[PV_T],
             entry[SOLAR_THERMAL],
@@ -345,27 +350,17 @@ def parse_input_files(
 
     ambient_temperatures: Dict[ProfileType, Dict[int, float]] = {}
     solar_irradiances: Dict[ProfileType, Dict[int, float]] = {}
-    try:
-        time_difference: int = weather_data[TIMEZONE]
-    except KeyError:
-        logger.error(
-            "Missing timezone information for location %s, use key '%s' to include UTC "
-            "diff. in hours.",
-            location,
-            TIMEZONE,
-        )
-        raise
 
-    # Sanitise the profile type information and extend to 25 hours.
+    # Extend profiles to 25 hours.
     for profile_type in ProfileType:
         ambient_temperatures[profile_type] = {
-            (int(key) + time_difference) % 24: value + ZERO_CELCIUS_OFFSET
+            int(key) % 24: value + ZERO_CELCIUS_OFFSET
             for key, value in weather_data[profile_type.value][
                 AMBIENT_TEMPERATURE
             ].items()
         }
         solar_irradiances[profile_type] = {
-            (int(key) + time_difference) % 24: value
+            int(key) % 24: value
             for key, value in weather_data[profile_type.value][SOLAR_IRRADIANCE].items()
         }
 

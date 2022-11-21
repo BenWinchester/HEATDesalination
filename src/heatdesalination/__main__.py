@@ -105,7 +105,7 @@ def main(args: List[Any]) -> None:
             logger.error(
                 "Must specify battery capacity if batteries included in scenario."
             )
-            missing_parameters.append("PV-T system size")
+            missing_parameters.append("Storage system size")
         if scenario.pv_t and not parsed_args.pv_t_system_size:
             logger.error(
                 "Must specify PV-T system size if PV-T collectors included in scenario."
