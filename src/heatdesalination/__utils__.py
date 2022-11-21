@@ -19,8 +19,9 @@ import enum
 import logging
 import os
 
+from collections import defaultdict
 from logging import Logger
-from typing import Any, Dict, List, NamedTuple, Tuple
+from typing import Any, DefaultDict, Dict, List, NamedTuple, Tuple
 
 import yaml
 
@@ -605,8 +606,9 @@ class ProfileDegradation(enum.Enum):
 
     """
 
-    DEGRADED: str =  "degraded"
+    DEGRADED: str = "degraded"
     UNDEGRADED: str = "undegraded"
+
 
 class ProfileType(enum.Enum):
     """
@@ -939,6 +941,9 @@ class Solution(NamedTuple):
     .. attribute:: tank_temperatures
         The temperature of the hot-water tank at each time step.
 
+    .. attribute:: total_electrical_output_power
+        The output power of the system at each time step.
+
     .. attribute:: battery_electricity_suppy_profile
         The amount of energy supplied by the batteries at each hour of the day for each
         year of the simulation.
@@ -963,23 +968,26 @@ class Solution(NamedTuple):
     electricity_demands: Dict[int, float]
     hot_water_demand_temperature: Dict[int, float | None]
     hot_water_demand_volume: Dict[int, float | None]
-    pv_electrical_efficiencies: Dict[int, Dict[int, float | None]]
-    pv_electrical_output_power: Dict[int, Dict[int, float | None]]
-    pv_system_electrical_output_power: Dict[int, Dict[int, float | None]]
-    pv_t_electrical_efficiencies: Dict[int, Dict[int, float | None]]
-    pv_t_electrical_output_power: Dict[int, Dict[int, float | None]]
+    pv_electrical_efficiencies: Dict[ProfileDegradation, Dict[int, float | None]]
+    pv_electrical_output_power: Dict[ProfileDegradation, Dict[int, float | None]]
+    pv_system_electrical_output_power: Dict[ProfileDegradation, Dict[int, float | None]]
+    pv_t_electrical_efficiencies: Dict[ProfileDegradation, Dict[int, float | None]]
+    pv_t_electrical_output_power: Dict[ProfileDegradation, Dict[int, float | None]]
     pv_t_htf_output_temperatures: Dict[int, float]
     pv_t_reduced_temperatures: Dict[int, float | None]
-    pv_t_system_electrical_output_power: Dict[int, Dict[int, float | None]]
+    pv_t_system_electrical_output_power: Dict[
+        ProfileDegradation, Dict[int, float | None]
+    ]
     pv_t_thermal_efficiencies: Dict[int, float | None]
     solar_thermal_htf_output_temperatures: Dict[int, float]
     solar_thermal_reduced_temperatures: Dict[int, float | None]
     solar_thermal_thermal_efficiencies: Dict[int, float | None]
     tank_temperatures: Dict[int, float]
-    battery_electricity_suppy_profile: Dict[int, Dict[int, float | None]] = None
-    battery_storage_profile: Dict[int, Dict[int, float | None]] = None
-    collector_electricity_supply_profile: Dict[int, Dict[int, float | None]] = None
-    grid_electricity_supply_profile: Dict[int, Dict[int, float | None]] = None
+    battery_electricity_suppy_profile: Dict[int, float | None] | None = None
+    battery_storage_profile: Dict[int, float | None] | None = None
+    collector_electricity_supply_profile: Dict[int, float | None] | None = None
+    grid_electricity_supply_profile: Dict[int, float | None] | None = None
+    output_power_map: Dict[ProfileDegradation, Dict[int, float]] | None = None
 
     @property
     def renewable_heating_fraction(self) -> Dict[int, float]:
@@ -1008,6 +1016,60 @@ class Solution(NamedTuple):
             )
             for hour, demand_temperature in self.hot_water_demand_temperature.items()
         }
+
+    @property
+    def total_electrical_output_power(
+        self,
+    ) -> Dict[ProfileDegradation, Dict[int, float]]:
+        """
+        The total electrical output power at each time step.
+
+        Outputs:
+            A mapping containing the degraded and undegraded profiles for total power
+            generation.
+
+        """
+
+        if self.output_power_map is not None:
+            return self.output_power_map
+
+        output_power_map: DefaultDict[
+            ProfileDegradation, Dict[int, float]
+        ] = defaultdict(lambda: defaultdict(float))
+
+        pv = self.pv_system_electrical_output_power is not None
+        pvt = self.pv_t_system_electrical_output_power is not None
+
+        # Loop through the profiles.
+        for profile in ProfileDegradation:
+
+            # Add the output for each hour for which it is not None.
+            for hour in range(24):
+                # Add the PV output power.
+                if (
+                    pv
+                    and (
+                        pv_output := self.pv_system_electrical_output_power[
+                            profile.value
+                        ][hour]
+                    )
+                    is not None
+                ):
+                    output_power_map[profile.value][hour] += pv_output
+
+                # Output the PV-T output power.
+                if (
+                    pvt
+                    and (
+                        pvt_output := self.pv_t_system_electrical_output_power[
+                            profile.value
+                        ][hour]
+                    )
+                    is not None
+                ):
+                    output_power_map[profile.value][hour] += pvt_output
+
+        return output_power_map
 
     def to_dataframe(self) -> pd.DataFrame:
         """

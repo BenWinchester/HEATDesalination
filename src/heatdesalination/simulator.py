@@ -31,7 +31,7 @@ from .heat_pump import calculate_heat_pump_electricity_consumption
 from .matrix import solve_matrix
 from .plant import DesalinationPlant
 from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel, electric_output
-from .storage.storage_utils import HotWaterTank
+from .storage.storage_utils import Battery, HotWaterTank
 
 
 __all__ = ("run_simulation",)
@@ -127,6 +127,72 @@ def _calculate_collector_degradation(
             ],
             average_degradation_rate,
         )
+
+
+def _calculate_storage_profile(
+    battery: Battery, battery_capacity: int | None, solution: Solution
+) -> None:
+    """
+    Calculate the storage profile for the batteries.
+
+    Inputs:
+        - battery:
+            The battery being modelled.
+        - battery_capacity:
+            The capacity of the batteries installed.
+        - solution:
+            The profiles being modelled.
+
+    """
+
+    total_collector_generation_profile = solution.total_electrical_output_power[
+        ProfileDegradation.DEGRADED.value
+    ]
+
+    # Setup a map to keep track of the profiles.
+    storage_profile: DefaultDict[int, float] = defaultdict(float)
+
+    for hour in range(24):
+        import pdb
+
+        pdb.set_trace()
+        net_storage_flow: float = (
+            total_collector_generation_profile[hour]
+            - solution.electricity_demands[hour]
+        )
+
+        if net_storage_flow < 0:
+            # Batteries can only discharge based on:
+            #   - the total power stored in the batteries above the minimum level,
+            #   - the total load being requested (excess discharge would be wasted),
+            #   - limited by the c-rate.
+            storage_power_supplied = min(
+                max((
+                    storage_profile[hour - 1] * (1 - battery.leakage)
+                    - battery.capacity * battery.minimum_charge
+                ), 0),
+                abs(net_storage_flow) * battery.conversion_out,
+                battery_capacity * battery.c_rate_discharging,
+            )
+            storage_profile[hour] = (
+                storage_profile[hour - 1]
+                - storage_power_supplied / battery.conversion_out
+            )
+        if net_storage_flow > 0:
+            # Batteries can only charge:
+            #   - limited by the amount of power being inputted,
+            #   - limited by the c-rate,
+            #   - limited by the electricity that they can hold.
+            electricity_to_batteries = min(
+                net_storage_flow * battery.conversion_in,
+                battery.capacity * battery.c_rate_charging,
+                battery.capacity * battery.maximum_charge
+            )
+            storage_profile[hour] = min(
+                storage_profile[hour - 1] * (1 - battery.leakage)
+                + electricity_to_batteries,
+                battery.capacity * battery.maximum_charge
+            )
 
 
 def _collector_mass_flow_rate(htf_mass_flow_rate: float, system_size: int) -> float:
@@ -464,6 +530,7 @@ def run_simulation(
 
 def determine_steady_state_simulation(
     ambient_temperatures: Dict[int, float],
+    battery: Battery | None,
     battery_capacity: int | None,
     buffer_tank: HotWaterTank,
     desalination_plant: DesalinationPlant,
@@ -492,6 +559,8 @@ def determine_steady_state_simulation(
     Inputs:
         - ambient_temperatures:
             The ambient temperature at each time step, measured in Kelvin.
+        - battery:
+            The battery installed or `None` if not battery is installed.
         - battery_capacity:
             The capacity in kWh of electrical storage installed, or `None` if none is
             installed.
@@ -605,6 +674,9 @@ def determine_steady_state_simulation(
 
     # Determine the degraded profiles.
     _calculate_collector_degradation(scenario, solution, system_lifetime)
+
+    # Determine the storage profile.
+    _calculate_storage_profile(battery, battery_capacity, solution)
 
     import pdb
 

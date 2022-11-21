@@ -128,6 +128,7 @@ def main(args: List[Any]) -> None:
         for profile_type in ProfileType:
             simulation_outputs = determine_steady_state_simulation(
                 ambient_temperatures[profile_type],
+                battery,
                 parsed_args.battery_capacity,
                 buffer_tank,
                 desalination_plant,
