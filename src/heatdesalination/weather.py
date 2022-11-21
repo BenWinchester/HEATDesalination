@@ -201,17 +201,28 @@ def _parse_args(args: List[Any]) -> argparse.Namespace:
 
     # Outputs:
     #   The name of the location being fetched, used to save the output file.
-    required_arguments.add_argument(
+    parser.add_argument(
         "--output",
         "-o",
         help="The name of the location being parsed, used for saving the output.",
         type=str,
     )
 
+    # Longitude:
+    #   The longitude of the location.
+    required_arguments.add_argument(
+        "--timezone",
+        "-t",
+        help="The timezone in hours relative to UTC for the location.",
+        type=float,
+    )
+
     return parser.parse_args(args)
 
 
-def main(latitude: float, longitude: float, output: str | None = None) -> None:
+def main(
+    latitude: float, longitude: float, timezone: int, output: str | None = None
+) -> None:
     """
     The main method for the weather module.
 
@@ -220,6 +231,8 @@ def main(latitude: float, longitude: float, output: str | None = None) -> None:
             The latitude of the location.
         - longitude:
             The longitude of the location.
+        - timezone:
+            The UTC timezone offset.
         - output:
             The name of the output file to save the data to.
 
@@ -241,7 +254,10 @@ def main(latitude: float, longitude: float, output: str | None = None) -> None:
     # Call PVGIS to get the weather data for the location
     try:
         parsed_data = pvgis.get_pvgis_hourly(
-            latitude, longitude, components=False, optimal_surface_tilt=True
+            latitude,
+            longitude,
+            components=False,
+            optimal_surface_tilt=True,
         )
     except (TypeError, ValueError):
         logger.error(
@@ -301,21 +317,25 @@ def main(latitude: float, longitude: float, output: str | None = None) -> None:
     average_profile.columns = WEATHER_COLUMN_HEADERS
     max_profile.columns = WEATHER_COLUMN_HEADERS
     min_profile.columns = WEATHER_COLUMN_HEADERS
+    average_profile_dict = average_profile.to_dict()
 
     print("[  DONE  ]")
     print(f"Saving weather data output{'.'*43} ", end="")
 
     # Generate the output data structure.
     output_data = {
-        ProfileType.AVERAGE.value: average_profile.to_dict(),
+        ProfileType.AVERAGE.value: {
+            key: {(time + timezone) % 24: value for time, value in entry.items()}
+            for key, entry in average_profile_dict.items()
+        },
         LATITUDE: latitude,
         LONGITUDE: longitude,
         ProfileType.MAXIMUM.value: {
-            key: {time.hour: value for time, value in entry.items()}
+            key: {(time.hour + timezone) % 24: value for time, value in entry.items()}
             for key, entry in max_profile.to_dict().items()
         },
         ProfileType.MINIMUM.value: {
-            key: {time.hour: value for time, value in entry.items()}
+            key: {(time.hour + timezone) % 24: value for time, value in entry.items()}
             for key, entry in min_profile.to_dict().items()
         },
         OPTIMUM_TILT_ANGLE: (
@@ -350,6 +370,13 @@ if __name__ == "__main__":
         raise Exception("Latitude must be specified.")
     if parsed_args.longitude is None:
         raise Exception("Longitude must be specified.")
+    if parsed_args.timezone is None:
+        raise Exception("Timezone must be specified.")
 
     # Call the main function.
-    main(parsed_args.latitude, parsed_args.longitude, parsed_args.output)
+    main(
+        parsed_args.latitude,
+        parsed_args.longitude,
+        parsed_args.timezone,
+        parsed_args.output,
+    )
