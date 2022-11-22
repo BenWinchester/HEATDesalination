@@ -77,6 +77,10 @@ COST: str = "cost"
 #   Keyword for the criterion on the optimisation.
 CRITERION: str = "criterion"
 
+# DAYS_PER_YEAR:
+#   The number of days per year.
+DAYS_PER_YEAR: float = 365.25
+
 # FIXED:
 #   Keyword for the fixed capacity of an optimisable component.
 FIXED: str = "fixed"
@@ -948,6 +952,12 @@ class Solution(NamedTuple):
         The amount of energy supplied by the batteries at each hour of the day for each
         year of the simulation.
 
+    .. attribute:: battery_lifetime_degradation
+        The total degradation of the batteries over the lifetime of the system.
+
+    .. attribute:: battery_replacements
+        The number of battery replacements required over the lifetime of the simulation.
+
     .. attribute:: battery_storage_profile
         The energy stored in the batteries at each hour of the day for each year of the
         simulation.
@@ -984,9 +994,12 @@ class Solution(NamedTuple):
     solar_thermal_thermal_efficiencies: Dict[int, float | None]
     tank_temperatures: Dict[int, float]
     battery_electricity_suppy_profile: Dict[int, float | None] | None = None
+    battery_lifetime_degradation: int | None = None
+    battery_replacements: int | None = None
     battery_storage_profile: Dict[int, float | None] | None = None
     collector_electricity_supply_profile: Dict[int, float | None] | None = None
     grid_electricity_supply_profile: Dict[int, float | None] | None = None
+    solar_power_supplied: Dict[int, float] | None = None
     output_power_map: Dict[ProfileDegradation, Dict[int, float]] | None = None
 
     @property
@@ -1071,7 +1084,8 @@ class Solution(NamedTuple):
 
         return output_power_map
 
-    def to_dataframe(self) -> pd.DataFrame:
+    @property
+    def as_dataframe(self) -> pd.DataFrame:
         """
         Return a :class:`pandas.DataFrame` containing the solution information.
 
@@ -1080,45 +1094,110 @@ class Solution(NamedTuple):
 
         """
 
-        return pd.DataFrame.from_dict(
-            {
-                "Ambient temperature / degC": {
-                    key: value - ZERO_CELCIUS_OFFSET
-                    for key, value in self.ambient_temperatures.items()
-                },
-                "Collector system input temperature / degC": {
-                    key: value - ZERO_CELCIUS_OFFSET
-                    for key, value in self.collector_input_temperatures.items()
-                },
-                "Collector system output temperature / degC": {
-                    key: value - ZERO_CELCIUS_OFFSET
-                    for key, value in self.collector_system_output_temperatures.items()
-                },
-                "Electricity demand / kWh": self.electricity_demands,
-                "Hot-water demand temperature / degC": self.hot_water_demand_temperature,
-                "Hot-water demand volume / kg/s": self.hot_water_demand_volume,
-                "PV-T collector output temperature / degC": {
-                    key: value - ZERO_CELCIUS_OFFSET
-                    for key, value in self.pv_t_htf_output_temperatures.items()
-                },
-                "Renewable heating fraction": self.renewable_heating_fraction,
-                "Solar-thermal collector output temperature / degC": {
-                    key: value - ZERO_CELCIUS_OFFSET
-                    for key, value in self.solar_thermal_htf_output_temperatures.items()
-                },
-                "Tank temperature / degC": {
-                    key: value - ZERO_CELCIUS_OFFSET
-                    for key, value in self.tank_temperatures.items()
-                },
-                "PV electric efficiencies": self.pv_electrical_efficiencies,
-                "PV electric output power / kW": self.pv_electrical_output_power,
-                "Total PV electric power produced / kW": self.pv_system_electrical_output_power,
-                "PV-T electric efficiencies": self.pv_t_electrical_efficiencies,
-                "PV-T electric output power / kW": self.pv_t_electrical_output_power,
-                "PV-T reduced temperature / degC/W/m^2": self.pv_t_reduced_temperatures,
-                "Total PV-T electric power produced / kW": self.pv_t_system_electrical_output_power,
-                "PV-T thermal efficiency": self.pv_t_thermal_efficiencies,
-                "Solar-thermal reduced temperature / degC/W/m^2": self.solar_thermal_reduced_temperatures,
-                "Solar-thermal thermal efficiency": self.solar_thermal_thermal_efficiencies,
-            }
-        ).sort_index()
+        # Construct a dictionary based on the available output information.
+        output_information_dict = {
+            "Ambient temperature / degC": {
+                key: value - ZERO_CELCIUS_OFFSET
+                for key, value in self.ambient_temperatures.items()
+            },
+            "Collector system input temperature / degC": {
+                key: value - ZERO_CELCIUS_OFFSET
+                for key, value in self.collector_input_temperatures.items()
+            },
+            "Collector system output temperature / degC": {
+                key: value - ZERO_CELCIUS_OFFSET
+                for key, value in self.collector_system_output_temperatures.items()
+            },
+            "Electricity demand / kWh": self.electricity_demands,
+            "Electricity demand met through solar collectors / kWh": self.solar_power_supplied,
+            "Electricity demand met through storage / kWh": self.battery_electricity_suppy_profile,
+            "Hot-water demand temperature / degC": {
+                key: (value - ZERO_CELCIUS_OFFSET) if value is not None else None
+                for key, value in self.hot_water_demand_temperature.items()
+            },
+            "Hot-water demand volume / kg/s": self.hot_water_demand_volume,
+            "PV-T collector output temperature / degC": {
+                key: value - ZERO_CELCIUS_OFFSET
+                for key, value in self.pv_t_htf_output_temperatures.items()
+            },
+            "Renewable heating fraction": self.renewable_heating_fraction,
+            "Solar-thermal collector output temperature / degC": {
+                key: value - ZERO_CELCIUS_OFFSET
+                for key, value in self.solar_thermal_htf_output_temperatures.items()
+            },
+            "Tank temperature / degC": {
+                key: value - ZERO_CELCIUS_OFFSET
+                for key, value in self.tank_temperatures.items()
+            },
+        }
+
+        # Update with PV information if applicable.
+        if self.pv_electrical_efficiencies is not None:
+            output_information_dict.update(
+                {
+                    "Undegraded PV electric efficiencies": self.pv_electrical_efficiencies[
+                        ProfileDegradation.UNDEGRADED.value
+                    ],
+                    "Degraded PV electric efficiencies": self.pv_electrical_efficiencies[
+                        ProfileDegradation.DEGRADED.value
+                    ],
+                    "Undegraded PV electric output power / kW": self.pv_electrical_output_power[
+                        ProfileDegradation.UNDEGRADED.value
+                    ],
+                    "Degraded PV electric output power / kW": self.pv_electrical_output_power[
+                        ProfileDegradation.DEGRADED.value
+                    ],
+                    "Undegraded Total PV electric power produced / kW": self.pv_system_electrical_output_power[
+                        ProfileDegradation.UNDEGRADED.value
+                    ],
+                    "Degraded Total PV electric power produced / kW": self.pv_system_electrical_output_power[
+                        ProfileDegradation.DEGRADED.value
+                    ],
+                }
+            )
+
+        # Update with PV-T information if applicable.
+        if self.pv_t_electrical_efficiencies is not None:
+            output_information_dict.update(
+                {
+                    "Undegraded PV-T electric efficiencies": self.pv_t_electrical_efficiencies[
+                        ProfileDegradation.UNDEGRADED.value
+                    ],
+                    "Degraded PV-T electric efficiencies": self.pv_t_electrical_efficiencies[
+                        ProfileDegradation.DEGRADED.value
+                    ],
+                    "Undegraded PV-T electric output power / kW": self.pv_t_electrical_output_power[
+                        ProfileDegradation.UNDEGRADED.value
+                    ],
+                    "Degraded PV-T electric output power / kW": self.pv_t_electrical_output_power[
+                        ProfileDegradation.DEGRADED.value
+                    ],
+                    "Undegraded Total PV-T electric power produced / kW": self.pv_t_system_electrical_output_power[
+                        ProfileDegradation.UNDEGRADED.value
+                    ],
+                    "Degraded Total PV-T electric power produced / kW": self.pv_t_system_electrical_output_power[
+                        ProfileDegradation.DEGRADED.value
+                    ],
+                    "PV-T output temperature / degC": {
+                        key: value - ZERO_CELCIUS_OFFSET
+                        for key, value in self.pv_t_htf_output_temperatures.items()
+                    },
+                    "PV-T reduced temperature / degC/W/m^2": self.pv_t_reduced_temperatures,
+                    "PV-T thermal efficiency": self.pv_t_thermal_efficiencies,
+                }
+            )
+
+        # Update with solar-thermal information if applicable.
+        if self.solar_thermal_htf_output_temperatures is not None:
+            output_information_dict.update(
+                {
+                    "Solar-thermal output temperature / degC": {
+                        key: value - ZERO_CELCIUS_OFFSET
+                        for key, value in self.solar_thermal_htf_output_temperatures.items()
+                    },
+                    "Solar-thermal reduced temperature / degC/W/m^2": self.solar_thermal_reduced_temperatures,
+                    "Solar-thermal thermal efficiency": self.solar_thermal_thermal_efficiencies,
+                }
+            )
+
+        return pd.DataFrame.from_dict(output_information_dict).sort_index()

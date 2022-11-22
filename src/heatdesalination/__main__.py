@@ -53,7 +53,7 @@ def save_simulation(
     """
 
     # Assemble the CSV datafile structure
-    output_data = simulation_outputs.to_dataframe()
+    output_data = simulation_outputs.as_dataframe
     output_data["Solar irradiance / W/m^2"] = solar_irradiance
 
     # Write to the output file.
@@ -144,6 +144,17 @@ def main(args: List[Any]) -> None:
                 parsed_args.solar_thermal_system_size,
                 parsed_args.system_lifetime,
             )
+            logger.info(
+                "Battery lifetime degradation was %s necessitating %s replacements.",
+                f"{simulation_outputs.battery_lifetime_degradation:.3g}",
+                simulation_outputs.battery_replacements,
+            )
+            if simulation_outputs.battery_replacements > 0:
+                print(
+                    f"Batteries were replaced {simulation_outputs.battery_replacements} time{'s' if simulation_outputs.battery_replacements > 1 else ''} during the simulation."
+                )
+            else:
+                print("Batteries were not replaced during the simulation period.")
             save_simulation(
                 parsed_args.output,
                 profile_type,

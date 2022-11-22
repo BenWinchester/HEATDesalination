@@ -20,13 +20,19 @@ profiles.
 
 from collections import defaultdict
 from logging import Logger
-from typing import DefaultDict, Dict
+from typing import DefaultDict, Dict, Tuple
 
 import math
 
 from tqdm import tqdm
 
-from .__utils__ import ProfileDegradation, Scenario, Solution, ZERO_CELCIUS_OFFSET
+from .__utils__ import (
+    DAYS_PER_YEAR,
+    ProfileDegradation,
+    Scenario,
+    Solution,
+    ZERO_CELCIUS_OFFSET,
+)
 from .heat_pump import calculate_heat_pump_electricity_consumption
 from .matrix import solve_matrix
 from .plant import DesalinationPlant
@@ -36,6 +42,11 @@ from .storage.storage_utils import Battery, HotWaterTank
 
 __all__ = ("run_simulation",)
 
+
+# DEGRADATION_PRECISION:
+#   The precision required when solving recursively for the degradation in terms of
+# decimal places.
+DEGRADATION_PRECISION: int = 5
 
 # Temperature precision:
 #   The precision required when solving for a steady-state solution.
@@ -129,33 +140,48 @@ def _calculate_collector_degradation(
         )
 
 
-def _calculate_storage_profile(
-    battery: Battery, battery_capacity: int | None, solution: Solution
-) -> None:
+def _storage_profile_iteration_step(
+    battery: Battery,
+    battery_system_size: int | None,
+    maximum_charge_degradation: float,
+    solution: Solution,
+    total_collector_generation_profile: Dict[int, float],
+    *,
+    initial_storage_profile_value: float,
+) -> Tuple[Dict[int, float], Dict[int, float]]:
     """
-    Calculate the storage profile for the batteries.
+    Carry out an iteration step for determining the storage profiles.
 
     Inputs:
         - battery:
             The battery being modelled.
         - battery_capacity:
             The capacity of the batteries installed.
+        - maximum_charge_degradation:
+            The factor of degradation to apply to the maximum charge
         - solution:
             The profiles being modelled.
+        - total_collector_generation_profile:
+            The total power generation profile from the solar average-degraded
+            solar collectors.
+        - initial_storage_profile_value:
+            An initial value for the storage profile to use.
+
+    Outputs:
+        - storage_power_supplied:
+            The storage power supplied in kWh at each hour.
+        - storage_profile:
+            The profile of power stored in the batteries at each hour.
 
     """
 
-    total_collector_generation_profile = solution.total_electrical_output_power[
-        ProfileDegradation.DEGRADED.value
-    ]
-
     # Setup a map to keep track of the profiles.
-    storage_profile: DefaultDict[int, float] = defaultdict(float)
+    storage_power_supplied_map: Dict[int, float] = {}
+    storage_profile: DefaultDict[int, float] = defaultdict(
+        lambda: initial_storage_profile_value
+    )
 
     for hour in range(24):
-        import pdb
-
-        pdb.set_trace()
         net_storage_flow: float = (
             total_collector_generation_profile[hour]
             - solution.electricity_demands[hour]
@@ -167,13 +193,19 @@ def _calculate_storage_profile(
             #   - the total load being requested (excess discharge would be wasted),
             #   - limited by the c-rate.
             storage_power_supplied = min(
-                max((
-                    storage_profile[hour - 1] * (1 - battery.leakage)
-                    - battery.capacity * battery.minimum_charge
-                ), 0),
+                max(
+                    (
+                        storage_profile[hour - 1] * (1 - battery.leakage)
+                        - battery_system_size
+                        * battery.capacity
+                        * battery.minimum_charge
+                    ),
+                    0,
+                ),
                 abs(net_storage_flow) * battery.conversion_out,
-                battery_capacity * battery.c_rate_discharging,
+                battery_system_size * battery.capacity * battery.c_rate_discharging,
             )
+            storage_power_supplied_map[hour] = storage_power_supplied
             storage_profile[hour] = (
                 storage_profile[hour - 1]
                 - storage_power_supplied / battery.conversion_out
@@ -185,14 +217,282 @@ def _calculate_storage_profile(
             #   - limited by the electricity that they can hold.
             electricity_to_batteries = min(
                 net_storage_flow * battery.conversion_in,
-                battery.capacity * battery.c_rate_charging,
-                battery.capacity * battery.maximum_charge
+                battery_system_size * battery.capacity * battery.c_rate_charging,
+                battery_system_size
+                * battery.capacity
+                * maximum_charge_degradation
+                * battery.maximum_charge
+                - storage_profile[hour - 1] * (1 - battery.leakage),
             )
-            storage_profile[hour] = min(
+            storage_power_supplied_map[hour] = 0
+            storage_profile[hour] = (
+                storage_profile[hour - 1] * (1 - battery.leakage)
+                + electricity_to_batteries
+            )
+        if net_storage_flow == 0:
+            # Batteries leak provide there is power to leak out.
+            storage_profile[hour] = max(
                 storage_profile[hour - 1] * (1 - battery.leakage)
                 + electricity_to_batteries,
-                battery.capacity * battery.maximum_charge
+                battery.capacity * battery.minimum_charge,
             )
+
+    return storage_power_supplied_map, storage_profile
+
+
+def _maximum_charge_degradation_factor(
+    lifetime_degradation: float,
+    undegraded_maximum_charge: float,
+    undegraded_minimum_charge: float,
+) -> float:
+    """
+    Calculates the factor by which to degrade the maximum charge.
+
+    The total charge-storing capacity of the batteries is degraded as time goes
+    on such that:
+        max* - min = (1 - eta) (max - min),
+    where - max* is the new maximum charge capacity of the batteries,
+          - max is the original maximum charge capacity of the batteries,
+          - min the original minimum ---------------- "" ---------------,
+          - and eta the degradation factor for the charge carying capacity such that,
+            when there is no degradation, eta is zero and, when there is full
+            degradation, eta is 1.
+
+    Rearranging this yields:
+        max* / max = (1 - eta) + eta * min / max
+    for the factor by which the maximum charge should be degraded based on a lifetime
+    loss by a factor of eta.
+
+    Inputs:
+        - lifetime_degradation:
+            The lifetime degradation to the charge-holding capacity of the batteries.
+        - undegraded_maximum_charge:
+            The maximum charge factor for undegraded batteries.
+        - undegraded_minimum_charge:
+            The minimum charge factor for undegraded batteries.
+
+    Outputs:
+        The degradation factor for the maximum charge of the batteries.
+
+    """
+
+    return (1 - lifetime_degradation) + lifetime_degradation * (
+        undegraded_minimum_charge / undegraded_maximum_charge
+    )
+
+
+def _recursive_storage_solver(
+    battery: Battery,
+    battery_system_size: int | None,
+    maximum_charge_degradation: float,
+    solution: Solution,
+    total_collector_generation_profile: Dict[int, float],
+    *,
+    initial_storage_profile_value: float,
+) -> Tuple[Dict[int, float], Dict[int, float]]:
+    """
+    Recursively solve the storage profile until a consistent start value is found.
+
+    Inputs:
+        - battery:
+            The battery being modelled.
+        - battery_capacity:
+            The capacity of the batteries installed.
+        - maximum_charge_degradation:
+            The factor of degradation to apply to the maximum charge
+        - solution:
+            The profiles being modelled.
+        - total_collector_generation_profile:
+            The total power generation profile from the solar average-degraded
+            solar collectors.
+        - initial_storage_profile_value:
+            An initial value for the storage profile to use.
+
+    Outputs:
+        - storage_power_supplied:
+            The storage power supplied in kWh at each hour.
+        - storage_profile:
+            The profile of power stored in the batteries at each hour.
+
+    """
+
+    # Call the storage profile iteration step.
+    storage_power_supplied_map, storage_profile = _storage_profile_iteration_step(
+        battery,
+        battery_system_size,
+        maximum_charge_degradation,
+        solution,
+        total_collector_generation_profile,
+        initial_storage_profile_value=initial_storage_profile_value,
+    )
+
+    # If the values match up, then return these outputs.
+    if (eleventh_hour_storage := storage_profile[23]) == initial_storage_profile_value:
+        return storage_power_supplied_map, storage_profile
+
+    return _recursive_storage_solver(
+        battery,
+        battery_system_size,
+        maximum_charge_degradation,
+        solution,
+        total_collector_generation_profile,
+        initial_storage_profile_value=eleventh_hour_storage,
+    )
+
+
+def _recursive_degraded_storage_solver(
+    battery: Battery,
+    battery_system_size: int | None,
+    solution: Solution,
+    system_lifetime: int,
+    total_collector_generation_profile: Dict[int, float],
+    *,
+    input_lifetime_degradation: float,
+) -> Tuple[float, Dict[int, float], Dict[int, float]]:
+    """
+    Recursively solve the degradation level of the storage profile until consistent.
+
+    Inputs:
+        - battery:
+            The battery being modelled.
+        - battery_capacity:
+            The capacity of the batteries installed.
+        - solution:
+            The profiles being modelled.
+        - system_lifetime:
+            The lifetime in years of the system.
+        - total_collector_generation_profile:
+            The total power generation profile from the solar average-degraded
+            solar collectors.
+        - input_lifetime_degradation:
+            An initial value for the lifetime degradation of the battery system.
+
+    Outputs:
+        - lifetime_degradation:
+            The lifetime degradation of the storage system expressed as a fraction
+            between 0 (no degradation) and 1 (full degradation).
+        - storage_power_supplied:
+            The storage power supplied in kWh at each hour.
+        - storage_profile:
+            The profile of power stored in the batteries at each hour.
+
+    """
+
+    # Refactor the lifetime degradation in case it is greater than 1.
+    def _refactor_lifetime_degradation(x: float) -> float:
+        """
+        Refactor the lifetime degradation if it is less than 1.
+
+        """
+
+        try:
+            return (x // 1) / x + (x % 1) ** 2 / x
+        except ZeroDivisionError:
+            return 0
+
+    # Begin with the supplied degradation factor.
+    storage_power_supplied_map, storage_profile = _recursive_storage_solver(
+        battery,
+        battery_system_size,
+        _maximum_charge_degradation_factor(
+            _refactor_lifetime_degradation(input_lifetime_degradation) / 2,
+            battery.maximum_charge,
+            battery.minimum_charge,
+        ),
+        solution,
+        total_collector_generation_profile,
+        initial_storage_profile_value=0,
+    )
+
+    # Compute the total power through the storage system over the lifetime of the
+    # batteries and hence the system degradation/
+    total_storage_power_supplied = (
+        system_lifetime * DAYS_PER_YEAR * sum(storage_power_supplied_map.values())
+    )
+    lifetime_degradation = (
+        total_storage_power_supplied
+        * battery.lifetime_loss
+        / (
+            battery_system_size
+            * battery.cycle_lifetime
+            * (battery.maximum_charge - battery.minimum_charge)
+            * battery.capacity
+        )
+    )
+
+    # If the lifetime degradation matches, return.
+    if round(lifetime_degradation, DEGRADATION_PRECISION) == round(
+        input_lifetime_degradation, DEGRADATION_PRECISION
+    ):
+        return lifetime_degradation, storage_power_supplied_map, storage_profile
+
+    # Degrade the storage capacity by this and re-run.
+    return _recursive_degraded_storage_solver(
+        battery,
+        battery_system_size,
+        solution,
+        system_lifetime,
+        total_collector_generation_profile,
+        input_lifetime_degradation=lifetime_degradation,
+    )
+
+
+def _calculate_storage_profile(
+    battery: Battery,
+    battery_system_size: int | None,
+    solution: Solution,
+    system_lifetime: int,
+) -> None:
+    """
+    Calculate the storage profile for the batteries.
+
+    Inputs:
+        - battery:
+            The battery being modelled.
+        - battery_capacity:
+            The capacity of the batteries installed.
+        - solution:
+            The profiles being modelled.
+        - system_lifetime:
+            The lifetime, in years, of the system being considered.
+
+    Outputs:
+        - battery_lifetime_degradation:
+            The lifetime degradation of the storage system expressed as a fraction
+            between 0 (no degradation) and 1 (full degradation).
+        - battery_power_supplied:
+            The storage power supplied in kWh at each hour.
+        - battery_storage_profile:
+            The profile of power stored in the batteries at each hour.
+        - solar_power_supplied_map:
+            The power supplied by the solar collectors at each hour.
+
+    """
+
+    # Determine the total solar generation.
+    total_collector_generation_profile = solution.total_electrical_output_power[
+        ProfileDegradation.DEGRADED.value
+    ]
+
+    # Compute the solar profile.
+    solar_power_supplied_map: Dict[int, float] = {
+        hour: min(
+            solution.electricity_demands[hour],
+            total_collector_generation_profile[hour]
+            if total_collector_generation_profile[hour] is not None
+            else 0,
+        )
+        for hour in solution.electricity_demands
+    }
+
+    return _recursive_degraded_storage_solver(
+        battery,
+        battery_system_size,
+        solution,
+        system_lifetime,
+        total_collector_generation_profile,
+        input_lifetime_degradation=0,
+    ) + (solar_power_supplied_map, )
 
 
 def _collector_mass_flow_rate(htf_mass_flow_rate: float, system_size: int) -> float:
@@ -676,10 +976,24 @@ def determine_steady_state_simulation(
     _calculate_collector_degradation(scenario, solution, system_lifetime)
 
     # Determine the storage profile.
-    _calculate_storage_profile(battery, battery_capacity, solution)
+    (
+        battery_lifetime_degradation,
+        battery_power_supplied_profile,
+        battery_storage_profile,
+        solar_power_supplied,
+    ) = _calculate_storage_profile(battery, battery_capacity, solution, system_lifetime)
 
-    import pdb
-
-    pdb.set_trace()
+    # Save these to the output tuple.
+    solution = solution._replace(
+        battery_lifetime_degradation=battery_lifetime_degradation
+    )
+    solution = solution._replace(
+        battery_replacements=int(battery_lifetime_degradation // 1)
+    )
+    solution = solution._replace(
+        battery_electricity_suppy_profile=battery_power_supplied_profile
+    )
+    solution = solution._replace(battery_storage_profile=battery_storage_profile)
+    solution = solution._replace(solar_power_supplied = solar_power_supplied)
 
     return solution
