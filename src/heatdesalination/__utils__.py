@@ -1100,6 +1100,7 @@ class Solution(NamedTuple):
                 key: value - ZERO_CELCIUS_OFFSET
                 for key, value in self.ambient_temperatures.items()
             },
+            "Battery storage profile / kWh": self.battery_storage_profile,
             "Collector system input temperature / degC": {
                 key: value - ZERO_CELCIUS_OFFSET
                 for key, value in self.collector_input_temperatures.items()

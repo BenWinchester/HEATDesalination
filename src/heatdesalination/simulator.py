@@ -281,7 +281,7 @@ def _maximum_charge_degradation_factor(
     )
 
 
-def _recursive_storage_solver(
+def _storage_solver(
     battery: Battery,
     battery_system_size: int | None,
     maximum_charge_degradation: float,
@@ -291,7 +291,7 @@ def _recursive_storage_solver(
     initial_storage_profile_value: float,
 ) -> Tuple[Dict[int, float], Dict[int, float]]:
     """
-    Recursively solve the storage profile until a consistent start value is found.
+    Solve the storage profile until a consistent start value is found.
 
     Inputs:
         - battery:
@@ -326,18 +326,30 @@ def _recursive_storage_solver(
         initial_storage_profile_value=initial_storage_profile_value,
     )
 
-    # If the values match up, then return these outputs.
-    if (eleventh_hour_storage := storage_profile[23]) == initial_storage_profile_value:
-        return storage_power_supplied_map, storage_profile
+    # Set up variables to keep track of whether a solution has been found.
+    eleventh_hour_storage: float = storage_profile[23]
+    solution_found: bool = initial_storage_profile_value == eleventh_hour_storage
 
-    return _recursive_storage_solver(
-        battery,
-        battery_system_size,
-        maximum_charge_degradation,
-        solution,
-        total_collector_generation_profile,
-        initial_storage_profile_value=eleventh_hour_storage,
-    )
+    # Loop until a consistent solution is found.
+    while not solution_found:
+        # Call the storage profile iteration step.
+        storage_power_supplied_map, storage_profile = _storage_profile_iteration_step(
+            battery,
+            battery_system_size,
+            maximum_charge_degradation,
+            solution,
+            total_collector_generation_profile,
+            initial_storage_profile_value=(
+                initial_storage_profile_value := eleventh_hour_storage
+            ),
+        )
+        eleventh_hour_storage = storage_profile[23]
+
+        solution_found = round(eleventh_hour_storage, DEGRADATION_PRECISION) == round(
+            initial_storage_profile_value, DEGRADATION_PRECISION
+        )
+
+    return storage_power_supplied_map, storage_profile
 
 
 def _recursive_degraded_storage_solver(
@@ -391,17 +403,18 @@ def _recursive_degraded_storage_solver(
             return 0
 
     # Begin with the supplied degradation factor.
-    storage_power_supplied_map, storage_profile = _recursive_storage_solver(
+    maximum_degradation_factor = _maximum_charge_degradation_factor(
+        _refactor_lifetime_degradation(input_lifetime_degradation) / 2,
+        battery.maximum_charge,
+        battery.minimum_charge,
+    )
+    storage_power_supplied_map, storage_profile = _storage_solver(
         battery,
         battery_system_size,
-        _maximum_charge_degradation_factor(
-            _refactor_lifetime_degradation(input_lifetime_degradation) / 2,
-            battery.maximum_charge,
-            battery.minimum_charge,
-        ),
+        maximum_degradation_factor,
         solution,
         total_collector_generation_profile,
-        initial_storage_profile_value=0,
+        initial_storage_profile_value=battery_system_size * battery.minimum_charge,
     )
 
     # Compute the total power through the storage system over the lifetime of the
@@ -485,6 +498,10 @@ def _calculate_storage_profile(
         for hour in solution.electricity_demands
     }
 
+    # If there is no storage, return purely the solar power map.
+    if battery_system_size == 0:
+        return 0, None, None, solar_power_supplied_map
+
     return _recursive_degraded_storage_solver(
         battery,
         battery_system_size,
@@ -492,7 +509,7 @@ def _calculate_storage_profile(
         system_lifetime,
         total_collector_generation_profile,
         input_lifetime_degradation=0,
-    ) + (solar_power_supplied_map, )
+    ) + (solar_power_supplied_map,)
 
 
 def _collector_mass_flow_rate(htf_mass_flow_rate: float, system_size: int) -> float:
@@ -994,6 +1011,6 @@ def determine_steady_state_simulation(
         battery_electricity_suppy_profile=battery_power_supplied_profile
     )
     solution = solution._replace(battery_storage_profile=battery_storage_profile)
-    solution = solution._replace(solar_power_supplied = solar_power_supplied)
+    solution = solution._replace(solar_power_supplied=solar_power_supplied)
 
     return solution

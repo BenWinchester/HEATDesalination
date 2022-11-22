@@ -457,8 +457,9 @@ def _simulate_and_calculate_criterion(
 
     # Determine the steady-state solution.
     try:
-        steady_state_solution = determine_steady_state_simulation(
+        steady_state_solution: Solution = determine_steady_state_simulation(
             ambient_temperatures,
+            battery,
             battery_capacity,
             buffer_tank,
             desalination_plant,
@@ -488,7 +489,7 @@ def _simulate_and_calculate_criterion(
         hybrid_pv_t_panel: pv_t_system_size,
         pv_panel: pv_panel_system_size,
         solar_thermal_collector: solar_thermal_system_size,
-        battery: storage_size,
+        battery: storage_size * (1 + steady_state_solution.battery_replacements),
     }
 
     # Return the value of the criterion.
