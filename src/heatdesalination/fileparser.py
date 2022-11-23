@@ -63,6 +63,10 @@ DESALINATION_PLANT_INPUTS: str = "plants.yaml"
 #   Keyword for desalination plants.
 DESALINATION_PLANTS: str = "desalination_plants"
 
+# GRID_COST:
+#   Keyword for the cost of grid (alternative/unmet) electricity.
+GRID_COST: str = "grid_cost"
+
 # HEAT_EXCHANGER_EFFICIENCY:
 #   Keyword for parsing the heat capacity of the heat exchangers.
 HEAT_EXCHANGER_EFFICIENCY: str = "heat_exchanger_efficiency"
@@ -203,6 +207,7 @@ def parse_input_files(
     scenarios = [
         Scenario(
             entry[BATTERY],
+            entry[GRID_COST],
             entry[HEAT_EXCHANGER_EFFICIENCY],
             entry[HEAT_PUMP_EFFICIENCY],
             entry[HOT_WATER_TANK],

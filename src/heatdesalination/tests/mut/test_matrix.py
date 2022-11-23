@@ -143,6 +143,7 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
 
         scenario = Scenario(
             (default_name := "default"),
+            0,
             self.heat_exchanger_efficiency,
             default_name,
             HEAT_CAPACITY_OF_WATER,
@@ -371,7 +372,16 @@ class TestSolveMatrix(unittest.TestCase):
         self.previous_tank_temperature: float = 75 + ZERO_CELCIUS_OFFSET
         self.pv_t_mass_flow_rate: float = 4 + ZERO_CELCIUS_OFFSET
         self.scenario = Scenario(
-            (default := "default"), 0, default, 0, 0, default, default, default, default
+            (default := "default"),
+            0,
+            0,
+            default,
+            0,
+            0,
+            default,
+            default,
+            default,
+            default,
         )
         self.solar_irradiance = mock.MagicMock()
         self.solar_thermal_collector = mock.MagicMock()

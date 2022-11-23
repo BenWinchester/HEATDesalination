@@ -101,17 +101,17 @@ def main(args: List[Any]) -> None:
     if parsed_args.simulation:
         # Raise exceptions if the arguments are invalid.
         missing_parameters: List[str] = []
-        if scenario.battery and not parsed_args.battery_capacity:
+        if scenario.battery and parsed_args.battery_capacity is None:
             logger.error(
                 "Must specify battery capacity if batteries included in scenario."
             )
             missing_parameters.append("Storage system size")
-        if scenario.pv_t and not parsed_args.pv_t_system_size:
+        if scenario.pv_t and parsed_args.pv_t_system_size is None:
             logger.error(
                 "Must specify PV-T system size if PV-T collectors included in scenario."
             )
             missing_parameters.append("PV-T system size")
-        if scenario.solar_thermal and not parsed_args.solar_thermal_system_size:
+        if scenario.solar_thermal and parsed_args.solar_thermal_system_size is None:
             logger.error(
                 "Must specify solar-thermal system size if solar-thermal collectors "
                 "included in scenario."

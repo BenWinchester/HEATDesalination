@@ -127,6 +127,7 @@ class TestRunSimulation(unittest.TestCase):
         # Setup the scenario
         self.scenario = Scenario(
             (default_name := "default"),
+            0,
             0.4,
             default_name,
             HEAT_CAPACITY_OF_WATER,

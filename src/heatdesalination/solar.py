@@ -26,6 +26,8 @@ import math
 from logging import Logger
 from typing import Any, Dict, Optional, Tuple
 
+from pvlib import temperature
+
 from .__utils__ import (
     AREA,
     COST,
@@ -637,6 +639,15 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
         """
         Calcuates the electrical performance of the collector.
 
+        NOTE: The calculation for determining the temperature of the PV modules uses
+        default temperature characteristics from
+          Faiman, D. (2008). "Assessing the outdoor operating temperature of
+          photovoltaic modules." Progress in Photovoltaics 16(4): 307-315.
+        as implemented in the pvlib module.
+
+        Should non-Silicon panels wish to be considered, these default values should be
+        altered accordingly or a more-accurate module-temperature module employed.
+
         Inputs:
             - ambient_temperature:
                 The ambient temperature, measured in degrees Kelvin.
@@ -667,12 +678,24 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
 
         """
 
+        # Determine the average temperature of the panel using empirical PVLib modules.
+        average_temperature = temperature.faiman(
+            solar_irradiance, ambient_temperature - ZERO_CELCIUS_OFFSET
+        )
+
         # Determine the fractional electrical performance and electrical efficiency of
         # the PV panel.
+        electrical_efficiency = self.reference_efficiency * (
+            1
+            - self.thermal_coefficient
+            * (ambient_temperature - self.reference_temperature)
+        )
 
         # Determine the reduced temperature of the panel.
         reduced_panel_temperature = reduced_temperature(
-            ambient_temperature, average_temperature, solar_irradiance
+            ambient_temperature,
+            average_temperature + ZERO_CELCIUS_OFFSET,
+            solar_irradiance,
         )
 
         return electrical_efficiency, None, reduced_panel_temperature, None
@@ -924,12 +947,19 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
             mass_flow_rate < self.min_mass_flow_rate
             or mass_flow_rate > self.max_mass_flow_rate
         ):
+            logger.debug(
+                "Flow rate of %s kg/s is out of bounds, range is %s to %s kilograms/second.",
+                mass_flow_rate,
+                self.min_mass_flow_rate,
+                self.max_mass_flow_rate,
+            )
             raise FlowRateError(
                 self.name,
                 f"Flow rate of {mass_flow_rate:.2g} kg/s is out of bounds, range is "
                 + f"{self.min_mass_flow_rate:.2g} to {self.max_mass_flow_rate:.2g} "
                 "kilograms/second.",
             )
+            pass
 
         _, negative_root = _thermal_performance(
             ambient_temperature,
@@ -1151,12 +1181,19 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
             mass_flow_rate < self.min_mass_flow_rate
             or mass_flow_rate > self.max_mass_flow_rate
         ):
+            logger.debug(
+                "Flow rate of %s kg/s is out of bounds, range is %s to %s kilograms/second.",
+                mass_flow_rate,
+                self.min_mass_flow_rate,
+                self.max_mass_flow_rate,
+            )
             raise FlowRateError(
                 self.name,
                 f"Flow rate of {mass_flow_rate:.2g} kg/s is out of bounds, range is "
                 + f"{self.min_mass_flow_rate:.2g} to {self.max_mass_flow_rate:.2g} "
                 "kilograms/second.",
             )
+            pass
 
         _, negative_root = _thermal_performance(
             ambient_temperature,

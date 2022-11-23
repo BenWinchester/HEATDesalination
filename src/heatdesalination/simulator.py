@@ -148,7 +148,7 @@ def _storage_profile_iteration_step(
     total_collector_generation_profile: Dict[int, float],
     *,
     initial_storage_profile_value: float,
-) -> Tuple[Dict[int, float], Dict[int, float]]:
+) -> Tuple[Dict[int, float], Dict[int, float], Dict[int, float]]:
     """
     Carry out an iteration step for determining the storage profiles.
 
@@ -168,6 +168,8 @@ def _storage_profile_iteration_step(
             An initial value for the storage profile to use.
 
     Outputs:
+        - power_to_storage_map:
+            The power supplied to the batteries at each hour in kWh.
         - storage_power_supplied:
             The storage power supplied in kWh at each hour.
         - storage_profile:
@@ -176,6 +178,7 @@ def _storage_profile_iteration_step(
     """
 
     # Setup a map to keep track of the profiles.
+    power_to_storage_map: Dict[int, float] = {}
     storage_power_supplied_map: Dict[int, float] = {}
     storage_profile: DefaultDict[int, float] = defaultdict(
         lambda: initial_storage_profile_value
@@ -202,9 +205,10 @@ def _storage_profile_iteration_step(
                     ),
                     0,
                 ),
-                abs(net_storage_flow) * battery.conversion_out,
+                abs(net_storage_flow),
                 battery_system_size * battery.capacity * battery.c_rate_discharging,
             )
+            power_to_storage_map[hour] = 0
             storage_power_supplied_map[hour] = storage_power_supplied
             storage_profile[hour] = (
                 storage_profile[hour - 1]
@@ -224,6 +228,9 @@ def _storage_profile_iteration_step(
                 * battery.maximum_charge
                 - storage_profile[hour - 1] * (1 - battery.leakage),
             )
+            power_to_storage_map[hour] = (
+                electricity_to_batteries / battery.conversion_in
+            )
             storage_power_supplied_map[hour] = 0
             storage_profile[hour] = (
                 storage_profile[hour - 1] * (1 - battery.leakage)
@@ -231,13 +238,15 @@ def _storage_profile_iteration_step(
             )
         if net_storage_flow == 0:
             # Batteries leak provide there is power to leak out.
+            power_to_storage_map[hour] = 0
+            storage_power_supplied_map[hour] = 0
             storage_profile[hour] = max(
                 storage_profile[hour - 1] * (1 - battery.leakage)
                 + electricity_to_batteries,
                 battery.capacity * battery.minimum_charge,
             )
 
-    return storage_power_supplied_map, storage_profile
+    return power_to_storage_map, storage_power_supplied_map, storage_profile
 
 
 def _maximum_charge_degradation_factor(
@@ -289,7 +298,7 @@ def _storage_solver(
     total_collector_generation_profile: Dict[int, float],
     *,
     initial_storage_profile_value: float,
-) -> Tuple[Dict[int, float], Dict[int, float]]:
+) -> Tuple[Dict[int, float], Dict[int, float], Dict[int, float]]:
     """
     Solve the storage profile until a consistent start value is found.
 
@@ -309,6 +318,8 @@ def _storage_solver(
             An initial value for the storage profile to use.
 
     Outputs:
+        - power_to_storage_map:
+            The power supplied to the batteries at each hour in kWh.
         - storage_power_supplied:
             The storage power supplied in kWh at each hour.
         - storage_profile:
@@ -317,7 +328,11 @@ def _storage_solver(
     """
 
     # Call the storage profile iteration step.
-    storage_power_supplied_map, storage_profile = _storage_profile_iteration_step(
+    (
+        power_to_storage_map,
+        storage_power_supplied_map,
+        storage_profile,
+    ) = _storage_profile_iteration_step(
         battery,
         battery_system_size,
         maximum_charge_degradation,
@@ -333,7 +348,11 @@ def _storage_solver(
     # Loop until a consistent solution is found.
     while not solution_found:
         # Call the storage profile iteration step.
-        storage_power_supplied_map, storage_profile = _storage_profile_iteration_step(
+        (
+            power_to_storage_map,
+            storage_power_supplied_map,
+            storage_profile,
+        ) = _storage_profile_iteration_step(
             battery,
             battery_system_size,
             maximum_charge_degradation,
@@ -349,7 +368,7 @@ def _storage_solver(
             initial_storage_profile_value, DEGRADATION_PRECISION
         )
 
-    return storage_power_supplied_map, storage_profile
+    return power_to_storage_map, storage_power_supplied_map, storage_profile
 
 
 def _recursive_degraded_storage_solver(
@@ -360,7 +379,7 @@ def _recursive_degraded_storage_solver(
     total_collector_generation_profile: Dict[int, float],
     *,
     input_lifetime_degradation: float,
-) -> Tuple[float, Dict[int, float], Dict[int, float]]:
+) -> Tuple[float, Dict[int, float], Dict[int, float], Dict[int, float]]:
     """
     Recursively solve the degradation level of the storage profile until consistent.
 
@@ -383,6 +402,8 @@ def _recursive_degraded_storage_solver(
         - lifetime_degradation:
             The lifetime degradation of the storage system expressed as a fraction
             between 0 (no degradation) and 1 (full degradation).
+        - power_to_storage_map:
+            The power supplied to the batteries at each hour in kWh.
         - storage_power_supplied:
             The storage power supplied in kWh at each hour.
         - storage_profile:
@@ -408,7 +429,7 @@ def _recursive_degraded_storage_solver(
         battery.maximum_charge,
         battery.minimum_charge,
     )
-    storage_power_supplied_map, storage_profile = _storage_solver(
+    power_to_storage_map, storage_power_supplied_map, storage_profile = _storage_solver(
         battery,
         battery_system_size,
         maximum_degradation_factor,
@@ -437,7 +458,12 @@ def _recursive_degraded_storage_solver(
     if round(lifetime_degradation, DEGRADATION_PRECISION) == round(
         input_lifetime_degradation, DEGRADATION_PRECISION
     ):
-        return lifetime_degradation, storage_power_supplied_map, storage_profile
+        return (
+            lifetime_degradation,
+            power_to_storage_map,
+            storage_power_supplied_map,
+            storage_profile,
+        )
 
     # Degrade the storage capacity by this and re-run.
     return _recursive_degraded_storage_solver(
@@ -455,7 +481,9 @@ def _calculate_storage_profile(
     battery_system_size: int | None,
     solution: Solution,
     system_lifetime: int,
-) -> None:
+) -> Tuple[
+    float, Dict[int, float], Dict[int, float], Dict[int, float], Dict[int, float]
+]:
     """
     Calculate the storage profile for the batteries.
 
@@ -473,6 +501,8 @@ def _calculate_storage_profile(
         - battery_lifetime_degradation:
             The lifetime degradation of the storage system expressed as a fraction
             between 0 (no degradation) and 1 (full degradation).
+        - battery_power_input:
+            The power supplied to the batteries at each hour in kWh.
         - battery_power_supplied:
             The storage power supplied in kWh at each hour.
         - battery_storage_profile:
@@ -483,9 +513,11 @@ def _calculate_storage_profile(
     """
 
     # Determine the total solar generation.
-    total_collector_generation_profile = solution.total_electrical_output_power[
-        ProfileDegradation.DEGRADED.value
-    ]
+    total_collector_generation_profile = (
+        solution.total_collector_electrical_output_power[
+            ProfileDegradation.DEGRADED.value
+        ]
+    )
 
     # Compute the solar profile.
     solar_power_supplied_map: Dict[int, float] = {
@@ -500,7 +532,7 @@ def _calculate_storage_profile(
 
     # If there is no storage, return purely the solar power map.
     if battery_system_size == 0:
-        return 0, None, None, solar_power_supplied_map
+        return 0, None, None, None, solar_power_supplied_map
 
     return _recursive_degraded_storage_solver(
         battery,
@@ -741,16 +773,20 @@ def run_simulation(
         hot_water_demand_volumes[hour] = hot_water_demand_volume
         pv_t_electrical_efficiencies[hour] = pv_t_electrical_efficiency
         pv_t_electrical_output_power[hour] = (
-            electric_output(
-                pv_t_electrical_efficiency
-                if pv_t_electrical_efficiency is not None
-                else 0,
-                hybrid_pv_t_panel.pv_module_characteristics.nominal_power,
-                hybrid_pv_t_panel.pv_module_characteristics.reference_efficiency,
-                solar_irradiances[hour],
+            (
+                electric_output(
+                    pv_t_electrical_efficiency
+                    if pv_t_electrical_efficiency is not None
+                    else 0,
+                    hybrid_pv_t_panel.pv_module_characteristics.nominal_power,
+                    hybrid_pv_t_panel.pv_module_characteristics.reference_efficiency,
+                    solar_irradiances[hour],
+                )
+                if solar_irradiances[hour] > 0
+                else 0
             )
-            if solar_irradiances[hour] > 0
-            else 0
+            if scenario.pv_t
+            else None
         )
         pv_t_htf_output_temperatures[hour] = pv_t_htf_output_temperature
         pv_t_reduced_temperatures[hour] = pv_t_reduced_temperature
@@ -768,13 +804,8 @@ def run_simulation(
         pv_electrical_efficiencies: Dict[int, float] | None = {
             hour: pv_panel.calculate_performance(
                 ambient_temperatures[hour], logger, solar_irradiances[hour]
-            )
-            for hour in tqdm(
-                range(len(ambient_temperatures)),
-                desc="pv performance",
-                leave=disable_tqdm,
-                unit="hour",
-            )
+            )[0]
+            for hour in range(len(ambient_temperatures))
         }
         pv_electrical_output_power: Dict[int, float] | None = {
             hour: (
@@ -790,7 +821,7 @@ def run_simulation(
             for hour, solar_irradiance in solar_irradiances.items()
         }
         pv_system_electrical_output_power: Dict[int, float] | None = {
-            hour: value * pv_system_size
+            hour: (value * pv_system_size if value is not None else 0)
             for hour, value in pv_electrical_output_power.items()
         }
     else:
@@ -801,7 +832,7 @@ def run_simulation(
     # Compute the output power from the various collectors.
     logger.info("Hourly simulation complete, compute the output power.")
     pv_t_system_electrical_output_power: Dict[int, float] = {
-        hour: value * pv_t_system_size
+        hour: (value * pv_t_system_size if value is not None else 0)
         for hour, value in pv_t_electrical_output_power.items()
     }
 
@@ -995,10 +1026,37 @@ def determine_steady_state_simulation(
     # Determine the storage profile.
     (
         battery_lifetime_degradation,
+        battery_power_input_profile,
         battery_power_supplied_profile,
         battery_storage_profile,
         solar_power_supplied,
     ) = _calculate_storage_profile(battery, battery_capacity, solution, system_lifetime)
+
+    # Determine the grid profile.
+    grid_profile = {
+        hour: solution.electricity_demands[hour]
+        - solar_power_supplied[hour]
+        - (
+            battery_power_supplied_profile[hour]
+            if battery_power_supplied_profile is not None
+            else 0
+        )
+        for hour in solar_power_supplied
+    }
+
+    # Determine the dumped solar energy.
+    dumped_solar = {
+        hour: solution.total_collector_electrical_output_power[
+            ProfileDegradation.DEGRADED.value
+        ][hour]
+        - solar_power_supplied[hour]
+        - (
+            battery_power_input_profile[hour]
+            if battery_power_supplied_profile is not None
+            else 0
+        )
+        for hour in solar_power_supplied
+    }
 
     # Save these to the output tuple.
     solution = solution._replace(
@@ -1010,7 +1068,9 @@ def determine_steady_state_simulation(
     solution = solution._replace(
         battery_electricity_suppy_profile=battery_power_supplied_profile
     )
+    solution = solution._replace(dumped_solar=dumped_solar)
     solution = solution._replace(battery_storage_profile=battery_storage_profile)
+    solution = solution._replace(grid_electricity_supply_profile=grid_profile)
     solution = solution._replace(solar_power_supplied=solar_power_supplied)
 
     return solution

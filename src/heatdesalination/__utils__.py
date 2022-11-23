@@ -286,7 +286,6 @@ class OptimisableComponent(enum.Enum):
     PV_T: str = "pv_t"
     START_HOUR: str = "start_hour"
     SOLAR_THERMAL: str = "st"
-    STORAGE: str = "storage"
 
 
 class OptimisationMode(enum.Enum):
@@ -314,7 +313,7 @@ class OptimisationParameters:
         Bounds associated with the optimisation, stored as a mapping.
 
     .. attribute:: constraints
-        Constraints associated with the optimisation, stored as a mappin.
+        Whether to use constraints on the optimisation (True) or not (False).
 
     .. attribute:: maximise
         Whether to maximise the target_criterion (True) or minimise it (False).
@@ -322,13 +321,17 @@ class OptimisationParameters:
     .. attribute:: minimise
         Whether to minimise the target criterion (True) or maximise it (False).
 
+    .. attribute:: optimisable_component_to_index
+        Mapping between component and the index in the vector.
+
     .. attribute:: target_criterion
         The target criterion.
 
     """
 
     bounds: Dict[OptimisableComponent, Dict[str, float | None]]
-    constraints: Dict[str, Dict[str, float | None]]
+    constraints: bool
+    optimisable_component_to_index: Dict[OptimisableComponent, int]
     _criterion: Dict[str, OptimisationMode]
 
     @property
@@ -419,19 +422,6 @@ class OptimisationParameters:
 
         return self.bounds[OptimisableComponent.START_HOUR].get(FIXED, None)
 
-    @property
-    def fixed_storage_value(self) -> float | None:
-        """
-        The initial guess for the `storage` if provided, else `None`.
-
-        Outputs:
-            - An initial guess for number of batteries installed or `None` if not
-              provided.
-
-        """
-
-        return self.bounds[OptimisableComponent.STORAGE].get(FIXED, None)
-
     def get_initial_guess_vector_and_bounds(
         self,
     ) -> Tuple[np.ndarray, List[Tuple[float, float]]]:
@@ -495,11 +485,6 @@ class OptimisationParameters:
                 self.bounds[(component := OptimisableComponent.START_HOUR)][
                     INITIAL_GUESS
                 ]
-            )
-            bounds.append((self.bounds[component][MIN], self.bounds[component][MAX]))
-        if self.fixed_storage_value is None:
-            initial_guess_vector.append(
-                self.bounds[(component := OptimisableComponent.STORAGE)][INITIAL_GUESS]
             )
             bounds.append((self.bounds[component][MIN], self.bounds[component][MAX]))
 
@@ -595,7 +580,21 @@ class OptimisationParameters:
             )
             raise
 
-        return cls(bounds, optimisation_inputs[CONSTRAINTS], criterion)
+        # Determine the indicies in the vector of the optimisable components.
+        index = 0
+        optimisable_component_to_index: Dict[OptimisableComponent, int] = {}
+        for component in OptimisableComponent:
+            if bounds[component].get(FIXED, None) is not None:
+                continue
+            optimisable_component_to_index[component] = index
+            index += 1
+
+        return cls(
+            bounds,
+            optimisation_inputs[CONSTRAINTS],
+            optimisable_component_to_index,
+            criterion,
+        )
 
 
 class ProfileDegradation(enum.Enum):
@@ -716,6 +715,10 @@ class Scenario:
     .. attribute:: battery
         The name of the battery.
 
+    .. attribute:: grid_cost
+        The cost of grid electricity (i.e., alternative or unmet electricity) in USD per
+        kWh/
+
     .. attribute:: heat_exchanger_efficiency
         The efficiency of the heat exchanger.
 
@@ -759,6 +762,7 @@ class Scenario:
     """
 
     battery: str
+    grid_cost: float
     heat_exchanger_efficiency: float
     heat_pump_efficiency: float
     hot_water_tank: str
@@ -945,7 +949,7 @@ class Solution(NamedTuple):
     .. attribute:: tank_temperatures
         The temperature of the hot-water tank at each time step.
 
-    .. attribute:: total_electrical_output_power
+    .. attribute:: total_collector_electrical_output_power
         The output power of the system at each time step.
 
     .. attribute:: battery_electricity_suppy_profile
@@ -962,13 +966,16 @@ class Solution(NamedTuple):
         The energy stored in the batteries at each hour of the day for each year of the
         simulation.
 
-    .. attribute:: collector_electricity_supply_profile
-        The amount of energy supplied by the solar collectors at each hour of the day
-        for each year of the simulation.
+    .. attribute:: dumped_solar
+        The dumped solar power at each hour of the day.
 
     .. attribute:: grid_electricity_supply_profile
         The electricity supplied by the grid to the system at each hour of the day for
         each year of the simulation.
+
+    .. attribute:: solar_power_supplied
+        The amount of energy supplied by the solar collectors at each hour of the day
+        for each year of the simulation.
 
     """
 
@@ -997,7 +1004,7 @@ class Solution(NamedTuple):
     battery_lifetime_degradation: int | None = None
     battery_replacements: int | None = None
     battery_storage_profile: Dict[int, float | None] | None = None
-    collector_electricity_supply_profile: Dict[int, float | None] | None = None
+    dumped_solar: Dict[int, float] | None = None
     grid_electricity_supply_profile: Dict[int, float | None] | None = None
     solar_power_supplied: Dict[int, float] | None = None
     output_power_map: Dict[ProfileDegradation, Dict[int, float]] | None = None
@@ -1031,7 +1038,7 @@ class Solution(NamedTuple):
         }
 
     @property
-    def total_electrical_output_power(
+    def total_collector_electrical_output_power(
         self,
     ) -> Dict[ProfileDegradation, Dict[int, float]]:
         """
@@ -1082,6 +1089,8 @@ class Solution(NamedTuple):
                 ):
                     output_power_map[profile.value][hour] += pvt_output
 
+        self._replace(output_power_map=output_power_map)
+
         return output_power_map
 
     @property
@@ -1109,7 +1118,9 @@ class Solution(NamedTuple):
                 key: value - ZERO_CELCIUS_OFFSET
                 for key, value in self.collector_system_output_temperatures.items()
             },
+            "Dumped electricity / kWh": self.dumped_solar,
             "Electricity demand / kWh": self.electricity_demands,
+            "Electricity demand met through the grid / kWh": self.grid_electricity_supply_profile,
             "Electricity demand met through solar collectors / kWh": self.solar_power_supplied,
             "Electricity demand met through storage / kWh": self.battery_electricity_suppy_profile,
             "Hot-water demand temperature / degC": {
@@ -1123,7 +1134,7 @@ class Solution(NamedTuple):
             },
             "Renewable heating fraction": self.renewable_heating_fraction,
             "Solar-thermal collector output temperature / degC": {
-                key: value - ZERO_CELCIUS_OFFSET
+                key: (value - ZERO_CELCIUS_OFFSET if value is not None else None)
                 for key, value in self.solar_thermal_htf_output_temperatures.items()
             },
             "Tank temperature / degC": {
@@ -1193,7 +1204,9 @@ class Solution(NamedTuple):
             output_information_dict.update(
                 {
                     "Solar-thermal output temperature / degC": {
-                        key: value - ZERO_CELCIUS_OFFSET
+                        key: (
+                            value - ZERO_CELCIUS_OFFSET if value is not None else None
+                        )
                         for key, value in self.solar_thermal_htf_output_temperatures.items()
                     },
                     "Solar-thermal reduced temperature / degC/W/m^2": self.solar_thermal_reduced_temperatures,

@@ -28,8 +28,10 @@ import numpy
 from scipy import optimize
 
 from .__utils__ import (
+    DAYS_PER_YEAR,
     CostableComponent,
     FlowRateError,
+    OptimisableComponent,
     OptimisationMode,
     OptimisationParameters,
     Scenario,
@@ -42,16 +44,27 @@ from .storage.storage_utils import Battery, HotWaterTank
 
 # UPPER_LIMIT:
 #   Value used to throw the optimizer off of solutions that have a flow-rate error.
-UPPER_LIMIT: float = 10**10
+UPPER_LIMIT: float = 10**8
 
 
-def _total_cost(component_sizes: Dict[CostableComponent | None, float]) -> float:
+def _total_cost(
+    component_sizes: Dict[CostableComponent | None, float],
+    scenario: Scenario,
+    solution: Solution,
+    system_lifetime: int,
+) -> float:
     """
     Compute the total cost of the system which was optimisable.
 
     Inputs:
         - component_sizes:
             The sizes of the various components which are costable.
+        - scenario:
+            The scenario being considered.
+        - solution:
+            The steady-state solution for the simulation.
+        - system_lifetime:
+            The lifetime of the system in years.
 
     Outputs:
         The total cost of the system components.
@@ -60,30 +73,52 @@ def _total_cost(component_sizes: Dict[CostableComponent | None, float]) -> float
 
     # Calculate the cost of the various components which can be costed.
     component_costs = {
-        component: component.cost * size
+        component: component.cost * abs(size)
         for component, size in component_sizes.items()
         if isinstance(component, CostableComponent)
     }
     total_component_cost = sum(component_costs.values())
 
+    # Calculate the undiscounted cost of grid electricity.
+    total_grid_cost = (
+        DAYS_PER_YEAR  # [days/year]
+        * system_lifetime  # [year]
+        * sum(solution.grid_electricity_supply_profile.values())  # [kWh/day]
+        * scenario.grid_cost  # [$/kWh]
+    )
+
     # Add the costs of any consumables such as diesel fuel or grid electricity.
-    total_cost = total_component_cost  # + diesel_fuel_cost + grid_cost
+    total_cost = (
+        total_component_cost + abs(total_grid_cost)
+    )  # + diesel_fuel_cost + grid_cost
 
     return total_cost
 
 
-def _total_electricity_supplied(solution: Solution) -> float:
+def _total_electricity_supplied(solution: Solution, system_lifetime: int) -> float:
     """
     Calculates the total electricity supplied.
 
     Inputs:
         - solution:
             The solution from the steady-state calculation.
+        - system_lifetime:
+            The lifetime of the system in years.
 
     Outputs:
         The total electricity supplied.
 
     """
+
+    return (
+        DAYS_PER_YEAR  # [days/year]
+        * system_lifetime  # [year]
+        * (
+            sum(solution.battery_electricity_suppy_profile)  # [kWh/day]
+            + sum(solution.grid_electricity_supply_profile)  # [kWh/day]
+            + sum(solution.total_collector_electrical_output_power)  # [kWh/day]
+        )
+    )
 
 
 class Criterion(abc.ABC):
@@ -115,7 +150,11 @@ class Criterion(abc.ABC):
     @classmethod
     @abc.abstractmethod
     def calculate_value(
-        cls, component_sizes: Dict[CostableComponent | None, float], solution: Solution
+        cls,
+        component_sizes: Dict[CostableComponent | None, float],
+        scenario: Scenario,
+        solution: Solution,
+        system_lifetime: int,
     ) -> float:
         """
         Calculate the value of the criterion.
@@ -123,8 +162,12 @@ class Criterion(abc.ABC):
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - scenario:
+                The scenario being considered.
             - solution:
                 The solution from running the simulation.
+            - system_lifetime:
+                The lifetime of the system in years.
 
         Outputs:
             The value being calculated.
@@ -140,7 +183,11 @@ class LCUE(Criterion, criterion_name="lcue"):
 
     @classmethod
     def calculate_value(
-        cls, component_sizes: Dict[CostableComponent | None, float], solution: Solution
+        cls,
+        component_sizes: Dict[CostableComponent | None, float],
+        scenario: Scenario,
+        solution: Solution,
+        system_lifetime: int,
     ) -> float:
         """
         Calculate the value of the LCUE.
@@ -148,15 +195,21 @@ class LCUE(Criterion, criterion_name="lcue"):
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - scenario:
+                The scenario being considered.
             - solution:
                 The solution from running the simulation.
+            - system_lifetime:
+                The lifetime of the system in years.
 
         Outputs:
             The LCUE (Levilised Cost of Used Electricity) in USD/kWh.
 
         """
 
-        return _total_cost(component_sizes) / _total_electricity_supplied(solution)
+        return _total_cost(
+            component_sizes, scenario, solution, system_lifetime
+        ) / _total_electricity_supplied(solution, system_lifetime)
 
 
 class RenewableElectricityFraction(
@@ -173,7 +226,11 @@ class RenewableElectricityFraction(
 
     @classmethod
     def calculate_value(
-        cls, component_sizes: Dict[CostableComponent | None, float], solution: Solution
+        cls,
+        component_sizes: Dict[CostableComponent | None, float],
+        scenario: Scenario,
+        solution: Solution,
+        system_lifetime: int,
     ) -> float:
         """
         Calculate the value of the renewable electricity fraction.
@@ -181,8 +238,12 @@ class RenewableElectricityFraction(
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - scenario:
+                The scenario being considered.
             - solution:
                 The solution from running the simulation.
+            - system_lifetime:
+                The lifetime of the system in years.
 
         """
 
@@ -199,7 +260,11 @@ class RenewableHeatingFraction(Criterion, criterion_name="renewable_heating_frac
 
     @classmethod
     def calculate_value(
-        cls, component_sizes: Dict[CostableComponent | None, float], solution: Solution
+        cls,
+        component_sizes: Dict[CostableComponent | None, float],
+        scenario: Scenario,
+        solution: Solution,
+        system_lifetime: int,
     ) -> float:
         """
         Calculate the value of the renewable heating fraction.
@@ -207,8 +272,12 @@ class RenewableHeatingFraction(Criterion, criterion_name="renewable_heating_frac
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - scenario:
+                The scenario being considered.
             - solution:
                 The solution from running the simulation.
+            - system_lifetime:
+                The lifetime of the system in years.
 
         """
 
@@ -236,7 +305,11 @@ class AuxiliaryHeatingFraction(Criterion, criterion_name="auxiliary_heating_frac
 
     @classmethod
     def calculate_value(
-        cls, component_sizes: Dict[CostableComponent | None, float], solution: Solution
+        cls,
+        component_sizes: Dict[CostableComponent | None, float],
+        scenario: Scenario,
+        solution: Solution,
+        system_lifetime: int,
     ) -> float:
         """
         Calculate the value of the auxiliary heating fraction.
@@ -247,13 +320,17 @@ class AuxiliaryHeatingFraction(Criterion, criterion_name="auxiliary_heating_frac
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - scenario:
+                The scenario being considered.
             - solution:
                 The solution from running the simulation.
+            - system_lifetime:
+                The lifetime of the system in years.
 
         """
 
         return 1 - super().calculate_value_map[RenewableHeatingFraction.name](
-            component_sizes, solution
+            component_sizes, scenario, solution, system_lifetime
         )
 
 
@@ -265,7 +342,11 @@ class TotalCost(Criterion, criterion_name="total_cost"):
 
     @classmethod
     def calculate_value(
-        cls, component_sizes: Dict[CostableComponent | None, float], solution: Solution
+        cls,
+        component_sizes: Dict[CostableComponent | None, float],
+        scenario: Scenario,
+        solution: Solution,
+        system_lifetime: int,
     ) -> float:
         """
         Calculate the value of the total cost.
@@ -273,15 +354,19 @@ class TotalCost(Criterion, criterion_name="total_cost"):
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - scenario:
+                The scenario being considered.
             - solution:
                 The solution from running the simulation.
+            - system_lifetime:
+                The lifetime of the system in years.
 
         Outputs:
             The total cost of the system's costable components.
 
         """
 
-        return _total_cost(component_sizes)
+        return _total_cost(component_sizes, scenario, solution, system_lifetime)
 
 
 # class UnmetElectricity(Criterion, criterion_name="unmet_electricity_fraction"):
@@ -340,7 +425,6 @@ def _simulate_and_calculate_criterion(
     solar_irradiances: Dict[int, float],
     solar_thermal_collector: SolarThermalPanel | None,
     solar_thermal_system_size: int | None,
-    storage_size: int | None,
     system_lifetime: int,
     disable_tqdm: bool = False,
 ) -> float:
@@ -362,8 +446,6 @@ def _simulate_and_calculate_criterion(
         The start hour for the plant.
     - solar_thermal_system_size:
         The solar-thermal system size.
-    - storage_size:
-        The battery capacity.
 
     Inputs:
         - ambient_temperatures:
@@ -450,11 +532,6 @@ def _simulate_and_calculate_criterion(
     desalination_plant.start_hour = start_hour
     desalination_plant.reset_operating_hours()
 
-    # Storage parameters
-    storage_size: float = (
-        storage_size if storage_size is not None else parameter_list.pop(0)
-    )
-
     # Determine the steady-state solution.
     try:
         steady_state_solution: Solution = determine_steady_state_simulation(
@@ -478,24 +555,121 @@ def _simulate_and_calculate_criterion(
         )
     except FlowRateError:
         logger.info(
-            "Flow-rate error encountered, using upper bound of %s to throw optimizer.",
-            UPPER_LIMIT,
+            "Flow-rate error encountered, doubling component sizes to throw optimizer.",
         )
         return UPPER_LIMIT
 
     # Assemble the component sizes mapping.
     component_sizes: Dict[CostableComponent, float] = {
+        battery: battery_capacity * (1 + steady_state_solution.battery_replacements),
         buffer_tank: buffer_tank_capacity,
         hybrid_pv_t_panel: pv_t_system_size,
         pv_panel: pv_panel_system_size,
         solar_thermal_collector: solar_thermal_system_size,
-        battery: storage_size * (1 + steady_state_solution.battery_replacements),
     }
 
     # Return the value of the criterion.
     return Criterion.calculate_value_map[optimisation_criterion](
-        component_sizes, steady_state_solution
+        component_sizes, scenario, steady_state_solution, system_lifetime
     )
+
+
+def _callback_function(current_vector: numpy.ndarray, *args) -> None:
+    """
+    Callback function to execute after each itteration.
+
+    Inputs:
+        - current_vector:
+            The current vector.
+
+    """
+
+    print("Current vector: ({})".format([f"{entry:.1f}" for entry in current_vector]))
+
+
+def _constraint_function(
+    current_vector: numpy.ndarray,
+    hybrid_pv_t_panel: HybridPVTPanel,
+    optimisation_parameters: OptimisationParameters,
+    solar_thermal_collector: SolarThermalPanel,
+) -> float:
+    """
+    Represents constraints on the solution.
+
+    The mass flow-rate needs to sit within certain bounds. If this is out of bounds,
+    then 0 will be returned stating that the system is invalid. Otherwise, 1 will be
+    returned.
+
+    """
+
+    def _constraint_value():
+        # Sanity check on bounds.
+        if (
+            battery_index := optimisation_parameters.optimisable_component_to_index.get(
+                OptimisableComponent.BATTERY_CAPACITY, None
+            )
+        ) is not None:
+            if current_vector[battery_index] < 0:
+                return -10
+        if (
+            pv_index := optimisation_parameters.optimisable_component_to_index.get(
+                OptimisableComponent.PV, None
+            )
+        ) is not None:
+            if current_vector[pv_index] < 0:
+                return -20
+
+        # Determine the mass flow rate if fixed or variable.
+        if optimisation_parameters.fixed_mass_flow_rate_value is not None:
+            system_mass_flow_rate: float = (
+                optimisation_parameters.fixed_mass_flow_rate_value
+            )
+        else:
+            system_mass_flow_rate = current_vector[
+                optimisation_parameters.optimisable_component_to_index[
+                    OptimisableComponent.MASS_FLOW_RATE
+                ]
+            ]
+
+        # If there are PV-T collectors present, ensure that the mass flow rate is valid.
+        if (
+            pv_t_index := optimisation_parameters.optimisable_component_to_index.get(
+                OptimisableComponent.PV_T, None
+            )
+        ) is not None:
+            collector_flow_rate = system_mass_flow_rate / (
+                pv_t_system_size := current_vector[pv_t_index]
+            )
+            if (
+                collector_flow_rate < hybrid_pv_t_panel.min_mass_flow_rate
+                or collector_flow_rate > hybrid_pv_t_panel.max_mass_flow_rate
+            ):
+                return -30
+
+        # If there are solar-thermal collectors present, ensure that the mass flow rate is
+        # valid.
+        if (
+            solar_thermal_index := optimisation_parameters.optimisable_component_to_index.get(
+                OptimisableComponent.SOLAR_THERMAL, None
+            )
+        ) is not None:
+            collector_flow_rate = system_mass_flow_rate / (
+                solar_thermal_system_size := current_vector[solar_thermal_index]
+            )
+            if (
+                collector_flow_rate < solar_thermal_collector.min_mass_flow_rate
+                or collector_flow_rate > solar_thermal_collector.max_mass_flow_rate
+            ):
+                return -40
+
+        # Should also return 0 if both the ST and PV-T sizes are zero.
+        if pv_t_system_size is not None and solar_thermal_system_size is not None:
+            if (pv_t_system_size == 0) and (solar_thermal_system_size == 0):
+                return -50
+
+        return 0
+
+    return _constraint_value()
 
 
 def run_optimisation(
@@ -551,12 +725,21 @@ def run_optimisation(
     """
 
     # Determine the alrogithm based on whether constraints are needed.
-    if (constraints := optimisation_parameters.constraints) is not None and len(
-        optimisation_parameters.constraints
-    ) > 0:
+    if optimisation_parameters.constraints is not None:
         algorithm = "COBYLA"
+        constraints = {
+            "type": "ineq",
+            "fun": _constraint_function,
+            "args": (
+                hybrid_pv_t_panel,
+                optimisation_parameters,
+                solar_thermal_collector,
+            ),
+        }
     else:
         algorithm = "Nelder-Mead"
+        constraints = None
+        # algorithm = None
 
     # Construct an initial guess vector and additional arguments.
     try:
@@ -588,7 +771,6 @@ def run_optimisation(
         solar_irradiances,
         solar_thermal_collector,
         optimisation_parameters.fixed_st_value,
-        optimisation_parameters.fixed_storage_value,
         system_lifetime,
         disable_tqdm,
     )
@@ -600,6 +782,7 @@ def run_optimisation(
         additional_arguments,
         method=algorithm,
         bounds=bounds,
+        callback=_callback_function,
         constraints=constraints if constraints is not None else None,
         options={"disp": True},
     )
