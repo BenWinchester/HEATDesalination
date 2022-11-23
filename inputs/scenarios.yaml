@@ -18,6 +18,20 @@ scenarios:
     hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
     htf_heat_capacity: !!float 4182  # [J/kg*K]
     plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: mexico
+    battery: !!str default_battery
+    grid_cost: !!float 0.174 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 1.0  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
     pv: dusol_ds60275_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
     pv_degradation_rate: !!float 0.011 # [%/year]
     pv_t: !!str abora_h72sk  # The PV-T collector to include or "off"
