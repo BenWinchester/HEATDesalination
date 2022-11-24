@@ -94,3 +94,88 @@ plt.ylabel("Average hourly power flow / kWh")
 
 ax.legend()
 plt.show()
+
+
+######################################################
+# Plotting weather profiles with standard deviations #
+######################################################
+
+import json
+import matplotlib.pyplot as plt
+import seaborn as sns
+from src.heatdesalination.__utils__ import ProfileType
+
+sns.set_palette("colorblind")
+
+with open("auto_generated/fujairah_united_arab_emirates.json", "r") as f:
+    data = json.load(f)
+
+keywords_to_plot = ["irradiance", "ambient_temperature", "wind_speed"]
+ylabels = [
+    "Solar irradiance / W/m^2",
+    "Ambient temperature / degrees Celcius",
+    "Wind speed / m/s",
+]
+map_colours = ["C3", "C1", "C0"]
+
+for index, keyword in enumerate(keywords_to_plot):
+    mapping = {
+        int(key): value
+        for key, value in data[ProfileType.AVERAGE.value][keyword].items()
+    }
+    average_profile = {key: mapping[key] for key in sorted(mapping)}
+    mapping = {
+        int(key): value
+        for key, value in data[ProfileType.LOWER_STANDARD_DEVIATION.value][
+            keyword
+        ].items()
+    }
+    lower_profile = {key: mapping[key] for key in sorted(mapping)}
+    mapping = {
+        int(key): value
+        for key, value in data[ProfileType.UPPER_STANDARD_DEVIATION.value][
+            keyword
+        ].items()
+    }
+    upper_profile = {key: mapping[key] for key in sorted(mapping)}
+    mapping = {
+        int(key): value
+        for key, value in data[ProfileType.MAXIMUM.value][keyword].items()
+    }
+    max_profile = {key: mapping[key] for key in sorted(mapping)}
+    mapping = {
+        int(key): value
+        for key, value in data[ProfileType.MINIMUM.value][keyword].items()
+    }
+    min_profile = {key: mapping[key] for key in sorted(mapping)}
+    plt.plot(
+        average_profile.keys(),
+        average_profile.values(),
+        label=f"average {keyword}",
+        color=map_colours[index],
+    )
+    plt.fill_between(
+        list(lower_profile.keys()),
+        list(lower_profile.values()),
+        list(upper_profile.values()),
+        color=map_colours[index],
+        alpha=0.5,
+    )
+    plt.plot(
+        max_profile.keys(),
+        max_profile.values(),
+        "--",
+        label=f"maximum {keyword}",
+        color=map_colours[index],
+    )
+    plt.plot(
+        min_profile.keys(),
+        min_profile.values(),
+        "--",
+        label=f"maximum {keyword}",
+        color=map_colours[index],
+    )
+    plt.xlabel("Hour of day")
+    plt.ylabel(ylabels[index])
+    plt.legend()
+    plt.show()
