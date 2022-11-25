@@ -195,8 +195,13 @@ def get_logger(logger_name: str, verbose: bool = False) -> logging.Logger:
     console_handler.setFormatter(formatter)
 
     # Delete the existing log if there is one already.
-    if os.path.isfile(os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log")):
-        os.remove(os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log"))
+    if os.path.isfile(
+        (logger_filepath := os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log"))
+    ):
+        try:
+            os.remove(logger_filepath)
+        except FileNotFoundError:
+            pass
 
     # Create a file handler.
     file_handler = logging.FileHandler(

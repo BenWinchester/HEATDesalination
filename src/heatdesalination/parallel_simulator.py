@@ -204,9 +204,16 @@ def main(args: List[Any]) -> List[Any]:
     logger.info("Carrying out %s parallel simulation(s)", len(simulations))
     # Carry out the simulations as necessary.
     with pool.Pool(8) as worker_pool:
-        results = worker_pool.map(
-            functools.partial(heatdesalination_wrapper, location=parsed_args.location),
-            simulations,
+        results = list(
+            tqdm(
+                worker_pool.imap(
+                    functools.partial(
+                        heatdesalination_wrapper, location=parsed_args.location
+                    ),
+                    simulations,
+                ),
+                total=len(simulations),
+            )
         )
     logger.info("Worker pool complete, %s results generated", len(results))
     if len(results) != len(simulations):
