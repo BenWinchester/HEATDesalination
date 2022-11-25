@@ -336,7 +336,8 @@ with open("initial_square.json", "r") as f:
     data = json.load(f)
 
 costs = [
-    entry["results"][ProfileType.AVERAGE.value][1][TotalCost.name] / 10 ** 6 for entry in data
+    entry["results"][ProfileType.AVERAGE.value][1][TotalCost.name] / 10**6
+    for entry in data
 ]
 # palette = sns.color_palette("blend:#0173B2,#64B5CD", as_cmap=True)
 palette = sns.color_palette("rocket", as_cmap=True)
@@ -344,7 +345,15 @@ palette = sns.color_palette("rocket", as_cmap=True)
 pv_sizes = [entry["simulation"]["pv_system_size"] for entry in data]
 battery_capacities = [entry["simulation"]["battery_capacity"] for entry in data]
 
-frame = pd.DataFrame({"Number of PV panels": pv_sizes, "Storage capacity / kWh": battery_capacities, "Cost / MUSD": costs}).pivot(index="Number of PV panels", columns="Storage capacity / kWh", values="Cost / MUSD")
+frame = pd.DataFrame(
+    {
+        "Number of PV panels": pv_sizes,
+        "Storage capacity / kWh": battery_capacities,
+        "Cost / MUSD": costs,
+    }
+).pivot(
+    index="Number of PV panels", columns="Storage capacity / kWh", values="Cost / MUSD"
+)
 sns.heatmap(frame, cmap=palette, annot=True)
 plt.show()
 
@@ -352,11 +361,91 @@ plt.show()
 # Setting up simulation runs #
 ##############################
 
-default_entry = {(batt_key:='battery_capacity'): 20, 'buffer_tank_capacity': 15000, 'mass_flow_rate': 20, (pv_key:='pv_system_size)': 5000, (pv_t_key:='pv_t_system_size'): 185, 'solar_thermal_system_size': 218, 'scenario': 'default', 'start_hour': 8, 'system_lifetime': 25, 'output': None, 'profile_types': ['avr', 'usd', 'lsd', 'max', 'min']}
+import json
+import os
+
+default_entry = {
+    (batt_key := "battery_capacity"): 20,
+    "buffer_tank_capacity": 15000,
+    "mass_flow_rate": 20,
+    (pv_key := "pv_system_size"): 5000,
+    (pv_t_key := "pv_t_system_size"): 185,
+    (st_key := "solar_thermal_system_size"): 218,
+    "scenario": "default",
+    "start_hour": 8,
+    "system_lifetime": 25,
+    "output": None,
+    "profile_types": ["avr", "usd", "lsd", "max", "min"],
+}
 
 battery_capacities = range(400, 650, 10)
 pv_sizes = range(5000, 6000, 40)
 pv_t_sizes = range(75, 630, 23)
 solar_thermal_sizes = range(218, 700, 20)
 
-for 
+runs = []
+for batt in battery_capacities:
+    for pv in pv_sizes:
+        entry = default_entry.copy()
+        entry[batt_key] = batt
+        entry[pv_key] = pv
+        runs.append(entry)
+
+with open(os.path.join("inputs", "pv_batt_square_simulations.json"), "w") as f:
+    json.dump(runs, f)
+
+runs = []
+for batt in battery_capacities:
+    for pv_t in pv_t_sizes:
+        entry = default_entry.copy()
+        entry[batt_key] = batt
+        entry[pv_t_key] = pv_t
+        runs.append(entry)
+
+with open(os.path.join("inputs", "pv_t_batt_square_simulations.json"), "w") as f:
+    json.dump(runs, f)
+
+runs = []
+for batt in battery_capacities:
+    for st in solar_thermal_sizes:
+        entry = default_entry.copy()
+        entry[batt_key] = batt
+        entry[st_key] = st
+        runs.append(entry)
+
+
+with open(os.path.join("inputs", "st_batt_square_simulations.json"), "w") as f:
+    json.dump(runs, f)
+
+runs = []
+for pv in pv_sizes:
+    for pv_t in pv_t_sizes:
+        entry = default_entry.copy()
+        entry[pv_key] = pv
+        entry[pv_t_key] = pv_t
+        runs.append(entry)
+
+with open(os.path.join("inputs", "pv_pv_t_square_simulations.json"), "w") as f:
+    json.dump(runs, f)
+
+runs = []
+for pv in pv_sizes:
+    for st in solar_thermal_sizes:
+        entry = default_entry.copy()
+        entry[pv_key] = pv
+        entry[st_key] = st
+        runs.append(entry)
+
+with open(os.path.join("inputs", "pv_st_square_simulations.json"), "w") as f:
+    json.dump(runs, f)
+
+runs = []
+for pv_t in pv_t_sizes:
+    for st in solar_thermal_sizes:
+        entry = default_entry.copy()
+        entry[pv_t_key] = pv_t
+        entry[st_key] = st
+        runs.append(entry)
+
+with open(os.path.join("inputs", "pv_t_st_square_simulations.json"), "w") as f:
+    json.dump(runs, f)
