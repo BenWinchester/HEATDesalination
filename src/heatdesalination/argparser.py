@@ -19,6 +19,8 @@ import argparse
 
 from typing import Any, List
 
+from src.heatdesalination.__utils__ import CLI_TO_PROFILE_TYPE
+
 __all__ = (
     "parse_args",
     "validate_args",
@@ -79,6 +81,18 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
         type=str,
     )
 
+    # Profile types:
+    #   The profile types to use for the modelling.
+    required_arguments.add_argument(
+        "--profile-types",
+        "-pt",
+        default=[],
+        help="The profile types to use. Valid options: "
+        f"{', '.join(CLI_TO_PROFILE_TYPE)}",
+        nargs="*",
+        type=str,
+    )
+
     # Scenario:
     #   The scenario to use for the modelling.
     required_arguments.add_argument(
@@ -110,6 +124,12 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
         "--battery-capacity",
         "-b",
         help="The capacity of the installed storage system, measured in kWh.",
+        type=float,
+    )
+    simulation_arguments.add_argument(
+        "--buffer-tank-capacity",
+        "-bt",
+        help="The capacity of the installed buffer tank, measured in kg or litres.",
         type=float,
     )
     simulation_arguments.add_argument(
@@ -184,6 +204,8 @@ def validate_args(parsed_args: argparse.Namespace) -> None:
         raise Exception("Location must be specified.")
     if parsed_args.scenario is None:
         raise Exception("Scenario must be specified.")
+    if parsed_args.profile_types is None:
+        raise Exception("Profile types must be specified.")
     if parsed_args.simulation and parsed_args.optimisation:
         raise Exception("Cannot run an optimisation and a simulation.")
     if not parsed_args.simulation and not parsed_args.optimisation:

@@ -31,6 +31,7 @@ import pandas as pd
 __all__ = (
     "AMBIENT_TEMPERATURE",
     "AREA",
+    "CLI_TO_PROFILE_TYPE",
     "COST",
     "CostableComponent",
     "FlowRateError",
@@ -629,8 +630,19 @@ class ProfileType(enum.Enum):
     """
 
     AVERAGE: str = "average_weather_conditions"
+    LOWER_STANDARD_DEVIATION: str = "lower_standard_deviation_weather_conditions"
     MAXIMUM: str = "maximum_irradiance_weather_conditions"
     MINIMUM: str = "minimum_irradiance_weather_conditions"
+    UPPER_STANDARD_DEVIATION: str = "upper_standard_deviation_weather_conditions"
+
+
+CLI_TO_PROFILE_TYPE: Dict[str, ProfileType] = {
+    "avr": ProfileType.AVERAGE,
+    "lsd": ProfileType.LOWER_STANDARD_DEVIATION,
+    "max": ProfileType.MAXIMUM,
+    "min": ProfileType.MINIMUM,
+    "usd": ProfileType.UPPER_STANDARD_DEVIATION,
+}
 
 
 def read_yaml(
@@ -1002,6 +1014,7 @@ class Solution(NamedTuple):
     tank_temperatures: Dict[int, float]
     battery_electricity_suppy_profile: Dict[int, float | None] | None = None
     battery_lifetime_degradation: int | None = None
+    battery_power_input_profile: Dict[int, float] = None
     battery_replacements: int | None = None
     battery_storage_profile: Dict[int, float | None] | None = None
     dumped_solar: Dict[int, float] | None = None
@@ -1109,6 +1122,7 @@ class Solution(NamedTuple):
                 key: value - ZERO_CELCIUS_OFFSET
                 for key, value in self.ambient_temperatures.items()
             },
+            "Battery power inflow profile / kWh": self.battery_power_input_profile,
             "Battery storage profile / kWh": self.battery_storage_profile,
             "Collector system input temperature / degC": {
                 key: value - ZERO_CELCIUS_OFFSET
@@ -1141,6 +1155,12 @@ class Solution(NamedTuple):
                 key: value - ZERO_CELCIUS_OFFSET
                 for key, value in self.tank_temperatures.items()
             },
+            "Total degraded collector electrical output power / kW": self.total_collector_electrical_output_power[
+                ProfileDegradation.DEGRADED.value
+            ],
+            "Total undegraded collector electrical output power / kW": self.total_collector_electrical_output_power[
+                ProfileDegradation.UNDEGRADED.value
+            ],
         }
 
         # Update with PV information if applicable.

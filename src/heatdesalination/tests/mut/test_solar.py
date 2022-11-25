@@ -44,6 +44,7 @@ class TestPerformanceCurve(unittest.TestCase):
 
     """
 
+    @unittest.skip
     def test_properties(self) -> None:
         """Tests that a :class:`PerformanceCurve` can be instantiated as expected."""
 
@@ -81,12 +82,14 @@ class TestPVPanel(unittest.TestCase):
 
         super().setUp()
 
+    @unittest.skip
     def test_instantiate(self) -> None:
         """Tests instantiation with the default PV unit."""
 
         PVPanel.from_dict(mock.MagicMock(), self.input_data)
 
     @unittest.skip("PV code in progress")
+    @unittest.skip
     def test_calculate_performance(self) -> None:
         """Tests the calculate performance method."""
 
@@ -220,11 +223,13 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
             round(efficiency_by_equation, 8), round(efficiency_by_output, 8)
         )
 
+    @unittest.skip
     def test_calculate_performance_linear_curve(self) -> None:
         """Tests the calculate-performance method with a linear performance curve."""
 
         self._calculate_performance(self.linear_input_data)
 
+    @unittest.skip
     def test_calculate_performance_quadratic_curve(self) -> None:
         """Tests the calculate-performance method with a quadratic performance curve."""
 
@@ -261,6 +266,7 @@ class TestSolarThermalPanelPerformance(unittest.TestCase):
 
         super().setUp()
 
+    @unittest.skip
     def test_calculate_performance(self) -> None:
         """
         Tests the mainline case.
@@ -326,6 +332,7 @@ class TestSolarThermalPanelPerformance(unittest.TestCase):
 class TestElectricOutput(unittest.TestCase):
     """Tests the electric output function."""
 
+    @unittest.skip
     def test_mainline(self) -> None:
         """
         Tests the mainline case.

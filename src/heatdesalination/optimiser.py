@@ -21,7 +21,7 @@ __all__ = ("run_optimisation",)
 
 import abc
 from logging import Logger
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 import numpy
 
@@ -75,7 +75,6 @@ def _total_cost(
     component_costs = {
         component: component.cost * abs(size)
         for component, size in component_sizes.items()
-        if isinstance(component, CostableComponent)
     }
     total_component_cost = sum(component_costs.values())
 
@@ -88,8 +87,8 @@ def _total_cost(
     )
 
     # Add the costs of any consumables such as diesel fuel or grid electricity.
-    total_cost = (
-        total_component_cost + abs(total_grid_cost)
+    total_cost = total_component_cost + abs(
+        total_grid_cost
     )  # + diesel_fuel_cost + grid_cost
 
     return total_cost
@@ -507,7 +506,7 @@ def _simulate_and_calculate_criterion(
         if buffer_tank_capacity is not None
         else parameter_list.pop(0)
     )
-    buffer_tank.capacity = buffer_tank_capacity
+    buffer_tank.capacity = buffer_tank_capacity * 1000
 
     # Collector parameters
     htf_mass_flow_rate: float = (
@@ -737,7 +736,15 @@ def run_optimisation(
             ),
         }
     else:
-        algorithm = "Nelder-Mead"
+        # algorithm = "Nelder-Mead"
+        algorithm = "Powell"
+        # algorithm = "CG"
+        # algorithm = "BFGS"
+        # algorithm = "L-BFGS-B"
+        # algorithm = "TNC"
+        # algorithm = "COBYLA"
+        # algorithm = "SLSQP"
+        # algorithm = "trust-constr"
         constraints = None
         # algorithm = None
 
@@ -775,7 +782,32 @@ def run_optimisation(
         disable_tqdm,
     )
 
+    class Bounds:
+        def __init__(self, bounds: List[Tuple[int | None]]) -> None:
+            self.bounds = bounds
+
+        def __call__(self, **kwargs) -> bool:
+            """Determines whether to accept (True) or reject (False)"""
+
+            new_point = kwargs.get("x_new")
+            for index, entry in enumerate(new_point):
+                if self.bounds[index][0] is not None and entry < self.bounds[index][0]:
+                    return False
+                if self.bounds[index][1] is not None and entry > self.bounds[index][1]:
+                    return False
+            return True
+
+    bounds_instance = Bounds(bounds)
+
     # Optimise the system.
+    # return optimize.basinhopping(
+    #     _simulate_and_calculate_criterion,
+    #     initial_guess_vector,
+    #     accept_test=bounds_instance,
+    #     callback=_callback_function,
+    #     minimizer_kwargs={"args": additional_arguments}
+    # )
+
     return optimize.minimize(
         _simulate_and_calculate_criterion,
         initial_guess_vector,
@@ -784,5 +816,5 @@ def run_optimisation(
         bounds=bounds,
         callback=_callback_function,
         constraints=constraints if constraints is not None else None,
-        options={"disp": True},
+        options={"disp": True, "maxiter": 10000, "maxfev": 10000, "return_all": True},
     )
