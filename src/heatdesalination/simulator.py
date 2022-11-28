@@ -1070,6 +1070,9 @@ def determine_steady_state_simulation(
     )
     solution = solution._replace(dumped_solar=dumped_solar)
     solution = solution._replace(battery_storage_profile=battery_storage_profile)
+    solution = solution._replace(
+        battery_power_input_profile=battery_power_input_profile
+    )
     solution = solution._replace(grid_electricity_supply_profile=grid_profile)
     solution = solution._replace(solar_power_supplied=solar_power_supplied)
 

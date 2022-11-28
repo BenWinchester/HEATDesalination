@@ -38,6 +38,7 @@ from ...matrix import (
 class TestCollectorsInputTemperature(unittest.TestCase):
     """Tests the `_collectors_input_temperature` helper function."""
 
+    @unittest.skip
     def test_mainline(self) -> None:
         """
         Tests the mainline case.
@@ -167,6 +168,7 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
             self.solar_thermal_mass_flow_rate,
         )
 
+    @unittest.skip
     def test_no_thermal_collectors(self) -> None:
         """Tests the PV-T only case."""
 
@@ -175,6 +177,7 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
                 pv_t=False, solar_thermal=False
             )
 
+    @unittest.skip
     def test_pv_t_only(self) -> None:
         """Tests the PV-T only case."""
 
@@ -212,6 +215,7 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
         )
         self.solar_thermal_panel.calculate_performance.assert_not_called()
 
+    @unittest.skip
     def test_pv_t_and_solar_thermal(self) -> None:
         """Tests the PV-T only case."""
 
@@ -256,6 +260,7 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
             self.solar_thermal_mass_flow_rate,
         )
 
+    @unittest.skip
     def test_solar_thermal_only(self) -> None:
         """Tests the PV-T only case."""
 
@@ -297,6 +302,7 @@ class TestSolarSystemOutputTemperatures(unittest.TestCase):
 class TestTankTemperature(unittest.TestCase):
     """Tests the `_tank_temperature` helper function."""
 
+    @unittest.skip
     def test_mainline(self) -> None:
         """
         Tests the mainline case.
@@ -424,6 +430,7 @@ class TestSolveMatrix(unittest.TestCase):
             self.tank_replacement_water_temperature,
         )
 
+    @unittest.skip
     def test_missing_collectors(self) -> None:
         """Tests the case where there are missing collectors."""
 
@@ -432,6 +439,7 @@ class TestSolveMatrix(unittest.TestCase):
         with self.assertRaises(InputFileError):
             self._solve_matrix(no_solar_thermal=True)
 
+    @unittest.skip
     def test_mainline(self) -> None:
         """Tests the mainline case."""
 

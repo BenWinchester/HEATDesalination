@@ -299,11 +299,12 @@ def main(
     }
 
     # Reverse the cumulative irradiance map to determine the max and min irradiance days
-    max_day = cumulative_irradiance_to_day[max(cumulative_irradiance_to_day)]
-    max_profile = daily_weather_profiles[max_day]
-
-    min_day = cumulative_irradiance_to_day[min(cumulative_irradiance_to_day)]
-    min_profile = daily_weather_profiles[min_day]
+    # max_day = cumulative_irradiance_to_day[max(cumulative_irradiance_to_day)]
+    # max_profile = daily_weather_profiles[max_day]
+    #
+    # min_day = cumulative_irradiance_to_day[min(cumulative_irradiance_to_day)]
+    # min_profile = daily_weather_profiles[min_day]
+    #
 
     # Determine the average profiles.
     unindexed_profiles = [
@@ -313,10 +314,41 @@ def main(
         functools.reduce(lambda x, y: x.add(y, fill_value=0), unindexed_profiles)
     ) / len(unindexed_profiles)
 
+    # Determine the standard deviation.
+    standard_deviation = pd.DataFrame(
+        np.sqrt(
+            functools.reduce(
+                lambda x, y: x.add((y - average_profile) ** 2, fill_value=0),
+                unindexed_profiles,
+            )
+            / len(unindexed_profiles)
+        )
+    )
+
+    # Determine the maximum value at each hour of the profiles and the minimum value.
+    concatenated_frame = pd.concat(
+        unindexed_profiles, keys=range(len(unindexed_profiles))
+    ).groupby(level=1)
+    max_profile = concatenated_frame.max()
+    min_profile = concatenated_frame.min()
+
+    upper_std_profile = average_profile + standard_deviation
+    lower_std_profile = average_profile - standard_deviation
+
+    # Ensure that no standard deviations are out of bounds.
+    upper_std_profile = (
+        pd.concat([upper_std_profile, max_profile], keys=[0, 1]).groupby(level=1).min()
+    )
+    lower_std_profile = (
+        pd.concat([lower_std_profile, min_profile], keys=[0, 1]).groupby(level=1).max()
+    )
+
     # Set the column headers correctly
     average_profile.columns = WEATHER_COLUMN_HEADERS
+    lower_std_profile.columns = WEATHER_COLUMN_HEADERS
     max_profile.columns = WEATHER_COLUMN_HEADERS
     min_profile.columns = WEATHER_COLUMN_HEADERS
+    upper_std_profile.columns = WEATHER_COLUMN_HEADERS
     average_profile_dict = average_profile.to_dict()
 
     print("[  DONE  ]")
@@ -330,21 +362,25 @@ def main(
         },
         LATITUDE: latitude,
         LONGITUDE: longitude,
+        ProfileType.LOWER_STANDARD_DEVIATION.value: {
+            key: {int(time + timezone) % 24: value for time, value in entry.items()}
+            for key, entry in lower_std_profile.to_dict().items()
+        },
         ProfileType.MAXIMUM.value: {
-            key: {
-                int(time.hour + timezone) % 24: value for time, value in entry.items()
-            }
+            key: {int(time + timezone) % 24: value for time, value in entry.items()}
             for key, entry in max_profile.to_dict().items()
         },
         ProfileType.MINIMUM.value: {
-            key: {
-                int(time.hour + timezone) % 24: value for time, value in entry.items()
-            }
+            key: {int(time + timezone) % 24: value for time, value in entry.items()}
             for key, entry in min_profile.to_dict().items()
         },
         OPTIMUM_TILT_ANGLE: (
             optimum_tilt_angle := parsed_data[1][MOUNTING_SYSTEM][FIXED][SLOPE][VALUE]
         ),
+        ProfileType.UPPER_STANDARD_DEVIATION.value: {
+            key: {int(time + timezone) % 24: value for time, value in entry.items()}
+            for key, entry in upper_std_profile.to_dict().items()
+        },
     }
 
     # Return and save information on the weather conditions for an average day and the

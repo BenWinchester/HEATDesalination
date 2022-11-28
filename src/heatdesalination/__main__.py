@@ -20,15 +20,19 @@ and optimise the desalination systems.
 import os
 import sys
 
-from typing import Any, Dict, List
+from typing import Dict, List
 
 from tqdm import tqdm
 
-from .__utils__ import ProfileType, Solution, get_logger
+from .__utils__ import CLI_TO_PROFILE_TYPE, ProfileType, Solution, get_logger
 from .argparser import MissingParametersError, parse_args, validate_args
 from .fileparser import parse_input_files
-from .optimiser import run_optimisation
+from .optimiser import Criterion, OptimisableComponent, run_optimisation, TotalCost
 from .simulator import determine_steady_state_simulation
+
+# ANALYSIS_REQUESTS:
+#   Names of criteria to evaluate.
+ANALYSIS_REQUESTS = {TotalCost.name}
 
 # SIMULATION_OUTPUTS_DIRECTORY:
 #   The outputs dierctory for simulations.
@@ -37,7 +41,7 @@ SIMULATION_OUTPUTS_DIRECTORY: str = "simulation_outputs"
 
 def save_simulation(
     output: str,
-    profile_type: ProfileType,
+    profile_type: str,
     simulation_outputs: Solution,
     solar_irradiance: Dict[int, float],
 ) -> None:
@@ -59,28 +63,78 @@ def save_simulation(
     # Write to the output file.
     os.makedirs(SIMULATION_OUTPUTS_DIRECTORY, exist_ok=True)
     with open(
-        f"{os.path.join(SIMULATION_OUTPUTS_DIRECTORY, output)}_{profile_type.value}"
-        ".csv",
+        f"{os.path.join(SIMULATION_OUTPUTS_DIRECTORY, output)}_{profile_type}" ".csv",
         "w",
         encoding="UTF-8",
     ) as output_file:
         output_data.to_csv(output_file)
 
 
-def main(args: List[Any]) -> None:
+def main(
+    location: str,
+    profile_types: List[ProfileType],
+    scenario_name: str,
+    system_lifetime: int,
+    battery_capacity: float | None = None,
+    buffer_tank_capacity: float | None = None,
+    mass_flow_rate: float | None = None,
+    optimisation: bool = False,
+    output: str | None = None,
+    pv_t_system_size: float | None = None,
+    pv_system_size: float | None = None,
+    simulation: bool = False,
+    solar_thermal_system_size: float | None = None,
+    start_hour: int | None = None,
+    *,
+    disable_tqdm: bool = False,
+    save_outputs: bool = True,
+) -> None:
     """
     Main module responsible for the flow of the HEATDesalination program.
 
     Inputs:
-        - args:
-            The un-parsed command-line arguments.
+        - location:
+            The name of the location to be modelled.
+        - profile_types:
+            The `list` of valid :class:`ProfileType` instances to consider.
+        - scenario_name:
+            The name of the scenario to use.
+        - system_lifetime:
+            The lifetime of the system being considered.
+        - battery_capacity:
+            The battery capacity if running a simulation or `None` if not.
+        - buffer_tank_capacity:
+            The buffer tank capacity if running a simulation or `None` if the default
+            value should be used.
+        - mass_flow_rate:
+            The mass flow rate if running a simulation or `None` if not.
+        - output:
+            The name of the output file to use or `None` if the default should be used.
+        - optimisation:
+            Whether an optimisation is being run (True) or not (False).
+        - pv_t_system_size:
+            The PV-T system size, measured in number of collectors, if running a
+            simulation or `None` if not.
+        - pv_system_size:
+            The PV system size, measured in number of collectors, if running a
+            simulation or `None` if not.
+        - simulation:
+            Whether a simulation is being run (True) or not (False).
+        - solar_thermal_system_size:
+            The solar-thermal system size, measured in number of collectors if running
+            a simulation or `None` if not.
+        - start_hour:
+            The start hour for the operation of the plant if running a simulation or
+            `None` if not.
+        - disable_tqdm:
+            Whether to disable tqdm or not.
+        - save_outputs:
+            Whether to save the outputs from the simulation/optimisation (True) or
+            return them (False).
 
     """
 
-    # Parse the command-line arguments.
-    parsed_args = parse_args(args)
-    validate_args(parsed_args)
-    logger = get_logger(f"{parsed_args.location}_heat_desalination")
+    logger = get_logger(f"{location}_heat_desalination")
 
     # Parse the various input files.
     (
@@ -94,79 +148,123 @@ def main(args: List[Any]) -> None:
         scenario,
         solar_irradiances,
         solar_thermal_collector,
-    ) = parse_input_files(
-        parsed_args.location, logger, parsed_args.scenario, parsed_args.start_hour
-    )
+    ) = parse_input_files(location, logger, scenario_name, start_hour)
 
-    if parsed_args.simulation:
+    if simulation:
         # Raise exceptions if the arguments are invalid.
         missing_parameters: List[str] = []
-        if scenario.battery and parsed_args.battery_capacity is None:
+        if scenario.battery and battery_capacity is None:
             logger.error(
                 "Must specify battery capacity if batteries included in scenario."
             )
             missing_parameters.append("Storage system size")
-        if scenario.pv_t and parsed_args.pv_t_system_size is None:
+        if scenario.pv_t and pv_t_system_size is None:
             logger.error(
                 "Must specify PV-T system size if PV-T collectors included in scenario."
             )
             missing_parameters.append("PV-T system size")
-        if scenario.solar_thermal and parsed_args.solar_thermal_system_size is None:
+        if scenario.solar_thermal and solar_thermal_system_size is None:
             logger.error(
                 "Must specify solar-thermal system size if solar-thermal collectors "
                 "included in scenario."
             )
             missing_parameters.append("Solar-thermal system size")
-        if not parsed_args.mass_flow_rate:
+        if not mass_flow_rate:
             logger.error("Must specify HTF mass flow rate if running a simulation.")
             missing_parameters.append("HTF mass flow rate")
 
         if len(missing_parameters) > 0:
             raise MissingParametersError(", ".join(missing_parameters))
 
-        # Run the simulation.
-        for profile_type in ProfileType:
-            simulation_outputs = determine_steady_state_simulation(
+        # Update the buffer-tank capacity.
+        buffer_tank.capacity = (
+            buffer_tank_capacity
+            if buffer_tank_capacity is not None
+            else buffer_tank.capacity
+        )
+
+        # Run the simulations.
+        simulation_outputs = {
+            profile_type.value: determine_steady_state_simulation(
                 ambient_temperatures[profile_type],
                 battery,
-                parsed_args.battery_capacity,
+                battery_capacity,
                 buffer_tank,
                 desalination_plant,
-                parsed_args.mass_flow_rate,
+                mass_flow_rate,
                 hybrid_pv_t_panel,
                 logger,
                 pv_panel,
-                parsed_args.pv_system_size,
-                parsed_args.pv_t_system_size,
+                pv_system_size,
+                pv_t_system_size,
                 scenario,
                 solar_irradiances[profile_type],
                 solar_thermal_collector,
-                parsed_args.solar_thermal_system_size,
-                parsed_args.system_lifetime,
+                solar_thermal_system_size,
+                system_lifetime,
+                disable_tqdm=disable_tqdm,
             )
+            for profile_type in profile_types
+        }
+
+        # Output information to the command-line interface.
+        for profile_type, result in simulation_outputs.items():
             logger.info(
-                "Battery lifetime degradation was %s necessitating %s replacements.",
-                f"{simulation_outputs.battery_lifetime_degradation:.3g}",
-                simulation_outputs.battery_replacements,
-            )
-            if simulation_outputs.battery_replacements > 0:
-                print(
-                    f"Batteries were replaced {simulation_outputs.battery_replacements} time{'s' if simulation_outputs.battery_replacements > 1 else ''} during the simulation."
-                )
-            else:
-                print("Batteries were not replaced during the simulation period.")
-            save_simulation(
-                parsed_args.output,
+                "Battery lifetime degradation for %s was %s necessitating %s replacements.",
                 profile_type,
-                simulation_outputs,
-                solar_irradiances[profile_type],
+                f"{result.battery_lifetime_degradation:.3g}",
+                result.battery_replacements,
             )
-    elif parsed_args.optimisation:
+            if result.battery_replacements > 0 and not disable_tqdm:
+                print(
+                    "Batteries were replaced "
+                    f"{result.battery_replacements} time"
+                    f"{'s' if result.battery_replacements > 1 else ''} "
+                    "during the simulation."
+                )
+            elif not disable_tqdm:
+                print("Batteries were not replaced during the simulation period.")
+            if save_outputs:
+                save_simulation(
+                    output,
+                    profile_type,
+                    result,
+                    solar_irradiances[ProfileType(profile_type)],
+                )
+
+        # Analyse the outputs
+        logger.info("Analysing results")
+        analysis = {
+            key: {
+                criterion: Criterion.calculate_value_map[criterion](
+                    {
+                        battery: battery_capacity,
+                        buffer_tank: buffer_tank_capacity,
+                        pv_panel: pv_system_size,
+                        hybrid_pv_t_panel: pv_t_system_size,
+                        solar_thermal_collector: solar_thermal_system_size,
+                    },
+                    scenario,
+                    result,
+                    system_lifetime,
+                )
+                for criterion in ANALYSIS_REQUESTS
+            }
+            for key, result in simulation_outputs.items()
+        }
+
+        # Return the outputs
+        return {
+            key: (entry.as_dataframe.to_dict(), analysis[key])
+            for key, entry in simulation_outputs.items()
+        }
+
+    elif optimisation:
         for optimisation_parameters in tqdm(
             optimisations, desc="optimisations", leave=True, unit="opt."
         ):
             for profile_type in tqdm(
-                ProfileType, desc="profile type", leave=False, unit="profile"
+                profile_types, desc="profile type", leave=False, unit="profile"
             ):
                 result = run_optimisation(
                     ambient_temperatures[profile_type],
@@ -180,11 +278,11 @@ def main(args: List[Any]) -> None:
                     scenario,
                     solar_irradiances[profile_type],
                     solar_thermal_collector,
-                    parsed_args.system_lifetime,
+                    system_lifetime,
                 )
                 import pdb
 
-                pdb.set_trace()
+                pdb.set_trace(header=f"Result: {result.x}")
     else:
         logger.error("Neither simulation or optimisation was specified. Quitting.")
         raise Exception(
@@ -194,4 +292,34 @@ def main(args: List[Any]) -> None:
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    # Parse the command-line arguments.
+    parsed_args = parse_args(sys.argv[1:])
+
+    # Validate that these are valid arguments.
+    validate_args(parsed_args)
+
+    # Determine the profile types that shuld be considered.
+    try:
+        profile_types = [
+            CLI_TO_PROFILE_TYPE[entry] for entry in parsed_args.profile_types
+        ]
+    except KeyError as err:
+        print(f"Invalid profile type. Valid types: {', '.join(CLI_TO_PROFILE_TYPE)}")
+        raise
+
+    main(
+        parsed_args.location,
+        profile_types,
+        parsed_args.scenario,
+        parsed_args.system_lifetime,
+        parsed_args.battery_capacity,
+        parsed_args.buffer_tank_capacity,
+        parsed_args.mass_flow_rate,
+        parsed_args.optimisation,
+        parsed_args.output,
+        parsed_args.pv_t_system_size,
+        parsed_args.pv_system_size,
+        parsed_args.simulation,
+        parsed_args.solar_thermal_system_size,
+        parsed_args.start_hour,
+    )
