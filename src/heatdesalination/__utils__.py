@@ -205,7 +205,7 @@ def get_logger(logger_name: str, verbose: bool = False) -> logging.Logger:
 
     # Create a file handler.
     file_handler = logging.FileHandler(
-        os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log")
+        os.path.join(LOGGER_DIRECTORY, f"{logger_name}_{os.getpid()}.log")
     )
     file_handler.setLevel(logging.DEBUG if verbose else logging.INFO)
     file_handler.setFormatter(formatter)

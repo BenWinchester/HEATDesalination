@@ -78,12 +78,28 @@ def _total_cost(
     }
     total_component_cost = sum(component_costs.values())
 
-    # Calculate the undiscounted cost of grid electricity.
+    # # Calculate the undiscounted cost of grid electricity.
+    # total_grid_cost = (
+    #     DAYS_PER_YEAR  # [days/year]
+    #     * system_lifetime  # [year]
+    #     * sum(solution.grid_electricity_supply_profile.values())  # [kWh/day]
+    #     * scenario.grid_cost  # [$/kWh]
+    # )
+
+    # UAE-specific code
+    discount_rate = 0
+    monthly_grid_consumption = (
+        sum(solution.grid_electricity_supply_profile.values()) * 30
+    )  # [kWh/month]
+    lower_tier_consumption = min(monthly_grid_consumption, 10000)
+    upper_tier_consumption = max(monthly_grid_consumption - 10000, 0)
     total_grid_cost = (
-        DAYS_PER_YEAR  # [days/year]
-        * system_lifetime  # [year]
-        * sum(solution.grid_electricity_supply_profile.values())  # [kWh/day]
-        * scenario.grid_cost  # [$/kWh]
+        (DAYS_PER_YEAR / 30)
+        * system_lifetime
+        * (
+            lower_tier_consumption * (0.23 * ((1 - discount_rate) ** system_lifetime))
+            + upper_tier_consumption * (0.38 * ((1 - discount_rate) ** system_lifetime))
+        )
     )
 
     # Add the costs of any consumables such as diesel fuel or grid electricity.
@@ -568,9 +584,12 @@ def _simulate_and_calculate_criterion(
     }
 
     # Return the value of the criterion.
-    return Criterion.calculate_value_map[optimisation_criterion](
-        component_sizes, scenario, steady_state_solution, system_lifetime
-    )
+    return (
+        Criterion.calculate_value_map[optimisation_criterion](
+            component_sizes, scenario, steady_state_solution, system_lifetime
+        )
+        / 10**6
+    ) ** 3
 
 
 def _callback_function(current_vector: numpy.ndarray, *args) -> None:
@@ -725,9 +744,11 @@ def run_optimisation(
 
     # Determine the alrogithm based on whether constraints are needed.
     if optimisation_parameters.constraints is not None:
-        algorithm = "COBYLA"
+        # algorithm = "COBYLA"
+        algorithm = "SLSQP"
         constraints = {
             "type": "ineq",
+            # "type": "eq",
             "fun": _constraint_function,
             "args": (
                 hybrid_pv_t_panel,
@@ -737,10 +758,10 @@ def run_optimisation(
         }
     else:
         # algorithm = "Nelder-Mead"
-        algorithm = "Powell"
+        # algorithm = "Powell"
         # algorithm = "CG"
         # algorithm = "BFGS"
-        # algorithm = "L-BFGS-B"
+        algorithm = "L-BFGS-B"
         # algorithm = "TNC"
         # algorithm = "COBYLA"
         # algorithm = "SLSQP"

@@ -13,7 +13,7 @@ scenarios:
     battery: !!str default_battery
     grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
     # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
-    heat_exchanger_efficiency: !!float 1.0  # Defined between 0 and 1
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
     heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
     hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
     htf_heat_capacity: !!float 4182  # [J/kg*K]
