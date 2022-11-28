@@ -15,7 +15,7 @@ batteries:
     c_rate_discharging: !!float 0.33  # Discharge rate
     conversion_in: !!float 0.95  # Conversion efficiency (0.0 - 1.0)
     conversion_out: !!float 0.95  # Conversion efficiency (0.0 - 1.0)
-    cost: !!float 400  # [USD/kWh]
+    cost: !!float 440  # [USD/kWh]
     cycle_lifetime: !!float 1500  # Expected number of cycles over lifetime
     maximum_charge: !!float 0.9  # State of charge (0.0 - 1.0)
     minimum_charge: !!float 0.4  # State of charge (0.0 - 1.0)
