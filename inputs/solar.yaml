@@ -463,7 +463,8 @@ solar_collectors:
       zeroth_order: !!float 0.743
     type: !!str solar_thermal
   - area: !!float 2.169965517
-    cost: !!float 735  # [USD/collector]
+    # cost: !!float 735  # [USD/collector]
+    cost: !!float 400  # [USD/collector]
     land_use: !!float 2.375310345
     max_mass_flow_rate: !!float 332.7733333
     min_mass_flow_rate: !!float 56.10666667
