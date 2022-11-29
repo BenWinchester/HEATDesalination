@@ -1,4 +1,4 @@
-#PBS -lwalltime=06:00:00
+#PBS -lwalltime=01:00:00
 #PBS -lselect=1:ncpus=8:mem=11800Mb
 
 echo -e "HPC script executed"
@@ -9,32 +9,8 @@ source activate py310
 
 cd $PBS_O_WORKDIR
 
-
-POSITIONAL_ARGS=()
-
-while [[ $# -gt 0 ]]; do
-  case $1 in
-    -l|--location)
-      LOCATION="$2"
-      shift # past argument
-      shift # past value
-      ;;
-    -o|--output)
-      OUTPUT="$2"
-      shift # past argument
-      shift # past value
-      ;;
-    -*|--*)
-      echo "Unknown option $1"
-      exit 1
-      ;;
-    *)
-      POSITIONAL_ARGS+=("$1") # save positional arg
-      shift # past argument
-      ;;
-  esac
-done
-
+LOCATION="fujairah_united_arab_emirates"
+OUTPUT="multi_square_10_x_10"
 
 # Sending runs to the HPC
 echo -e "Running parallel simulation module..."
