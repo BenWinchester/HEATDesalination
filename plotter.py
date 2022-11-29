@@ -633,7 +633,9 @@ for pv_t in tqdm(pv_t_sizes, desc="pv_t_sizes"):
                     entry[tank_key] = tank
                     runs.append(entry)
             # Save these runs to the file.
-            with open(os.path.join(basename.format(pv_t=pv_t, st=st, tank=tank)), "w") as f:
+            with open(
+                os.path.join(basename.format(pv_t=pv_t, st=st, tank=tank)), "w"
+            ) as f:
                 json.dump(runs, f)
 
 ##############################
@@ -646,8 +648,8 @@ import json
 
 default_entry = {
     "location": "fujairah_united_arab_emirates",
-    (simulation_key:="simulation"): None,
-    (output_key:="output"): None
+    (simulation_key := "simulation"): None,
+    (output_key := "output"): None,
 }
 
 regex = re.compile(r"(P?pv_t_\d*_st_\d*_tank_\d*_runs)")

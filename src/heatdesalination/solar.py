@@ -614,7 +614,7 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
 
         """
 
-        logger.info("Attempting to create PVPanel from solar input data.")
+        logger.debug("Attempting to create PVPanel from solar input data.")
 
         return cls(
             solar_inputs[AREA],
@@ -816,7 +816,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
 
         """
 
-        logger.info("Attempting to create SolarThermalPanel from solar input data.")
+        logger.debug("Attempting to create SolarThermalPanel from solar input data.")
 
         try:
             thermal_performance_inputs = solar_inputs[THERMAL_PERFORMANCE_CURVE]
@@ -860,7 +860,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                 raise
         else:
             electric_performance_curve = None
-            logger.info(
+            logger.debug(
                 "No performance curve defined for solar-thermal panel '%s'.",
                 solar_inputs["name"],
             )
@@ -883,7 +883,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                 )
                 raise
         else:
-            logger.info(
+            logger.debug(
                 "No performance curve defined for solar-thermal panel '%s'.",
                 solar_inputs["name"],
             )
@@ -1248,7 +1248,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
 
         """
 
-        logger.info("Attempting to create SolarThermalPanel from solar input data.")
+        logger.debug("Attempting to create SolarThermalPanel from solar input data.")
 
         try:
             performance_curve_inputs = solar_inputs[THERMAL_PERFORMANCE_CURVE]

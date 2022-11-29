@@ -165,7 +165,7 @@ def _parse_args(args: List[Any]) -> argparse.Namespace:
 
 
 def heatdesalination_wrapper(
-    simulation: Simulation, location: str
+    simulation: Simulation, location: str, logger: Logger
 ) -> Dict[ProfileType, Solution]:
     """
     Run a steady-state simulation
@@ -188,11 +188,14 @@ def heatdesalination_wrapper(
         simulation.solar_thermal_system_size,
         simulation.start_hour,
         disable_tqdm=True,
+        logger=logger,
         save_outputs=False,
     )
 
 
-def main(location: str, output: str, simulations_file: str, logger: Logger) -> List[Any]:
+def main(
+    location: str, output: str, simulations_file: str, logger: Logger
+) -> List[Any]:
     """
     Main method for carrying out multiple simulations..
 
@@ -227,7 +230,9 @@ def main(location: str, output: str, simulations_file: str, logger: Logger) -> L
         results = list(
             tqdm(
                 worker_pool.imap(
-                    functools.partial(heatdesalination_wrapper, location=location),
+                    functools.partial(
+                        heatdesalination_wrapper, location=location, logger=logger
+                    ),
                     simulations,
                 ),
                 total=len(simulations),
