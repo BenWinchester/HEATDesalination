@@ -162,9 +162,9 @@ def main(args) -> None:
     print(
         HEADER_STRING.format(
             version_line=(
-                " " * (47 - math.ceil(len(version_string) / 2))
+                " " * (44 - math.ceil(len(version_string) / 2))
                 + version_string
-                + " " * (47 - math.floor(len(version_string) / 2))
+                + " " * (44 - math.floor(len(version_string) / 2))
             )
         )
     )
