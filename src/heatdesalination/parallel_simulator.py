@@ -32,13 +32,12 @@ from tqdm import tqdm
 from src.heatdesalination.__main__ import main as heatdesalination_main
 from src.heatdesalination.__utils__ import (
     CLI_TO_PROFILE_TYPE,
+    DONE,
     get_logger,
     ProfileType,
-    read_yaml,
     Solution,
 )
 from src.heatdesalination.fileparser import INPUTS_DIRECTORY
-from src.heatdesalination.simulator import determine_steady_state_simulation
 
 # SIMULATIONS_FILEPATH:
 #   The file path to the simulations file.
@@ -192,22 +191,24 @@ def heatdesalination_wrapper(
     )
 
 
-def main(args: List[Any]) -> List[Any]:
+def main(location: str, output: str, simulations_file: str) -> List[Any]:
     """
     Main method for carrying out multiple simulations..
 
     Inputs:
-        - args:
-            The command-line arguments.
+        - location:
+            The name of the location to use for the weather data.
+        - output:
+            THe mame of the output file to use.
+        - simulations_file:
+            The name of the simulations file to use.
 
     """
 
-    # Parse the command-line arguments.
-    parsed_args = _parse_args(args)
-    logger = get_logger(f"{parsed_args.location}_parallel_simulator")
+    logger = get_logger(f"{location}_parallel_simulator")
 
     # Use the inputted simulations filepath if provided.
-    if (simulations_filename := parsed_args.simulations_file) is not None:
+    if (simulations_filename := simulations_file) is not None:
         simulations_filepath: str = os.path.join(
             INPUTS_DIRECTORY, f"{simulations_filename}.json"
         )
@@ -226,7 +227,7 @@ def main(args: List[Any]) -> List[Any]:
             tqdm(
                 worker_pool.imap(
                     functools.partial(
-                        heatdesalination_wrapper, location=parsed_args.location
+                        heatdesalination_wrapper, location=location
                     ),
                     simulations,
                 ),
@@ -240,7 +241,7 @@ def main(args: List[Any]) -> List[Any]:
             len(results),
             len(simulations),
         )
-    print("[  DONE  ]")
+    print()
 
     # Convert to a mapping from simulation information.
     print(f"Prepping results map{'.'*49} ", end="")
@@ -252,17 +253,20 @@ def main(args: List[Any]) -> List[Any]:
         for index in range(len(results))
     ]
 
-    print("[  DONE  ]")
+    print(DONE)
 
     print(f"Saving output file{'.'*51} ", end="")
-    if parsed_args.output is not None:
-        with open(f"{parsed_args.output}.json", "w") as f:
+    if output is not None:
+        with open(f"{output}.json", "w") as f:
             json.dump(results_map, f)
-    print("[  DONE  ]")
+    print(DONE)
 
     print("Exiting")
     return results
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    # Parse the command-line arguments.
+    parsed_args = _parse_args(sys.argv[1:])
+
+    main(parsed_args.location, parsed_args.output, parsed_args.simulations_file)

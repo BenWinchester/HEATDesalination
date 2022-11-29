@@ -30,6 +30,10 @@ from .fileparser import parse_input_files
 from .optimiser import Criterion, OptimisableComponent, run_optimisation, TotalCost
 from .simulator import determine_steady_state_simulation
 
+# __version__:
+#   The version of the software being used.
+__version__: str = "v1.0.0"
+
 # ANALYSIS_REQUESTS:
 #   Names of criteria to evaluate.
 ANALYSIS_REQUESTS = {TotalCost.name}

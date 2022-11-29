@@ -1,7 +1,18 @@
-#PBS -lwalltime=01:00:00
+########################################################################################
+# hpc_template.sh - Script for executing HEATDesalination as an array job on the HPC.  #
+#                                                                                      #
+# Author: Ben Winchester                                                               #
+# Copyright: Ben Winchester, 2022                                                      #
+# Date created: 29/11/2022                                                             #
+#                                                                                      #
+# For more information, please email:                                                  #
+#   benedict.winchester@gmail.com                                                      #
+########################################################################################
+#PBS -J 1-{NUM_RUNS}
+#PBS -lwalltime={WALLTIME}:00:00
 #PBS -lselect=1:ncpus=8:mem=11800Mb
 
-echo -e "HPC script executed"
+echo -e "HPC array script executed"
 
 # Load the anaconda environment
 module load anaconda3/personal
@@ -11,7 +22,7 @@ cd $PBS_O_WORKDIR
 
 # Sending runs to the HPC
 echo -e "Running parallel simulation module..."
-python3.10 -u -m src.heatdesalination.parallel_simulator -l {LOCATION} -o {OUTPUT} -s {SIMULATIONS}
+python3.10 -u -m src.heatdesalination.hpc_wrapper -r {RUNS_FILE} {WALLTIME}
 echo -e "Complete"
 
 cd $CURRENT_DIR

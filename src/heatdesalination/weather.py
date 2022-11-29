@@ -37,6 +37,7 @@ from requests import HTTPError
 from .__utils__ import (
     AMBIENT_TEMPERATURE,
     AUTO_GENERATED_FILES_DIRECTORY,
+    DONE,
     get_logger,
     LATITUDE,
     LONGITUDE,

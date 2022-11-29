@@ -34,12 +34,16 @@ __all__ = (
     "CLI_TO_PROFILE_TYPE",
     "COST",
     "CostableComponent",
+    "DONE",
+    "FAILED",
     "FlowRateError",
+    "HPCSimulation",
     "InputFileError",
     "LATITUDE",
     "LOGGER_DIRECTORY",
     "LONGITUDE",
     "NAME",
+    "parse_hpc_args_and_runs",
     "ProfileDegradation",
     "ProfileType",
     "read_yaml",
@@ -81,6 +85,14 @@ CRITERION: str = "criterion"
 # DAYS_PER_YEAR:
 #   The number of days per year.
 DAYS_PER_YEAR: float = 365.25
+
+# DONE:
+#   Keyword for "done".
+DONE: str = "[  DONE  ]"
+
+# FAILED:
+#   Keyword for "failed".
+FAILED: str = "[ FAILED ]"
 
 # FIXED:
 #   Keyword for the fixed capacity of an optimisable component.
@@ -233,6 +245,31 @@ class FlowRateError(Exception):
         """
 
         super().__init__(f"Flow-rate mismatch for collector '{collector_name}': {msg}")
+
+
+@dataclasses.dataclass
+class HPCSimulation:
+    """
+    Contains information about a run to carry out on the HPC.
+
+    - location:
+        The name of the location to consider.
+
+    - output:
+        The name of the output file to use.
+
+    - simulations:
+        The name of the input simulations file to use.
+
+    - walltime:
+        The walltime to use if specified.
+
+    """
+
+    location: str
+    output: str
+    simulations: str
+    walltime: int | None = None
 
 
 class InputFileError(Exception):
@@ -648,6 +685,49 @@ CLI_TO_PROFILE_TYPE: Dict[str, ProfileType] = {
     "min": ProfileType.MINIMUM,
     "usd": ProfileType.UPPER_STANDARD_DEVIATION,
 }
+
+
+def parse_hpc_args_and_runs(
+    args: List[Any], logger: Logger
+) -> Tuple[str, List[HPCSimulation], int | None]:
+    """
+    Parse the arguments and runs.
+
+    Inputs:
+        - args:
+            The unparsed command-line arguments.
+        - logger:
+            The logger to use for the run.
+
+    Outputs:
+        - run_filename:
+            The name of the runs file to carry out.
+        - runs:
+            The runs to carry out.
+        - walltime:
+            The walltime to use
+
+    """
+
+    # Parse the command-line arguments.
+    parsed_args = _parse_args(args)
+    logger.info("Command-line arguments parsed.")
+
+    # Open the runs file and parse the information.
+    logger.info("Parsing runs file.")
+    with open(parsed_args.runs, "r") as f:
+        runs_file_data = json.load(f)
+
+    # Update the walltime if necessary.
+    if parsed_args.walltime is not None:
+        logger.info("Walltime of %s passed in on the CLI. Updating runs.")
+        for entry in runs_file_data:
+            entry[WALLTIME] = parsed_args.walltime
+
+    runs = [HPCSimulation(**entry) for entry in runs_file_data]
+    logger.info("Runs file parsed: %s runs to carry out.", len(runs))
+
+    return parsed_args.runs, runs, parsed_args.walltime
 
 
 def read_yaml(
