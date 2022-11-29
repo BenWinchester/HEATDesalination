@@ -336,18 +336,23 @@ solution = determine_steady_state_simulation(
     disable_tqdm=disable_tqdm,
 )
 
-print("Total cost = {} MUSD".format(TotalCost.calculate_value(
-    {
-        battery: battery_capacity,
-        buffer_tank: buffer_tank_capacity,
-        pv_panel: pv_system_size,
-        hybrid_pv_t_panel: pv_t_system_size,
-        solar_thermal_collector: solar_thermal_system_size,
-    },
-    scenario,
-    solution,
-    system_lifetime,
-) / 10 ** 6))
+print(
+    "Total cost = {} MUSD".format(
+        TotalCost.calculate_value(
+            {
+                battery: battery_capacity,
+                buffer_tank: buffer_tank_capacity,
+                pv_panel: pv_system_size,
+                hybrid_pv_t_panel: pv_t_system_size,
+                solar_thermal_collector: solar_thermal_system_size,
+            },
+            scenario,
+            solution,
+            system_lifetime,
+        )
+        / 10**6
+    )
+)
 
 ###########################################
 # Plotting costs of the surrounding areas #
@@ -393,7 +398,7 @@ cmap1.set_over("none")
 cmap2 = sns.color_palette("blend:#84BB4E,#00548F", as_cmap=True)
 cmap2.set_over("none")
 
-ax1 = sns.heatmap(frame, vmin=2, vmax=max(costs), cmap=cmap1, cbar_kws={'pad': 0.02})
+ax1 = sns.heatmap(frame, vmin=2, vmax=max(costs), cmap=cmap1, cbar_kws={"pad": 0.02})
 sns.heatmap(frame, vmin=min(costs), vmax=2, cmap=cmap2, ax=ax1)
 
 plt.show()
