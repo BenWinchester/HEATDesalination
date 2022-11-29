@@ -61,21 +61,21 @@ HEADER_STRING = """
  | __ || _|  / _ \\    | |   | |) |/ -_)(_-</ _` || | | || ' \\))/ _` ||  _| | |/ _ \\| ' \\))
  |_||_||___|/_/ \\_\\   |_|   |___/ \\___|/__/\\__,_||_| |_||_||_| \\__,_| \\__| |_|\\___/|_||_|
 
-                ___                     _      _   _  _ ___  ___
-               |_ _|_ __  _ __  ___ _ _(_)__ _| | | || | _ \\/ __|
-                | || '  \\| '_ \\/ -_) '_| / _` | | | __ |  _/ (__
-               |___|_|_|_| .__/\\___|_| |_\\__,_|_| |_||_|_|  \\___|
-                         |_|
+                    ___                     _      _   _  _ ___  ___
+                   |_ _|_ __  _ __  ___ _ _(_)__ _| | | || | _ \\/ __|
+                    | || '  \\| '_ \\/ -_) '_| / _` | | | __ |  _/ (__
+                   |___|_|_|_| .__/\\___|_| |_\\__,_|_| |_||_|_|  \\___|
+                             |_|
 
-                    Hybrid Electric and Thermal Desalination
-                         Copyright Ben Winchester, 2022
+                        Hybrid Electric and Thermal Desalination
+                             Copyright Ben Winchester, 2022
 {version_line}
 
-This version of HEATDesalination has been adapted fgor Imperial College London's
-                          High-performance computers.
+    This version of HEATDesalination has been adapted fgor Imperial College London's
+                              High-performance computers.
 
-                         For more information, cont
-                 Ben Winchester (benedict.winchester@gmail.com)
+                             For more information, cont
+                     Ben Winchester (benedict.winchester@gmail.com)
 
 """
 
@@ -162,9 +162,9 @@ def main(args) -> None:
     print(
         HEADER_STRING.format(
             version_line=(
-                " " * (40 - math.ceil(len(version_string) / 2))
+                " " * (47 - math.ceil(len(version_string) / 2))
                 + version_string
-                + " " * (40 - math.floor(len(version_string) / 2))
+                + " " * (47 - math.floor(len(version_string) / 2))
             )
         )
     )
@@ -182,7 +182,7 @@ def main(args) -> None:
     )
 
     # Check that all of the runs are valid.
-    print(f"Checking HPC runs{'.'*49} ", end="")
+    print(f"Checking HPC runs{'.'*63} ", end="")
     logger.info("Checking all run files are valid.")
     if not all(_check_run(logger, run) for run in runs):
         print(FAILED)
@@ -195,7 +195,7 @@ def main(args) -> None:
     logger.info("All HPC runs valid.")
 
     # Parse the default HPC job submission script.
-    print(f"Processing HPC job submission script{'.'*30} ", end="")
+    print(f"Processing HPC job submission script{'.'*44} ", end="")
     logger.info("Parsing base HPC job submission script.")
     try:
         with open(HPC_SUBMISSION_SCRIPT_FILEPATH, "r") as f:
@@ -250,9 +250,9 @@ def main(args) -> None:
             )
         except Exception:  # pylint: disable=broad-except
             logger.error("Failed. See logs for details.")
-            print(f"Sending jobs to the HPC{'.'*43} {FAILED}")
+            print(f"Sending jobs to the HPC{'.'*57} {FAILED}")
             raise
-        print(f"Sending jobs to the HPC{'.'*43} {DONE}")
+        print(f"Sending jobs to the HPC{'.'*57} {DONE}")
         logger.info("HPC runs submitted. Exiting.")
 
 
