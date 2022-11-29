@@ -14,6 +14,7 @@ __utils__.py - The utility module for the HEATDeslination program.
 
 """
 
+import argparse
 import dataclasses
 import enum
 import logging
@@ -23,6 +24,7 @@ from collections import defaultdict
 from logging import Logger
 from typing import Any, DefaultDict, Dict, List, NamedTuple, Tuple
 
+import json
 import yaml
 
 import numpy as np
@@ -146,6 +148,10 @@ SOLAR_IRRADIANCE: str = "irradiance"
 #   Keyword for parsing timezone.
 TIMEZONE: str = "timezone"
 
+# WALLTIME:
+#   The keyword for walltime information.
+WALLTIME: str = "walltime"
+
 # WIND_SPEED:
 #   Keyword for the wind speed.
 WIND_SPEED: str = "wind_speed"
@@ -206,6 +212,8 @@ def get_logger(logger_name: str, verbose: bool = False) -> logging.Logger:
     console_handler.setLevel(logging.ERROR)
     console_handler.setFormatter(formatter)
 
+    logger.addHandler(console_handler)
+
     # Delete the existing log if there is one already.
     if os.path.isfile(
         (logger_filepath := os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log"))
@@ -216,15 +224,17 @@ def get_logger(logger_name: str, verbose: bool = False) -> logging.Logger:
             pass
 
     # Create a file handler.
-    file_handler = logging.FileHandler(
-        os.path.join(LOGGER_DIRECTORY, f"{logger_name}_{os.getpid()}.log")
-    )
-    file_handler.setLevel(logging.DEBUG if verbose else logging.INFO)
-    file_handler.setFormatter(formatter)
+    if not os.path.isfile(
+        (logger_filename := os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log"))
+    ):
+        file_handler = logging.FileHandler(
+            os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log")
+        )
+        file_handler.setLevel(logging.DEBUG if verbose else logging.INFO)
+        file_handler.setFormatter(formatter)
 
-    # Add the file handler to the logger.
-    logger.addHandler(console_handler)
-    logger.addHandler(file_handler)
+        # Add the file handler to the logger.
+        logger.addHandler(file_handler)
 
     return logger
 
@@ -685,49 +695,6 @@ CLI_TO_PROFILE_TYPE: Dict[str, ProfileType] = {
     "min": ProfileType.MINIMUM,
     "usd": ProfileType.UPPER_STANDARD_DEVIATION,
 }
-
-
-def parse_hpc_args_and_runs(
-    args: List[Any], logger: Logger
-) -> Tuple[str, List[HPCSimulation], int | None]:
-    """
-    Parse the arguments and runs.
-
-    Inputs:
-        - args:
-            The unparsed command-line arguments.
-        - logger:
-            The logger to use for the run.
-
-    Outputs:
-        - run_filename:
-            The name of the runs file to carry out.
-        - runs:
-            The runs to carry out.
-        - walltime:
-            The walltime to use
-
-    """
-
-    # Parse the command-line arguments.
-    parsed_args = _parse_args(args)
-    logger.info("Command-line arguments parsed.")
-
-    # Open the runs file and parse the information.
-    logger.info("Parsing runs file.")
-    with open(parsed_args.runs, "r") as f:
-        runs_file_data = json.load(f)
-
-    # Update the walltime if necessary.
-    if parsed_args.walltime is not None:
-        logger.info("Walltime of %s passed in on the CLI. Updating runs.")
-        for entry in runs_file_data:
-            entry[WALLTIME] = parsed_args.walltime
-
-    runs = [HPCSimulation(**entry) for entry in runs_file_data]
-    logger.info("Runs file parsed: %s runs to carry out.", len(runs))
-
-    return parsed_args.runs, runs, parsed_args.walltime
 
 
 def read_yaml(

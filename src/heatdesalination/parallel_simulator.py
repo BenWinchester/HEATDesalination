@@ -226,9 +226,7 @@ def main(location: str, output: str, simulations_file: str) -> List[Any]:
         results = list(
             tqdm(
                 worker_pool.imap(
-                    functools.partial(
-                        heatdesalination_wrapper, location=location
-                    ),
+                    functools.partial(heatdesalination_wrapper, location=location),
                     simulations,
                 ),
                 total=len(simulations),

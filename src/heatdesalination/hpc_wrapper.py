@@ -50,9 +50,7 @@ def main(args: List[Any]) -> None:
     try:
         hpc_job_number = int(os.getenv(HPC_JOB_NUMBER))  # type: ignore
     except ValueError:
-        print(
-            f"HPC environmental variable {HPC_JOB_NUMBER} was not of type int."
-        )
+        print(f"HPC environmental variable {HPC_JOB_NUMBER} was not of type int.")
         raise
 
     # Use a separate logger for each run accordingly.
@@ -62,7 +60,7 @@ def main(args: List[Any]) -> None:
 
     # Call the utility module to parse the HPC run information.
     logger.info("Parsing HPC input file.")
-    _, runs,  _ = parse_hpc_args_and_runs(args, logger)
+    _, runs, _ = parse_hpc_args_and_runs(args, logger)
     logger.info("HPC input file successfully parsed.")
 
     # Sanitise the jobn number.

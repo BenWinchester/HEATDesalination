@@ -32,8 +32,6 @@ import tempfile
 
 from logging import Logger
 
-import json
-
 from .__main__ import __version__
 from .__utils__ import (
     AUTO_GENERATED_FILES_DIRECTORY,
@@ -41,10 +39,10 @@ from .__utils__ import (
     FAILED,
     get_logger,
     HPCSimulation,
-    parse_hpc_args_and_runs,
 )
+from .argparser import parse_hpc_args_and_runs
+
 from .fileparser import INPUTS_DIRECTORY
-from .parallel_simulator import Simulation
 
 __all__ = ("main",)
 
@@ -87,7 +85,7 @@ HPC_SUBMISSION_COMMAND: str = "qsub"
 
 # HPC submission script filename:
 #   The name of the HPC script submission file.
-HPC_SUBMISSION_SCRIPT_FILENAME: str = "hpc_templerate.sh"
+HPC_SUBMISSION_SCRIPT_FILENAME: str = "hpc_template.sh"
 
 # HPC array job submission script:
 #   The path to the HPC script submission file.
@@ -98,10 +96,6 @@ HPC_SUBMISSION_SCRIPT_FILEPATH: str = os.path.join(
 # Logger name:
 #   The name to use for the logger for this script.
 LOGGER_NAME: str = "hpc_heatdesalination_launch_script"
-
-# Walltime:
-#   The keyword for walltime information.
-WALLTIME: str = "walltime"
 
 
 def _check_run(logger: Logger, hpc_run: HPCSimulation) -> bool:
@@ -121,7 +115,7 @@ def _check_run(logger: Logger, hpc_run: HPCSimulation) -> bool:
 
     # Check that the location exists.
     if not os.path.isfile(
-        os.path.join(AUTO_GENERATED_FILES_DIRECTORY, hpc_run.location)
+        os.path.join(AUTO_GENERATED_FILES_DIRECTORY, f"{hpc_run.location}.json")
     ):
         logger.error(
             "Location '%s' does not exist.",
@@ -130,7 +124,9 @@ def _check_run(logger: Logger, hpc_run: HPCSimulation) -> bool:
         return False
 
     # Check that the simulations file exists.
-    if not os.path.isfile(os.path.join(INPUTS_DIRECTORY, hpc_run.simulations)):
+    if not os.path.isfile(
+        os.path.join(INPUTS_DIRECTORY, f"{hpc_run.simulations}.json")
+    ):
         logger.error(
             "Simulations file '%s' not found in inputs folder %s.",
             hpc_run.simulations,
@@ -139,8 +135,10 @@ def _check_run(logger: Logger, hpc_run: HPCSimulation) -> bool:
         return False
 
     # Check that the output file doesn't already exist.
-    if os.path.isfile(os.path.join(INPUTS_DIRECTORY, hpc_run.output)):
-        logger.error("Output file '%s' already exists.", hpc_run.output)
+    if os.path.isfile(
+        output_filename := os.path.join(INPUTS_DIRECTORY, f"{hpc_run.output}.json")
+    ):
+        logger.error("Output file '%s' already exists.", output_filename)
         return False
 
     # Check that the walltime is between 1 and 72 hours.
@@ -152,50 +150,6 @@ def _check_run(logger: Logger, hpc_run: HPCSimulation) -> bool:
         return False
 
     return True
-
-
-def _parse_args(args: List[Any]) -> argparse.Namespace:
-    """
-    Parses command-line arguments into a :class:`argparse.NameSpace`.
-
-    Inputs:
-        The unparsed command-line arguments.
-
-    Outputs:
-        The parsed command-line arguments.
-
-    """
-
-    parser = argparse.ArgumentParser()
-
-    required_arguments = parser.add_argument_group("required arguments")
-
-    ######################
-    # Required arguments #
-    ######################
-
-    # Location/Weather:
-    #   The weather information to use.
-    required_arguments.add_argument(
-        "--runs",
-        "-r",
-        help="The path to the runs file to use.",
-        type=str,
-    )
-
-    ######################
-    # Optional arguments #
-    ######################
-
-    parser.add_argument(
-        "--walltime",
-        "-w",
-        default=None,
-        help="The walltime in hours.",
-        type=int,
-    )
-
-    return parser.parse_args(args)
 
 
 def main(args) -> None:
@@ -229,12 +183,12 @@ def main(args) -> None:
 
     # Check that all of the runs are valid.
     print(f"Checking HPC runs{'.'*37} ", end="")
-    print.info("Checking all run files are valid.")
+    logger.info("Checking all run files are valid.")
     if not all(_check_run(logger, run) for run in runs):
+        print(FAILED)
         logger.error(
             "Not all HPC runs were valid, exiting.",
         )
-        print(FAILED)
         raise Exception("Not all HPC runs were valid, see logs for details.")
 
     print(DONE)
@@ -247,12 +201,12 @@ def main(args) -> None:
         with open(HPC_SUBMISSION_SCRIPT_FILEPATH, "r") as f:
             hpc_submission_script_file_contents = f.read()
     except FileNotFoundError:
+        print(FAILED)
         logger.error(
             "HPC job submission file not found. Check that the file, '%s', has not "
             "been removed.",
             HPC_SUBMISSION_SCRIPT_FILEPATH,
         )
-        print(FAILED)
         raise
 
     print(DONE)

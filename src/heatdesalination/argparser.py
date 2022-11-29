@@ -16,10 +16,14 @@ argparser.py - The argument parser module for the HEATDeslination program.
 
 
 import argparse
+import os
 
-from typing import Any, List
+from logging import Logger
+from typing import Any, List, Tuple
 
-from src.heatdesalination.__utils__ import CLI_TO_PROFILE_TYPE
+import json
+
+from src.heatdesalination.__utils__ import CLI_TO_PROFILE_TYPE, HPCSimulation, WALLTIME
 
 __all__ = (
     "parse_args",
@@ -184,6 +188,99 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
     )
 
     return parser.parse_args(args)
+
+
+def _parse_hpc_args(args: List[Any]) -> argparse.Namespace:
+    """
+    Parses command-line arguments into a :class:`argparse.NameSpace`.
+
+    Inputs:
+        The unparsed command-line arguments.
+
+    Outputs:
+        The parsed command-line arguments.
+
+    """
+
+    parser = argparse.ArgumentParser()
+
+    required_arguments = parser.add_argument_group("required arguments")
+
+    ######################
+    # Required arguments #
+    ######################
+
+    # Location/Weather:
+    #   The weather information to use.
+    required_arguments.add_argument(
+        "--runs",
+        "-r",
+        help="The path to the runs file to use.",
+        type=str,
+    )
+
+    ######################
+    # Optional arguments #
+    ######################
+
+    parser.add_argument(
+        "--walltime",
+        "-w",
+        default=None,
+        help="The walltime in hours.",
+        type=int,
+    )
+
+    return parser.parse_args(args)
+
+
+def parse_hpc_args_and_runs(
+    args: List[Any], logger: Logger
+) -> Tuple[str, List[HPCSimulation], int | None]:
+    """
+    Parse the arguments and runs.
+
+    Inputs:
+        - args:
+            The unparsed command-line arguments.
+        - logger:
+            The logger to use for the run.
+
+    Outputs:
+        - run_filename:
+            The name of the runs file to carry out.
+        - runs:
+            The runs to carry out.
+        - walltime:
+            The walltime to use
+
+    """
+
+    # Parse the command-line arguments.
+    parsed_args = _parse_hpc_args(args)
+    logger.info("Command-line arguments parsed.")
+
+    # Exit if the runs file does not exist.
+    if (runs_filename := parsed_args.runs) is None:
+        raise MissingParametersError("runs")
+    if not os.path.isfile(parsed_args.runs):
+        raise FileNotFoundError(f"HPC runs file {runs_filename} could not be found.")
+
+    # Open the runs file and parse the information.
+    logger.info("Parsing runs file.")
+    with open(runs_filename, "r") as f:
+        runs_file_data = json.load(f)
+
+    # Update the walltime if necessary.
+    if parsed_args.walltime is not None:
+        logger.info("Walltime of %s passed in on the CLI. Updating runs.")
+        for entry in runs_file_data:
+            entry[WALLTIME] = parsed_args.walltime
+
+    runs = [HPCSimulation(**entry) for entry in runs_file_data]
+    logger.info("Runs file parsed: %s runs to carry out.", len(runs))
+
+    return runs_filename, runs, parsed_args.walltime
 
 
 def validate_args(parsed_args: argparse.Namespace) -> None:
