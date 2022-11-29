@@ -528,9 +528,9 @@ default_entry = {
 
 battery_capacities = range(0, 1001, 20)
 pv_sizes = range(0, 10001, 200)
-pv_t_sizes = range(72, 3600, 350)
-solar_thermal_sizes = range(218, 1283, 100)
-tank_capacities = range(15, 100, 8)
+pv_t_sizes = range(72, 3600, 70)
+solar_thermal_sizes = range(218, 1220, 20)
+tank_capacities = range(15, 101, 34)
 
 runs = []
 for batt in battery_capacities:
@@ -615,3 +615,47 @@ for batt in tqdm(battery_capacities, desc="batt"):
 
 with open(os.path.join("inputs", "ten_by_ten_simulations.json"), "w") as f:
     json.dump(runs, f)
+
+# Runs for the HPC
+basename = os.path.join("inputs", "pv_t_{pv_t}_st_{st}_tank_{tank}_runs.json")
+for pv_t in tqdm(pv_t_sizes, desc="pv_t_sizes"):
+    for st in tqdm(solar_thermal_sizes, desc="st_sizes", leave=False):
+        for tank in tqdm(tank_capacities, desc="tank capacities", leave=False):
+            # Setup runs at this resolution
+            runs = []
+            for batt in tqdm(battery_capacities, desc="batt", leave=False):
+                for pv in tqdm(pv_sizes, desc="pv", leave=False):
+                    entry = default_entry.copy()
+                    entry[batt_key] = batt
+                    entry[pv_key] = pv
+                    entry[pv_t_key] = pv_t
+                    entry[st_key] = st
+                    entry[tank_key] = tank
+                    runs.append(entry)
+            # Save these runs to the file.
+            with open(os.path.join(basename.format(pv_t=pv_t, st=st, tank=tank)), "w") as f:
+                json.dump(runs, f)
+
+##############################
+# Assemble the HPC runs file #
+##############################
+
+import re
+
+import json
+
+default_entry = {
+    "location": "fujairah_united_arab_emirates",
+    (simulation_key:="simulation"): None,
+    (output_key:="output"): None
+}
+
+regex = re.compile(r"(P?pv_t_\d*_st_\d*_tank_\d*_runs)")
+entries = [entry for entry in os.listdir("inputs") if regex.match(entry) is not None]
+
+hpc_simulations = []
+for entry in entries:
+    temp = default_entry.copy()
+    temp[simulation_key] = regex.match(entry).group(0)
+    temp[output_key] = f"{regex.match(entry).group(0)}_output"
+    hpc_simulations.append(temp)

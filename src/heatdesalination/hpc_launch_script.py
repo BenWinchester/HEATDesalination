@@ -182,7 +182,7 @@ def main(args) -> None:
     )
 
     # Check that all of the runs are valid.
-    print(f"Checking HPC runs{'.'*37} ", end="")
+    print(f"Checking HPC runs{'.'*49} ", end="")
     logger.info("Checking all run files are valid.")
     if not all(_check_run(logger, run) for run in runs):
         print(FAILED)

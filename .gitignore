@@ -133,3 +133,6 @@ dmypy.json
 
 # Auto-generated files
 auto_generated/
+
+# Runs files
+inputs/*_runs.json
