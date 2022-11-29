@@ -24,6 +24,7 @@ import os
 import json
 import sys
 
+from logging import Logger
 from multiprocessing import pool
 from typing import Any, Dict, List
 
@@ -191,7 +192,7 @@ def heatdesalination_wrapper(
     )
 
 
-def main(location: str, output: str, simulations_file: str) -> List[Any]:
+def main(location: str, output: str, simulations_file: str, logger: Logger) -> List[Any]:
     """
     Main method for carrying out multiple simulations..
 
@@ -202,10 +203,10 @@ def main(location: str, output: str, simulations_file: str) -> List[Any]:
             THe mame of the output file to use.
         - simulations_file:
             The name of the simulations file to use.
+        - logger:
+            The logger to use if specified.
 
     """
-
-    logger = get_logger(f"{location}_parallel_simulator")
 
     # Use the inputted simulations filepath if provided.
     if (simulations_filename := simulations_file) is not None:
@@ -267,4 +268,7 @@ if __name__ == "__main__":
     # Parse the command-line arguments.
     parsed_args = _parse_args(sys.argv[1:])
 
-    main(parsed_args.location, parsed_args.output, parsed_args.simulations_file)
+    # Setup the logger.
+    logger = get_logger(f"{parsed_args.location}_parallel_simulator")
+
+    main(parsed_args.location, parsed_args.output, parsed_args.simulations_file, logger)

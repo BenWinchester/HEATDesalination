@@ -22,6 +22,7 @@ the HPC.
 
 import os
 import sys
+
 from typing import Any, List
 
 from .__utils__ import get_logger
@@ -80,7 +81,7 @@ def main(args: List[Any]) -> None:
     logger.info("Run successfully determined: %s", str(hpc_run))
 
     logger.info("Carrying out run.")
-    parallel_simulator_main(hpc_run.location, hpc_run.output, hpc_run.simulation)
+    parallel_simulator_main(hpc_run.location, hpc_run.output, hpc_run.simulation, logger)
     logger.info("Run successfully exectued, exiting.")
 
 
