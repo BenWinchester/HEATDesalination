@@ -22,7 +22,7 @@ cd $PBS_O_WORKDIR
 
 # Sending runs to the HPC
 echo -e "Running parallel simulation module..."
-python3.10 -u -m src.heatdesalination.hpc_wrapper -r {RUNS_FILE} {WALLTIME}
+python3.10 -u -m src.heatdesalination.hpc_wrapper -r {RUNS_FILE} -w {WALLTIME}
 echo -e "Complete"
 
 cd $CURRENT_DIR
