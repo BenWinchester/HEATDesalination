@@ -125,11 +125,11 @@ def _check_run(logger: Logger, hpc_run: HPCSimulation) -> bool:
 
     # Check that the simulations file exists.
     if not os.path.isfile(
-        os.path.join(INPUTS_DIRECTORY, f"{hpc_run.simulations}.json")
+        os.path.join(INPUTS_DIRECTORY, f"{hpc_run.simulation}.json")
     ):
         logger.error(
             "Simulations file '%s' not found in inputs folder %s.",
-            hpc_run.simulations,
+            hpc_run.simulation,
             INPUTS_DIRECTORY,
         )
         return False
