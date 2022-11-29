@@ -216,7 +216,7 @@ def main(args) -> None:
     hpc_submission_script_file_contents = hpc_submission_script_file_contents.format(
         NUM_RUNS=len(runs),
         RUNS_FILE=runs_filename,
-        WALLTIME=f"-w {walltime}" if walltime is not None else "",
+        WALLTIME=f"{walltime}" if walltime is not None else "",
     )
     logger.info(
         "HPC job submission script updated with %s runs, %s walltime.",
