@@ -278,7 +278,7 @@ class HPCSimulation:
 
     location: str
     output: str
-    simulations: str
+    simulation: str
     walltime: int | None = None
 
 
