@@ -24,7 +24,8 @@ import os
 import sys
 from typing import Any, List
 
-from .__utils__ import get_logger, parse_hpc_args_and_runs
+from .__utils__ import get_logger
+from .argparser import parse_hpc_args_and_runs
 from .parallel_simulator import main as parallel_simulator_main
 
 
