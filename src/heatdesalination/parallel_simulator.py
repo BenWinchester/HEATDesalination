@@ -151,6 +151,16 @@ def _parse_args(args: List[Any]) -> argparse.Namespace:
         type=str,
     )
 
+    # Simulations:
+    #   The name of the simulations input file to use.
+    parser.add_argument(
+        "--simulations-file",
+        "-s",
+        default=None,
+        help="The name of the input simulations file to use.",
+        type=str,
+    )
+
     return parser.parse_args(args)
 
 
@@ -196,8 +206,16 @@ def main(args: List[Any]) -> List[Any]:
     parsed_args = _parse_args(args)
     logger = get_logger(f"{parsed_args.location}_parallel_simulator")
 
+    # Use the inputted simulations filepath if provided.
+    if (simulations_filename := parsed_args.simulations_file) is not None:
+        simulations_filepath: str = os.path.join(
+            INPUTS_DIRECTORY, f"{simulations_filename}.json"
+        )
+    else:
+        simulations_filepath = SIMULATIONS_FILEPATH
+
     # Parse the simulations file.
-    with open(SIMULATIONS_FILEPATH, "r") as simulations_file:
+    with open(simulations_filepath, "r") as simulations_file:
         simulations = [Simulation(**entry) for entry in json.load(simulations_file)]
 
     print(f"Carrying out parallel simulation{'.'*37} ", end="")
