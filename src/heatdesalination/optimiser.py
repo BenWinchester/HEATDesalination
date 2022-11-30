@@ -761,9 +761,9 @@ def run_optimisation(
         # algorithm = "Powell"
         # algorithm = "CG"
         # algorithm = "BFGS"
-        algorithm = "L-BFGS-B"
+        # algorithm = "L-BFGS-B"
         # algorithm = "TNC"
-        # algorithm = "COBYLA"
+        algorithm = "COBYLA"
         # algorithm = "SLSQP"
         # algorithm = "trust-constr"
         constraints = None

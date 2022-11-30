@@ -63,11 +63,11 @@ optimisations:
   - bounds:
       battery_capacity:
         # fixed: 0
-        initial_guess: 300
+        initial_guess: 500
         min: 0
         max: null
       buffer_tank_capacity:
-        fixed: 100
+        fixed: 49
         # initial_guess: 30  # [m^3]
         # min: 15  # [m^3]
         # max: 100  # [m^3]
@@ -82,15 +82,15 @@ optimisations:
         min: 0
         max: null
       pv_t:
-        # fixed: 0
-        initial_guess: 3000  # Number of PV-T collectors
-        min: 72
-        max: 3600
+        fixed: 1262
+        # initial_guess: 3000  # Number of PV-T collectors
+        # min: 72
+        # max: 3600
       st:
-        # fixed: 0
-        initial_guess: 500  # Number of solar-thermal collectors
-        min: 218
-        max: 1283
+        fixed: 318
+        # initial_guess: 500  # Number of solar-thermal collectors
+        # min: 218
+        # max: 1283
       start_hour:
         fixed: 8
         # initial_guess: 10  # [o'clock] using 24-hour clock

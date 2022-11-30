@@ -309,11 +309,10 @@ result
 
 battery_capacity = result.x[0]
 pv_system_size = result.x[1]
-pv_t_system_size = result.x[2]
-solar_thermal_system_size = result.x[3]
+# pv_t_system_size = result.x[2]
+# solar_thermal_system_size = result.x[3]
 
-buffer_tank.cacpacity = 100
-buffer_tank_capacity = 100
+buffer_tank.cacpacity = optimisation_parameters.fixed_buffer_tank_capacitiy_value
 
 # Run a simulation based on this.
 solution = determine_steady_state_simulation(
@@ -327,11 +326,13 @@ solution = determine_steady_state_simulation(
     logger,
     pv_panel,
     pv_system_size,
-    pv_t_system_size,
+    optimisation_parameters.fixed_pv_t_value,
+    # pv_t_system_size,
     scenario,
     solar_irradiances[profile_type],
     solar_thermal_collector,
-    solar_thermal_system_size,
+    optimisation_parameters.fixed_st_value,
+    # solar_thermal_system_size,
     system_lifetime,
     disable_tqdm=disable_tqdm,
 )
@@ -341,10 +342,12 @@ print(
         TotalCost.calculate_value(
             {
                 battery: battery_capacity,
-                buffer_tank: buffer_tank_capacity,
+                buffer_tank: buffer_tank.capacity,
                 pv_panel: pv_system_size,
-                hybrid_pv_t_panel: pv_t_system_size,
-                solar_thermal_collector: solar_thermal_system_size,
+                # hybrid_pv_t_panel: pv_t_system_size,
+                hybrid_pv_t_panel: optimisation_parameters.fixed_pv_t_value,
+                # solar_thermal_collector: solar_thermal_system_size,
+                solar_thermal_collector: optimisation_parameters.fixed_st_value,
             },
             scenario,
             solution,
@@ -393,20 +396,26 @@ sns.heatmap(frame, cmap=palette, annot=False)
 plt.show()
 
 # adapt the colormaps such that the "under" or "over" color is "none"
-# cmap1 = sns.color_palette("blend:#00548F,#CA6630", as_cmap=True)
+# cmap1 = sns.color_palette("blend:#FAECD9,#AD5506", as_cmap=True)
+# cmap1 = sns.dark_palette("502382", as_cmap=True)
+# cmap1 = sns.color_palette("PuOr_r", as_cmap=True)
 cmap1 = sns.cubehelix_palette(
-    start=0.5, rot=-0.5, dark=0.5, light=1, as_cmap=True, reverse=True
+    start=0.2, rot=-0.3, dark=0.5, light=1, as_cmap=True, reverse=True
 )
 cmap1.set_over("none")
-# cmap2 = sns.color_palette("blend:#84BB4E,#00548F", as_cmap=True)
+
+# cmap2 = sns.color_palette("blend:#502382,#E9E9F1", as_cmap=True)
+# cmap2 = sns.light_palette("502382", as_cmap=True)
+# cmap2 = sns.color_palette("PuBu_r", as_cmap=True)
 cmap2 = sns.cubehelix_palette(
-    start=0.5, rot=-0.5, dark=0, light=0.5, as_cmap=True, reverse=True
+    start=0.2, rot=-0.3, dark=0, light=0.5, as_cmap=True, reverse=True
 )
 cmap2.set_over("none")
 
 ax1 = sns.heatmap(frame, vmin=2, vmax=max(costs), cmap=cmap1, cbar_kws={"pad": 0.02})
 ax2 = sns.heatmap(frame, vmin=min(costs), vmax=2, cmap=cmap2, ax=ax1)
 
+# Invert the axes
 min_cost_index = {cost: index for index, cost in enumerate(costs)}[min(costs)]
 plt.scatter(
     [battery_capacities[min_cost_index]],
@@ -417,9 +426,18 @@ plt.scatter(
     zorder=-1,
 )
 
-sns.heatmap(
-    frame, mask=frame > min(costs), cbar=False, annot=True, annot_kws={"weight": "bold"}
+ax3 = sns.heatmap(
+    frame,
+    mask=frame > min(costs),
+    cmap=cmap2,
+    cbar=False,
+    annot=True,
+    annot_kws={"weight": "bold"},
 )
+
+ax1.invert_yaxis()
+ax2.invert_yaxis()
+ax3.invert_yaxis()
 
 plt.show()
 
@@ -485,22 +503,38 @@ cost_mesh = np.array(costs).reshape(batt_mesh.shape)
 
 fig, ax = plt.subplots()
 
-contours = ax.contourf(batt_mesh, pv_mesh, cost_mesh, 100, cmap="rocket")
+contours = ax.contourf(batt_mesh, pv_mesh, cost_mesh, 100, cmap=cmap2)
 fig.colorbar(contours, ax=ax)
 
 plt.show()
 
-cmap1 = sns.color_palette("blend:#00548F,#84BB4E", as_cmap=True)
+
+# adapt the colormaps such that the "under" or "over" color is "none"
+cmap1 = sns.color_palette("blend:#0173b2,#5AC4FE", as_cmap=True)
+# cmap1 = sns.cubehelix_palette(
+#     start=0.5, rot=-0.5, dark=0.5, light=1, as_cmap=True, reverse=True
+# )
 cmap1.set_over("none")
-cmap2 = sns.color_palette("blend:#84BB4E,#00548F", as_cmap=True)
+cmap2 = sns.color_palette("blend:#5AC4FE,#FFFFFF", as_cmap=True)
+# cmap2 = sns.cubehelix_palette(
+#     start=0.5, rot=-0.5, dark=0, light=0.5, as_cmap=True, reverse=True
+# )
 cmap2.set_over("none")
 
-contours = plt.contour(
+# cmap1 = sns.color_palette("blend:#00548F,#84BB4E", as_cmap=True)
+# cmap1.set_over("none")
+# cmap2 = sns.color_palette("blend:#84BB4E,#00548F", as_cmap=True)
+# cmap2.set_over("none")
+
+
+fig, ax = plt.subplots()
+
+contours = ax.contour(
     batt_mesh,
     pv_mesh,
     cost_mesh,
     300,
-    cmap="Greens",
+    cmap=cmap2,
     extent=[
         min(battery_capacities),
         max(battery_capacities),
@@ -508,9 +542,10 @@ contours = plt.contour(
         max(pv_sizes),
     ],
 )
+fig.colorbar(contours, ax=ax)
+
 plt.xlabel("Battery capacity / kWh")
 plt.ylabel("PV system size / collectors")
-plt.colorbar(contours)
 
 min_cost_index = {cost: index for index, cost in enumerate(costs)}[min(costs)]
 plt.scatter(
@@ -518,12 +553,131 @@ plt.scatter(
     [pv_sizes[min_cost_index]],
     marker="x",
     color="red",
-    s=10000,
+    s=1000,
     zorder=10,
 )
 
 plt.show()
 
+##################################
+# Second attempt at contour plot #
+##################################
+
+import json
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+from src.heatdesalination.__utils__ import ProfileType
+from src.heatdesalination.optimiser import TotalCost
+
+with open("pv_t_1262_st_318_tank_49_output.json", "r") as f:
+    data = json.load(f)
+
+costs = [
+    (entry["results"][ProfileType.AVERAGE.value][1][TotalCost.name] / 10**6)
+    for entry in data
+]
+# palette = sns.color_palette("blend:#0173B2,#64B5CD", as_cmap=True)
+# palette = sns.color_palette("rocket", as_cmap=True)
+
+# Open all vec files
+with open("pv_t_1262_st_318_tank_49_nelder_mead_vecs.json", "r") as f:
+    nm_vecs = json.load(f)
+
+
+pv_sizes = [entry["simulation"]["pv_system_size"] for entry in data]
+battery_capacities = [entry["simulation"]["battery_capacity"] for entry in data]
+
+# Generate the frame
+frame = pd.DataFrame(
+    {
+        "Storage capacity / kWh": battery_capacities,
+        "Number of PV panels": pv_sizes,
+        "Cost / MUSD": costs,
+    }
+)
+pivotted_frame = frame.pivot(
+    index="Number of PV panels", columns="Storage capacity / kWh", values="Cost / MUSD"
+)
+
+# Extract the arrays.
+Z = pivotted_frame.values
+X_unique = np.sort(frame["Storage capacity / kWh"].unique())
+Y_unique = np.sort(frame["Number of PV panels"].unique())
+X, Y = np.meshgrid(X_unique, Y_unique)
+
+# Define levels in z-axis where we want lines to appear
+levels = np.array(
+    [
+        round(min(costs), 2) + 0.01,
+        1.7,
+        1.75,
+        1.8,
+        1.85,
+        1.9,
+        2,
+        2.5,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+    ]
+)
+
+# Generate a color mapping of the levels we've specified
+fig, ax = plt.subplots()
+cmap = sns.color_palette("Oranges", len(levels), as_cmap=True)
+cpf = ax.contourf(X, Y, Z, len(levels), cmap=cmap)
+
+# Set all level lines to black
+line_colors = ["black" for l in cpf.levels]
+
+# Make plot and customize axes
+contours = ax.contour(X, Y, Z, levels=levels, colors=line_colors)
+ax.clabel(contours, fontsize=10, colors=line_colors)
+ax.set_xlabel("Storage size / kWh")
+_ = ax.set_ylabel("PV size / number of collectors")
+
+fig.colorbar(cpf, ax=ax, label="Total lifetime cost / MUSD")
+
+min_cost_index = {cost: index for index, cost in enumerate(costs)}[min(costs)]
+
+scatter_palette = sns.color_palette("colorblind")
+
+plt.scatter(
+    battery_capacities[min_cost_index],
+    pv_sizes[min_cost_index],
+    marker="x",
+    color="#A40000",
+    label="optimum point",
+    linewidths=2.5,
+    s=150,
+    zorder=1,
+)
+plt.scatter(
+    [entry[0] for entry in nm_vecs if entry[0] <= 1000],
+    [entry[1] for entry in nm_vecs if entry[0] <= 1000],
+    marker="x",
+    color="#03507E",
+    label="Nelder-Mead",
+    linewidths=2.5,
+    s=150,
+    zorder=1,
+)
+plt.plot(
+    nm_vecs[-1][0],
+    nm_vecs[-1][1],
+    color="#03507E",
+)
+
+plt.legend()
+plt.show()
 
 #############
 # Subsquare #
@@ -751,3 +905,18 @@ for filename in tqdm(output_filenames, desc="files", unit="file"):
     # If the lowest cost is equal to the lowest value encountered so far, save this.
     if current_minimum_cost == min_cost:
         min_cost_overflow[filename] = current_minimum_cost
+
+####################
+# Dump all vectors #
+####################
+
+interact
+
+import json
+
+algorithm = "cobyla"
+vecs = [list(entry) for entry in result.allvecs]
+
+with open(f"pv_t_1262_st_318_tank_49_{algorithm}.json", "w") as f:
+    json.dump(vecs, f)
+
