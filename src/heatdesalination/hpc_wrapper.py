@@ -82,7 +82,7 @@ def main(args: List[Any]) -> None:
 
     logger.info("Carrying out run.")
     parallel_simulator_main(
-        hpc_run.location, hpc_run.output, hpc_run.simulation, logger
+        hpc_run.location, logger, hpc_run.output, hpc_run.simulation, full_results=False
     )
     logger.info("Run successfully exectued, exiting.")
 

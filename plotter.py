@@ -366,7 +366,7 @@ import seaborn as sns
 from src.heatdesalination.__utils__ import ProfileType
 from src.heatdesalination.optimiser import TotalCost
 
-with open("200_x_200_pv_batt_square.json", "r") as f:
+with open("pv_t_1262_st_318_tank_49_output.json", "r") as f:
     data = json.load(f)
 
 costs = [
@@ -393,13 +393,33 @@ sns.heatmap(frame, cmap=palette, annot=False)
 plt.show()
 
 # adapt the colormaps such that the "under" or "over" color is "none"
-cmap1 = sns.color_palette("blend:#00548F,#CA6630", as_cmap=True)
+# cmap1 = sns.color_palette("blend:#00548F,#CA6630", as_cmap=True)
+cmap1 = sns.cubehelix_palette(
+    start=0.5, rot=-0.5, dark=0.5, light=1, as_cmap=True, reverse=True
+)
 cmap1.set_over("none")
-cmap2 = sns.color_palette("blend:#84BB4E,#00548F", as_cmap=True)
+# cmap2 = sns.color_palette("blend:#84BB4E,#00548F", as_cmap=True)
+cmap2 = sns.cubehelix_palette(
+    start=0.5, rot=-0.5, dark=0, light=0.5, as_cmap=True, reverse=True
+)
 cmap2.set_over("none")
 
 ax1 = sns.heatmap(frame, vmin=2, vmax=max(costs), cmap=cmap1, cbar_kws={"pad": 0.02})
-sns.heatmap(frame, vmin=min(costs), vmax=2, cmap=cmap2, ax=ax1)
+ax2 = sns.heatmap(frame, vmin=min(costs), vmax=2, cmap=cmap2, ax=ax1)
+
+min_cost_index = {cost: index for index, cost in enumerate(costs)}[min(costs)]
+plt.scatter(
+    [battery_capacities[min_cost_index]],
+    [pv_sizes[min_cost_index]],
+    marker="x",
+    color="red",
+    s=10000,
+    zorder=-1,
+)
+
+sns.heatmap(
+    frame, mask=frame > min(costs), cbar=False, annot=True, annot_kws={"weight": "bold"}
+)
 
 plt.show()
 
@@ -467,6 +487,7 @@ fig, ax = plt.subplots()
 
 contours = ax.contourf(batt_mesh, pv_mesh, cost_mesh, 100, cmap="rocket")
 fig.colorbar(contours, ax=ax)
+
 plt.show()
 
 cmap1 = sns.color_palette("blend:#00548F,#84BB4E", as_cmap=True)
@@ -474,11 +495,35 @@ cmap1.set_over("none")
 cmap2 = sns.color_palette("blend:#84BB4E,#00548F", as_cmap=True)
 cmap2.set_over("none")
 
-contours = plt.contour(batt_mesh, pv_mesh, cost_mesh, 300, cmap=cmap1)
+contours = plt.contour(
+    batt_mesh,
+    pv_mesh,
+    cost_mesh,
+    300,
+    cmap="Greens",
+    extent=[
+        min(battery_capacities),
+        max(battery_capacities),
+        min(pv_sizes),
+        max(pv_sizes),
+    ],
+)
 plt.xlabel("Battery capacity / kWh")
 plt.ylabel("PV system size / collectors")
 plt.colorbar(contours)
+
+min_cost_index = {cost: index for index, cost in enumerate(costs)}[min(costs)]
+plt.scatter(
+    [battery_capacities[min_cost_index]],
+    [pv_sizes[min_cost_index]],
+    marker="x",
+    color="red",
+    s=10000,
+    zorder=10,
+)
+
 plt.show()
+
 
 #############
 # Subsquare #
@@ -661,3 +706,48 @@ for entry in entries:
     temp[simulation_key] = regex.match(entry).group(0)
     temp[output_key] = f"{regex.match(entry).group(0)}_output"
     hpc_simulations.append(temp)
+
+#######################
+# HPC file processing #
+#######################
+
+import os
+import re
+
+from typing import Dict
+
+import json
+
+from tqdm import tqdm
+
+from src.heatdesalination.__utils__ import ProfileType
+from src.heatdesalination.optimiser import TotalCost
+
+regex = re.compile(r"pv_t_(?P<pv_t>\d*)_st_(?P<st>\d*)_tank_(?P<tank>\d*)_runs_output")
+output_filenames = [
+    entry for entry in os.listdir(".") if regex.match(entry) is not None
+]
+
+# Cycle through the file names, compute the costs, and, if the file has a lower cost,
+# save it as the lowest-cost filename.
+
+min_cost: float = 10**10
+min_cost_filename: str | None = None
+min_cost_overflow: Dict[str, float] = {}
+
+for filename in tqdm(output_filenames, desc="files", unit="file"):
+    with open(filename, "r") as f:
+        data = json.load(f)
+    # Calculate the costs
+    costs = [
+        (entry["results"][ProfileType.AVERAGE.value][1][TotalCost.name] / 10**6)
+        for entry in data
+    ]
+    # If the lowest cost is lower than the lowest value encountered so far, use this.
+    if (current_minimum_cost := min(costs)) < min_cost:
+        min_cost_filename = filename
+        min_cost = current_minimum_cost
+        continue
+    # If the lowest cost is equal to the lowest value encountered so far, save this.
+    if current_minimum_cost == min_cost:
+        min_cost_overflow[filename] = current_minimum_cost

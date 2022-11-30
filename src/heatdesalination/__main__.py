@@ -20,7 +20,6 @@ and optimise the desalination systems.
 import os
 import sys
 
-from logging import Logger
 from typing import Dict, List
 
 from tqdm import tqdm
@@ -92,7 +91,6 @@ def main(
     start_hour: int | None = None,
     *,
     disable_tqdm: bool = False,
-    logger: Logger | None = None,
     save_outputs: bool = True,
 ) -> None:
     """
@@ -134,16 +132,13 @@ def main(
             `None` if not.
         - disable_tqdm:
             Whether to disable tqdm or not.
-        - logger:
-            The logger to use for the run if specified.
         - save_outputs:
             Whether to save the outputs from the simulation/optimisation (True) or
             return them (False).
 
     """
 
-    if logger is None:
-        logger = get_logger(f"{location}_heat_desalination")
+    logger = get_logger(f"{location}_heat_desalination")
 
     # Parse the various input files.
     (
@@ -218,27 +213,21 @@ def main(
 
         # Output information to the command-line interface.
         for profile_type, result in simulation_outputs.items():
-            if battery_capacity > 0:
-                logger.info(
-                    "Battery lifetime degradation for %s was %s necessitating %s "
-                    "replacements.",
-                    profile_type,
-                    f"{result.battery_lifetime_degradation:.3g}",
-                    result.battery_replacements,
+            logger.info(
+                "Battery lifetime degradation for %s was %s necessitating %s replacements.",
+                profile_type,
+                f"{result.battery_lifetime_degradation:.3g}",
+                result.battery_replacements,
+            )
+            if result.battery_replacements > 0 and not disable_tqdm:
+                print(
+                    "Batteries were replaced "
+                    f"{result.battery_replacements} time"
+                    f"{'s' if result.battery_replacements > 1 else ''} "
+                    "during the simulation."
                 )
-                if result.battery_replacements > 0 and not disable_tqdm:
-                    print(
-                        "Batteries were replaced "
-                        f"{result.battery_replacements} time"
-                        f"{'s' if result.battery_replacements > 1 else ''} "
-                        "during the simulation."
-                    )
-                elif not disable_tqdm:
-                    print("Batteries were not replaced during the simulation period.")
-            else:
-                logger.info(
-                    "No batteries installed so no battery degradation to consider."
-                )
+            elif not disable_tqdm:
+                print("Batteries were not replaced during the simulation period.")
             if save_outputs:
                 save_simulation(
                     output,

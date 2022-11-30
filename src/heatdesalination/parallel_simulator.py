@@ -161,11 +161,25 @@ def _parse_args(args: List[Any]) -> argparse.Namespace:
         type=str,
     )
 
+    ######################
+    # Optional arguments #
+    ######################
+
+    # Full results:
+    #   Whether to store the full results (True) or not (False).
+    parser.add_argument(
+        "--partial-results",
+        "-p",
+        action="store_true",
+        default=False,
+        help=argparse.SUPPRESS,
+    )
+
     return parser.parse_args(args)
 
 
 def heatdesalination_wrapper(
-    simulation: Simulation, location: str, logger: Logger
+    simulation: Simulation, location: str
 ) -> Dict[ProfileType, Solution]:
     """
     Run a steady-state simulation
@@ -188,13 +202,16 @@ def heatdesalination_wrapper(
         simulation.solar_thermal_system_size,
         simulation.start_hour,
         disable_tqdm=True,
-        logger=logger,
         save_outputs=False,
     )
 
 
 def main(
-    location: str, output: str, simulations_file: str, logger: Logger
+    location: str,
+    logger: Logger,
+    output: str,
+    simulations_file: str,
+    full_results: bool = True,
 ) -> List[Any]:
     """
     Main method for carrying out multiple simulations..
@@ -202,12 +219,14 @@ def main(
     Inputs:
         - location:
             The name of the location to use for the weather data.
+        - logger:
+            The logger to use if specified.
         - output:
             THe mame of the output file to use.
         - simulations_file:
             The name of the simulations file to use.
-        - logger:
-            The logger to use if specified.
+        - full_results:
+            Whether to record the full results (True) or reduced results (False).
 
     """
 
@@ -230,9 +249,7 @@ def main(
         results = list(
             tqdm(
                 worker_pool.imap(
-                    functools.partial(
-                        heatdesalination_wrapper, location=location, logger=logger
-                    ),
+                    functools.partial(heatdesalination_wrapper, location=location),
                     simulations,
                 ),
                 total=len(simulations),
@@ -249,13 +266,22 @@ def main(
 
     # Convert to a mapping from simulation information.
     print(f"Prepping results map{'.'*49} ", end="")
-    results_map = [
-        {
-            "simulation": dataclasses.asdict(simulations[index]),
-            "results": results[index],
-        }
-        for index in range(len(results))
-    ]
+    if full_results:
+        results_map = [
+            {
+                "simulation": dataclasses.asdict(simulations[index]),
+                "results": results[index],
+            }
+            for index in range(len(results))
+        ]
+    else:
+        results_map = [
+            {
+                "simulation": dataclasses.asdict(simulations[index]),
+                "results": {key: value[1] for key, value in results[index].items()},
+            }
+            for index in range(len(results))
+        ]
 
     print(DONE)
 
@@ -276,4 +302,10 @@ if __name__ == "__main__":
     # Setup the logger.
     logger = get_logger(f"{parsed_args.location}_parallel_simulator")
 
-    main(parsed_args.location, parsed_args.output, parsed_args.simulations_file, logger)
+    main(
+        parsed_args.location,
+        logger,
+        parsed_args.output,
+        parsed_args.simulations_file,
+        not parsed_args.partial_results,
+    )

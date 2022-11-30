@@ -328,13 +328,17 @@ def _thermal_performance(
 
     # If noly a linear calculation is required, solve linearly.
     if performance_curve.c_2 == 0:
-        return None, (
-            2 * performance_curve.eta_0 * area * solar_irradiance
-            + 2 * mass_flow_rate * htf_heat_capacity * input_temperature
-            + performance_curve.c_1
-            * area
-            * (input_temperature - 2 * ambient_temperature)
-        ) / (2 * mass_flow_rate * htf_heat_capacity - performance_curve.c_1 * area)
+        return (
+            None,
+            (
+                2 * performance_curve.eta_0 * area * solar_irradiance
+                + 2 * mass_flow_rate * htf_heat_capacity * input_temperature
+                + performance_curve.c_1
+                * area
+                * (input_temperature - 2 * ambient_temperature)
+            )
+            / (2 * mass_flow_rate * htf_heat_capacity - performance_curve.c_1 * area),
+        )
 
     # Compute the various terms of the equation
     a: float = performance_curve.c_2 * area  # pylint: disable=invalid-name
@@ -614,7 +618,7 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
 
         """
 
-        logger.debug("Attempting to create PVPanel from solar input data.")
+        logger.info("Attempting to create PVPanel from solar input data.")
 
         return cls(
             solar_inputs[AREA],
@@ -816,7 +820,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
 
         """
 
-        logger.debug("Attempting to create SolarThermalPanel from solar input data.")
+        logger.info("Attempting to create SolarThermalPanel from solar input data.")
 
         try:
             thermal_performance_inputs = solar_inputs[THERMAL_PERFORMANCE_CURVE]
@@ -860,7 +864,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                 raise
         else:
             electric_performance_curve = None
-            logger.debug(
+            logger.info(
                 "No performance curve defined for solar-thermal panel '%s'.",
                 solar_inputs["name"],
             )
@@ -883,7 +887,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                 )
                 raise
         else:
-            logger.debug(
+            logger.info(
                 "No performance curve defined for solar-thermal panel '%s'.",
                 solar_inputs["name"],
             )
@@ -1248,7 +1252,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
 
         """
 
-        logger.debug("Attempting to create SolarThermalPanel from solar input data.")
+        logger.info("Attempting to create SolarThermalPanel from solar input data.")
 
         try:
             performance_curve_inputs = solar_inputs[THERMAL_PERFORMANCE_CURVE]
