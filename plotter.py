@@ -572,11 +572,11 @@ import seaborn as sns
 from src.heatdesalination.__utils__ import ProfileType
 from src.heatdesalination.optimiser import TotalCost
 
-with open("pv_t_1262_st_318_tank_49_output.json", "r") as f:
+with open("pv_t_72_st_218_tank_32_runs_output.json", "r") as f:
     data = json.load(f)
 
 costs = [
-    (entry["results"][ProfileType.AVERAGE.value][1][TotalCost.name] / 10**6)
+    (entry["results"][ProfileType.AVERAGE.value][TotalCost.name] / 10**6)
     for entry in data
 ]
 # palette = sns.color_palette("blend:#0173B2,#64B5CD", as_cmap=True)
@@ -606,7 +606,12 @@ X, Y = np.meshgrid(X_unique, Y_unique)
 # Define levels in z-axis where we want lines to appear
 levels = np.array(
     [
-        round(min(costs), 2) + 0.01,
+        1.4,
+        1.45,
+        1.5,
+        1.55,
+        1.6,
+        1.65,
         1.7,
         1.75,
         1.8,
@@ -646,16 +651,16 @@ min_cost_index = {cost: index for index, cost in enumerate(costs)}[min(costs)]
 scatter_palette = sns.color_palette("colorblind", n=7)
 
 # Open all vec files and scatter their journeys
-# plt.scatter(
-#     battery_capacities[min_cost_index],
-#     pv_sizes[min_cost_index],
-#     marker="x",
-#     color="#A40000",
-#     label="optimum point",
-#     linewidths=2.5,
-#     s=150,
-#     zorder=1,
-# )
+plt.scatter(
+    battery_capacities[min_cost_index],
+    pv_sizes[min_cost_index],
+    marker="x",
+    color="#A40000",
+    label="optimum point",
+    linewidths=2.5,
+    s=150,
+    zorder=1,
+)
 
 # Nelder-Mead
 with open("pv_t_1262_st_318_tank_49_nelder_mead_vecs.json", "r") as f:
@@ -990,6 +995,8 @@ from tqdm import tqdm
 from src.heatdesalination.__utils__ import ProfileType
 from src.heatdesalination.optimiser import TotalCost
 
+os.chdir("hpc_parallel_simulations")
+
 regex = re.compile(r"pv_t_(?P<pv_t>\d*)_st_(?P<st>\d*)_tank_(?P<tank>\d*)_runs_output")
 output_filenames = [
     entry for entry in os.listdir(".") if regex.match(entry) is not None
@@ -1007,17 +1014,48 @@ for filename in tqdm(output_filenames, desc="files", unit="file"):
         data = json.load(f)
     # Calculate the costs
     costs = [
-        (entry["results"][ProfileType.AVERAGE.value][1][TotalCost.name] / 10**6)
+        (entry["results"][ProfileType.AVERAGE.value][TotalCost.name] / 10**6)
         for entry in data
     ]
     # If the lowest cost is lower than the lowest value encountered so far, use this.
     if (current_minimum_cost := min(costs)) < min_cost:
         min_cost_filename = filename
         min_cost = current_minimum_cost
+        print(f"New min cost in {min_cost_filename}: {min_cost:.3g}")
         continue
     # If the lowest cost is equal to the lowest value encountered so far, save this.
     if current_minimum_cost == min_cost:
         min_cost_overflow[filename] = current_minimum_cost
+        print("Equal min cost found, saving")
+
+##########################################
+# HPC min-cost search in parallel planes #
+##########################################
+
+regex = re.compile(r"pv_t_(?P<pv_t>\d*)_st_(?P<st>\d*)_tank_(?P<tank>\d*)_runs_output")
+output_filenames = [
+    entry for entry in os.listdir(".") if regex.match(entry) is not None
+]
+
+# Assemble a list containing the cost of the various points matching PV and batt.
+min_cost_batt: float = 170
+min_cost_pv: float = 6400
+min_cost_list = []
+
+batt_key: str = "battery_capacity"
+pv_key: str = "pv_system_size"
+pv_t_key: str = "pv_t_system_size"
+st_key: str = "solar_thermal_system_size"
+tank_key: str = "buffer_tank_capacitiy"
+
+simulation_key: str = "simulation"
+
+# Cycle through the filenames
+for filename in tqdm(output_filenames, desc="files", unit="file"):
+    with open(filename, "r") as f:
+        data = json.load(f)
+    # Find the point with the matching PV and batt
+    min_cost_list.extend([entry for entry in data if entry[simulation_key][batt_key] == min_cost_batt and entry[simulation_key][pv_key] == min_cost_pv])
 
 ####################
 # Dump all vectors #
@@ -1066,15 +1104,40 @@ with open(os.path.join("inputs", "optimisations.json"), "w") as f:
 
 import json
 import matplotlib.pyplot as plt
+import os
 import seaborn as sns
 sns.set_palette("colorblind")
 
-y = [entry["result"][0][1]["average_weather_conditions"][0]["total_cost"] for entry in data]
-y_lsd = [entry["result"][0][1]["lower_standard_deviation_weather_conditions"][0]["total_cost"] for entry in data]
-y_usd  = [entry["result"][0][1]["upper_standard_deviation_weather_conditions"][0]["total_cost"] for entry in data]
-y_min = [min(y_lsd[index], y_usd[index]) for index in range(len(y))]
-y_max = [max(y_lsd[index], y_usd[index]) for index in range(len(y))]
+with open("parallel_optimisation_results.json", "r") as f:
+    data = json.load(f)
 
-plt.plot(x, y, color="C0")
-plt.fill_between(x, y_min, y_max, color="C0", alpha=0.5)
-plt.show()
+keys = {"total_cost", "auxiliary_heating_fraction", "dumped_electricity", "grid_electricity_fraction", "solar_electricity_fraction", "storage_electricity_fraction"}
+
+x = [entry["optimisation"]["scenario"] for entry in data]
+x = [entry_2.replace("m_", "-") for entry_2 in [entry_1.split("_dr_")[-1] for entry_1 in [entry.split("uae")[1] for entry in x]]]
+x[20] = "00"
+x = [float(entry) for entry in x]
+
+# Plot the various keys
+for index, key in enumerate(keys):
+    y = [entry["result"][0][1]["average_weather_conditions"][0][key] for entry in data]
+    y_lsd = [entry["result"][0][1]["lower_standard_deviation_weather_conditions"][0][key] for entry in data]
+    y_usd  = [entry["result"][0][1]["upper_standard_deviation_weather_conditions"][0][key] for entry in data]
+    y_min = [min(y_lsd[index], y_usd[index], y_max[index]) for index in range(len(y_max))]
+    y_max = [entry["result"][0][1]["maximum_irradiance_weather_conditions"][0][key] for entry in data]
+    y_max = [max(y_lsd[index], y_usd[index], y_max[index]) for index in range(len(y_max))]
+    # Determine the x range
+    # Plot
+    plt.plot(x, y, color=f"C{index}")
+    plt.fill_between(x, y_lsd, y, color=f"C{index}", alpha=0.5)
+    plt.fill_between(x, y, y_usd, color=f"C{index}", alpha=0.5)
+    plt.plot(x, y_min, "--", color=f"C{index}")
+    plt.plot(x, y_max, "--", color=f"C{index}")
+    plt.ylabel(key.replace("_", " ").capitalize())
+    plt.xlabel("Mean grid discount rate / %/year")
+    plt.show()
+    with open(f"four_param_optimisation_dec_1_pv_t_st_batt_pv_{key}.json", "w") as f:
+        json.dump(
+            {"x": x, key: y, f"{key}_usd": y_usd, f"{key}_lsd": y_lsd, f"{key}_max": y_max, f"{key}_min": y_min},
+            f
+        )

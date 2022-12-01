@@ -175,7 +175,7 @@ def heatdesalination_wrapper(optimisation: Optimisation) -> Any:
         None,
         None,
         disable_tqdm=True,
-        save_outputs=True,
+        save_outputs=False,
     )
 
 

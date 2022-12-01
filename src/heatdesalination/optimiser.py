@@ -483,9 +483,13 @@ class StorageElectricityFraction(
 
         """
 
-        storage_power_supplied = sum(
-            solution.battery_electricity_suppy_profile.values()
-        )
+        try:
+            storage_power_supplied: float = sum(
+                solution.battery_electricity_suppy_profile.values()
+            )
+        except AttributeError:
+            print("No battery profile for scenario %s", str(scenario))
+            storage_power_supplied = 0
         total_electricity_demand = sum(solution.electricity_demands.values())
         return storage_power_supplied / total_electricity_demand
 
@@ -976,10 +980,10 @@ def run_optimisation(
         additional_arguments,
         method=algorithm,
         bounds=bounds,
-        # callback=_callback_function,
+        callback=_callback_function if not disable_tqdm else None,
         constraints=constraints if constraints is not None else None,
         # options={"disp": True, "maxiter": 10000, "maxfev": 10000, "return_all": True},
-        options={"disp": False, "maxiter": 10000},
+        options={"disp": not disable_tqdm, "maxiter": 10000},
     )
 
     # Calculate the optimisation criterion value and return this also.
