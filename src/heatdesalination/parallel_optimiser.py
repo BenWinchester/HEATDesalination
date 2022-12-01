@@ -42,7 +42,9 @@ from src.heatdesalination.fileparser import INPUTS_DIRECTORY
 
 # PARALLEL_OPTIMISATIONS_FILEPATH:
 #   The file path to the optimisations file.
-PARALLEL_OPTIMISATIONS_FILEPATH: str = os.path.join(INPUTS_DIRECTORY, "optimisations.json")
+PARALLEL_OPTIMISATIONS_FILEPATH: str = os.path.join(
+    INPUTS_DIRECTORY, "optimisations.json"
+)
 
 
 @dataclasses.dataclass
@@ -116,6 +118,17 @@ def _parse_args(args: List[Any]) -> argparse.Namespace:
         type=str,
     )
 
+    # Output:
+    #   The name of the output file to use.
+    parser.add_argument(
+        "--output-file",
+        "--output",
+        "-out",
+        default="parallel_optimisation_results",
+        help="The name of the output file to save the results to.",
+        type=str,
+    )
+
     ######################
     # Optional arguments #
     ######################
@@ -133,9 +146,7 @@ def _parse_args(args: List[Any]) -> argparse.Namespace:
     return parser.parse_args(args)
 
 
-def heatdesalination_wrapper(
-    optimisation: Optimisation
-) -> Any:
+def heatdesalination_wrapper(optimisation: Optimisation) -> Any:
     """
     Run a standard optimisation.
 
@@ -171,6 +182,7 @@ def heatdesalination_wrapper(
 def main(
     logger: Logger,
     optimisations_file: str,
+    output_file: str,
     full_results: bool = True,
 ) -> List[Any]:
     """
@@ -196,7 +208,9 @@ def main(
 
     # Parse the optimisations file.
     with open(optimisations_filepath, "r") as optimisations_file:
-        optimisations = [Optimisation(**entry) for entry in json.load(optimisations_file)]
+        optimisations = [
+            Optimisation(**entry) for entry in json.load(optimisations_file)
+        ]
 
     print(f"Carrying out parallel optimisation{'.'*35} ", end="")
     logger.info("Carrying out %s parallel simulation(s)", len(optimisations))
@@ -222,36 +236,21 @@ def main(
         )
     print(DONE)
 
-    import pdb
-
-
-    pdb.set_trace()
-
     # Convert to a mapping from simulation information.
     print(f"Prepping results map{'.'*49} ", end="")
-    if full_results:
-        results_map = [
-            {
-                "simulation": dataclasses.asdict(optimisations[index]),
-                "results": results[index],
-            }
-            for index in range(len(results))
-        ]
-    else:
-        results_map = [
-            {
-                "simulation": dataclasses.asdict(optimisations[index]),
-                "results": {key: value[1] for key, value in results[index].items()},
-            }
-            for index in range(len(results))
-        ]
+    output_data = [
+        {
+            "optimisation": dataclasses.asdict(optimisations[index]),
+            "result": results[index],
+        }
+        for index in range(len(results))
+    ]
 
     print(DONE)
 
     print(f"Saving output file{'.'*51} ", end="")
-    if output is not None:
-        with open(f"{output}.json", "w") as f:
-            json.dump(results_map, f)
+    with open(f"{output_file}.json", "w") as f:
+        json.dump(output_data, f)
     print(DONE)
 
     print("Exiting")
@@ -268,5 +267,6 @@ if __name__ == "__main__":
     main(
         logger,
         parsed_args.optimisations_file,
+        parsed_args.output_file,
         not parsed_args.partial_results,
     )

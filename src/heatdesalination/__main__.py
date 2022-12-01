@@ -310,7 +310,11 @@ def main(
         optimisation_results: List[Dict[str, Dict[str, Any], List[float]]] = []
 
         for optimisation_parameters in tqdm(
-            optimisations, desc="optimisations", disable=disable_tqdm, leave=True, unit="opt."
+            optimisations,
+            desc="optimisations",
+            disable=disable_tqdm,
+            leave=True,
+            unit="opt.",
         ):
             optimisation_results.append(
                 (

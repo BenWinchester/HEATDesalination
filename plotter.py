@@ -1039,23 +1039,42 @@ with open(f"pv_t_1262_st_318_tank_49_{algorithm}.json", "w") as f:
 
 default_optimisation = {
     "location": "fujairah_united_arab_emirates",
-    (output_key:="output"): "parallel_optimisation_output_1",
-    "profile_types": [
-        "avr", "usd", "lsd", "max", "min"
-    ],
-    (scenario_key:="scenario"): "default",
-    (system_lifetime_key:="system_lifetime"): 25,
+    (output_key := "output"): "parallel_optimisation_output_1",
+    "profile_types": ["avr", "usd", "lsd", "max", "min"],
+    (scenario_key := "scenario"): "default",
+    (system_lifetime_key := "system_lifetime"): 25,
 }
 
 output = "fujairah_uae_{}"
 optimisations = []
 
 for discount_rate in range(-20, 21, 1):
-    scenario = "uae_dr_{}".format(f"{'m_' if discount_rate < 0 else ''}{f'{round(discount_rate/10, 2)}'.replace('.', '').replace('-','')}")
+    scenario = "uae_dr_{}".format(
+        f"{'m_' if discount_rate < 0 else ''}{f'{round(discount_rate/10, 2)}'.replace('.', '').replace('-','')}"
+    )
     optimisation = default_optimisation.copy()
     optimisation[output_key] = output.format(scenario)
     optimisation[scenario_key] = scenario
     optimisations.append(optimisation)
 
-with open(os.path.join("inputs","optimisations.json"), "w") as f:
+with open(os.path.join("inputs", "optimisations.json"), "w") as f:
     json.dump(optimisations, f)
+
+##########################################
+# Post-processing parallel optimisations #
+##########################################
+
+import json
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set_palette("colorblind")
+
+y = [entry["result"][0][1]["average_weather_conditions"][0]["total_cost"] for entry in data]
+y_lsd = [entry["result"][0][1]["lower_standard_deviation_weather_conditions"][0]["total_cost"] for entry in data]
+y_usd  = [entry["result"][0][1]["upper_standard_deviation_weather_conditions"][0]["total_cost"] for entry in data]
+y_min = [min(y_lsd[index], y_usd[index]) for index in range(len(y))]
+y_max = [max(y_lsd[index], y_usd[index]) for index in range(len(y))]
+
+plt.plot(x, y, color="C0")
+plt.fill_between(x, y_min, y_max, color="C0", alpha=0.5)
+plt.show()

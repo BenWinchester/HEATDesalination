@@ -21,7 +21,7 @@ __all__ = ("run_optimisation",)
 
 import abc
 from logging import Logger
-from typing import Any, Dict, List, Tuple
+from typing import Dict, List, Tuple
 
 import numpy
 
@@ -32,7 +32,6 @@ from .__utils__ import (
     CostableComponent,
     FlowRateError,
     OptimisableComponent,
-    OptimisationMode,
     OptimisationParameters,
     Scenario,
     Solution,
@@ -129,9 +128,11 @@ def _total_electricity_supplied(solution: Solution, system_lifetime: int) -> flo
         DAYS_PER_YEAR  # [days/year]
         * system_lifetime  # [year]
         * (
-            sum(solution.battery_electricity_suppy_profile)  # [kWh/day]
-            + sum(solution.grid_electricity_supply_profile)  # [kWh/day]
-            + sum(solution.total_collector_electrical_output_power)  # [kWh/day]
+            sum(solution.battery_electricity_suppy_profile.values())  # [kWh/day]
+            + sum(solution.grid_electricity_supply_profile.values())  # [kWh/day]
+            + sum(
+                solution.total_collector_electrical_output_power.values()
+            )  # [kWh/day]
         )
     )
 
@@ -188,6 +189,72 @@ class Criterion(abc.ABC):
             The value being calculated.
 
         """
+
+class DumpedElectricity(Criterion, criterion_name="dumped_electricity"):
+    """Contains the calculation for the assessment of dumped energy."""
+
+    @classmethod
+    def calculate_value(
+        cls,
+        component_sizes: Dict[CostableComponent | None, float],
+        scenario: Scenario,
+        solution: Solution,
+        system_lifetime: int,
+    ) -> float:
+        """
+        Calculate the total amount of dumped electricity over the system lifetime.
+
+        Inputs:
+            - component_sizes:
+                The sizes of the various components which are costable.
+            - scenario:
+                The scenario being considered.
+            - solution:
+                The solution from running the simulation.
+            - system_lifetime:
+                The lifetime of the system in years.
+
+        Outputs:
+            The dumped electricity over the lifetime of the system.
+
+        """
+
+        return sum(solution.dumped_solar.values()) * DAYS_PER_YEAR * system_lifetime
+
+
+
+class GridElectricityFraction(Criterion, criterion_name="grid_electricity_fraction"):
+    """Contains the calculation for the fraction of electricity from grid."""
+
+    @classmethod
+    def calculate_value(
+        cls,
+        component_sizes: Dict[CostableComponent | None, float],
+        scenario: Scenario,
+        solution: Solution,
+        system_lifetime: int,
+    ) -> float:
+        """
+        Calculate the fraction of electricity that came from the grid.
+
+        Inputs:
+            - component_sizes:
+                The sizes of the various components which are costable.
+            - scenario:
+                The scenario being considered.
+            - solution:
+                The solution from running the simulation.
+            - system_lifetime:
+                The lifetime of the system in years.
+
+        Outputs:
+            The fraction of electricity generated that came from the grid.
+
+        """
+
+        grid_power_supplied = sum(solution.grid_electricity_supply_profile.values())
+        total_electricity_demand = sum(solution.electricity_demands.values())
+        return grid_power_supplied / total_electricity_demand
 
 
 class LCUE(Criterion, criterion_name="lcue"):
@@ -347,6 +414,80 @@ class AuxiliaryHeatingFraction(Criterion, criterion_name="auxiliary_heating_frac
         return 1 - super().calculate_value_map[RenewableHeatingFraction.name](
             component_sizes, scenario, solution, system_lifetime
         )
+
+
+class SolarElectricityFraction(Criterion, criterion_name="solar_electricity_fraction"):
+    """Contains the calculation for the fraction of electricity from solar."""
+
+    @classmethod
+    def calculate_value(
+        cls,
+        component_sizes: Dict[CostableComponent | None, float],
+        scenario: Scenario,
+        solution: Solution,
+        system_lifetime: int,
+    ) -> float:
+        """
+        Calculate the fraction of electricity that came from solar collectors.
+
+        Inputs:
+            - component_sizes:
+                The sizes of the various components which are costable.
+            - scenario:
+                The scenario being considered.
+            - solution:
+                The solution from running the simulation.
+            - system_lifetime:
+                The lifetime of the system in years.
+
+        Outputs:
+            The fraction of electricity generated that came from solar.
+
+        """
+
+        solar_power_supplied = sum(
+            solution.solar_power_supplied.values()
+        )
+        total_electricity_demand = sum(solution.electricity_demands.values())
+        return solar_power_supplied / total_electricity_demand
+
+
+class StorageElectricityFraction(
+    Criterion, criterion_name="storage_electricity_fraction"
+):
+    """Contains the calculation for the fraction of electricity from storage."""
+
+    @classmethod
+    def calculate_value(
+        cls,
+        component_sizes: Dict[CostableComponent | None, float],
+        scenario: Scenario,
+        solution: Solution,
+        system_lifetime: int,
+    ) -> float:
+        """
+        Calculate the fraction of electricity that came from storage.
+
+        Inputs:
+            - component_sizes:
+                The sizes of the various components which are costable.
+            - scenario:
+                The scenario being considered.
+            - solution:
+                The solution from running the simulation.
+            - system_lifetime:
+                The lifetime of the system in years.
+
+        Outputs:
+            The fraction of electricity generated that came from storage.
+
+        """
+
+        storage_power_supplied = sum(
+            solution.battery_electricity_suppy_profile.values()
+        )
+        total_electricity_demand = sum(solution.electricity_demands.values())
+        return storage_power_supplied / total_electricity_demand
 
 
 class TotalCost(Criterion, criterion_name="total_cost"):
@@ -909,9 +1050,20 @@ def run_optimisation(
         solar_thermal_collector: solar_thermal_system_size,
     }
 
-    criterion_value = Criterion.calculate_value_map[
-        optimisation_parameters.target_criterion
-    ](component_sizes, scenario, solution, system_lifetime)
+    # Compute various criteria values.
+    criterion_map = {
+        criterion.name: criterion.calculate_value(
+            component_sizes, scenario, solution, system_lifetime
+        )
+        for criterion in [
+            AuxiliaryHeatingFraction,
+            DumpedElectricity,
+            GridElectricityFraction,
+            SolarElectricityFraction,
+            StorageElectricityFraction,
+            TotalCost,
+        ]
+    }
 
     # Return the value of the criterion along with the result from the simulation.
-    return {optimisation_parameters.target_criterion: criterion_value}, list(optimisation_result.x)
+    return criterion_map, list(optimisation_result.x)

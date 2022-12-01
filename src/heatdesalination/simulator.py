@@ -28,7 +28,7 @@ from tqdm import tqdm
 
 from .__utils__ import (
     DAYS_PER_YEAR,
-    ProfileDegradation,
+    ProfileDegradationType,
     Scenario,
     Solution,
     ZERO_CELCIUS_OFFSET,
@@ -97,44 +97,44 @@ def _calculate_collector_degradation(
     # Degrade the PV and PV-T electrical profiles.
     if scenario.pv:
         solution.pv_electrical_efficiencies[
-            ProfileDegradation.DEGRADED.value
+            ProfileDegradationType.DEGRADED.value
         ] = _degrade(
-            solution.pv_electrical_efficiencies[ProfileDegradation.UNDEGRADED.value],
+            solution.pv_electrical_efficiencies[ProfileDegradationType.UNDEGRADED.value],
             average_degradation_rate,
         )
         solution.pv_electrical_output_power[
-            ProfileDegradation.DEGRADED.value
+            ProfileDegradationType.DEGRADED.value
         ] = _degrade(
-            solution.pv_electrical_output_power[ProfileDegradation.UNDEGRADED.value],
+            solution.pv_electrical_output_power[ProfileDegradationType.UNDEGRADED.value],
             average_degradation_rate,
         )
         solution.pv_system_electrical_output_power[
-            ProfileDegradation.DEGRADED.value
+            ProfileDegradationType.DEGRADED.value
         ] = _degrade(
             solution.pv_system_electrical_output_power[
-                ProfileDegradation.UNDEGRADED.value
+                ProfileDegradationType.UNDEGRADED.value
             ],
             average_degradation_rate,
         )
 
     if scenario.pv_t:
         solution.pv_t_electrical_efficiencies[
-            ProfileDegradation.DEGRADED.value
+            ProfileDegradationType.DEGRADED.value
         ] = _degrade(
-            solution.pv_t_electrical_efficiencies[ProfileDegradation.UNDEGRADED.value],
+            solution.pv_t_electrical_efficiencies[ProfileDegradationType.UNDEGRADED.value],
             average_degradation_rate,
         )
         solution.pv_t_electrical_output_power[
-            ProfileDegradation.DEGRADED.value
+            ProfileDegradationType.DEGRADED.value
         ] = _degrade(
-            solution.pv_t_electrical_output_power[ProfileDegradation.UNDEGRADED.value],
+            solution.pv_t_electrical_output_power[ProfileDegradationType.UNDEGRADED.value],
             average_degradation_rate,
         )
         solution.pv_t_system_electrical_output_power[
-            ProfileDegradation.DEGRADED.value
+            ProfileDegradationType.DEGRADED.value
         ] = _degrade(
             solution.pv_t_system_electrical_output_power[
-                ProfileDegradation.UNDEGRADED.value
+                ProfileDegradationType.UNDEGRADED.value
             ],
             average_degradation_rate,
         )
@@ -515,7 +515,7 @@ def _calculate_storage_profile(
     # Determine the total solar generation.
     total_collector_generation_profile = (
         solution.total_collector_electrical_output_power[
-            ProfileDegradation.DEGRADED.value
+            ProfileDegradationType.DEGRADED.value
         ]
     )
 
@@ -844,24 +844,24 @@ def run_simulation(
         electricity_demands,
         hot_water_demand_temperatures,
         hot_water_demand_volumes,
-        {ProfileDegradation.UNDEGRADED.value: pv_electrical_efficiencies}
+        {ProfileDegradationType.UNDEGRADED.value: pv_electrical_efficiencies}
         if scenario.pv
         else None,
-        {ProfileDegradation.UNDEGRADED.value: pv_electrical_output_power}
+        {ProfileDegradationType.UNDEGRADED.value: pv_electrical_output_power}
         if scenario.pv
         else None,
-        {ProfileDegradation.UNDEGRADED.value: pv_system_electrical_output_power}
+        {ProfileDegradationType.UNDEGRADED.value: pv_system_electrical_output_power}
         if scenario.pv
         else None,
-        {ProfileDegradation.UNDEGRADED.value: pv_t_electrical_efficiencies}
+        {ProfileDegradationType.UNDEGRADED.value: pv_t_electrical_efficiencies}
         if scenario.pv_t
         else None,
-        {ProfileDegradation.UNDEGRADED.value: pv_t_electrical_output_power}
+        {ProfileDegradationType.UNDEGRADED.value: pv_t_electrical_output_power}
         if scenario.pv_t
         else None,
         pv_t_htf_output_temperatures if scenario.pv_t else None,
         pv_t_reduced_temperatures if scenario.pv_t else None,
-        {ProfileDegradation.UNDEGRADED.value: pv_t_system_electrical_output_power}
+        {ProfileDegradationType.UNDEGRADED.value: pv_t_system_electrical_output_power}
         if scenario.pv_t
         else None,
         pv_t_thermal_efficiencies if scenario.pv_t else None,
@@ -1047,7 +1047,7 @@ def determine_steady_state_simulation(
     # Determine the dumped solar energy.
     dumped_solar = {
         hour: solution.total_collector_electrical_output_power[
-            ProfileDegradation.DEGRADED.value
+            ProfileDegradationType.DEGRADED.value
         ][hour]
         - solar_power_supplied[hour]
         - (

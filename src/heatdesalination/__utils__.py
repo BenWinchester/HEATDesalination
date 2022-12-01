@@ -46,7 +46,7 @@ __all__ = (
     "LONGITUDE",
     "NAME",
     "parse_hpc_args_and_runs",
-    "ProfileDegradation",
+    "ProfileDegradationType",
     "ProfileType",
     "read_yaml",
     "reduced_temperature",
@@ -665,7 +665,7 @@ class OptimisationParameters:
         )
 
 
-class ProfileDegradation(enum.Enum):
+class ProfileDegradationType(enum.Enum):
     """
     Denotes whether a profile is degraded.
 
@@ -1068,15 +1068,15 @@ class Solution(NamedTuple):
     electricity_demands: Dict[int, float]
     hot_water_demand_temperature: Dict[int, float | None]
     hot_water_demand_volume: Dict[int, float | None]
-    pv_electrical_efficiencies: Dict[ProfileDegradation, Dict[int, float | None]]
-    pv_electrical_output_power: Dict[ProfileDegradation, Dict[int, float | None]]
-    pv_system_electrical_output_power: Dict[ProfileDegradation, Dict[int, float | None]]
-    pv_t_electrical_efficiencies: Dict[ProfileDegradation, Dict[int, float | None]]
-    pv_t_electrical_output_power: Dict[ProfileDegradation, Dict[int, float | None]]
+    pv_electrical_efficiencies: Dict[ProfileDegradationType, Dict[int, float | None]]
+    pv_electrical_output_power: Dict[ProfileDegradationType, Dict[int, float | None]]
+    pv_system_electrical_output_power: Dict[ProfileDegradationType, Dict[int, float | None]]
+    pv_t_electrical_efficiencies: Dict[ProfileDegradationType, Dict[int, float | None]]
+    pv_t_electrical_output_power: Dict[ProfileDegradationType, Dict[int, float | None]]
     pv_t_htf_output_temperatures: Dict[int, float]
     pv_t_reduced_temperatures: Dict[int, float | None]
     pv_t_system_electrical_output_power: Dict[
-        ProfileDegradation, Dict[int, float | None]
+        ProfileDegradationType, Dict[int, float | None]
     ]
     pv_t_thermal_efficiencies: Dict[int, float | None]
     solar_thermal_htf_output_temperatures: Dict[int, float]
@@ -1091,7 +1091,7 @@ class Solution(NamedTuple):
     dumped_solar: Dict[int, float] | None = None
     grid_electricity_supply_profile: Dict[int, float | None] | None = None
     solar_power_supplied: Dict[int, float] | None = None
-    output_power_map: Dict[ProfileDegradation, Dict[int, float]] | None = None
+    output_power_map: Dict[ProfileDegradationType, Dict[int, float]] | None = None
 
     @property
     def renewable_heating_fraction(self) -> Dict[int, float]:
@@ -1124,7 +1124,7 @@ class Solution(NamedTuple):
     @property
     def total_collector_electrical_output_power(
         self,
-    ) -> Dict[ProfileDegradation, Dict[int, float]]:
+    ) -> Dict[ProfileDegradationType, Dict[int, float]]:
         """
         The total electrical output power at each time step.
 
@@ -1138,14 +1138,14 @@ class Solution(NamedTuple):
             return self.output_power_map
 
         output_power_map: DefaultDict[
-            ProfileDegradation, Dict[int, float]
+            ProfileDegradationType, Dict[int, float]
         ] = defaultdict(lambda: defaultdict(float))
 
         pv = self.pv_system_electrical_output_power is not None
         pvt = self.pv_t_system_electrical_output_power is not None
 
         # Loop through the profiles.
-        for profile in ProfileDegradation:
+        for profile in ProfileDegradationType:
 
             # Add the output for each hour for which it is not None.
             for hour in range(24):
@@ -1227,10 +1227,10 @@ class Solution(NamedTuple):
                 for key, value in self.tank_temperatures.items()
             },
             "Total degraded collector electrical output power / kW": self.total_collector_electrical_output_power[
-                ProfileDegradation.DEGRADED.value
+                ProfileDegradationType.DEGRADED.value
             ],
             "Total undegraded collector electrical output power / kW": self.total_collector_electrical_output_power[
-                ProfileDegradation.UNDEGRADED.value
+                ProfileDegradationType.UNDEGRADED.value
             ],
         }
 
@@ -1239,22 +1239,22 @@ class Solution(NamedTuple):
             output_information_dict.update(
                 {
                     "Undegraded PV electric efficiencies": self.pv_electrical_efficiencies[
-                        ProfileDegradation.UNDEGRADED.value
+                        ProfileDegradationType.UNDEGRADED.value
                     ],
                     "Degraded PV electric efficiencies": self.pv_electrical_efficiencies[
-                        ProfileDegradation.DEGRADED.value
+                        ProfileDegradationType.DEGRADED.value
                     ],
                     "Undegraded PV electric output power / kW": self.pv_electrical_output_power[
-                        ProfileDegradation.UNDEGRADED.value
+                        ProfileDegradationType.UNDEGRADED.value
                     ],
                     "Degraded PV electric output power / kW": self.pv_electrical_output_power[
-                        ProfileDegradation.DEGRADED.value
+                        ProfileDegradationType.DEGRADED.value
                     ],
                     "Undegraded Total PV electric power produced / kW": self.pv_system_electrical_output_power[
-                        ProfileDegradation.UNDEGRADED.value
+                        ProfileDegradationType.UNDEGRADED.value
                     ],
                     "Degraded Total PV electric power produced / kW": self.pv_system_electrical_output_power[
-                        ProfileDegradation.DEGRADED.value
+                        ProfileDegradationType.DEGRADED.value
                     ],
                 }
             )
@@ -1264,22 +1264,22 @@ class Solution(NamedTuple):
             output_information_dict.update(
                 {
                     "Undegraded PV-T electric efficiencies": self.pv_t_electrical_efficiencies[
-                        ProfileDegradation.UNDEGRADED.value
+                        ProfileDegradationType.UNDEGRADED.value
                     ],
                     "Degraded PV-T electric efficiencies": self.pv_t_electrical_efficiencies[
-                        ProfileDegradation.DEGRADED.value
+                        ProfileDegradationType.DEGRADED.value
                     ],
                     "Undegraded PV-T electric output power / kW": self.pv_t_electrical_output_power[
-                        ProfileDegradation.UNDEGRADED.value
+                        ProfileDegradationType.UNDEGRADED.value
                     ],
                     "Degraded PV-T electric output power / kW": self.pv_t_electrical_output_power[
-                        ProfileDegradation.DEGRADED.value
+                        ProfileDegradationType.DEGRADED.value
                     ],
                     "Undegraded Total PV-T electric power produced / kW": self.pv_t_system_electrical_output_power[
-                        ProfileDegradation.UNDEGRADED.value
+                        ProfileDegradationType.UNDEGRADED.value
                     ],
                     "Degraded Total PV-T electric power produced / kW": self.pv_t_system_electrical_output_power[
-                        ProfileDegradation.DEGRADED.value
+                        ProfileDegradationType.DEGRADED.value
                     ],
                     "PV-T output temperature / degC": {
                         key: value - ZERO_CELCIUS_OFFSET
