@@ -9,8 +9,609 @@
 ################################################################################
 
 scenarios:
-  - name: default
+  - name: default_uae
     battery: !!str default_battery
+    discount_rate: !!float 0 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_01
+    battery: !!str default_battery
+    discount_rate: !!float -0.01 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_02
+    battery: !!str default_battery
+    discount_rate: !!float -0.02 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_03
+    battery: !!str default_battery
+    discount_rate: !!float -0.03 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_04
+    battery: !!str default_battery
+    discount_rate: !!float -0.04 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_05
+    battery: !!str default_battery
+    discount_rate: !!float -0.05 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_06
+    battery: !!str default_battery
+    discount_rate: !!float -0.06 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_07
+    battery: !!str default_battery
+    discount_rate: !!float -0.07 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_08
+    battery: !!str default_battery
+    discount_rate: !!float -0.08 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_09
+    battery: !!str default_battery
+    discount_rate: !!float -0.09 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_10
+    battery: !!str default_battery
+    discount_rate: !!float -0.1 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_11
+    battery: !!str default_battery
+    discount_rate: !!float -0.11 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_12
+    battery: !!str default_battery
+    discount_rate: !!float -0.12 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_13
+    battery: !!str default_battery
+    discount_rate: !!float -0.13 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_14
+    battery: !!str default_battery
+    discount_rate: !!float -0.14 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_15
+    battery: !!str default_battery
+    discount_rate: !!float -0.15 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_16
+    battery: !!str default_battery
+    discount_rate: !!float -0.16 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_17
+    battery: !!str default_battery
+    discount_rate: !!float -0.17 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_18
+    battery: !!str default_battery
+    discount_rate: !!float -0.18 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_19
+    battery: !!str default_battery
+    discount_rate: !!float -0.19 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_m_20
+    battery: !!str default_battery
+    discount_rate: !!float -0.20 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_01
+    battery: !!str default_battery
+    discount_rate: !!float 0.01 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_02
+    battery: !!str default_battery
+    discount_rate: !!float 0.02 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_03
+    battery: !!str default_battery
+    discount_rate: !!float 0.03 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_04
+    battery: !!str default_battery
+    discount_rate: !!float 0.04 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_05
+    battery: !!str default_battery
+    discount_rate: !!float 0.05 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_06
+    battery: !!str default_battery
+    discount_rate: !!float 0.06 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_07
+    battery: !!str default_battery
+    discount_rate: !!float 0.07 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_08
+    battery: !!str default_battery
+    discount_rate: !!float 0.08 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_09
+    battery: !!str default_battery
+    discount_rate: !!float 0.09 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_10
+    battery: !!str default_battery
+    discount_rate: !!float 0.1 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_11
+    battery: !!str default_battery
+    discount_rate: !!float 0.11 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_12
+    battery: !!str default_battery
+    discount_rate: !!float 0.12 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_13
+    battery: !!str default_battery
+    discount_rate: !!float 0.13 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_14
+    battery: !!str default_battery
+    discount_rate: !!float 0.14 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_15
+    battery: !!str default_battery
+    discount_rate: !!float 0.15 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_16
+    battery: !!str default_battery
+    discount_rate: !!float 0.16 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_17
+    battery: !!str default_battery
+    discount_rate: !!float 0.17 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_18
+    battery: !!str default_battery
+    discount_rate: !!float 0.18 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_19
+    battery: !!str default_battery
+    discount_rate: !!float 0.19 # [fraction/annum] Fractional discount per annum
+    grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
+    # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
+    heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1
+    heat_pump_efficiency: !!float 0.5  # Defined between 0 and 1, usually 0.5
+    hot_water_tank: !!str hot_water_tank  # The name of the hot-water tank
+    htf_heat_capacity: !!float 4182  # [J/kg*K]
+    plant: !!str med  # The name of the desalination plant to include
+    pv: dusol_ds60280_m  # dusol_ds60275_m  # The name of the PV panel to include or "off"
+    pv_degradation_rate: !!float 0.011 # [%/year]
+    pv_t: !!str dualsun_spring_insulated  # The PV-T collector to include or "off"
+    # pv_t: off
+    solar_thermal: !!str mean_fpc  # The solar-thermal collector or "off"
+  - name: uae_dr_20
+    battery: !!str default_battery
+    discount_rate: !!float 0.20 # [fraction/annum] Fractional discount per annum
     grid_cost: !!float 0.1 # [$/kWh] Cost of alternative electricity
     # grid_cost: !!float 10 # [$/kWh] Cost of alternative electricity
     heat_exchanger_efficiency: !!float 0.4  # Defined between 0 and 1

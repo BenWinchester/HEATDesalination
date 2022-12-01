@@ -87,7 +87,7 @@ def _total_cost(
     # )
 
     # UAE-specific code
-    discount_rate = 0
+    discount_rate = scenario.discount_rate
     monthly_grid_consumption = (
         sum(solution.grid_electricity_supply_profile.values()) * 30
     )  # [kWh/month]
@@ -705,7 +705,7 @@ def run_optimisation(
     system_lifetime: int,
     *,
     disable_tqdm: bool = True,
-) -> Any:
+) -> Tuple[Dict[str, float], List[float]]:
     """
     Determine the optimum system conditions.
 
@@ -761,9 +761,9 @@ def run_optimisation(
         # algorithm = "Powell"
         # algorithm = "CG"
         # algorithm = "BFGS"
-        # algorithm = "L-BFGS-B"
+        algorithm = "L-BFGS-B"
         # algorithm = "TNC"
-        algorithm = "COBYLA"
+        # algorithm = "COBYLA"
         # algorithm = "SLSQP"
         # algorithm = "trust-constr"
         constraints = None
@@ -829,13 +829,89 @@ def run_optimisation(
     #     minimizer_kwargs={"args": additional_arguments}
     # )
 
-    return optimize.minimize(
+    optimisation_result = optimize.minimize(
         _simulate_and_calculate_criterion,
         initial_guess_vector,
         additional_arguments,
         method=algorithm,
         bounds=bounds,
-        callback=_callback_function,
+        # callback=_callback_function,
         constraints=constraints if constraints is not None else None,
-        options={"disp": True, "maxiter": 10000, "maxfev": 10000, "return_all": True},
+        # options={"disp": True, "maxiter": 10000, "maxfev": 10000, "return_all": True},
+        options={"disp": False, "maxiter": 10000},
     )
+
+    # Calculate the optimisation criterion value and return this also.
+    parameter_list: List[float] = list(optimisation_result.x)
+
+    # Setup input parameters from the vector.
+    battery_capacity: float = (
+        optimisation_parameters.fixed_battery_capacity_value
+        if optimisation_parameters.fixed_battery_capacity_value is not None
+        else parameter_list.pop(0)
+    )
+    buffer_tank_capacity: float = (
+        optimisation_parameters.fixed_buffer_tank_capacity_value
+        if optimisation_parameters.fixed_buffer_tank_capacity_value is not None
+        else parameter_list.pop(0)
+    )
+    buffer_tank.capacity = buffer_tank_capacity * 1000
+
+    # Collector parameters
+    htf_mass_flow_rate: float = (
+        optimisation_parameters.fixed_mass_flow_rate_value
+        if optimisation_parameters.fixed_mass_flow_rate_value is not None
+        else parameter_list.pop(0)
+    )
+    pv_system_size: float = (
+        optimisation_parameters.fixed_pv_value
+        if optimisation_parameters.fixed_pv_value is not None
+        else parameter_list.pop(0)
+    )
+    pv_t_system_size: float = (
+        optimisation_parameters.fixed_pv_t_value
+        if optimisation_parameters.fixed_pv_t_value is not None
+        else parameter_list.pop(0)
+    )
+    solar_thermal_system_size: float = (
+        optimisation_parameters.fixed_st_value
+        if optimisation_parameters.fixed_st_value is not None
+        else parameter_list.pop(0)
+    )
+
+    # Carry out a simulation.
+    solution = determine_steady_state_simulation(
+        ambient_temperatures,
+        battery,
+        battery_capacity,
+        buffer_tank,
+        desalination_plant,
+        htf_mass_flow_rate,
+        hybrid_pv_t_panel,
+        logger,
+        pv_panel,
+        pv_system_size,
+        pv_t_system_size,
+        scenario,
+        solar_irradiances,
+        solar_thermal_collector,
+        solar_thermal_system_size,
+        system_lifetime,
+        disable_tqdm=disable_tqdm,
+    )
+
+    # Assemble the component sizes mapping.
+    component_sizes: Dict[CostableComponent, float] = {
+        battery: battery_capacity * (1 + solution.battery_replacements),
+        buffer_tank: buffer_tank_capacity,
+        hybrid_pv_t_panel: pv_t_system_size,
+        pv_panel: pv_system_size,
+        solar_thermal_collector: solar_thermal_system_size,
+    }
+
+    criterion_value = Criterion.calculate_value_map[
+        optimisation_parameters.target_criterion
+    ](component_sizes, scenario, solution, system_lifetime)
+
+    # Return the value of the criterion along with the result from the simulation.
+    return {optimisation_parameters.target_criterion: criterion_value}, list(optimisation_result.x)

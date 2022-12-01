@@ -20,15 +20,19 @@ and optimise the desalination systems.
 import os
 import sys
 
-from typing import Dict, List
+from typing import Any, Dict, List
+
+import json
 
 from tqdm import tqdm
 
 from .__utils__ import CLI_TO_PROFILE_TYPE, ProfileType, Solution, get_logger
 from .argparser import MissingParametersError, parse_args, validate_args
 from .fileparser import parse_input_files
-from .optimiser import Criterion, OptimisableComponent, run_optimisation, TotalCost
+from .optimiser import Criterion, run_optimisation, TotalCost
 from .simulator import determine_steady_state_simulation
+
+__all__ = ("main",)
 
 # __version__:
 #   The version of the software being used.
@@ -41,6 +45,14 @@ ANALYSIS_REQUESTS = {TotalCost.name}
 # SIMULATION_OUTPUTS_DIRECTORY:
 #   The outputs dierctory for simulations.
 SIMULATION_OUTPUTS_DIRECTORY: str = "simulation_outputs"
+
+# OPTIMISATION_OUTPUTS_DIRECTORY:
+#   The outputs directory for optimisations.
+OPTIMISATION_OUTPUTS_DIRECTORY: str = "optimisation_outputs"
+
+# OPTIMISATION_PARAMETERS_KEYWORD:
+#   Keyword for saving optimisation parameters.
+OPTIMISATION_PARAMETERS: str = "parameters"
 
 
 def save_simulation(
@@ -74,6 +86,33 @@ def save_simulation(
         output_data.to_csv(output_file)
 
 
+def save_optimisation(
+    optimisation_outputs: List[Any],
+    output: str,
+) -> None:
+    """
+    Save the outputs from the optimisation run.
+
+    Inputs:
+        - optimisation_results:
+            The results from the optimisation.
+        - output:
+            The name of the output file to use.
+
+    """
+
+    # Create the outputs directory if it doesn't exist already.
+    os.makedirs(OPTIMISATION_OUTPUTS_DIRECTORY, exist_ok=True)
+
+    # Write to the output file.
+    with open(
+        f"{os.path.join(OPTIMISATION_OUTPUTS_DIRECTORY, output)}.json",
+        "w",
+        encoding="UTF-8",
+    ) as output_file:
+        json.dump(optimisation_outputs, output_file)
+
+
 def main(
     location: str,
     profile_types: List[ProfileType],
@@ -92,7 +131,7 @@ def main(
     *,
     disable_tqdm: bool = False,
     save_outputs: bool = True,
-) -> None:
+) -> Any:
     """
     Main module responsible for the flow of the HEATDesalination program.
 
@@ -135,6 +174,9 @@ def main(
         - save_outputs:
             Whether to save the outputs from the simulation/optimisation (True) or
             return them (False).
+
+    Outputs:
+        - The result of the optimisations or simulations.
 
     """
 
@@ -264,29 +306,45 @@ def main(
         }
 
     elif optimisation:
-        for optimisation_parameters in tqdm(
-            optimisations, desc="optimisations", leave=True, unit="opt."
-        ):
-            for profile_type in tqdm(
-                profile_types, desc="profile type", leave=False, unit="profile"
-            ):
-                result = run_optimisation(
-                    ambient_temperatures[profile_type],
-                    battery,
-                    buffer_tank,
-                    desalination_plant,
-                    hybrid_pv_t_panel,
-                    logger,
-                    optimisation_parameters,
-                    pv_panel,
-                    scenario,
-                    solar_irradiances[profile_type],
-                    solar_thermal_collector,
-                    system_lifetime,
-                )
-                import pdb
+        # Setup a variable for storing the optimisation results.
+        optimisation_results: List[Dict[str, Dict[str, Any], List[float]]] = []
 
-                pdb.set_trace(header=f"Result: {result.x}")
+        for optimisation_parameters in tqdm(
+            optimisations, desc="optimisations", disable=disable_tqdm, leave=True, unit="opt."
+        ):
+            optimisation_results.append(
+                (
+                    {OPTIMISATION_PARAMETERS: optimisation_parameters.asdict},
+                    {
+                        profile_type.value: run_optimisation(
+                            ambient_temperatures[profile_type],
+                            battery,
+                            buffer_tank,
+                            desalination_plant,
+                            hybrid_pv_t_panel,
+                            logger,
+                            optimisation_parameters,
+                            pv_panel,
+                            scenario,
+                            solar_irradiances[profile_type],
+                            solar_thermal_collector,
+                            system_lifetime,
+                        )
+                        for profile_type in tqdm(
+                            profile_types,
+                            desc="profile type",
+                            disable=disable_tqdm,
+                            leave=False,
+                            unit="profile",
+                        )
+                    },
+                )
+            )
+
+        if save_outputs:
+            save_optimisation(optimisation_results, output)
+
+        return optimisation_results
     else:
         logger.error("Neither simulation or optimisation was specified. Quitting.")
         raise Exception(

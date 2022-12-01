@@ -388,6 +388,21 @@ class OptimisationParameters:
     _criterion: Dict[str, OptimisationMode]
 
     @property
+    def asdict(self) -> Dict[str, Any]:
+        """
+        Return a dictionary representing the class.
+
+        Outputs:
+            A dictionary representing the class.
+
+        """
+
+        return {
+            BOUNDS: {key.value: value for key, value in self.bounds.items()},
+            CONSTRAINTS: self.constraints,
+        }
+
+    @property
     def fixed_battery_capacity_value(self) -> float | None:
         """
         The initial guess for the `battery_capacity` if provided, else `None`.
@@ -823,6 +838,9 @@ class Scenario:
     .. attribute:: solar_thermal_panel_name
         The name of the solar-thermal panel being considered.
 
+    .. attribute:: discount_rate
+        The discount rate for grid electricity if provided, else 0.
+
     """
 
     battery: str
@@ -837,6 +855,7 @@ class Scenario:
     _pv: bool | str
     _pv_t: bool | str
     _solar_thermal: bool | str
+    discount_rate: float = 0
 
     @property
     def pv(self) -> bool:  # pylint: disable=invalid-name

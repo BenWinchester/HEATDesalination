@@ -1,0 +1,40 @@
+[
+    {
+        "battery_capacity": 115.6,
+        "buffer_tank_capacity": 49,
+        "mass_flow_rate": 20,
+        "pv_system_size": 4592.6,
+        "pv_t_system_size": 1262,
+        "solar_thermal_system_size": 318,
+        "scenario": "default",
+        "start_hour": 8,
+        "system_lifetime": 25,
+        "output": null,
+        "profile_types": [
+            "avr",
+            "usd",
+            "lsd",
+            "max",
+            "min"
+        ]
+    },
+    {
+        "battery_capacity": 1177,
+        "buffer_tank_capacity": 49,
+        "mass_flow_rate": 20,
+        "pv_system_size": 4091.87,
+        "pv_t_system_size": 1262,
+        "solar_thermal_system_size": 318,
+        "scenario": "default",
+        "start_hour": 8,
+        "system_lifetime": 25,
+        "output": null,
+        "profile_types": [
+            "avr",
+            "usd",
+            "lsd",
+            "max",
+            "min"
+        ]
+    }
+]

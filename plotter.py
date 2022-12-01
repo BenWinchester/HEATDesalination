@@ -582,11 +582,6 @@ costs = [
 # palette = sns.color_palette("blend:#0173B2,#64B5CD", as_cmap=True)
 # palette = sns.color_palette("rocket", as_cmap=True)
 
-# Open all vec files
-with open("pv_t_1262_st_318_tank_49_nelder_mead_vecs.json", "r") as f:
-    nm_vecs = json.load(f)
-
-
 pv_sizes = [entry["simulation"]["pv_system_size"] for entry in data]
 battery_capacities = [entry["simulation"]["battery_capacity"] for entry in data]
 
@@ -632,7 +627,7 @@ levels = np.array(
 
 # Generate a color mapping of the levels we've specified
 fig, ax = plt.subplots()
-cmap = sns.color_palette("Oranges", len(levels), as_cmap=True)
+cmap = sns.color_palette("PuBu", len(levels), as_cmap=True)
 cpf = ax.contourf(X, Y, Z, len(levels), cmap=cmap)
 
 # Set all level lines to black
@@ -648,35 +643,153 @@ fig.colorbar(cpf, ax=ax, label="Total lifetime cost / MUSD")
 
 min_cost_index = {cost: index for index, cost in enumerate(costs)}[min(costs)]
 
-scatter_palette = sns.color_palette("colorblind")
+scatter_palette = sns.color_palette("colorblind", n=7)
+
+# Open all vec files and scatter their journeys
+# plt.scatter(
+#     battery_capacities[min_cost_index],
+#     pv_sizes[min_cost_index],
+#     marker="x",
+#     color="#A40000",
+#     label="optimum point",
+#     linewidths=2.5,
+#     s=150,
+#     zorder=1,
+# )
+
+# Nelder-Mead
+with open("pv_t_1262_st_318_tank_49_nelder_mead_vecs.json", "r") as f:
+    nm_vecs = json.load(f)
 
 plt.scatter(
-    battery_capacities[min_cost_index],
-    pv_sizes[min_cost_index],
+    nm_vecs[-1][0],
+    nm_vecs[-1][1],
     marker="x",
-    color="#A40000",
-    label="optimum point",
-    linewidths=2.5,
-    s=150,
-    zorder=1,
-)
-plt.scatter(
-    [entry[0] for entry in nm_vecs if entry[0] <= 1000],
-    [entry[1] for entry in nm_vecs if entry[0] <= 1000],
-    marker="x",
-    color="#03507E",
+    color="C0",
     label="Nelder-Mead",
     linewidths=2.5,
     s=150,
     zorder=1,
 )
 plt.plot(
-    nm_vecs[-1][0],
-    nm_vecs[-1][1],
-    color="#03507E",
+    [entry[0] for entry in nm_vecs],
+    [entry[1] for entry in nm_vecs],
+    color="C0",
+    marker="x",
+)
+
+# Powell
+with open("pv_t_1262_st_318_tank_49_powell.json", "r") as f:
+    powell_vecs = json.load(f)
+
+plt.scatter(
+    powell_vecs[-1][0],
+    powell_vecs[-1][1],
+    marker="x",
+    color="C1",
+    label="Powell",
+    linewidths=2.5,
+    s=150,
+    zorder=1,
+)
+plt.plot(
+    [entry[0] for entry in powell_vecs],
+    [entry[1] for entry in powell_vecs],
+    color="C1",
+    marker="x",
+)
+
+# CG
+with open("pv_t_1262_st_318_tank_49_cg.json", "r") as f:
+    cg_vecs = json.load(f)
+
+plt.scatter(
+    cg_vecs[-1][0],
+    cg_vecs[-1][1],
+    marker="x",
+    color="C2",
+    label="CG",
+    linewidths=2.5,
+    s=150,
+    zorder=1,
+)
+plt.plot(
+    [entry[0] for entry in cg_vecs],
+    [entry[1] for entry in cg_vecs],
+    color="C2",
+    marker="x",
+)
+
+# BFGS
+with open("pv_t_1262_st_318_tank_49_bfgs.json", "r") as f:
+    bfgs_vecs = json.load(f)
+
+plt.scatter(
+    bfgs_vecs[-1][0],
+    bfgs_vecs[-1][1],
+    marker="x",
+    color="C3",
+    label="BFGS",
+    linewidths=2.5,
+    s=150,
+    zorder=1,
+)
+plt.plot(
+    [entry[0] for entry in bfgs_vecs],
+    [entry[1] for entry in bfgs_vecs],
+    color="C3",
+    marker="x",
+)
+
+# L-BFGS-B
+with open("pv_t_1262_st_318_tank_49_l_bfgs_g.json", "r") as f:
+    l_bfgs_g_vecs = json.load(f)
+
+plt.scatter(
+    l_bfgs_g_vecs[-1][0],
+    l_bfgs_g_vecs[-1][1],
+    marker="x",
+    color="C4",
+    label="L-BFGS-B",
+    linewidths=2.5,
+    s=150,
+    zorder=1,
+)
+plt.plot(
+    [entry[0] for entry in l_bfgs_g_vecs],
+    [entry[1] for entry in l_bfgs_g_vecs],
+    color="C4",
+    marker="x",
+)
+
+# TNC
+with open("pv_t_1262_st_318_tank_49_tnc.json", "r") as f:
+    tnc_vecs = json.load(f)
+
+plt.scatter(
+    tnc_vecs[-1][0],
+    tnc_vecs[-1][1],
+    marker="x",
+    color="C5",
+    label="TNC",
+    linewidths=2.5,
+    s=150,
+    zorder=1,
+)
+plt.plot(
+    [entry[0] for entry in tnc_vecs],
+    [entry[1] for entry in tnc_vecs],
+    color="C5",
+    marker="x",
 )
 
 plt.legend()
+
+plt.xlabel("Storage capacity / kWh")
+plt.ylabel("Number of PV panels")
+plt.xlim(min(battery_capacities), max(battery_capacities))
+plt.ylim(min(pv_sizes), max(pv_sizes))
+
 plt.show()
 
 #############
@@ -920,3 +1033,29 @@ vecs = [list(entry) for entry in result.allvecs]
 with open(f"pv_t_1262_st_318_tank_49_{algorithm}.json", "w") as f:
     json.dump(vecs, f)
 
+##########################
+# Creating optimisations #
+##########################
+
+default_optimisation = {
+    "location": "fujairah_united_arab_emirates",
+    (output_key:="output"): "parallel_optimisation_output_1",
+    "profile_types": [
+        "avr", "usd", "lsd", "max", "min"
+    ],
+    (scenario_key:="scenario"): "default",
+    (system_lifetime_key:="system_lifetime"): 25,
+}
+
+output = "fujairah_uae_{}"
+optimisations = []
+
+for discount_rate in range(-20, 21, 1):
+    scenario = "uae_dr_{}".format(f"{'m_' if discount_rate < 0 else ''}{f'{round(discount_rate/10, 2)}'.replace('.', '').replace('-','')}")
+    optimisation = default_optimisation.copy()
+    optimisation[output_key] = output.format(scenario)
+    optimisation[scenario_key] = scenario
+    optimisations.append(optimisation)
+
+with open(os.path.join("inputs","optimisations.json"), "w") as f:
+    json.dump(optimisations, f)

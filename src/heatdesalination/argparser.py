@@ -109,7 +109,7 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
     #   The start hour at which to being modelling.
     required_arguments.add_argument(
         "--start-hour",
-        "--start",
+        "-sh",
         help="The start time for the desalination plant to begin operation.",
         type=int,
     )
@@ -132,7 +132,7 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
     )
     simulation_arguments.add_argument(
         "--buffer-tank-capacity",
-        "-bt",
+        "-t",
         help="The capacity of the installed buffer tank, measured in kg or litres.",
         type=float,
     )

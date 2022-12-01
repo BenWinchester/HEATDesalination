@@ -1,6 +1,6 @@
 #!/usr/bin/python3.10
 ########################################################################################
-# parallel_simulator.py - Module for enabling parallel simulations.                    #
+# parallel_optimiser.py - Module for enabling parallel optimisations.                    #
 #                                                                                      #
 # Author: Ben Winchester                                                               #
 # Copyright: Ben Winchester, 2022                                                      #
@@ -10,7 +10,7 @@
 ########################################################################################
 
 """
-parallel_simulator.py - The simulation module for the HEATDeslination program.
+parallel_optimiser.py - The simulation module for the HEATDeslination program.
 
 Module for enabling external scripts for carrying out multiple optimisations for a
 given location based on some input files.
@@ -40,24 +40,18 @@ from src.heatdesalination.__utils__ import (
 )
 from src.heatdesalination.fileparser import INPUTS_DIRECTORY
 
-# SIMULATIONS_FILEPATH:
-#   The file path to the simulations file.
-SIMULATIONS_FILEPATH: str = os.path.join(INPUTS_DIRECTORY, "simulations.json")
+# PARALLEL_OPTIMISATIONS_FILEPATH:
+#   The file path to the optimisations file.
+PARALLEL_OPTIMISATIONS_FILEPATH: str = os.path.join(INPUTS_DIRECTORY, "optimisations.json")
 
 
 @dataclasses.dataclass
-class Simulation:
+class Optimisation:
     """
-    Represents a simulation that can be carried out.
+    Represents an optimisation that can be carried out in parallel.
 
-    .. attribute:: battery_capacity
-        The battery capacity in kWh.
-
-    .. attribute:: buffer_tank_capacity
-        The buffer-tank capacity in litres.
-
-    .. attribute:: mass_flow_rate
-        The mass flow rate in kg/s.
+    .. attribute:: location
+        The name of the location to use.
 
     .. attribute:: output
         The name of the output file to use.
@@ -65,36 +59,18 @@ class Simulation:
     .. attribute:: profile_types
         The list of profile types to be carried out.
 
-    .. attribute:: pv_system_size
-        The size of the PV system in numbers of collectors.
-
-    .. attribute:: pv_t_system_size
-        The size of the PV-T system in numbers of collectors.
-
     .. attribute:: scenario
         The name of the scenario to use.
-
-    .. attribute:: solar_thermal_system_size
-        The size of the solar-thermal system in numbers of collectors.
-
-    .. attribute:: start_hour
-        The start hour for the desalination plant.
 
     .. attribute:: system_lifetime
         The lifetime of the system in years.
 
     """
 
-    battery_capacity: float
-    buffer_tank_capacity: float
-    mass_flow_rate: float
+    location: str
     output: str
     profile_types: List[str]
-    pv_system_size: float
-    pv_t_system_size: float
     scenario: str
-    solar_thermal_system_size: float
-    start_hour: int
     system_lifetime: int
 
     @property
@@ -130,34 +106,13 @@ def _parse_args(args: List[Any]) -> argparse.Namespace:
     # Required arguments #
     ######################
 
-    # Location/Weather:
-    #   The weather information to use.
-    required_arguments.add_argument(
-        "--location",
-        "--weather",
-        "-l",
-        "-w",
-        help="The name of the weather inputs file to use.",
-        type=str,
-    )
-
-    # Output:
-    #   The name of the file to save the output results from the simulations to.
+    # Optimisations:
+    #   The name of the optimisations input file to use.
     parser.add_argument(
-        "--output",
+        "--optimisations-file",
         "-o",
         default=None,
-        help="The name of the output file to use for the multiple results.",
-        type=str,
-    )
-
-    # Simulations:
-    #   The name of the simulations input file to use.
-    parser.add_argument(
-        "--simulations-file",
-        "-s",
-        default=None,
-        help="The name of the input simulations file to use.",
+        help="The name of the input optimisations file to use.",
         type=str,
     )
 
@@ -179,97 +134,105 @@ def _parse_args(args: List[Any]) -> argparse.Namespace:
 
 
 def heatdesalination_wrapper(
-    simulation: Simulation, location: str
-) -> Dict[ProfileType, Solution]:
+    optimisation: Optimisation
+) -> Any:
     """
-    Run a steady-state simulation
+    Run a standard optimisation.
+
+    Inputs:
+        - optimisation:
+            The optimisation to run.
+
+    Outputs:
+        The results of the parallel optimisation.
 
     """
 
     return heatdesalination_main(
-        location,
-        simulation.profile_type_instances,
-        simulation.scenario,
-        simulation.system_lifetime,
-        simulation.battery_capacity,
-        simulation.buffer_tank_capacity,
-        simulation.mass_flow_rate,
-        False,
-        simulation.output,
-        simulation.pv_t_system_size,
-        simulation.pv_system_size,
+        optimisation.location,
+        optimisation.profile_type_instances,
+        optimisation.scenario,
+        optimisation.system_lifetime,
+        None,
+        None,
+        None,
         True,
-        simulation.solar_thermal_system_size,
-        simulation.start_hour,
+        optimisation.output,
+        None,
+        None,
+        False,
+        None,
+        None,
         disable_tqdm=True,
-        save_outputs=False,
+        save_outputs=True,
     )
 
 
 def main(
-    location: str,
     logger: Logger,
-    output: str,
-    simulations_file: str,
+    optimisations_file: str,
     full_results: bool = True,
 ) -> List[Any]:
     """
-    Main method for carrying out multiple simulations.
+    Main method for carrying out multiple optimisations.
 
     Inputs:
-        - location:
-            The name of the location to use for the weather data.
         - logger:
             The logger to use if specified.
-        - output:
-            THe mame of the output file to use.
-        - simulations_file:
-            The name of the simulations file to use.
+        - optimisations_file:
+            The name of the optimisations file to use.
         - full_results:
             Whether to record the full results (True) or reduced results (False).
 
     """
 
-    # Use the inputted simulations filepath if provided.
-    if (simulations_filename := simulations_file) is not None:
-        simulations_filepath: str = os.path.join(
-            INPUTS_DIRECTORY, f"{simulations_filename}.json"
+    # Use the inputted optimisations filepath if provided.
+    if (optimisations_filename := optimisations_file) is not None:
+        optimisations_filepath: str = os.path.join(
+            INPUTS_DIRECTORY, f"{optimisations_filename}.json"
         )
     else:
-        simulations_filepath = SIMULATIONS_FILEPATH
+        optimisations_filepath = PARALLEL_OPTIMISATIONS_FILEPATH
 
-    # Parse the simulations file.
-    with open(simulations_filepath, "r") as simulations_file:
-        simulations = [Simulation(**entry) for entry in json.load(simulations_file)]
+    # Parse the optimisations file.
+    with open(optimisations_filepath, "r") as optimisations_file:
+        optimisations = [Optimisation(**entry) for entry in json.load(optimisations_file)]
 
-    print(f"Carrying out parallel simulation{'.'*37} ", end="")
-    logger.info("Carrying out %s parallel simulation(s)", len(simulations))
-    # Carry out the simulations as necessary.
-    with pool.Pool(min(8, len(simulations))) as worker_pool:
+    print(f"Carrying out parallel optimisation{'.'*35} ", end="")
+    logger.info("Carrying out %s parallel simulation(s)", len(optimisations))
+    # Carry out the optimisations as necessary.
+    with pool.Pool(min(8, len(optimisations))) as worker_pool:
         results = list(
             tqdm(
                 worker_pool.imap(
-                    functools.partial(heatdesalination_wrapper, location=location),
-                    simulations,
+                    heatdesalination_wrapper,
+                    optimisations,
                 ),
-                total=len(simulations),
+                desc="parallel_optimisations",
+                unit="process",
+                total=len(optimisations),
             )
         )
     logger.info("Worker pool complete, %s results generated", len(results))
-    if len(results) != len(simulations):
+    if len(results) != len(optimisations):
         logger.error(
-            "Results and simulations length mismatch: %s results for %s simulations",
+            "Results and optimisations length mismatch: %s results for %s optimisations",
             len(results),
-            len(simulations),
+            len(optimisations),
         )
-    print()
+    print(DONE)
+
+    import pdb
+
+
+    pdb.set_trace()
 
     # Convert to a mapping from simulation information.
     print(f"Prepping results map{'.'*49} ", end="")
     if full_results:
         results_map = [
             {
-                "simulation": dataclasses.asdict(simulations[index]),
+                "simulation": dataclasses.asdict(optimisations[index]),
                 "results": results[index],
             }
             for index in range(len(results))
@@ -277,7 +240,7 @@ def main(
     else:
         results_map = [
             {
-                "simulation": dataclasses.asdict(simulations[index]),
+                "simulation": dataclasses.asdict(optimisations[index]),
                 "results": {key: value[1] for key, value in results[index].items()},
             }
             for index in range(len(results))
@@ -300,12 +263,10 @@ if __name__ == "__main__":
     parsed_args = _parse_args(sys.argv[1:])
 
     # Setup the logger.
-    logger = get_logger(f"{parsed_args.location}_parallel_simulator")
+    logger = get_logger(f"parallel_optimiser")
 
     main(
-        parsed_args.location,
         logger,
-        parsed_args.output,
-        parsed_args.simulations_file,
+        parsed_args.optimisations_file,
         not parsed_args.partial_results,
     )
