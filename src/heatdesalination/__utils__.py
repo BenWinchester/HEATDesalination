@@ -215,26 +215,26 @@ def get_logger(logger_name: str, verbose: bool = False) -> logging.Logger:
     logger.addHandler(console_handler)
 
     # Delete the existing log if there is one already.
-    if os.path.isfile(
-        (logger_filepath := os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log"))
-    ):
-        try:
-            os.remove(logger_filepath)
-        except FileNotFoundError:
-            pass
+    # if os.path.isfile(
+    #     (logger_filepath := os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log"))
+    # ):
+    #     try:
+    #         os.remove(logger_filepath)
+    #     except FileNotFoundError:
+    #         pass
 
     # Create a file handler.
-    if not os.path.isfile(
-        (logger_filename := os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log"))
-    ):
-        file_handler = logging.FileHandler(
-            os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log")
-        )
-        file_handler.setLevel(logging.DEBUG if verbose else logging.INFO)
-        file_handler.setFormatter(formatter)
-
-        # Add the file handler to the logger.
-        logger.addHandler(file_handler)
+    # if not os.path.isfile(
+    #     (logger_filename := os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log"))
+    # ):
+    #     file_handler = logging.FileHandler(
+    #         os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log")
+    #     )
+    #     file_handler.setLevel(logging.DEBUG if verbose else logging.INFO)
+    #     file_handler.setFormatter(formatter)
+    #
+    #     # Add the file handler to the logger.
+    #     logger.addHandler(file_handler)
 
     return logger
 
