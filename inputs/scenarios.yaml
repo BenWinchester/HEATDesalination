@@ -19,7 +19,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-100
+  name: uae_dr_m_100
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -32,7 +32,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-101
+  name: uae_dr_m_099
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -45,7 +45,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-102
+  name: uae_dr_m_098
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -58,7 +58,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-103
+  name: uae_dr_m_097
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -71,7 +71,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-104
+  name: uae_dr_m_096
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -84,7 +84,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-105
+  name: uae_dr_m_095
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -97,7 +97,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-106
+  name: uae_dr_m_094
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -110,7 +110,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-107
+  name: uae_dr_m_093
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -123,7 +123,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-108
+  name: uae_dr_m_092
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -136,7 +136,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-109
+  name: uae_dr_m_091
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -149,7 +149,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-110
+  name: uae_dr_m_090
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -162,7 +162,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-111
+  name: uae_dr_m_089
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -175,7 +175,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-112
+  name: uae_dr_m_088
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -188,7 +188,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-113
+  name: uae_dr_m_087
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -201,7 +201,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-114
+  name: uae_dr_m_086
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -214,7 +214,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-115
+  name: uae_dr_m_085
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -227,7 +227,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-116
+  name: uae_dr_m_084
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -240,7 +240,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-117
+  name: uae_dr_m_083
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -253,7 +253,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-118
+  name: uae_dr_m_082
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -266,7 +266,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-119
+  name: uae_dr_m_081
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -279,7 +279,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-120
+  name: uae_dr_m_080
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -292,7 +292,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-121
+  name: uae_dr_m_079
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -305,7 +305,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-122
+  name: uae_dr_m_078
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -318,7 +318,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-123
+  name: uae_dr_m_077
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -331,7 +331,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-124
+  name: uae_dr_m_076
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -344,7 +344,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-125
+  name: uae_dr_m_075
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -357,7 +357,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-126
+  name: uae_dr_m_074
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -370,7 +370,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-127
+  name: uae_dr_m_073
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -383,7 +383,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-128
+  name: uae_dr_m_072
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -396,7 +396,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-129
+  name: uae_dr_m_071
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -409,7 +409,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-130
+  name: uae_dr_m_070
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -422,7 +422,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-131
+  name: uae_dr_m_069
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -435,7 +435,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-132
+  name: uae_dr_m_068
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -448,7 +448,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-133
+  name: uae_dr_m_067
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -461,7 +461,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-134
+  name: uae_dr_m_066
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -474,7 +474,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-135
+  name: uae_dr_m_065
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -487,7 +487,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-136
+  name: uae_dr_m_064
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -500,7 +500,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-137
+  name: uae_dr_m_063
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -513,7 +513,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-138
+  name: uae_dr_m_062
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -526,7 +526,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-139
+  name: uae_dr_m_061
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -539,7 +539,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-140
+  name: uae_dr_m_060
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -552,7 +552,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-141
+  name: uae_dr_m_059
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -565,7 +565,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-142
+  name: uae_dr_m_058
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -578,7 +578,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-143
+  name: uae_dr_m_057
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -591,7 +591,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-144
+  name: uae_dr_m_056
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -604,7 +604,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-145
+  name: uae_dr_m_055
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -617,7 +617,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-146
+  name: uae_dr_m_054
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -630,7 +630,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-147
+  name: uae_dr_m_053
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -643,7 +643,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-148
+  name: uae_dr_m_052
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -656,7 +656,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-149
+  name: uae_dr_m_051
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -669,7 +669,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-150
+  name: uae_dr_m_050
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -682,7 +682,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-151
+  name: uae_dr_m_049
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -695,7 +695,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-152
+  name: uae_dr_m_048
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -708,7 +708,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-153
+  name: uae_dr_m_047
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -721,7 +721,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-154
+  name: uae_dr_m_046
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -734,7 +734,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-155
+  name: uae_dr_m_045
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -747,7 +747,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-156
+  name: uae_dr_m_044
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -760,7 +760,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-157
+  name: uae_dr_m_043
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -773,7 +773,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-158
+  name: uae_dr_m_042
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -786,7 +786,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-159
+  name: uae_dr_m_041
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -799,7 +799,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-160
+  name: uae_dr_m_040
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -812,7 +812,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-161
+  name: uae_dr_m_039
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -825,7 +825,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-162
+  name: uae_dr_m_038
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -838,7 +838,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-163
+  name: uae_dr_m_037
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -851,7 +851,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-164
+  name: uae_dr_m_036
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -864,7 +864,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-165
+  name: uae_dr_m_035
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -877,7 +877,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-166
+  name: uae_dr_m_034
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -890,7 +890,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-167
+  name: uae_dr_m_033
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -903,7 +903,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-168
+  name: uae_dr_m_032
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -916,7 +916,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-169
+  name: uae_dr_m_031
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -929,7 +929,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-170
+  name: uae_dr_m_030
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -942,7 +942,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-171
+  name: uae_dr_m_029
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -955,7 +955,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-172
+  name: uae_dr_m_028
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -968,7 +968,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-173
+  name: uae_dr_m_027
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -981,7 +981,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-174
+  name: uae_dr_m_026
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -994,7 +994,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-175
+  name: uae_dr_m_025
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1007,7 +1007,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-176
+  name: uae_dr_m_024
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1020,7 +1020,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-177
+  name: uae_dr_m_023
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1033,7 +1033,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-178
+  name: uae_dr_m_022
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1046,7 +1046,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-179
+  name: uae_dr_m_021
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1059,7 +1059,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-180
+  name: uae_dr_m_020
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1072,7 +1072,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-181
+  name: uae_dr_m_019
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1085,7 +1085,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-182
+  name: uae_dr_m_018
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1098,7 +1098,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-183
+  name: uae_dr_m_017
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1111,7 +1111,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-184
+  name: uae_dr_m_016
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1124,7 +1124,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-185
+  name: uae_dr_m_015
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1137,7 +1137,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-186
+  name: uae_dr_m_014
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1150,7 +1150,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-187
+  name: uae_dr_m_013
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1163,7 +1163,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-188
+  name: uae_dr_m_012
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1176,7 +1176,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-189
+  name: uae_dr_m_011
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1189,7 +1189,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-190
+  name: uae_dr_m_010
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1202,7 +1202,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-191
+  name: uae_dr_m_009
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1215,7 +1215,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-192
+  name: uae_dr_m_008
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1228,7 +1228,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-193
+  name: uae_dr_m_007
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1241,7 +1241,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-194
+  name: uae_dr_m_006
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1254,7 +1254,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-195
+  name: uae_dr_m_005
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1267,7 +1267,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-196
+  name: uae_dr_m_004
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1280,7 +1280,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-197
+  name: uae_dr_m_003
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1293,7 +1293,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-198
+  name: uae_dr_m_002
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1306,7 +1306,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-199
+  name: uae_dr_m_001
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
