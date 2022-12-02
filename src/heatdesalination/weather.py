@@ -24,7 +24,7 @@ import os
 import sys
 
 from logging import Logger
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 import json
 import numpy as np
