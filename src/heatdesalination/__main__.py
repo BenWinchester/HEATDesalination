@@ -223,10 +223,15 @@ def main(
             raise MissingParametersError(", ".join(missing_parameters))
 
         # Update the buffer-tank capacity.
+        existing_buffer_tank_capacity: float = buffer_tank.capacity
         buffer_tank.capacity = (
             buffer_tank_capacity
             if buffer_tank_capacity is not None
             else buffer_tank.capacity
+        )
+        # Increase the area of the tank by a factor of the volume increase accordingly.
+        buffer_tank.area *= (buffer_tank.capacity / existing_buffer_tank_capacity) ** (
+            2 / 3
         )
 
         # Run the simulations.

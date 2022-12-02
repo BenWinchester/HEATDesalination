@@ -99,13 +99,17 @@ def _calculate_collector_degradation(
         solution.pv_electrical_efficiencies[
             ProfileDegradationType.DEGRADED.value
         ] = _degrade(
-            solution.pv_electrical_efficiencies[ProfileDegradationType.UNDEGRADED.value],
+            solution.pv_electrical_efficiencies[
+                ProfileDegradationType.UNDEGRADED.value
+            ],
             average_degradation_rate,
         )
         solution.pv_electrical_output_power[
             ProfileDegradationType.DEGRADED.value
         ] = _degrade(
-            solution.pv_electrical_output_power[ProfileDegradationType.UNDEGRADED.value],
+            solution.pv_electrical_output_power[
+                ProfileDegradationType.UNDEGRADED.value
+            ],
             average_degradation_rate,
         )
         solution.pv_system_electrical_output_power[
@@ -121,13 +125,17 @@ def _calculate_collector_degradation(
         solution.pv_t_electrical_efficiencies[
             ProfileDegradationType.DEGRADED.value
         ] = _degrade(
-            solution.pv_t_electrical_efficiencies[ProfileDegradationType.UNDEGRADED.value],
+            solution.pv_t_electrical_efficiencies[
+                ProfileDegradationType.UNDEGRADED.value
+            ],
             average_degradation_rate,
         )
         solution.pv_t_electrical_output_power[
             ProfileDegradationType.DEGRADED.value
         ] = _degrade(
-            solution.pv_t_electrical_output_power[ProfileDegradationType.UNDEGRADED.value],
+            solution.pv_t_electrical_output_power[
+                ProfileDegradationType.UNDEGRADED.value
+            ],
             average_degradation_rate,
         )
         solution.pv_t_system_electrical_output_power[
