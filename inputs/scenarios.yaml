@@ -2618,26 +2618,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_0.0%
+  name: uae_pv_deg_0.70%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - &id001 !!python/object/apply:numpy.dtype
-    args:
-    - f8
-    - false
-    - true
-    state: !!python/tuple
-    - 3
-    - <
-    - null
-    - null
-    - null
-    - -1
-    - -1
-    - 0
-  - !!binary |
-    eekmMQisfD8=
+  pv_degradation_rate: 0.007
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2647,13 +2631,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_0.0%
+  name: uae_pv_deg_0.73%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    qshENff+fT8=
+  pv_degradation_rate: 0.0073232323232323236
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2663,13 +2644,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_0.0%
+  name: uae_pv_deg_0.76%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    26diOeZRfz8=
+  pv_degradation_rate: 0.007646464646464647
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2679,13 +2657,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_0.0%
+  name: uae_pv_deg_0.80%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    hkPAnmpSgD8=
+  pv_degradation_rate: 0.00796969696969697
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2695,13 +2670,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_0.0%
+  name: uae_pv_deg_0.83%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    HjPPIOL7gD8=
+  pv_degradation_rate: 0.008292929292929293
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2711,13 +2683,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_0.0%
+  name: uae_pv_deg_0.86%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    tiLeolmlgT8=
+  pv_degradation_rate: 0.008616161616161615
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2727,13 +2696,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_0.0%
+  name: uae_pv_deg_0.89%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    TxLtJNFOgj8=
+  pv_degradation_rate: 0.00893939393939394
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2743,13 +2709,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_0.0%
+  name: uae_pv_deg_0.93%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    5wH8pkj4gj8=
+  pv_degradation_rate: 0.009262626262626262
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2759,13 +2722,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_0.0%
+  name: uae_pv_deg_0.96%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    gPEKKcChgz8=
+  pv_degradation_rate: 0.009585858585858587
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2775,13 +2735,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_0.0%
+  name: uae_pv_deg_0.99%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    GOEZqzdLhD8=
+  pv_degradation_rate: 0.009909090909090909
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2791,13 +2748,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.2%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    sNAoLa/0hD8=
+  pv_degradation_rate: 0.010232323232323232
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2807,13 +2761,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.6%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    ScA3ryaehT8=
+  pv_degradation_rate: 0.010555555555555556
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2823,13 +2774,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.9%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    4q9GMZ5Hhj8=
+  pv_degradation_rate: 0.01087878787878788
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2839,13 +2787,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.12%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    ep9VsxXxhj8=
+  pv_degradation_rate: 0.011202020202020203
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2855,13 +2800,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.15%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    Eo9kNY2ahz8=
+  pv_degradation_rate: 0.011525252525252525
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2871,13 +2813,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.18%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    qn5ztwREiD8=
+  pv_degradation_rate: 0.011848484848484848
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2887,13 +2826,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.22%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    Q26COXztiD8=
+  pv_degradation_rate: 0.012171717171717172
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2903,13 +2839,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.25%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    3F2Ru/OWiT8=
+  pv_degradation_rate: 0.012494949494949496
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2919,13 +2852,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.28%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    dE2gPWtAij8=
+  pv_degradation_rate: 0.012818181818181819
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2935,13 +2865,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.31%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    DD2vv+Lpij8=
+  pv_degradation_rate: 0.013141414141414141
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2951,13 +2878,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.35%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    pCy+QVqTiz8=
+  pv_degradation_rate: 0.013464646464646464
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2967,13 +2891,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.38%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    PRzNw9E8jD8=
+  pv_degradation_rate: 0.013787878787878788
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2983,13 +2904,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.41%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    1gvcRUnmjD8=
+  pv_degradation_rate: 0.014111111111111112
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -2999,13 +2917,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.44%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    bvvqx8CPjT8=
+  pv_degradation_rate: 0.014434343434343435
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3015,13 +2930,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.48%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    Buv5STg5jj8=
+  pv_degradation_rate: 0.014757575757575758
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3031,13 +2943,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.51%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    ntoIzK/ijj8=
+  pv_degradation_rate: 0.01508080808080808
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3047,13 +2956,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.54%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    OMoXTieMjz8=
+  pv_degradation_rate: 0.015404040404040406
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3063,13 +2969,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.57%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    6FwTaM8akD8=
+  pv_degradation_rate: 0.01572727272727273
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3079,13 +2982,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.60%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    tNQaKYtvkD8=
+  pv_degradation_rate: 0.01605050505050505
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3095,13 +2995,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.64%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    gEwi6kbEkD8=
+  pv_degradation_rate: 0.016373737373737374
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3111,13 +3008,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.67%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    TMQpqwIZkT8=
+  pv_degradation_rate: 0.016696969696969696
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3127,13 +3021,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.70%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    GTwxbL5tkT8=
+  pv_degradation_rate: 0.017020202020202022
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3143,13 +3034,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.73%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    5bM4LXrCkT8=
+  pv_degradation_rate: 0.017343434343434345
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3159,13 +3047,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.77%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    sStA7jUXkj8=
+  pv_degradation_rate: 0.017666666666666667
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3175,13 +3060,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.80%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    faNHr/Frkj8=
+  pv_degradation_rate: 0.01798989898989899
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3191,13 +3073,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.83%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    SRtPcK3Akj8=
+  pv_degradation_rate: 0.018313131313131312
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3207,13 +3086,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.86%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    FpNWMWkVkz8=
+  pv_degradation_rate: 0.01863636363636364
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3223,13 +3099,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.90%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    4gpe8iRqkz8=
+  pv_degradation_rate: 0.01895959595959596
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3239,13 +3112,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.93%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    roJls+C+kz8=
+  pv_degradation_rate: 0.019282828282828283
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3255,13 +3125,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.96%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    evpsdJwTlD8=
+  pv_degradation_rate: 0.019606060606060606
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3271,13 +3138,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_1.0%
+  name: uae_pv_deg_1.99%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    RnJ0NVholD8=
+  pv_degradation_rate: 0.01992929292929293
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3287,13 +3151,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.2%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    E+p79hO9lD8=
+  pv_degradation_rate: 0.020252525252525255
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3303,13 +3164,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.6%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    32GDt88RlT8=
+  pv_degradation_rate: 0.020575757575757577
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3319,13 +3177,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.9%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    q9mKeItmlT8=
+  pv_degradation_rate: 0.0208989898989899
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3335,13 +3190,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.12%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    d1GSOUe7lT8=
+  pv_degradation_rate: 0.021222222222222222
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3351,13 +3203,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.16%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    Q8mZ+gIQlj8=
+  pv_degradation_rate: 0.021545454545454545
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3367,13 +3216,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.19%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    EEGhu75klj8=
+  pv_degradation_rate: 0.02186868686868687
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3383,13 +3229,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.22%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    3LiofHq5lj8=
+  pv_degradation_rate: 0.022191919191919193
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3399,13 +3242,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.25%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    qDCwPTYOlz8=
+  pv_degradation_rate: 0.022515151515151516
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3415,13 +3255,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.28%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    dKi3/vFilz8=
+  pv_degradation_rate: 0.02283838383838384
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3431,13 +3268,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.32%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    QCC/v623lz8=
+  pv_degradation_rate: 0.02316161616161616
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3447,13 +3281,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.35%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    DJjGgGkMmD8=
+  pv_degradation_rate: 0.023484848484848483
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3463,13 +3294,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.38%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    2Q/OQSVhmD8=
+  pv_degradation_rate: 0.02380808080808081
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3479,13 +3307,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.41%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    pYfVAuG1mD8=
+  pv_degradation_rate: 0.024131313131313132
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3495,13 +3320,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.44%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    cf/cw5wKmT8=
+  pv_degradation_rate: 0.024454545454545455
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3511,13 +3333,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.48%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    PXfkhFhfmT8=
+  pv_degradation_rate: 0.024777777777777777
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3527,13 +3346,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.51%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    Ce/rRRS0mT8=
+  pv_degradation_rate: 0.0251010101010101
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3543,13 +3359,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.54%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    1mbzBtAImj8=
+  pv_degradation_rate: 0.025424242424242426
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3559,13 +3372,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.57%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    ot76x4tdmj8=
+  pv_degradation_rate: 0.025747474747474748
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3575,13 +3385,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.61%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    blYCiUeymj8=
+  pv_degradation_rate: 0.02607070707070707
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3591,13 +3398,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.64%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    Os4JSgMHmz8=
+  pv_degradation_rate: 0.026393939393939393
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3607,13 +3411,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.67%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    BkYRC79bmz8=
+  pv_degradation_rate: 0.026717171717171716
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3623,13 +3424,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.70%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    070YzHqwmz8=
+  pv_degradation_rate: 0.027040404040404042
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3639,13 +3437,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.74%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    nzUgjTYFnD8=
+  pv_degradation_rate: 0.027363636363636364
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3655,13 +3450,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.77%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    a60nTvJZnD8=
+  pv_degradation_rate: 0.027686868686868687
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3671,13 +3463,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.80%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    NyUvD66unD8=
+  pv_degradation_rate: 0.02801010101010101
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3687,13 +3476,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.83%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    A5020GkDnT8=
+  pv_degradation_rate: 0.028333333333333332
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3703,13 +3489,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.87%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    0BQ+kSVYnT8=
+  pv_degradation_rate: 0.028656565656565658
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3719,13 +3502,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.90%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    nIxFUuGsnT8=
+  pv_degradation_rate: 0.02897979797979798
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3735,13 +3515,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.93%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    aARNE50Bnj8=
+  pv_degradation_rate: 0.029303030303030303
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3751,13 +3528,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.96%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    NHxU1FhWnj8=
+  pv_degradation_rate: 0.029626262626262626
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3767,13 +3541,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_2.0%
+  name: uae_pv_deg_2.100%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    APRblRSrnj8=
+  pv_degradation_rate: 0.029949494949494948
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3783,13 +3554,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.3%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    zWtjVtD/nj8=
+  pv_degradation_rate: 0.030272727272727274
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3799,13 +3567,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.6%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    meNqF4xUnz8=
+  pv_degradation_rate: 0.030595959595959597
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3815,13 +3580,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.9%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    ZVty2Eepnz8=
+  pv_degradation_rate: 0.03091919191919192
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3831,13 +3593,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.12%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    MdN5mQP+nz8=
+  pv_degradation_rate: 0.03124242424242424
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3847,13 +3606,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.16%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    f6VArV8poD8=
+  pv_degradation_rate: 0.03156565656565657
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3863,13 +3619,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.19%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    ZWHEjb1ToD8=
+  pv_degradation_rate: 0.03188888888888889
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3879,13 +3632,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.22%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    Sx1Ibht+oD8=
+  pv_degradation_rate: 0.03221212121212121
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3895,13 +3645,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.25%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    MdnLTnmooD8=
+  pv_degradation_rate: 0.032535353535353535
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3911,13 +3658,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.29%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    F5VPL9fSoD8=
+  pv_degradation_rate: 0.03285858585858586
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3927,13 +3671,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.32%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    /VDTDzX9oD8=
+  pv_degradation_rate: 0.03318181818181818
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3943,13 +3684,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.35%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    5AxX8JInoT8=
+  pv_degradation_rate: 0.03350505050505051
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3959,13 +3697,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.38%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    ysja0PBRoT8=
+  pv_degradation_rate: 0.03382828282828283
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3975,13 +3710,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.42%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    sIResU58oT8=
+  pv_degradation_rate: 0.034151515151515155
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -3991,13 +3723,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.45%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    lkDikaymoT8=
+  pv_degradation_rate: 0.03447474747474748
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -4007,13 +3736,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.48%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    fPxlcgrRoT8=
+  pv_degradation_rate: 0.0347979797979798
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -4023,13 +3749,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.51%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    YrjpUmj7oT8=
+  pv_degradation_rate: 0.03512121212121212
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -4039,13 +3762,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.54%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    SHRtM8Yloj8=
+  pv_degradation_rate: 0.035444444444444445
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -4055,13 +3775,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.58%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    LjDxEyRQoj8=
+  pv_degradation_rate: 0.03576767676767677
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -4071,13 +3788,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.61%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    FOx09IF6oj8=
+  pv_degradation_rate: 0.03609090909090909
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -4087,13 +3801,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.64%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    +qf41N+koj8=
+  pv_degradation_rate: 0.03641414141414141
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -4103,13 +3814,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.67%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    4WN8tT3Poj8=
+  pv_degradation_rate: 0.03673737373737374
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -4119,13 +3827,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.71%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    xx8Alpv5oj8=
+  pv_degradation_rate: 0.037060606060606065
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -4135,13 +3840,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.74%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    rduDdvkjoz8=
+  pv_degradation_rate: 0.03738383838383839
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -4151,13 +3853,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.77%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    k5cHV1dOoz8=
+  pv_degradation_rate: 0.03770707070707071
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -4167,13 +3866,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.80%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    eVOLN7V4oz8=
+  pv_degradation_rate: 0.03803030303030303
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -4183,13 +3879,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.84%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    Xw8PGBOjoz8=
+  pv_degradation_rate: 0.038353535353535355
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -4199,13 +3892,10 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.87%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    RcuS+HDNoz8=
+  pv_degradation_rate: 0.03867676767676768
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
 - battery: default_battery
@@ -4215,12 +3905,9 @@
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_pv_deg_3.0%
+  name: uae_pv_deg_3.90%
   plant: med
   pv: dusol_ds60280_m
-  pv_degradation_rate: !!python/object/apply:numpy.core.multiarray.scalar
-  - *id001
-  - !!binary |
-    K4cW2c73oz8=
+  pv_degradation_rate: 0.039
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
