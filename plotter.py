@@ -1,3 +1,5 @@
+
+
 interact
 import matplotlib.pyplot as plt
 
@@ -1270,6 +1272,12 @@ import json
 import matplotlib.pyplot as plt
 import os
 import seaborn as sns
+from scipy.signal import lfilter
+
+# Noise-filtering parameters
+n = 5  # the larger n is, the smoother curve will be
+b = [1.0 / n] * n
+a = 1
 
 sns.set_palette("colorblind")
 
@@ -1301,6 +1309,7 @@ x = [
 ]
 x = [entry.replace("--", "-") for entry in x]
 x = [float(entry) for entry in x]
+x = [(-(200 + entry) if entry < 0 else entry) for entry in x]
 
 # Plot the various keys
 for plot_index, title in enumerate(optimisation_titles):
@@ -1344,15 +1353,17 @@ for plot_index, title in enumerate(optimisation_titles):
         # ]
         # Determine the x range
         # Plot
-        plt.plot(x, y, color=f"C{index}")
-        plt.fill_between(x, y_ler, y, color=f"C{index}", alpha=0.5)
-        plt.fill_between(x, y, y_uer, color=f"C{index}", alpha=0.5)
+        plt.plot(x, lfilter(b, a, y), color=f"C{index}")
+        plt.fill_between(x, lfilter(b, a, y_ler), lfilter(b, a, y), color=f"C{index}", alpha=0.5)
+        plt.fill_between(x, lfilter(b, a, y), lfilter(b, a, y_uer), color=f"C{index}", alpha=0.5)
         # plt.plot(x, y_min, "--", color=f"C{index}")
         # plt.plot(x, y_max, "--", color=f"C{index}")
-        plt.plot(x, y_uer, "--", color=f"C{index}")
-        plt.plot(x, y_ler, "--", color=f"C{index}")
+        plt.plot(x, lfilter(b, a, y_uer), "--", color=f"C{index}")
+        plt.plot(x, lfilter(b, a, y_ler), "--", color=f"C{index}")
         plt.ylabel(key.replace("_", " ").capitalize())
         plt.xlabel("Mean grid discount rate / %/year")
+        plt.xlim(-25, 25)
+        plt.ylim(0, 1.5 * max(y[75:125]))
         plt.title(f"{key.replace('_', ' ').capitalize()} for {title.capitalize()}")
         plt.show()
         with open(f"grid_high_res_weather_error_{key}.json", "w") as f:
