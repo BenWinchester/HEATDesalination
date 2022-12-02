@@ -660,12 +660,19 @@ def _simulate_and_calculate_criterion(
     battery_capacity: float = (
         battery_capacity if battery_capacity is not None else parameter_list.pop(0)
     )
-    buffer_tank_capacity: float = (
+    existing_buffer_tank_capacity: float = buffer_tank.capacity
+    buffer_tank.capacity = (
         buffer_tank_capacity
         if buffer_tank_capacity is not None
         else parameter_list.pop(0)
     )
+    # Sanitise the units on the area of the buffer tank
     buffer_tank.capacity = buffer_tank_capacity * 1000
+
+    # Increase the area of the tank by a factor of the volume increase accordingly.
+    buffer_tank.area *= (buffer_tank.capacity / existing_buffer_tank_capacity) ** (
+        2 / 3
+    )
 
     # Collector parameters
     htf_mass_flow_rate: float = (
