@@ -12,8 +12,8 @@
         "output": null,
         "profile_types": [
             "avr",
-            "usd",
-            "lsd",
+            "uer",
+            "ler",
             "max",
             "min"
         ]
@@ -31,8 +31,8 @@
         "output": null,
         "profile_types": [
             "avr",
-            "usd",
-            "lsd",
+            "uer",
+            "ler",
             "max",
             "min"
         ]

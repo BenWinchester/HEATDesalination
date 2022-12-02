@@ -697,17 +697,21 @@ class ProfileType(enum.Enum):
     """
 
     AVERAGE: str = "average_weather_conditions"
+    LOWER_ERROR_BAR: str = "lower_error_bar_weather_conditions"
     LOWER_STANDARD_DEVIATION: str = "lower_standard_deviation_weather_conditions"
     MAXIMUM: str = "maximum_irradiance_weather_conditions"
     MINIMUM: str = "minimum_irradiance_weather_conditions"
+    UPPER_ERROR_BAR: str = "upper_error_bar_weather_conditions"
     UPPER_STANDARD_DEVIATION: str = "upper_standard_deviation_weather_conditions"
 
 
 CLI_TO_PROFILE_TYPE: Dict[str, ProfileType] = {
     "avr": ProfileType.AVERAGE,
+    "ler": ProfileType.LOWER_ERROR_BAR,
     "lsd": ProfileType.LOWER_STANDARD_DEVIATION,
     "max": ProfileType.MAXIMUM,
     "min": ProfileType.MINIMUM,
+    "uer": ProfileType.UPPER_ERROR_BAR,
     "usd": ProfileType.UPPER_STANDARD_DEVIATION,
 }
 

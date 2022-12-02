@@ -101,122 +101,122 @@ optimisations:
     criterion:
       total_cost: minimise
   # No PV optimisation
-  # - bounds:
-  #     battery_capacity:
-  #       # fixed: 0
-  #       initial_guess: 500
-  #       min: 0
-  #       max: null
-  #     buffer_tank_capacity:
-  #       fixed: 50
-  #       # initial_guess: 30  # [m^3]
-  #       # min: 15  # [m^3]
-  #       # max: 100  # [m^3]
-  #     mass_flow_rate:
-  #       fixed: 20
-  #       # initial_guess: 20  # [kg/s]
-  #       # min: 2
-  #       # max: 20
-  #     pv:
-  #       fixed: 0
-  #       # initial_guess: 500  # Number of PV collectors
-  #       # min: 0
-  #       # max: null
-  #     pv_t:
-  #       # fixed: 1262
-  #       initial_guess: 3000  # Number of PV-T collectors
-  #       min: 72
-  #       max: 3600
-  #     st:
-  #       # fixed: 0
-  #       initial_guess: 500  # Number of solar-thermal collectors
-  #       min: 218
-  #       max: 1283
-  #     start_hour:
-  #       fixed: 8
-  #       # initial_guess: 10  # [o'clock] using 24-hour clock
-  #       # min: 0
-  #       # max: 23
-  #   constraints: null
-  #   criterion:
-  #     total_cost: minimise
-  # # No PV-T optimisation
-  # - bounds:
-  #     battery_capacity:
-  #       # fixed: 0
-  #       initial_guess: 500
-  #       min: 0
-  #       max: null
-  #     buffer_tank_capacity:
-  #       fixed: 50
-  #       # initial_guess: 30  # [m^3]
-  #       # min: 15  # [m^3]
-  #       # max: 100  # [m^3]
-  #     mass_flow_rate:
-  #       fixed: 20
-  #       # initial_guess: 20  # [kg/s]
-  #       # min: 2
-  #       # max: 20
-  #     pv:
-  #       # fixed: 0
-  #       initial_guess: 500  # Number of PV collectors
-  #       min: 0
-  #       max: null
-  #     pv_t:
-  #       fixed: 0
-  #       # initial_guess: 3000  # Number of PV-T collectors
-  #       # min: 72
-  #       # max: 3600
-  #     st:
-  #       # fixed: 0
-  #       initial_guess: 500  # Number of solar-thermal collectors
-  #       min: 218
-  #       max: 1283
-  #     start_hour:
-  #       fixed: 8
-  #       # initial_guess: 10  # [o'clock] using 24-hour clock
-  #       # min: 0
-  #       # max: 23
-  #   constraints: null
-  #   criterion:
-  #     total_cost: minimise
-  # # No solar-thermal optimisation
-  # - bounds:
-  #     battery_capacity:
-  #       # fixed: 0
-  #       initial_guess: 500
-  #       min: 0
-  #       max: null
-  #     buffer_tank_capacity:
-  #       fixed: 50
-  #       # initial_guess: 30  # [m^3]
-  #       # min: 15  # [m^3]
-  #       # max: 100  # [m^3]
-  #     mass_flow_rate:
-  #       fixed: 20
-  #       # initial_guess: 20  # [kg/s]
-  #       # min: 2
-  #       # max: 20
-  #     pv:
-  #       # fixed: 0
-  #       initial_guess: 500  # Number of PV collectors
-  #       min: 0
-  #       max: null
-  #     pv_t:
-  #       # fixed: 0
-  #       initial_guess: 3000  # Number of PV-T collectors
-  #       min: 72
-  #       max: 3600
-  #     st:
-  #       fixed: 0
-  #       # initial_guess: 500  # Number of solar-thermal collectors
-  #       # min: 218
-  #       # max: 1283
-  #     start_hour:
-  #       fixed: 8
-  #       # initial_guess: 10  # [o'clock] using 24-hour clock
-  #       # min: 0
-  #       # max: 23
-  #   constraints: null
-  #   criterion:
-  #     total_cost: minimise
+  - bounds:
+      battery_capacity:
+        # fixed: 0
+        initial_guess: 500
+        min: 0
+        max: null
+      buffer_tank_capacity:
+        fixed: 50
+        # initial_guess: 30  # [m^3]
+        # min: 15  # [m^3]
+        # max: 100  # [m^3]
+      mass_flow_rate:
+        fixed: 20
+        # initial_guess: 20  # [kg/s]
+        # min: 2
+        # max: 20
+      pv:
+        fixed: 0
+        # initial_guess: 500  # Number of PV collectors
+        # min: 0
+        # max: null
+      pv_t:
+        # fixed: 1262
+        initial_guess: 3000  # Number of PV-T collectors
+        min: 72
+        max: 3600
+      st:
+        # fixed: 0
+        initial_guess: 500  # Number of solar-thermal collectors
+        min: 218
+        max: 1283
+      start_hour:
+        fixed: 8
+        # initial_guess: 10  # [o'clock] using 24-hour clock
+        # min: 0
+        # max: 23
+    constraints: null
+    criterion:
+      total_cost: minimise
+  # No PV-T optimisation
+  - bounds:
+      battery_capacity:
+        # fixed: 0
+        initial_guess: 500
+        min: 0
+        max: null
+      buffer_tank_capacity:
+        fixed: 50
+        # initial_guess: 30  # [m^3]
+        # min: 15  # [m^3]
+        # max: 100  # [m^3]
+      mass_flow_rate:
+        fixed: 20
+        # initial_guess: 20  # [kg/s]
+        # min: 2
+        # max: 20
+      pv:
+        # fixed: 0
+        initial_guess: 500  # Number of PV collectors
+        min: 0
+        max: null
+      pv_t:
+        fixed: 0
+        # initial_guess: 3000  # Number of PV-T collectors
+        # min: 72
+        # max: 3600
+      st:
+        # fixed: 0
+        initial_guess: 500  # Number of solar-thermal collectors
+        min: 218
+        max: 1283
+      start_hour:
+        fixed: 8
+        # initial_guess: 10  # [o'clock] using 24-hour clock
+        # min: 0
+        # max: 23
+    constraints: null
+    criterion:
+      total_cost: minimise
+  # No solar-thermal optimisation
+  - bounds:
+      battery_capacity:
+        # fixed: 0
+        initial_guess: 500
+        min: 0
+        max: null
+      buffer_tank_capacity:
+        fixed: 50
+        # initial_guess: 30  # [m^3]
+        # min: 15  # [m^3]
+        # max: 100  # [m^3]
+      mass_flow_rate:
+        fixed: 20
+        # initial_guess: 20  # [kg/s]
+        # min: 2
+        # max: 20
+      pv:
+        # fixed: 0
+        initial_guess: 500  # Number of PV collectors
+        min: 0
+        max: null
+      pv_t:
+        # fixed: 0
+        initial_guess: 3000  # Number of PV-T collectors
+        min: 72
+        max: 3600
+      st:
+        fixed: 0
+        # initial_guess: 500  # Number of solar-thermal collectors
+        # min: 218
+        # max: 1283
+      start_hour:
+        fixed: 8
+        # initial_guess: 10  # [o'clock] using 24-hour clock
+        # min: 0
+        # max: 23
+    constraints: null
+    criterion:
+      total_cost: minimise
