@@ -369,11 +369,11 @@ import seaborn as sns
 from src.heatdesalination.__utils__ import ProfileType
 from src.heatdesalination.optimiser import TotalCost
 
-with open("pv_t_1262_st_318_tank_49_output.json", "r") as f:
+with open("pv_t_72_st_218_tank_32_runs_output.json", "r") as f:
     data = json.load(f)
 
 costs = [
-    (entry["results"][ProfileType.AVERAGE.value][1][TotalCost.name] / 10**6)
+    (entry["results"][ProfileType.AVERAGE.value][TotalCost.name] / 10**6)
     for entry in data
 ]
 # palette = sns.color_palette("blend:#0173B2,#64B5CD", as_cmap=True)
@@ -797,6 +797,109 @@ plt.ylim(min(pv_sizes), max(pv_sizes))
 
 plt.show()
 
+#########################
+# Post-HPC contour plot #
+#########################
+
+import json
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+from src.heatdesalination.__utils__ import ProfileType
+from src.heatdesalination.optimiser import TotalCost
+
+with open("min_cost_list.json", "r") as f:
+    min_cost_list = json.load(f)
+
+costs = [
+    (entry["results"][ProfileType.AVERAGE.value][TotalCost.name] / 10**6)
+    for entry in min_cost_list
+    if entry["simulation"]["buffer_tank_capacity"] == 32
+]
+# palette = sns.color_palette("blend:#0173B2,#64B5CD", as_cmap=True)
+# palette = sns.color_palette("rocket", as_cmap=True)
+
+pv_sizes = [entry["simulation"]["pv_system_size"] for entry in min_cost_list if entry["simulation"]["buffer_tank_capacity"] == 32]
+battery_capacities = [entry["simulation"]["battery_capacity"] for entry in min_cost_list if entry["simulation"]["buffer_tank_capacity"] == 32]
+pv_t_sizes = [entry["simulation"]["pv_t_system_size"] for entry in min_cost_list if entry["simulation"]["buffer_tank_capacity"] == 32]
+st_sizes = [entry["simulation"]["solar_thermal_system_size"] for entry in min_cost_list if entry["simulation"]["buffer_tank_capacity"] == 32]
+
+# Generate the frame
+frame = pd.DataFrame(
+    {
+        "Number of PV-T collectors": pv_t_sizes,
+        "Number of solar-thermal collectors": st_sizes,
+        "Cost / MUSD": costs,
+    }
+)
+pivotted_frame = frame.pivot(
+    index="Number of PV-T collectors", columns="Number of solar-thermal collectors", values="Cost / MUSD"
+)
+
+# # Generate the frame
+# frame = pd.DataFrame(
+#     {
+#         "Storage capacity / kWh": battery_capacities,
+#         "Number of PV panels": pv_sizes,
+#         "Cost / MUSD": costs,
+#     }
+# )
+# pivotted_frame = frame.pivot(
+#     index="Number of PV panels", columns="Storage capacity / kWh", values="Cost / MUSD"
+# )
+
+# Extract the arrays.
+Z = pivotted_frame.values
+# X_unique = np.sort(frame["Storage capacity / kWh"].unique())
+# Y_unique = np.sort(frame["Number of PV panels"].unique())
+X_unique = np.sort(frame["Number of PV-T collectors"].unique())
+Y_unique = np.sort(frame["Number of solar-thermal collectors"].unique())
+X, Y = np.meshgrid(X_unique, Y_unique)
+
+# Define levels in z-axis where we want lines to appear
+levels = np.array(
+    [
+        1.4,
+        1.45,
+        1.5,
+        1.55,
+        1.6,
+        1.65,
+        1.7,
+        1.75,
+        1.8,
+        1.85,
+        1.9,
+        2,
+        2.5,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+    ]
+)
+
+# Generate a color mapping of the levels we've specified
+fig, ax = plt.subplots()
+cmap = sns.color_palette("PuBu", len(levels), as_cmap=True)
+cpf = ax.contourf(X, Y, Z, len(levels), cmap=cmap)
+
+# Set all level lines to black
+line_colors = ["black" for l in cpf.levels]
+
+# Make plot and customize axes
+contours = ax.contour(X, Y, Z, levels=levels, colors=line_colors)
+ax.clabel(contours, fontsize=10, colors=line_colors)
+ax.set_xlabel("Storage size / kWh")
+_ = ax.set_ylabel("PV size / number of collectors")
+
+fig.colorbar(cpf, ax=ax, label="Total lifetime cost / MUSD")
 #############
 # Subsquare #
 #############
@@ -1037,9 +1140,10 @@ output_filenames = [
     entry for entry in os.listdir(".") if regex.match(entry) is not None
 ]
 
+
 # Assemble a list containing the cost of the various points matching PV and batt.
-min_cost_batt: float = 170
-min_cost_pv: float = 6400
+# min_cost_batt: float = 170
+# min_cost_pv: float = 6400
 min_cost_list = []
 
 batt_key: str = "battery_capacity"
@@ -1141,3 +1245,23 @@ for index, key in enumerate(keys):
             {"x": x, key: y, f"{key}_usd": y_usd, f"{key}_lsd": y_lsd, f"{key}_max": y_max, f"{key}_min": y_min},
             f
         )
+
+#######################
+# Scenario-generation #
+#######################
+
+import os
+import yaml
+
+with open((scenarios_filepath:=os.path.join("inputs", "scenarios.yaml")), "r") as f:
+    scenarios = yaml.safe_load(f)
+
+
+for discount_rate in range(-200, 200, 1):
+    scenario = default_scenario.copy()
+    scenario["discount_rate"] = discount_rate / 100
+    scenario["name"] = f"uae_dr_{'m_' if discount_rate < 0 else ''}{discount_rate // 100}{(discount_rate % 100) // 10}{(discount_rate % 100) % 10}"
+    scenarios["scenarios"].append(scenario)
+
+with open(scenarios_filepath, "w") as f:
+    yaml.dump(scenarios, f)
