@@ -1353,6 +1353,19 @@ for plot_index, title in enumerate(optimisation_titles):
         # ]
         # Determine the x range
         # Plot
+        plt.plot(x, y, color=f"C{index}")
+        plt.fill_between(x, y_ler, y, color=f"C{index}", alpha=0.5)
+        plt.fill_between(x, y, y_uer, color=f"C{index}", alpha=0.5)
+        # plt.plot(x, y_min, "--", color=f"C{index}")
+        # plt.plot(x, y_max, "--", color=f"C{index}")
+        plt.plot(x, y_uer, "--", color=f"C{index}")
+        plt.plot(x, y_ler, "--", color=f"C{index}")
+        plt.ylabel(key.replace("_", " ").capitalize())
+        plt.xlabel("Mean grid discount rate / %/year")
+        plt.xlim(-25, 25)
+        plt.ylim(0, 1.5 * max(y[75:125]))
+        plt.title(f"{key.replace('_', ' ').capitalize()} (unsmoothed) for {title.capitalize()}")
+        plt.show()
         plt.plot(x, lfilter(b, a, y), color=f"C{index}")
         plt.fill_between(x, lfilter(b, a, y_ler), lfilter(b, a, y), color=f"C{index}", alpha=0.5)
         plt.fill_between(x, lfilter(b, a, y), lfilter(b, a, y_uer), color=f"C{index}", alpha=0.5)
@@ -1364,7 +1377,7 @@ for plot_index, title in enumerate(optimisation_titles):
         plt.xlabel("Mean grid discount rate / %/year")
         plt.xlim(-25, 25)
         plt.ylim(0, 1.5 * max(y[75:125]))
-        plt.title(f"{key.replace('_', ' ').capitalize()} for {title.capitalize()}")
+        plt.title(f"{key.replace('_', ' ').capitalize()} (smoothed) for {title.capitalize()}")
         plt.show()
         with open(f"grid_high_res_weather_error_{key}.json", "w") as f:
             json.dump(
