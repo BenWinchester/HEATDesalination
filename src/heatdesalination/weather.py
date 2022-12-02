@@ -356,15 +356,15 @@ def main(
 
     # Set the column headers correctly
     average_profile.columns = WEATHER_COLUMN_HEADERS
-    upper_error_bar_profile.columns = WEATHER_COLUMN_HEADERS
     lower_error_bar_profile.columns = WEATHER_COLUMN_HEADERS
+    lower_std_profile.columns = WEATHER_COLUMN_HEADERS
     max_profile.columns = WEATHER_COLUMN_HEADERS
     min_profile.columns = WEATHER_COLUMN_HEADERS
     upper_error_bar_profile.columns = WEATHER_COLUMN_HEADERS
     upper_std_profile.columns = WEATHER_COLUMN_HEADERS
     average_profile_dict = average_profile.to_dict()
 
-    print("[  DONE  ]")
+    print(DONE)
     print(f"Saving weather data output{'.'*43} ", end="")
 
     # Generate the output data structure.
@@ -417,7 +417,7 @@ def main(
         json.dump(output_data, output_file, indent=4)
 
     logger.info("Output data successfully saved to %s.", filepath)
-    print("[  DONE  ]")
+    print(DONE)
     print(f"Output data successfully saved to {filepath}.")
     print(f"Optimum tilt angle for {location_name} is {optimum_tilt_angle} degrees.")
 
