@@ -83,6 +83,12 @@ LOGGER_NAME: str = "weather"
 #   Keyword for the mounting system of the panel.
 MOUNTING_SYSTEM: str = "mounting_system"
 
+# PVGIS_ERROR:
+#   The fractional error in PVGIS data.
+#   Milosavljević DD, Kevkić TS, Jovanović SJ. Review and validation of photovoltaic
+# solar simulation tools/software based on case study. Open Physics 2022;20:431–51.
+PVGIS_ERROR: float = 0.181
+
 # SLOPE:
 #   Keyword for the slope of the panel mounting system.
 SLOPE: str = "slope"
@@ -344,11 +350,17 @@ def main(
         pd.concat([lower_std_profile, min_profile], keys=[0, 1]).groupby(level=1).max()
     )
 
+    # Compute weather-based error bars.
+    upper_error_bar_profile = average_profile * (1 + PVGIS_ERROR)
+    lower_error_bar_profile = average_profile * (1 - PVGIS_ERROR)
+
     # Set the column headers correctly
     average_profile.columns = WEATHER_COLUMN_HEADERS
-    lower_std_profile.columns = WEATHER_COLUMN_HEADERS
+    upper_error_bar_profile.columns = WEATHER_COLUMN_HEADERS
+    lower_error_bar_profile.columns = WEATHER_COLUMN_HEADERS
     max_profile.columns = WEATHER_COLUMN_HEADERS
     min_profile.columns = WEATHER_COLUMN_HEADERS
+    upper_error_bar_profile.columns = WEATHER_COLUMN_HEADERS
     upper_std_profile.columns = WEATHER_COLUMN_HEADERS
     average_profile_dict = average_profile.to_dict()
 
@@ -363,6 +375,10 @@ def main(
         },
         LATITUDE: latitude,
         LONGITUDE: longitude,
+        ProfileType.LOWER_ERROR_BAR.value: {
+            key: {int(time + timezone) % 24: value for time, value in entry.items()}
+            for key, entry in lower_error_bar_profile.to_dict().items()
+        },
         ProfileType.LOWER_STANDARD_DEVIATION.value: {
             key: {int(time + timezone) % 24: value for time, value in entry.items()}
             for key, entry in lower_std_profile.to_dict().items()
@@ -378,6 +394,10 @@ def main(
         OPTIMUM_TILT_ANGLE: (
             optimum_tilt_angle := parsed_data[1][MOUNTING_SYSTEM][FIXED][SLOPE][VALUE]
         ),
+        ProfileType.UPPER_ERROR_BAR.value: {
+            key: {int(time + timezone) % 24: value for time, value in entry.items()}
+            for key, entry in upper_error_bar_profile.to_dict().items()
+        },
         ProfileType.UPPER_STANDARD_DEVIATION.value: {
             key: {int(time + timezone) % 24: value for time, value in entry.items()}
             for key, entry in upper_std_profile.to_dict().items()
