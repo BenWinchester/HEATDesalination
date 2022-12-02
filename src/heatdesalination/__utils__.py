@@ -1070,7 +1070,9 @@ class Solution(NamedTuple):
     hot_water_demand_volume: Dict[int, float | None]
     pv_electrical_efficiencies: Dict[ProfileDegradationType, Dict[int, float | None]]
     pv_electrical_output_power: Dict[ProfileDegradationType, Dict[int, float | None]]
-    pv_system_electrical_output_power: Dict[ProfileDegradationType, Dict[int, float | None]]
+    pv_system_electrical_output_power: Dict[
+        ProfileDegradationType, Dict[int, float | None]
+    ]
     pv_t_electrical_efficiencies: Dict[ProfileDegradationType, Dict[int, float | None]]
     pv_t_electrical_output_power: Dict[ProfileDegradationType, Dict[int, float | None]]
     pv_t_htf_output_temperatures: Dict[int, float]

@@ -190,6 +190,7 @@ class Criterion(abc.ABC):
 
         """
 
+
 class DumpedElectricity(Criterion, criterion_name="dumped_electricity"):
     """Contains the calculation for the assessment of dumped energy."""
 
@@ -220,7 +221,6 @@ class DumpedElectricity(Criterion, criterion_name="dumped_electricity"):
         """
 
         return sum(solution.dumped_solar.values()) * DAYS_PER_YEAR * system_lifetime
-
 
 
 class GridElectricityFraction(Criterion, criterion_name="grid_electricity_fraction"):
@@ -445,9 +445,7 @@ class SolarElectricityFraction(Criterion, criterion_name="solar_electricity_frac
 
         """
 
-        solar_power_supplied = sum(
-            solution.solar_power_supplied.values()
-        )
+        solar_power_supplied = sum(solution.solar_power_supplied.values())
         total_electricity_demand = sum(solution.electricity_demands.values())
         return solar_power_supplied / total_electricity_demand
 
