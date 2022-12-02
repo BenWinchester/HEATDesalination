@@ -821,10 +821,26 @@ costs = [
 # palette = sns.color_palette("blend:#0173B2,#64B5CD", as_cmap=True)
 # palette = sns.color_palette("rocket", as_cmap=True)
 
-pv_sizes = [entry["simulation"]["pv_system_size"] for entry in min_cost_list if entry["simulation"]["buffer_tank_capacity"] == 32]
-battery_capacities = [entry["simulation"]["battery_capacity"] for entry in min_cost_list if entry["simulation"]["buffer_tank_capacity"] == 32]
-pv_t_sizes = [entry["simulation"]["pv_t_system_size"] for entry in min_cost_list if entry["simulation"]["buffer_tank_capacity"] == 32]
-st_sizes = [entry["simulation"]["solar_thermal_system_size"] for entry in min_cost_list if entry["simulation"]["buffer_tank_capacity"] == 32]
+pv_sizes = [
+    entry["simulation"]["pv_system_size"]
+    for entry in min_cost_list
+    if entry["simulation"]["buffer_tank_capacity"] == 32
+]
+battery_capacities = [
+    entry["simulation"]["battery_capacity"]
+    for entry in min_cost_list
+    if entry["simulation"]["buffer_tank_capacity"] == 32
+]
+pv_t_sizes = [
+    entry["simulation"]["pv_t_system_size"]
+    for entry in min_cost_list
+    if entry["simulation"]["buffer_tank_capacity"] == 32
+]
+st_sizes = [
+    entry["simulation"]["solar_thermal_system_size"]
+    for entry in min_cost_list
+    if entry["simulation"]["buffer_tank_capacity"] == 32
+]
 
 # Generate the frame
 frame = pd.DataFrame(
@@ -835,7 +851,9 @@ frame = pd.DataFrame(
     }
 )
 pivotted_frame = frame.pivot(
-    index="Number of PV-T collectors", columns="Number of solar-thermal collectors", values="Cost / MUSD"
+    index="Number of PV-T collectors",
+    columns="Number of solar-thermal collectors",
+    values="Cost / MUSD",
 )
 
 # # Generate the frame
@@ -1159,7 +1177,14 @@ for filename in tqdm(output_filenames, desc="files", unit="file"):
     with open(filename, "r") as f:
         data = json.load(f)
     # Find the point with the matching PV and batt
-    min_cost_list.extend([entry for entry in data if entry[simulation_key][batt_key] == min_cost_batt and entry[simulation_key][pv_key] == min_cost_pv])
+    min_cost_list.extend(
+        [
+            entry
+            for entry in data
+            if entry[simulation_key][batt_key] == min_cost_batt
+            and entry[simulation_key][pv_key] == min_cost_pv
+        ]
+    )
 
 ####################
 # Dump all vectors #
@@ -1210,26 +1235,52 @@ import json
 import matplotlib.pyplot as plt
 import os
 import seaborn as sns
+
 sns.set_palette("colorblind")
 
 with open("parallel_optimisation_results.json", "r") as f:
     data = json.load(f)
 
-keys = {"total_cost", "auxiliary_heating_fraction", "dumped_electricity", "grid_electricity_fraction", "solar_electricity_fraction", "storage_electricity_fraction"}
+keys = {
+    "total_cost",
+    "auxiliary_heating_fraction",
+    "dumped_electricity",
+    "grid_electricity_fraction",
+    "solar_electricity_fraction",
+    "storage_electricity_fraction",
+}
 
 x = [entry["optimisation"]["scenario"] for entry in data]
-x = [entry_2.replace("m_", "-") for entry_2 in [entry_1.split("_dr_")[-1] for entry_1 in [entry.split("uae")[1] for entry in x]]]
+x = [
+    entry_2.replace("m_", "-")
+    for entry_2 in [
+        entry_1.split("_dr_")[-1] for entry_1 in [entry.split("uae")[1] for entry in x]
+    ]
+]
 x[20] = "00"
 x = [float(entry) for entry in x]
 
 # Plot the various keys
 for index, key in enumerate(keys):
     y = [entry["result"][0][1]["average_weather_conditions"][0][key] for entry in data]
-    y_lsd = [entry["result"][0][1]["lower_standard_deviation_weather_conditions"][0][key] for entry in data]
-    y_usd  = [entry["result"][0][1]["upper_standard_deviation_weather_conditions"][0][key] for entry in data]
-    y_min = [min(y_lsd[index], y_usd[index], y_max[index]) for index in range(len(y_max))]
-    y_max = [entry["result"][0][1]["maximum_irradiance_weather_conditions"][0][key] for entry in data]
-    y_max = [max(y_lsd[index], y_usd[index], y_max[index]) for index in range(len(y_max))]
+    y_lsd = [
+        entry["result"][0][1]["lower_standard_deviation_weather_conditions"][0][key]
+        for entry in data
+    ]
+    y_usd = [
+        entry["result"][0][1]["upper_standard_deviation_weather_conditions"][0][key]
+        for entry in data
+    ]
+    y_min = [
+        min(y_lsd[index], y_usd[index], y_max[index]) for index in range(len(y_max))
+    ]
+    y_max = [
+        entry["result"][0][1]["maximum_irradiance_weather_conditions"][0][key]
+        for entry in data
+    ]
+    y_max = [
+        max(y_lsd[index], y_usd[index], y_max[index]) for index in range(len(y_max))
+    ]
     # Determine the x range
     # Plot
     plt.plot(x, y, color=f"C{index}")
@@ -1242,8 +1293,15 @@ for index, key in enumerate(keys):
     plt.show()
     with open(f"four_param_optimisation_dec_1_pv_t_st_batt_pv_{key}.json", "w") as f:
         json.dump(
-            {"x": x, key: y, f"{key}_usd": y_usd, f"{key}_lsd": y_lsd, f"{key}_max": y_max, f"{key}_min": y_min},
-            f
+            {
+                "x": x,
+                key: y,
+                f"{key}_usd": y_usd,
+                f"{key}_lsd": y_lsd,
+                f"{key}_max": y_max,
+                f"{key}_min": y_min,
+            },
+            f,
         )
 
 #######################
@@ -1253,14 +1311,16 @@ for index, key in enumerate(keys):
 import os
 import yaml
 
-with open((scenarios_filepath:=os.path.join("inputs", "scenarios.yaml")), "r") as f:
+with open((scenarios_filepath := os.path.join("inputs", "scenarios.yaml")), "r") as f:
     scenarios = yaml.safe_load(f)
 
 
 for discount_rate in range(-200, 200, 1):
     scenario = default_scenario.copy()
     scenario["discount_rate"] = discount_rate / 100
-    scenario["name"] = f"uae_dr_{'m_' if discount_rate < 0 else ''}{discount_rate // 100}{(discount_rate % 100) // 10}{(discount_rate % 100) % 10}"
+    scenario[
+        "name"
+    ] = f"uae_dr_{'m_' if discount_rate < 0 else ''}{discount_rate // 100}{(discount_rate % 100) // 10}{(discount_rate % 100) % 10}"
     scenarios["scenarios"].append(scenario)
 
 with open(scenarios_filepath, "w") as f:
