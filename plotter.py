@@ -977,13 +977,13 @@ import os
 from tqdm import tqdm
 
 default_entry = {
-    (batt_key := "battery_capacity"): 20,
+    (batt_key := "battery_capacity"): 170,
     (tank_key := "buffer_tank_capacity"): 100000,
     "mass_flow_rate": 20,
-    (pv_key := "pv_system_size"): 5000,
+    (pv_key := "pv_system_size"): 6400,
     (pv_t_key := "pv_t_system_size"): 300,
     (st_key := "solar_thermal_system_size"): 300,
-    "scenario": "default",
+    "scenario": "default_uae",
     "start_hour": 8,
     "system_lifetime": 25,
     "output": None,
@@ -992,8 +992,8 @@ default_entry = {
 
 battery_capacities = range(0, 1001, 100)
 pv_sizes = range(0, 10001, 1000)
-pv_t_sizes = range(72, 3600, 500)
-solar_thermal_sizes = range(218, 1283, 200)
+pv_t_sizes = range(72, 3600, 145)
+solar_thermal_sizes = range(218, 1283, 44)
 tank_capacities = range(15, 100, 80)
 
 runs = []
