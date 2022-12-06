@@ -19,7 +19,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-100
+  name: uae_dr_m_100
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -32,7 +32,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-101
+  name: uae_dr_m_099
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -45,7 +45,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-102
+  name: uae_dr_m_098
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -58,7 +58,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-103
+  name: uae_dr_m_097
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -71,7 +71,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-104
+  name: uae_dr_m_096
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -84,7 +84,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-105
+  name: uae_dr_m_095
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -97,7 +97,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-106
+  name: uae_dr_m_094
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -110,7 +110,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-107
+  name: uae_dr_m_093
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -123,7 +123,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-108
+  name: uae_dr_m_092
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -136,7 +136,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-109
+  name: uae_dr_m_091
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -149,7 +149,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-110
+  name: uae_dr_m_090
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -162,7 +162,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-111
+  name: uae_dr_m_089
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -175,7 +175,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-112
+  name: uae_dr_m_088
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -188,7 +188,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-113
+  name: uae_dr_m_087
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -201,7 +201,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-114
+  name: uae_dr_m_086
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -214,7 +214,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-115
+  name: uae_dr_m_085
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -227,7 +227,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-116
+  name: uae_dr_m_084
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -240,7 +240,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-117
+  name: uae_dr_m_083
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -253,7 +253,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-118
+  name: uae_dr_m_082
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -266,7 +266,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-119
+  name: uae_dr_m_081
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -279,7 +279,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-120
+  name: uae_dr_m_080
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -292,7 +292,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-121
+  name: uae_dr_m_079
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -305,7 +305,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-122
+  name: uae_dr_m_078
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -318,7 +318,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-123
+  name: uae_dr_m_077
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -331,7 +331,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-124
+  name: uae_dr_m_076
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -344,7 +344,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-125
+  name: uae_dr_m_075
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -357,7 +357,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-126
+  name: uae_dr_m_074
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -370,7 +370,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-127
+  name: uae_dr_m_073
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -383,7 +383,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-128
+  name: uae_dr_m_072
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -396,7 +396,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-129
+  name: uae_dr_m_071
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -409,7 +409,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-130
+  name: uae_dr_m_070
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -422,7 +422,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-131
+  name: uae_dr_m_069
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -435,7 +435,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-132
+  name: uae_dr_m_068
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -448,7 +448,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-133
+  name: uae_dr_m_067
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -461,7 +461,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-134
+  name: uae_dr_m_066
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -474,7 +474,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-135
+  name: uae_dr_m_065
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -487,7 +487,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-136
+  name: uae_dr_m_064
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -500,7 +500,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-137
+  name: uae_dr_m_063
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -513,7 +513,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-138
+  name: uae_dr_m_062
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -526,7 +526,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-139
+  name: uae_dr_m_061
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -539,7 +539,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-140
+  name: uae_dr_m_060
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -552,7 +552,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-141
+  name: uae_dr_m_059
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -565,7 +565,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-142
+  name: uae_dr_m_058
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -578,7 +578,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-143
+  name: uae_dr_m_057
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -591,7 +591,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-144
+  name: uae_dr_m_056
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -604,7 +604,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-145
+  name: uae_dr_m_055
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -617,7 +617,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-146
+  name: uae_dr_m_054
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -630,7 +630,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-147
+  name: uae_dr_m_053
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -643,7 +643,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-148
+  name: uae_dr_m_052
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -656,7 +656,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-149
+  name: uae_dr_m_051
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -669,7 +669,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-150
+  name: uae_dr_m_050
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -682,7 +682,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-151
+  name: uae_dr_m_049
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -695,7 +695,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-152
+  name: uae_dr_m_048
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -708,7 +708,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-153
+  name: uae_dr_m_047
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -721,7 +721,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-154
+  name: uae_dr_m_046
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -734,7 +734,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-155
+  name: uae_dr_m_045
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -747,7 +747,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-156
+  name: uae_dr_m_044
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -760,7 +760,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-157
+  name: uae_dr_m_043
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -773,7 +773,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-158
+  name: uae_dr_m_042
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -786,7 +786,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-159
+  name: uae_dr_m_041
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -799,7 +799,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-160
+  name: uae_dr_m_040
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -812,7 +812,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-161
+  name: uae_dr_m_039
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -825,7 +825,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-162
+  name: uae_dr_m_038
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -838,7 +838,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-163
+  name: uae_dr_m_037
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -851,7 +851,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-164
+  name: uae_dr_m_036
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -864,7 +864,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-165
+  name: uae_dr_m_035
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -877,7 +877,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-166
+  name: uae_dr_m_034
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -890,7 +890,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-167
+  name: uae_dr_m_033
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -903,7 +903,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-168
+  name: uae_dr_m_032
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -916,7 +916,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-169
+  name: uae_dr_m_031
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -929,7 +929,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-170
+  name: uae_dr_m_030
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -942,7 +942,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-171
+  name: uae_dr_m_029
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -955,7 +955,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-172
+  name: uae_dr_m_028
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -968,7 +968,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-173
+  name: uae_dr_m_027
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -981,7 +981,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-174
+  name: uae_dr_m_026
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -994,7 +994,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-175
+  name: uae_dr_m_025
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1007,7 +1007,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-176
+  name: uae_dr_m_024
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1020,7 +1020,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-177
+  name: uae_dr_m_023
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1033,7 +1033,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-178
+  name: uae_dr_m_022
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1046,7 +1046,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-179
+  name: uae_dr_m_021
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1059,7 +1059,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-180
+  name: uae_dr_m_020
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1072,7 +1072,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-181
+  name: uae_dr_m_019
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1085,7 +1085,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-182
+  name: uae_dr_m_018
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1098,7 +1098,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-183
+  name: uae_dr_m_017
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1111,7 +1111,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-184
+  name: uae_dr_m_016
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1124,7 +1124,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-185
+  name: uae_dr_m_015
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1137,7 +1137,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-186
+  name: uae_dr_m_014
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1150,7 +1150,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-187
+  name: uae_dr_m_013
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1163,7 +1163,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-188
+  name: uae_dr_m_012
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1176,7 +1176,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-189
+  name: uae_dr_m_011
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1189,7 +1189,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-190
+  name: uae_dr_m_010
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1202,7 +1202,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-191
+  name: uae_dr_m_009
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1215,7 +1215,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-192
+  name: uae_dr_m_008
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1228,7 +1228,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-193
+  name: uae_dr_m_007
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1241,7 +1241,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-194
+  name: uae_dr_m_006
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1254,7 +1254,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-195
+  name: uae_dr_m_005
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1267,7 +1267,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-196
+  name: uae_dr_m_004
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1280,7 +1280,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-197
+  name: uae_dr_m_003
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1293,7 +1293,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-198
+  name: uae_dr_m_002
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -1306,7 +1306,7 @@ scenarios:
   heat_pump_efficiency: 0.5
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
-  name: uae_dr_m_-199
+  name: uae_dr_m_001
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.011
@@ -3910,5 +3910,2605 @@ scenarios:
   plant: med
   pv: dusol_ds60280_m
   pv_degradation_rate: 0.039
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.0
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_0.0%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.010101010101010102
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_1.1%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.020202020202020204
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_2.2%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.030303030303030304
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_3.3%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.04040404040404041
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_4.4%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.05050505050505051
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_5.5%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.06060606060606061
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_6.6%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.07070707070707072
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_7.7%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.08080808080808081
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_8.8%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.09090909090909091
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_9.9%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.10101010101010102
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_10.10%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.11111111111111112
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_11.11%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.12121212121212122
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_12.12%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.13131313131313133
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_13.13%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.14141414141414144
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_14.14%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.15151515151515152
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_15.15%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.16161616161616163
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_16.16%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.17171717171717174
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_17.17%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.18181818181818182
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_18.18%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.19191919191919193
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_19.19%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.20202020202020204
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_20.20%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.21212121212121213
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_21.21%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.22222222222222224
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_22.22%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.23232323232323235
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_23.23%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.24242424242424243
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_24.24%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.25252525252525254
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_25.25%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.26262626262626265
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_26.26%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.27272727272727276
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_27.27%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.2828282828282829
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_28.28%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.29292929292929293
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_29.29%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.30303030303030304
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_30.30%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.31313131313131315
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_31.31%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.32323232323232326
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_32.32%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.33333333333333337
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_33.33%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.3434343434343435
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_34.34%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.3535353535353536
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_35.35%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.36363636363636365
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_36.36%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.37373737373737376
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_37.37%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.38383838383838387
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_38.38%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.393939393939394
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_39.39%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4040404040404041
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_40.40%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4141414141414142
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_41.41%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.42424242424242425
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_42.42%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.43434343434343436
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_43.43%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4444444444444445
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_44.44%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4545454545454546
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_45.46%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4646464646464647
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_46.46%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4747474747474748
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_47.48%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.48484848484848486
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_48.48%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.494949494949495
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_49.50%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.5050505050505051
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_50.50%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.5151515151515152
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_51.52%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.5252525252525253
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_52.52%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.5353535353535354
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_53.54%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.5454545454545455
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_54.55%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.5555555555555556
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_55.56%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.5656565656565657
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_56.57%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.5757575757575758
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_57.58%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.5858585858585859
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_58.59%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.595959595959596
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_59.60%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.6060606060606061
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_60.61%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.6161616161616162
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_61.62%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.6262626262626263
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_62.63%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.6363636363636365
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_63.64%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.6464646464646465
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_64.65%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.6565656565656566
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_65.66%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.6666666666666667
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_66.67%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.6767676767676768
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_67.68%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.686868686868687
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_68.69%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.696969696969697
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_69.70%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.7070707070707072
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_70.71%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.7171717171717172
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_71.72%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.7272727272727273
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_72.73%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.7373737373737375
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_73.74%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.7474747474747475
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_74.75%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.7575757575757577
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_75.76%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.7676767676767677
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_76.77%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.7777777777777778
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_77.78%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.787878787878788
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_78.79%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.797979797979798
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_79.80%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.8080808080808082
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_80.81%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.8181818181818182
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_81.82%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.8282828282828284
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_82.83%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.8383838383838385
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_83.84%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.8484848484848485
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_84.85%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.8585858585858587
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_85.86%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.8686868686868687
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_86.87%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.8787878787878789
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_87.88%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.888888888888889
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_88.89%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.8989898989898991
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_89.90%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.9090909090909092
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_90.91%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.9191919191919192
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_91.92%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.9292929292929294
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_92.93%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.9393939393939394
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_93.94%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.9494949494949496
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_94.95%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.9595959595959597
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_95.96%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.9696969696969697
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_96.97%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.9797979797979799
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_97.98%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.98989898989899
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_98.99%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 1.0
+  heat_pump_efficiency: 0.5
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_ex_eff_100.0%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.0
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_0.0%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.010101010101010102
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_1.1%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.020202020202020204
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_2.2%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.030303030303030304
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_3.3%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.04040404040404041
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_4.4%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.05050505050505051
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_5.5%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.06060606060606061
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_6.6%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.07070707070707072
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_7.7%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.08080808080808081
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_8.8%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.09090909090909091
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_9.9%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.10101010101010102
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_10.10%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.11111111111111112
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_11.11%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.12121212121212122
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_12.12%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.13131313131313133
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_13.13%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.14141414141414144
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_14.14%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.15151515151515152
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_15.15%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.16161616161616163
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_16.16%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.17171717171717174
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_17.17%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.18181818181818182
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_18.18%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.19191919191919193
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_19.19%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.20202020202020204
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_20.20%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.21212121212121213
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_21.21%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.22222222222222224
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_22.22%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.23232323232323235
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_23.23%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.24242424242424243
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_24.24%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.25252525252525254
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_25.25%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.26262626262626265
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_26.26%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.27272727272727276
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_27.27%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.2828282828282829
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_28.28%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.29292929292929293
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_29.29%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.30303030303030304
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_30.30%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.31313131313131315
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_31.31%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.32323232323232326
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_32.32%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.33333333333333337
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_33.33%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.3434343434343435
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_34.34%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.3535353535353536
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_35.35%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.36363636363636365
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_36.36%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.37373737373737376
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_37.37%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.38383838383838387
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_38.38%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.393939393939394
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_39.39%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.4040404040404041
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_40.40%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.4141414141414142
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_41.41%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.42424242424242425
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_42.42%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.43434343434343436
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_43.43%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.4444444444444445
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_44.44%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.4545454545454546
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_45.46%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.4646464646464647
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_46.46%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.4747474747474748
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_47.48%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.48484848484848486
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_48.48%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.494949494949495
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_49.50%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.5050505050505051
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_50.50%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.5151515151515152
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_51.52%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.5252525252525253
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_52.52%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.5353535353535354
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_53.54%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.5454545454545455
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_54.55%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.5555555555555556
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_55.56%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.5656565656565657
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_56.57%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.5757575757575758
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_57.58%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.5858585858585859
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_58.59%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.595959595959596
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_59.60%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.6060606060606061
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_60.61%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.6161616161616162
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_61.62%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.6262626262626263
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_62.63%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.6363636363636365
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_63.64%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.6464646464646465
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_64.65%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.6565656565656566
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_65.66%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.6666666666666667
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_66.67%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.6767676767676768
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_67.68%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.686868686868687
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_68.69%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.696969696969697
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_69.70%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.7070707070707072
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_70.71%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.7171717171717172
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_71.72%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.7272727272727273
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_72.73%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.7373737373737375
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_73.74%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.7474747474747475
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_74.75%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.7575757575757577
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_75.76%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.7676767676767677
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_76.77%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.7777777777777778
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_77.78%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.787878787878788
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_78.79%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.797979797979798
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_79.80%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.8080808080808082
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_80.81%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.8181818181818182
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_81.82%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.8282828282828284
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_82.83%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.8383838383838385
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_83.84%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.8484848484848485
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_84.85%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.8585858585858587
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_85.86%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.8686868686868687
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_86.87%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.8787878787878789
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_87.88%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.888888888888889
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_88.89%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.8989898989898991
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_89.90%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.9090909090909092
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_90.91%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.9191919191919192
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_91.92%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.9292929292929294
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_92.93%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.9393939393939394
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_93.94%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.9494949494949496
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_94.95%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.9595959595959597
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_95.96%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.9696969696969697
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_96.97%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.9797979797979799
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_97.98%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 0.98989898989899
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_98.99%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
+  pv_t: dualsun_spring_insulated
+  solar_thermal: mean_fpc
+- battery: default_battery
+  discount_rate: 0.0
+  grid_cost: 0.1
+  heat_exchanger_efficiency: 0.4
+  heat_pump_efficiency: 1.0
+  hot_water_tank: hot_water_tank
+  htf_heat_capacity: 4182.0
+  name: uae_heat_pump_eff_100.0%
+  plant: med
+  pv: dusol_ds60280_m
+  pv_degradation_rate: 0.011
   pv_t: dualsun_spring_insulated
   solar_thermal: mean_fpc
