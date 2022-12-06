@@ -990,11 +990,11 @@ default_entry = {
     "profile_types": ["avr", "usd", "lsd", "max", "min"],
 }
 
-battery_capacities = range(0, 1001, 20)
-pv_sizes = range(0, 10001, 200)
-pv_t_sizes = range(72, 3600, 70)
-solar_thermal_sizes = range(218, 1220, 20)
-tank_capacities = range(15, 101, 34)
+battery_capacities = range(0, 1001, 100)
+pv_sizes = range(0, 10001, 1000)
+pv_t_sizes = range(72, 3600, 500)
+solar_thermal_sizes = range(218, 1283, 200)
+tank_capacities = range(15, 100, 80)
 
 runs = []
 for batt in battery_capacities:
@@ -1077,7 +1077,7 @@ for batt in tqdm(battery_capacities, desc="batt"):
                     entry[st_key] = st
                     runs.append(entry)
 
-with open(os.path.join("inputs", "ten_by_ten_simulations.json"), "w") as f:
+with open(os.path.join("inputs", "fifty_by_fifth_simulations.json"), "w") as f:
     json.dump(runs, f)
 
 # Runs for the HPC
