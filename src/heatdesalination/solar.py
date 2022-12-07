@@ -770,7 +770,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
 
         """
 
-        return self._max_mass_flow_rate / 3600
+        return (self._max_mass_flow_rate / 3600 if self._max_mass_flow_rate is not None else None)
 
     @property
     def min_mass_flow_rate(self) -> float:
@@ -782,7 +782,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
 
         """
 
-        return self._min_mass_flow_rate / 3600
+        return (self._min_mass_flow_rate / 3600 if self._min_mass_flow_rate is not None else None)
 
     def __repr__(self) -> str:
         """
@@ -948,8 +948,8 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
 
         # Raise a flow-rate error if the flow rate is insufficient.
         if (
-            mass_flow_rate < self.min_mass_flow_rate
-            or mass_flow_rate > self.max_mass_flow_rate
+            (mass_flow_rate < self.min_mass_flow_rate if self.min_mass_flow_rate is not None else False)
+            or (mass_flow_rate > self.max_mass_flow_rate if self.max_mass_flow_rate is not None else False)
         ):
             logger.debug(
                 "Flow rate of %s kg/s is out of bounds, range is %s to %s kilograms/second.",
@@ -1085,7 +1085,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
 
         """
 
-        return self._max_mass_flow_rate / 3600
+        return (self._max_mass_flow_rate / 3600 if self._max_mass_flow_rate is not None else None)
 
     @property
     def min_mass_flow_rate(self) -> float:
@@ -1097,7 +1097,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
 
         """
 
-        return self._min_mass_flow_rate / 3600
+        return (self._min_mass_flow_rate / 3600 if self._min_mass_flow_rate is not None else None)
 
     @property
     def nominal_mass_flow_rate(self) -> float:
@@ -1109,7 +1109,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
 
         """
 
-        return self._nominal_mass_flow_rate / 3600
+        return (self._nominal_mass_flow_rate / 3600 if self._nominal_mass_flow_rate is not None else None)
 
     def __repr__(self) -> str:
         """
@@ -1182,8 +1182,8 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
 
         # Raise a flow-rate error if the flow rate is insufficient.
         if (
-            mass_flow_rate < self.min_mass_flow_rate
-            or mass_flow_rate > self.max_mass_flow_rate
+            (mass_flow_rate < self.min_mass_flow_rate if self.min_mass_flow_rate is not None else False)
+            or (mass_flow_rate > self.max_mass_flow_rate if self.max_mass_flow_rate is not None else False)
         ):
             logger.debug(
                 "Flow rate of %s kg/s is out of bounds, range is %s to %s kilograms/second.",
@@ -1194,7 +1194,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
             raise FlowRateError(
                 self.name,
                 f"Flow rate of {mass_flow_rate:.2g} kg/s is out of bounds, range is "
-                + f"{self.min_mass_flow_rate:.2g} to {self.max_mass_flow_rate:.2g} "
+                + f"{self.min_mass_flow_rate} to {self.max_mass_flow_rate} "
                 "kilograms/second.",
             )
             pass

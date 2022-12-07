@@ -61,7 +61,7 @@ solar_collectors:
     area: !!float 1.9602  # [m^2]
     cost: !!float 350  # [USD/panel]
     land_use: !!float 1.9602  # [m^2]
-    max_mass_flow_rate: !!float 1000  # [NaN]
+    max_mass_flow_rate: null  # [NaN]
     min_mass_flow_rate: !!float 20  # [l/h]
     nominal_mass_flow_rate: !!float 60  # [l/h]
     pv_module_characteristics:
@@ -83,7 +83,7 @@ solar_collectors:
     area: !!float 1.876  # [m^2]
     cost: !!float 300  # [USD/panel]
     land_use: !!float 1.876  # [m^2]
-    max_mass_flow_rate: !!float 1000  # [NaN]
+    max_mass_flow_rate: null  # [NaN]
     min_mass_flow_rate: !!float 20  # [l/h]
     nominal_mass_flow_rate: !!float 60  # [l/h]
     pv_module_characteristics:
@@ -100,7 +100,7 @@ solar_collectors:
     area: !!float 1.876  # [m^2]
     cost: !!float 300  # [USD/panel]
     land_use: !!float 1.876  # [m^2]
-    max_mass_flow_rate: !!float 1000  # [NaN]
+    max_mass_flow_rate: null  # [NaN]
     min_mass_flow_rate: !!float 20  # [l/h]
     nominal_mass_flow_rate: !!float 60  # [l/h]
     pv_module_characteristics:
@@ -464,9 +464,9 @@ solar_collectors:
     type: !!str solar_thermal
   - area: !!float 2.169965517
     # cost: !!float 735  # [USD/collector]
-    cost: !!float 200  # [USD/collector]
+    cost: !!float 700  # [USD/collector]
     land_use: !!float 2.375310345
-    max_mass_flow_rate: !!float 332.7733333
+    max_mass_flow_rate: null
     min_mass_flow_rate: !!float 56.10666667
     name: !!str mean_fpc
     nominal_mass_flow_rate: !!float 97.85714286

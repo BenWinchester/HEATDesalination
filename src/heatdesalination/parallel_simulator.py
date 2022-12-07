@@ -34,6 +34,7 @@ from src.heatdesalination.__main__ import main as heatdesalination_main
 from src.heatdesalination.__utils__ import (
     CLI_TO_PROFILE_TYPE,
     DONE,
+    FlowRateError,
     get_logger,
     ProfileType,
     Solution,
@@ -180,30 +181,44 @@ def _parse_args(args: List[Any]) -> argparse.Namespace:
 
 def heatdesalination_wrapper(
     simulation: Simulation, location: str
-) -> Dict[ProfileType, Solution]:
+) -> Dict[ProfileType, Solution] | None:
     """
     Run a steady-state simulation
 
+    Inputs:
+        - simulation:
+            The simulation to carry out.
+        - location:
+            The location for which to run the simulation.
+
+    Outputs:
+        - The results of the simulation or `None` if a flow-rate error was
+          encountered.
+
     """
 
-    return heatdesalination_main(
-        location,
-        simulation.profile_type_instances,
-        simulation.scenario,
-        simulation.system_lifetime,
-        simulation.battery_capacity,
-        simulation.buffer_tank_capacity,
-        simulation.mass_flow_rate,
-        False,
-        simulation.output,
-        simulation.pv_t_system_size,
-        simulation.pv_system_size,
-        True,
-        simulation.solar_thermal_system_size,
-        simulation.start_hour,
-        disable_tqdm=True,
-        save_outputs=False,
-    )
+    try:
+        return heatdesalination_main(
+            location,
+            simulation.profile_type_instances,
+            simulation.scenario,
+            simulation.system_lifetime,
+            simulation.battery_capacity,
+            simulation.buffer_tank_capacity,
+            simulation.mass_flow_rate,
+            False,
+            simulation.output,
+            simulation.pv_t_system_size,
+            simulation.pv_system_size,
+            True,
+            simulation.solar_thermal_system_size,
+            simulation.start_hour,
+            disable_tqdm=True,
+            save_outputs=False,
+        )
+    except FlowRateError:
+        print("Flow-rate error, skipping results.")
+        return None
 
 
 def main(

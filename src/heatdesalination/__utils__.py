@@ -975,6 +975,16 @@ class Solution(NamedTuple):
     .. attribute:: ambient_temperatures
         The ambient temperature at each time step.
 
+    .. attribute:: auxiliary_heating_demands:
+        The auxiliary heating demand in thermal kW needed by the plant in addition to
+        any PV-T- or solar-thermal-driven heating.
+
+    .. attribute:: auxiliary_heating_electricity_demands:
+        The electricity requirements from the plant due to auxiliary heating.
+
+    .. attribute:: base_electricity_demands:
+        The electricity requirements from the plant due to its base electrical load.
+
     .. attribute:: collector_input_temperatures
         The input temperature to the collector system at each time step.
 
@@ -1067,6 +1077,9 @@ class Solution(NamedTuple):
     """
 
     ambient_temperatures: Dict[int, float]
+    auxiliary_heating_demands: Dict[int, float]
+    auxiliary_heating_electricity_demands: Dict[int, float]
+    base_electricity_demands: Dict[int, float]
     collector_input_temperatures: Dict[int, float]
     collector_system_output_temperatures: Dict[int, float]
     electricity_demands: Dict[int, float]
@@ -1199,6 +1212,7 @@ class Solution(NamedTuple):
                 key: value - ZERO_CELCIUS_OFFSET
                 for key, value in self.ambient_temperatures.items()
             },
+            "Auxiliary heating demand / kWh(th)": self.auxiliary_heating_demands,
             "Battery power inflow profile / kWh": self.battery_power_input_profile,
             "Battery storage profile / kWh": self.battery_storage_profile,
             "Collector system input temperature / degC": {
@@ -1211,6 +1225,8 @@ class Solution(NamedTuple):
             },
             "Dumped electricity / kWh": self.dumped_solar,
             "Electricity demand / kWh": self.electricity_demands,
+            "Electrical auxiliary heating demand / kWh(el)": self.auxiliary_heating_electricity_demands,
+            "Base electricity dewmand / kWh": self.base_electricity_demands,
             "Electricity demand met through the grid / kWh": self.grid_electricity_supply_profile,
             "Electricity demand met through solar collectors / kWh": self.solar_power_supplied,
             "Electricity demand met through storage / kWh": self.battery_electricity_suppy_profile,
@@ -1220,7 +1236,7 @@ class Solution(NamedTuple):
             },
             "Hot-water demand volume / kg/s": self.hot_water_demand_volume,
             "PV-T collector output temperature / degC": {
-                key: value - ZERO_CELCIUS_OFFSET
+                key: (value - ZERO_CELCIUS_OFFSET if value is not None else None)
                 for key, value in self.pv_t_htf_output_temperatures.items()
             },
             "Renewable heating fraction": self.renewable_heating_fraction,
@@ -1288,7 +1304,7 @@ class Solution(NamedTuple):
                         ProfileDegradationType.DEGRADED.value
                     ],
                     "PV-T output temperature / degC": {
-                        key: value - ZERO_CELCIUS_OFFSET
+                        key: (value - ZERO_CELCIUS_OFFSET if value is not None else None)
                         for key, value in self.pv_t_htf_output_temperatures.items()
                     },
                     "PV-T reduced temperature / degC/W/m^2": self.pv_t_reduced_temperatures,
