@@ -218,12 +218,16 @@ plt.show()
 
 import json
 import matplotlib.pyplot as plt
+import os
 import seaborn as sns
 from src.heatdesalination.__utils__ import ProfileType
 
 sns.set_palette("colorblind")
 
-with open("auto_generated/fujairah_united_arab_emirates.json", "r") as f:
+with open(
+    os.path.join("auto_generated", "fujairah_emirate_united_arab_emirates.json"),
+    "r"
+) as f:
     data = json.load(f)
 
 keywords_to_plot = ["irradiance", "ambient_temperature", "wind_speed"]
@@ -232,7 +236,7 @@ ylabels = [
     "Ambient temperature / degrees Celcius",
     "Wind speed / m/s",
 ]
-map_colours = ["C3", "C1", "C0"]
+map_colours = ["C1", "C3", "C0"]
 
 for index, keyword in enumerate(keywords_to_plot):
     mapping = {
@@ -242,14 +246,14 @@ for index, keyword in enumerate(keywords_to_plot):
     average_profile = {key: mapping[key] for key in sorted(mapping)}
     mapping = {
         int(key): value
-        for key, value in data[ProfileType.LOWER_STANDARD_DEVIATION.value][
+        for key, value in data[ProfileType.LOWER_ERROR_BAR.value][
             keyword
         ].items()
     }
     lower_profile = {key: mapping[key] for key in sorted(mapping)}
     mapping = {
         int(key): value
-        for key, value in data[ProfileType.UPPER_STANDARD_DEVIATION.value][
+        for key, value in data[ProfileType.UPPER_ERROR_BAR.value][
             keyword
         ].items()
     }
@@ -276,6 +280,7 @@ for index, keyword in enumerate(keywords_to_plot):
         list(upper_profile.values()),
         color=map_colours[index],
         alpha=0.5,
+        label="PVGIS error"
     )
     plt.plot(
         max_profile.keys(),
@@ -307,7 +312,11 @@ from typing import List
 import matplotlib.pyplot as plt
 import matplotlib
 
-ALPHA = 0.3
+
+ALPHA = 0.9
+sns.set_style("whitegrid")
+sns.set_palette("colorblind")
+sns.set_context("notebook")
 
 with open(
     "simulation_outputs\simulation_output_average_weather_conditions.csv", "r"
@@ -334,7 +343,6 @@ keys: List[str] = [
     "Collector system output temperature / degC",
     "Tank temperature / degC",
 ]
-sns.set_palette("colorblind")
 
 for index, key in enumerate(keys):
     plt.plot(x, average_data[key], c=f"C{index}", label=key.replace("/ degC", ""))
@@ -349,7 +357,6 @@ plt.show()
 
 # Heating energy plot
 x: List[int] = list(range(len(average_data)))
-sns.set_palette("colorblind", n_colors=4)
 
 # Compute the hot-water demand in heat
 fig, ax = plt.subplots()
@@ -403,7 +410,6 @@ print(
 )
 
 # Plot the electrical sources
-sns.set_palette("colorblind")
 plt.plot(
     x,
     average_data["Electricity demand / kWh"],
@@ -432,6 +438,77 @@ plt.legend()
 plt.xlabel("Hour of day")
 plt.ylabel("Electrical demand / kWh")
 plt.show()
+
+
+sns.set_palette("PuBu_r", n_colors=5)
+plt.fill_between(
+    x,
+    average_data["Electricity demand met through storage / kWh"]
+    + average_data["Electricity demand met through solar collectors / kWh"]
+    + average_data["Electricity demand met through the grid / kWh"]
+    + average_data["Battery power inflow profile / kWh"],
+    average_data["Electricity demand met through storage / kWh"]
+    + average_data["Electricity demand met through solar collectors / kWh"]
+    + average_data["Electricity demand met through the grid / kWh"]
+    + average_data["Battery power inflow profile / kWh"]
+    + average_data["Dumped electricity / kWh"],
+    color="C4",
+    label="Dumped electricity",
+    alpha=ALPHA
+)
+plt.fill_between(
+    x,
+    average_data["Electricity demand met through storage / kWh"]
+    + average_data["Electricity demand met through solar collectors / kWh"]
+    + average_data["Electricity demand met through the grid / kWh"],
+    average_data["Electricity demand met through storage / kWh"]
+    + average_data["Electricity demand met through solar collectors / kWh"]
+    + average_data["Electricity demand met through the grid / kWh"]
+    + average_data["Battery power inflow profile / kWh"],
+    color="C3",
+    label="Power to storage",
+    alpha=ALPHA
+)
+plt.fill_between(
+    x,
+    average_data["Electricity demand met through storage / kWh"]
+    + average_data["Electricity demand met through solar collectors / kWh"],
+    average_data["Electricity demand met through storage / kWh"]
+    + average_data["Electricity demand met through solar collectors / kWh"]
+    + average_data["Electricity demand met through the grid / kWh"],
+    color="C2",
+    label="Grid",
+    alpha=ALPHA
+)
+plt.fill_between(
+    x,
+    average_data["Electricity demand met through storage / kWh"],
+    average_data["Electricity demand met through storage / kWh"]
+    + average_data["Electricity demand met through solar collectors / kWh"],
+    color="C1",
+    label="Solar",
+    alpha=ALPHA
+)
+plt.fill_between(
+    x,
+    [0] * len(x),
+    average_data["Electricity demand met through storage / kWh"],
+    color="C0",
+    label="Storage",
+    alpha=ALPHA
+)
+plt.plot(
+    x,
+    average_data["Electricity demand / kWh"],
+    "--",
+    c="C0",
+    label="Electricity demand / kWh"
+)
+plt.legend()
+plt.xlabel("Hour of day")
+plt.ylabel("Source of electrical power / kWh")
+plt.show()
+
 
 ##########################################
 # Manual post-simulation cost comparison #
@@ -900,9 +977,9 @@ ax.set_xlabel("Solar-thermal capacity / collectors")
 ax.set_ylabel("PV-T capacity / collectors")
 
 # fig.colorbar(cpf, ax=ax, label="Total lifetime cost / MUSD")
-# fig.colorbar(cpf, ax=ax, label="Auxiliary heating fraction")
+fig.colorbar(cpf, ax=ax, label="Auxiliary heating fraction")
 # fig.colorbar(cpf, ax=ax, label="Grid fraction")
-fig.colorbar(cpf, ax=ax, label="Solar fraction")
+# fig.colorbar(cpf, ax=ax, label="Solar fraction")
 # fig.colorbar(cpf, ax=ax, label="Storage fraction")
 
 plt.show()
@@ -1545,12 +1622,17 @@ import matplotlib.pyplot as plt
 import os
 import seaborn as sns
 from scipy.signal import lfilter
+from src.heatdesalination.__utils__ import ProfileType
 
 # Noise-filtering parameters
 n = 5  # the larger n is, the smoother curve will be
 b = [1.0 / n] * n
 a = 1
 
+
+ALPHA = 0.5
+sns.set_style("whitegrid")
+sns.set_context("notebook")
 sns.set_palette("colorblind")
 
 with open("hpc_grid_optimisations_probe.json", "r") as f:
@@ -1586,6 +1668,70 @@ x = [(-(200 + entry) if entry < 0 else entry) for entry in x]
 # Plot the various keys
 for plot_index, title in enumerate(optimisation_titles):
     sns.set_palette("colorblind")
+    batt = [
+        entry["result"][plot_index][1][ProfileType.AVERAGE.value][1][0]
+        for entry in data
+    ]
+    ler_batt = [
+        entry["result"][plot_index][1][ProfileType.LOWER_ERROR_BAR.value][1][0]
+        for entry in data
+    ]
+    uer_batt = [
+        entry["result"][plot_index][1][ProfileType.UPPER_ERROR_BAR.value][1][0]
+        for entry in data
+    ]
+    pv = [
+        entry["result"][plot_index][1][ProfileType.AVERAGE.value][1][1]
+        for entry in data
+    ]
+    ler_pv = [
+        entry["result"][plot_index][1][ProfileType.LOWER_ERROR_BAR.value][1][1]
+        for entry in data
+    ]
+    uer_pv = [
+        entry["result"][plot_index][1][ProfileType.UPPER_ERROR_BAR.value][1][1]
+        for entry in data
+    ]
+    pv_t = [
+        entry["result"][plot_index][1][ProfileType.AVERAGE.value][1][2]
+        for entry in data
+    ]
+    ler_pv_t = [
+        entry["result"][plot_index][1][ProfileType.LOWER_ERROR_BAR.value][1][2]
+        for entry in data
+    ]
+    uer_pv_t = [
+        entry["result"][plot_index][1][ProfileType.UPPER_ERROR_BAR.value][1][2]
+        for entry in data
+    ]
+    st = [
+        entry["result"][plot_index][1][ProfileType.AVERAGE.value][1][3]
+        for entry in data
+    ]
+    ler_st = [
+        entry["result"][plot_index][1][ProfileType.LOWER_ERROR_BAR.value][1][3]
+        for entry in data
+    ]
+    uer_st = [
+        entry["result"][plot_index][1][ProfileType.UPPER_ERROR_BAR.value][1][3]
+        for entry in data
+    ]
+    plt.plot(x, batt, color="C0", label="Battery capacity / kWh")
+    plt.fill_between(x, ler_batt, uer_batt, color="C0", alpha=ALPHA)
+    plt.plot(x, pv, color="C1", label="Num. PV collectors")
+    plt.fill_between(x, ler_pv, uer_pv, color="C1", alpha=ALPHA)
+    plt.plot(x, pv_t, color="C2", label="Num. PV-T collectors")
+    plt.fill_between(x, ler_pv_t, uer_pv_t, color="C2", alpha=ALPHA)
+    plt.plot(x, st, color="C3", label="Num. solar-thermal collectors")
+    plt.fill_between(x, ler_st, uer_st, color="C3", alpha=ALPHA)
+    plt.xlabel("Mean grid discount rate / %/year")
+    plt.xlim(-25, 25)
+    plt.ylabel("Component size")
+    plt.ylim(0, 1.25 * max(
+        uer_batt[75:125] + uer_pv[75:125] + uer_pv_t[75:125] + uer_st[75:125]
+    ))
+    plt.legend()
+    plt.show()
     for index, key in enumerate(keys):
         y = [
             entry["result"][plot_index][1]["average_weather_conditions"][0][key]
@@ -1725,8 +1871,62 @@ for plot_index, title in enumerate(optimisation_titles):
     plt.ylabel("Fractional generation of electricity demand")
     plt.title(f"Fractional electricity sources for {title.capitalize()}")
     plt.legend()
+    plt.xlim(-25, 25)
     plt.show()
-    # Plot without raised minima
+    # Plot the smoothed fractions of power from storage, pv, and the grid.
+    sns.set_palette("PuBu_r", n_colors=3)
+    storage_fraction = lfilter(b, a, [
+        entry["result"][plot_index][1]["average_weather_conditions"][0][
+            "storage_electricity_fraction"
+        ]
+        for entry in data
+    ])
+    solar_fraction = lfilter(b, a, [
+        entry["result"][plot_index][1]["average_weather_conditions"][0][
+            "solar_electricity_fraction"
+        ]
+        for entry in data
+    ])
+    grid_fraction = lfilter(b, a, [
+        entry["result"][plot_index][1]["average_weather_conditions"][0][
+            "grid_electricity_fraction"
+        ]
+        for entry in data
+    ])
+    plt.plot(
+        x,
+        (
+            grid_line := [
+                solar_fraction[index] + grid_fraction[index] + storage_fraction[index]
+                for index in range(len(storage_fraction))
+            ]
+        ),
+        color=f"C2",
+        label="grid fraction",
+    )
+    plt.plot(
+        x,
+        (
+            solar_line := [
+                storage_fraction[index] + solar_fraction[index]
+                for index in range(len(storage_fraction))
+            ]
+        ),
+        color=f"C1",
+        label="solar fraction",
+    )
+    plt.plot(x, storage_fraction, color=f"C0", label="storage fraction")
+    plt.fill_between(
+        x, [0] * len(storage_fraction), storage_fraction, color="C0", alpha=0.7
+    )
+    plt.fill_between(x, storage_fraction, solar_line, color="C1", alpha=0.7)
+    plt.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
+    plt.xlabel("Mean grid discount rate / %/year")
+    plt.ylabel("Fractional generation of electricity demand")
+    plt.title(f"Fractional electricity sources for {title.capitalize()}")
+    plt.legend()
+    plt.xlim(-25, 25)
+    plt.show()    # Plot without raised minima
     storage_fraction = [
         entry["result"][plot_index][1]["average_weather_conditions"][0][
             "storage_electricity_fraction"
@@ -1757,6 +1957,7 @@ for plot_index, title in enumerate(optimisation_titles):
     plt.ylabel("Fractional generation of electricity demand")
     plt.title(f"Fractional electricity sources for {title.capitalize()}")
     plt.legend()
+    plt.xlim(-25, 25)
     plt.show()
 
 ################################
@@ -1942,6 +2143,7 @@ for plot_index, title in enumerate(optimisation_titles):
 # Scenario-generation #
 #######################
 
+import numpy as np
 import os
 import yaml
 
@@ -1962,18 +2164,16 @@ default_optimisation = {
 new_scenarios = [default_scenario]
 grid_optimisations = []
 
-for discount_rate in range(-100, 100, 1):
+for discount_rate in np.linspace(-25, 25, 250):
     scenario = default_scenario.copy()
     scenario["discount_rate"] = float(discount_rate / 100)
     scenario[
         "name"
-    ] = f"uae_dr_{'m_' if discount_rate < 0 else ''}{abs(discount_rate) // 100}{(abs(discount_rate) % 100) // 10}{(abs(discount_rate) % 100) % 10}"
+    ] = f"uae_dr_{'m_' if discount_rate < 0 else ''}" f"{int(round(abs(discount_rate) // 1, 0))}" f"{int(round((abs(discount_rate) % 1) // 0.1, 0))}" f"{int(round((abs(discount_rate) % 1) % 0.1, 0))}"
     new_scenarios.append(scenario)
     optimisation = default_optimisation.copy()
     optimisation["scenario"] = scenario["name"]
     grid_optimisations.append(optimisation)
-
-import numpy as np
 
 pv_degradation_optimisations = []
 
