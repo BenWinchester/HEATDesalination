@@ -29,7 +29,16 @@ from tqdm import tqdm
 from .__utils__ import CLI_TO_PROFILE_TYPE, ProfileType, Solution, get_logger
 from .argparser import MissingParametersError, parse_args, validate_args
 from .fileparser import parse_input_files
-from .optimiser import AuxiliaryHeatingFraction, Criterion, DumpedElectricity, GridElectricityFraction, run_optimisation, SolarElectricityFraction, StorageElectricityFraction, TotalCost
+from .optimiser import (
+    AuxiliaryHeatingFraction,
+    Criterion,
+    DumpedElectricity,
+    GridElectricityFraction,
+    run_optimisation,
+    SolarElectricityFraction,
+    StorageElectricityFraction,
+    TotalCost,
+)
 from .simulator import determine_steady_state_simulation
 
 __all__ = ("main",)
@@ -47,7 +56,7 @@ ANALYSIS_REQUESTS = {
     # LCUE.name,
     SolarElectricityFraction.name,
     StorageElectricityFraction.name,
-    TotalCost.name
+    TotalCost.name,
 }
 
 # SIMULATION_OUTPUTS_DIRECTORY:

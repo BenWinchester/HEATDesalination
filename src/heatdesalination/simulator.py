@@ -752,26 +752,33 @@ def run_simulation(
         # Determine the electricity demands of the plant including any auxiliary
         # heating.
         if desalination_plant.operating(hour):
-            auxiliary_heating_demand = max((
-                desalination_plant.requirements(hour).hot_water_volume  # [kg/s]
-                * buffer_tank.heat_capacity  # [J/kg*K]
-                * (
-                    desalination_plant.requirements(hour).hot_water_temperature
-                    - tank_temperature  # [K]
-                )
-                / 1000  # [W/kW]
-            ), 0)  # [kW]
-            auxiliary_heating_electricity_demand: float = max((
-                calculate_heat_pump_electricity_consumption(
-                    desalination_plant.requirements(hour).hot_water_temperature,
-                    ambient_temperatures[hour],
-                    auxiliary_heating_demand,
-                    scenario.heat_pump_efficiency,
-                )
-            ), 0)  # [kW]
-            electricity_demand: float = desalination_plant.requirements(  # [kW]
-                hour
-            ).electricity + auxiliary_heating_electricity_demand
+            auxiliary_heating_demand = max(
+                (
+                    desalination_plant.requirements(hour).hot_water_volume  # [kg/s]
+                    * buffer_tank.heat_capacity  # [J/kg*K]
+                    * (
+                        desalination_plant.requirements(hour).hot_water_temperature
+                        - tank_temperature  # [K]
+                    )
+                    / 1000  # [W/kW]
+                ),
+                0,
+            )  # [kW]
+            auxiliary_heating_electricity_demand: float = max(
+                (
+                    calculate_heat_pump_electricity_consumption(
+                        desalination_plant.requirements(hour).hot_water_temperature,
+                        ambient_temperatures[hour],
+                        auxiliary_heating_demand,
+                        scenario.heat_pump_efficiency,
+                    )
+                ),
+                0,
+            )  # [kW]
+            electricity_demand: float = (
+                desalination_plant.requirements(hour).electricity  # [kW]
+                + auxiliary_heating_electricity_demand
+            )
         else:
             auxiliary_heating_demand = 0
             auxiliary_heating_electricity_demand = 0
@@ -779,10 +786,12 @@ def run_simulation(
 
         # Save these outputs in mappings.
         auxiliary_heating_demands[hour] = auxiliary_heating_demand
-        auxiliary_heating_electricity_demands[hour] = auxiliary_heating_electricity_demand
+        auxiliary_heating_electricity_demands[
+            hour
+        ] = auxiliary_heating_electricity_demand
         base_electricity_demands[hour] = desalination_plant.requirements(  # [kW]
-                hour
-            ).electricity
+            hour
+        ).electricity
         collector_input_temperatures[hour] = collector_input_temperature
         collector_system_output_temperatures[hour] = collector_system_output_temperature
         electricity_demands[hour] = electricity_demand

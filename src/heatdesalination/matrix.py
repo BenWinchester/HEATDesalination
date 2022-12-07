@@ -136,7 +136,7 @@ def _solar_system_output_temperatures(
             collector_system_input_temperature,
             pv_t_mass_flow_rate,
         )
-        if pv_t_htf_output_temperature > (max_htf_temp:=100 + ZERO_CELCIUS_OFFSET):
+        if pv_t_htf_output_temperature > (max_htf_temp := 100 + ZERO_CELCIUS_OFFSET):
             logger.info(
                 "PV-T collectors outputted HTF at a temperature greater than 100 degC. "
                 "Capping"
@@ -164,12 +164,16 @@ def _solar_system_output_temperatures(
             else collector_system_input_temperature,
             solar_thermal_mass_flow_rate,
         )
-        if solar_thermal_htf_output_temperature > (max_htf_temp:=100 + ZERO_CELCIUS_OFFSET):
+        if solar_thermal_htf_output_temperature > (
+            max_htf_temp := 100 + ZERO_CELCIUS_OFFSET
+        ):
             logger.info(
                 "Solar-thermal collectors outputted HTF at a temperature greater than "
                 "100 degC. Capping"
             )
-            solar_thermal_htf_output_temperature = min(max_htf_temp, solar_thermal_htf_output_temperature)
+            solar_thermal_htf_output_temperature = min(
+                max_htf_temp, solar_thermal_htf_output_temperature
+            )
     else:
         solar_thermal_htf_output_temperature = None
         solar_thermal_reduced_temperature = None
@@ -312,11 +316,7 @@ def _tank_temperature(
         tank_heat_capacity_term * previous_tank_temperature
         + hot_water_load_term * tank_replacement_water_temperature
         + environment_heat_transfer_term * tank_ambient_temperature
-    ) / (
-        tank_heat_capacity_term
-        + hot_water_load_term
-        + environment_heat_transfer_term
-    )
+    ) / (tank_heat_capacity_term + hot_water_load_term + environment_heat_transfer_term)
 
 
 def solve_matrix(

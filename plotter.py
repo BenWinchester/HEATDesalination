@@ -1,5 +1,3 @@
-
-
 interact
 import matplotlib.pyplot as plt
 
@@ -311,24 +309,30 @@ import matplotlib
 
 ALPHA = 0.3
 
-with open("simulation_outputs\simulation_output_average_weather_conditions.csv", "r") as f:
+with open(
+    "simulation_outputs\simulation_output_average_weather_conditions.csv", "r"
+) as f:
     average_data = pd.read_csv(f, index_col=0)
 
 
-with open("simulation_outputs\simulation_output_lower_error_bar_weather_conditions.csv", "r") as f:
+with open(
+    "simulation_outputs\simulation_output_lower_error_bar_weather_conditions.csv", "r"
+) as f:
     lower_error_data = pd.read_csv(f, index_col=0)
 
 
-with open("simulation_outputs\simulation_output_upper_error_bar_weather_conditions.csv", "r") as f:
+with open(
+    "simulation_outputs\simulation_output_upper_error_bar_weather_conditions.csv", "r"
+) as f:
     upper_error_data = pd.read_csv(f, index_col=0)
 
 # Temperature plot
 x: List[int] = list(range(len(average_data)))
 keys: List[str] = [
-    'Collector system input temperature / degC',
-    'PV-T collector output temperature / degC',
-    'Collector system output temperature / degC',
-    'Tank temperature / degC'
+    "Collector system input temperature / degC",
+    "PV-T collector output temperature / degC",
+    "Collector system output temperature / degC",
+    "Tank temperature / degC",
 ]
 sns.set_palette("colorblind")
 
@@ -348,18 +352,42 @@ x: List[int] = list(range(len(average_data)))
 sns.set_palette("colorblind", n_colors=4)
 
 # Compute the hot-water demand in heat
-fig,ax = plt.subplots()
-hot_water_heat_demand = (average_data['Hot-water demand temperature / degC'] - 40) * average_data['Hot-water demand volume / kg/s'] * 4.184
-tank_heat_supply = (average_data['Tank temperature / degC'] - 40) * average_data['Hot-water demand volume / kg/s'] * 4.184
+fig, ax = plt.subplots()
+hot_water_heat_demand = (
+    (average_data["Hot-water demand temperature / degC"] - 40)
+    * average_data["Hot-water demand volume / kg/s"]
+    * 4.184
+)
+tank_heat_supply = (
+    (average_data["Tank temperature / degC"] - 40)
+    * average_data["Hot-water demand volume / kg/s"]
+    * 4.184
+)
 
 ax.plot(x, hot_water_heat_demand, "--", c="C0")
 # ax.plot(x, tank_heat_supply, c="C1", label="Hot-water tanks")
-ax.fill_between(x, [0] * len(x), tank_heat_supply, color="C1", alpha=ALPHA, label="Heat supplied from tank(s)")
+ax.fill_between(
+    x,
+    [0] * len(x),
+    tank_heat_supply,
+    color="C1",
+    alpha=ALPHA,
+    label="Heat supplied from tank(s)",
+)
 # ax.plot(x, tank_heat_supply + average_data['Auxiliary heating demand / kWh(th)'], c="C2", label="Auxiliary heating")
-ax.fill_between(x, tank_heat_supply, tank_heat_supply + average_data['Auxiliary heating demand / kWh(th)'], color="C2", alpha=ALPHA, label="Heat supplied from heat pump(s)")
+ax.fill_between(
+    x,
+    tank_heat_supply,
+    tank_heat_supply + average_data["Auxiliary heating demand / kWh(th)"],
+    color="C2",
+    alpha=ALPHA,
+    label="Heat supplied from heat pump(s)",
+)
 
 ax2 = ax.twinx()
-ax2.plot(x, average_data['Tank temperature / degC'], "--", c="C3", label="Tank temperature")
+ax2.plot(
+    x, average_data["Tank temperature / degC"], "--", c="C3", label="Tank temperature"
+)
 
 ax.legend()
 ax2.legend()
@@ -370,13 +398,36 @@ plt.show()
 
 # Print the total amount of auxiliary heating vs in-house heating that took place
 print(f"Total collector heating: {np.sum(tank_heat_supply)} kWh(th)")
-print(f"Total auxiliary heating: {np.sum(average_data['Auxiliary heating demand / kWh(th)'])} kWh(th)")
+print(
+    f"Total auxiliary heating: {np.sum(average_data['Auxiliary heating demand / kWh(th)'])} kWh(th)"
+)
 
 # Plot the electrical sources
 sns.set_palette("colorblind")
-plt.plot(x, average_data["Electricity demand / kWh"], "--", c="C0", label="Total electricity demand")
-plt.fill_between(x, average_data["Base electricity dewmand / kWh"], average_data["Base electricity dewmand / kWh"] + average_data["Electrical auxiliary heating demand / kWh(el)"], color="C2", label="Plant auxiliary heating requirements", alpha=ALPHA)
-plt.fill_between(x, [0] * len(x), average_data["Base electricity dewmand / kWh"], color="C1", label="Plant electrical requirements", alpha=ALPHA)
+plt.plot(
+    x,
+    average_data["Electricity demand / kWh"],
+    "--",
+    c="C0",
+    label="Total electricity demand",
+)
+plt.fill_between(
+    x,
+    average_data["Base electricity dewmand / kWh"],
+    average_data["Base electricity dewmand / kWh"]
+    + average_data["Electrical auxiliary heating demand / kWh(el)"],
+    color="C2",
+    label="Plant auxiliary heating requirements",
+    alpha=ALPHA,
+)
+plt.fill_between(
+    x,
+    [0] * len(x),
+    average_data["Base electricity dewmand / kWh"],
+    color="C1",
+    label="Plant electrical requirements",
+    alpha=ALPHA,
+)
 plt.legend()
 plt.xlabel("Hour of day")
 plt.ylabel("Electrical demand / kWh")
@@ -661,30 +712,50 @@ from src.heatdesalination.optimiser import (
     GridElectricityFraction,
     SolarElectricityFraction,
     StorageElectricityFraction,
-    TotalCost
+    TotalCost,
 )
 
 with open("no_pv_25_by_25_large_pv_t_st_square.json", "r") as f:
     data = json.load(f)
 
 auxiliary_heating_fraction = [
-    ((entry["results"][ProfileType.AVERAGE.value][AuxiliaryHeatingFraction.name]) if entry["results"] is not None else None)
+    (
+        (entry["results"][ProfileType.AVERAGE.value][AuxiliaryHeatingFraction.name])
+        if entry["results"] is not None
+        else None
+    )
     for entry in data
 ]
 grid_fraction = [
-    ((entry["results"][ProfileType.AVERAGE.value][GridElectricityFraction.name]) if entry["results"] is not None else None)
+    (
+        (entry["results"][ProfileType.AVERAGE.value][GridElectricityFraction.name])
+        if entry["results"] is not None
+        else None
+    )
     for entry in data
 ]
 solar_fraction = [
-    ((entry["results"][ProfileType.AVERAGE.value][SolarElectricityFraction.name]) if entry["results"] is not None else None)
+    (
+        (entry["results"][ProfileType.AVERAGE.value][SolarElectricityFraction.name])
+        if entry["results"] is not None
+        else None
+    )
     for entry in data
 ]
 storage_fraction = [
-    ((entry["results"][ProfileType.AVERAGE.value][StorageElectricityFraction.name]) if entry["results"] is not None else None)
+    (
+        (entry["results"][ProfileType.AVERAGE.value][StorageElectricityFraction.name])
+        if entry["results"] is not None
+        else None
+    )
     for entry in data
 ]
 costs = [
-    ((entry["results"][ProfileType.AVERAGE.value][TotalCost.name] / 10**6) if entry["results"] is not None else None)
+    (
+        (entry["results"][ProfileType.AVERAGE.value][TotalCost.name] / 10**6)
+        if entry["results"] is not None
+        else None
+    )
     for entry in data
 ]
 
@@ -694,7 +765,9 @@ costs = [
 pv_sizes = [entry["simulation"]["pv_system_size"] for entry in data]
 battery_capacities = [entry["simulation"]["battery_capacity"] for entry in data]
 pv_t_sizes = [entry["simulation"]["pv_t_system_size"] for entry in data]
-solar_thermal_sizes = [entry["simulation"]["solar_thermal_system_size"] for entry in data]
+solar_thermal_sizes = [
+    entry["simulation"]["solar_thermal_system_size"] for entry in data
+]
 
 # Generate the frame
 # frame = pd.DataFrame(
@@ -1276,7 +1349,7 @@ import shutil
 
 shutil.copy2(
     os.path.join("inputs", "pv_t_st_square_simulations.json"),
-    os.path.join("inputs", "simulations.json")
+    os.path.join("inputs", "simulations.json"),
 )
 
 # Runs for the HPC
@@ -1563,11 +1636,17 @@ for plot_index, title in enumerate(optimisation_titles):
         plt.xlabel("Mean grid discount rate / %/year")
         plt.xlim(-25, 25)
         plt.ylim(0, 1.5 * max(y[75:125]))
-        plt.title(f"{key.replace('_', ' ').capitalize()} (unsmoothed) for {title.capitalize()}")
+        plt.title(
+            f"{key.replace('_', ' ').capitalize()} (unsmoothed) for {title.capitalize()}"
+        )
         plt.show()
         plt.plot(x, lfilter(b, a, y), color=f"C{index}")
-        plt.fill_between(x, lfilter(b, a, y_ler), lfilter(b, a, y), color=f"C{index}", alpha=0.5)
-        plt.fill_between(x, lfilter(b, a, y), lfilter(b, a, y_uer), color=f"C{index}", alpha=0.5)
+        plt.fill_between(
+            x, lfilter(b, a, y_ler), lfilter(b, a, y), color=f"C{index}", alpha=0.5
+        )
+        plt.fill_between(
+            x, lfilter(b, a, y), lfilter(b, a, y_uer), color=f"C{index}", alpha=0.5
+        )
         # plt.plot(x, y_min, "--", color=f"C{index}")
         # plt.plot(x, y_max, "--", color=f"C{index}")
         plt.plot(x, lfilter(b, a, y_uer), "--", color=f"C{index}")
@@ -1576,7 +1655,9 @@ for plot_index, title in enumerate(optimisation_titles):
         plt.xlabel("Mean grid discount rate / %/year")
         plt.xlim(-25, 25)
         plt.ylim(0, 1.5 * max(y[75:125]))
-        plt.title(f"{key.replace('_', ' ').capitalize()} (smoothed) for {title.capitalize()}")
+        plt.title(
+            f"{key.replace('_', ' ').capitalize()} (smoothed) for {title.capitalize()}"
+        )
         plt.show()
         with open(f"grid_high_res_weather_error_{key}.json", "w") as f:
             json.dump(

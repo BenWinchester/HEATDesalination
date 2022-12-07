@@ -1304,7 +1304,9 @@ class Solution(NamedTuple):
                         ProfileDegradationType.DEGRADED.value
                     ],
                     "PV-T output temperature / degC": {
-                        key: (value - ZERO_CELCIUS_OFFSET if value is not None else None)
+                        key: (
+                            value - ZERO_CELCIUS_OFFSET if value is not None else None
+                        )
                         for key, value in self.pv_t_htf_output_temperatures.items()
                     },
                     "PV-T reduced temperature / degC/W/m^2": self.pv_t_reduced_temperatures,
