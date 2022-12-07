@@ -1,3 +1,5 @@
+
+
 interact
 import matplotlib.pyplot as plt
 
@@ -810,37 +812,71 @@ import seaborn as sns
 from src.heatdesalination.__utils__ import ProfileType
 from src.heatdesalination.optimiser import TotalCost
 
-with open("min_cost_list.json", "r") as f:
+with open("min_cost_data.json", "r") as f:
     min_cost_list = json.load(f)
 
 costs = [
     (entry["results"][ProfileType.AVERAGE.value][TotalCost.name] / 10**6)
     for entry in min_cost_list
-    if entry["simulation"]["buffer_tank_capacity"] == 32
+    if entry[(simulation_key := "simulation")][(tank_key := "buffer_tank_capacity")]
+    == 32
 ]
 # palette = sns.color_palette("blend:#0173B2,#64B5CD", as_cmap=True)
 # palette = sns.color_palette("rocket", as_cmap=True)
 
 pv_sizes = [
-    entry["simulation"]["pv_system_size"]
+    entry[simulation_key]["pv_system_size"]
     for entry in min_cost_list
-    if entry["simulation"]["buffer_tank_capacity"] == 32
+    if entry[simulation_key][tank_key] == 32
 ]
 battery_capacities = [
-    entry["simulation"]["battery_capacity"]
+    entry[simulation_key]["battery_capacity"]
     for entry in min_cost_list
-    if entry["simulation"]["buffer_tank_capacity"] == 32
+    if entry[simulation_key][tank_key] == 32
 ]
 pv_t_sizes = [
-    entry["simulation"]["pv_t_system_size"]
+    entry[simulation_key]["pv_t_system_size"]
     for entry in min_cost_list
-    if entry["simulation"]["buffer_tank_capacity"] == 32
+    if entry[simulation_key][tank_key] == 32
 ]
 st_sizes = [
-    entry["simulation"]["solar_thermal_system_size"]
+    entry[simulation_key]["solar_thermal_system_size"]
     for entry in min_cost_list
-    if entry["simulation"]["buffer_tank_capacity"] == 32
+    if entry[simulation_key][tank_key] == 32
 ]
+
+# Generate the frame in PV-batt space
+pv_sizes = [
+    entry[simulation_key]["pv_system_size"]
+    for entry in min_cost_list
+    if entry[simulation_key][tank_key] == 32
+    and entry[simulation_key]["pv_t_system_size"] == 72
+    and entry[simulation_key]["solar_thermal_system_size"] == 218
+]
+battery_capacities = [
+    entry[simulation_key]["battery_capacity"]
+    for entry in min_cost_list
+    if entry[simulation_key][tank_key] == 32
+    and entry[simulation_key]["pv_t_system_size"] == 72
+    and entry[simulation_key]["solar_thermal_system_size"] == 218
+]
+costs = [
+    (entry["results"][ProfileType.AVERAGE.value][TotalCost.name] / 10**6)
+    for entry in min_cost_list
+    if entry[simulation_key][tank_key] == 32
+    and entry[simulation_key]["pv_t_system_size"] == 72
+    and entry[simulation_key]["solar_thermal_system_size"] == 218
+]
+frame = pd.DataFrame(
+    {
+        "Storage capacity / kWh": battery_capacities,
+        "Number of PV panels": pv_sizes,
+        "Cost / MUSD": costs,
+    }
+)
+pivotted_frame = frame.pivot(
+    index="Number of PV panels", columns="Storage capacity / kWh", values="Cost / MUSD"
+)
 
 # Generate the frame
 frame = pd.DataFrame(
@@ -857,16 +893,6 @@ pivotted_frame = frame.pivot(
 )
 
 # # Generate the frame
-# frame = pd.DataFrame(
-#     {
-#         "Storage capacity / kWh": battery_capacities,
-#         "Number of PV panels": pv_sizes,
-#         "Cost / MUSD": costs,
-#     }
-# )
-# pivotted_frame = frame.pivot(
-#     index="Number of PV panels", columns="Storage capacity / kWh", values="Cost / MUSD"
-# )
 
 # Extract the arrays.
 Z = pivotted_frame.values
@@ -951,24 +977,24 @@ import os
 from tqdm import tqdm
 
 default_entry = {
-    (batt_key := "battery_capacity"): 20,
+    (batt_key := "battery_capacity"): 170,
     (tank_key := "buffer_tank_capacity"): 100000,
     "mass_flow_rate": 20,
-    (pv_key := "pv_system_size"): 5000,
+    (pv_key := "pv_system_size"): 6400,
     (pv_t_key := "pv_t_system_size"): 300,
     (st_key := "solar_thermal_system_size"): 300,
-    "scenario": "default",
+    "scenario": "default_uae",
     "start_hour": 8,
     "system_lifetime": 25,
     "output": None,
     "profile_types": ["avr", "usd", "lsd", "max", "min"],
 }
 
-battery_capacities = range(0, 1001, 20)
-pv_sizes = range(0, 10001, 200)
-pv_t_sizes = range(72, 3600, 70)
-solar_thermal_sizes = range(218, 1220, 20)
-tank_capacities = range(15, 101, 34)
+battery_capacities = range(0, 1001, 100)
+pv_sizes = range(0, 10001, 1000)
+pv_t_sizes = range(72, 3600, 145)
+solar_thermal_sizes = range(218, 1283, 44)
+tank_capacities = range(15, 100, 80)
 
 runs = []
 for batt in battery_capacities:
@@ -1051,7 +1077,7 @@ for batt in tqdm(battery_capacities, desc="batt"):
                     entry[st_key] = st
                     runs.append(entry)
 
-with open(os.path.join("inputs", "ten_by_ten_simulations.json"), "w") as f:
+with open(os.path.join("inputs", "fifty_by_fifth_simulations.json"), "w") as f:
     json.dump(runs, f)
 
 # Runs for the HPC
@@ -1113,6 +1139,8 @@ import json
 
 from tqdm import tqdm
 
+from typing import List, Dict
+
 from src.heatdesalination.__utils__ import ProfileType
 from src.heatdesalination.optimiser import TotalCost
 
@@ -1129,6 +1157,7 @@ output_filenames = [
 min_cost: float = 10**10
 min_cost_filename: str | None = None
 min_cost_overflow: Dict[str, float] = {}
+output_to_display: List[str] = []
 
 for filename in tqdm(output_filenames, desc="files", unit="file"):
     with open(filename, "r") as f:
@@ -1142,12 +1171,20 @@ for filename in tqdm(output_filenames, desc="files", unit="file"):
     if (current_minimum_cost := min(costs)) < min_cost:
         min_cost_filename = filename
         min_cost = current_minimum_cost
-        print(f"New min cost in {min_cost_filename}: {min_cost:.3g}")
+        print((output := f"New min cost in {min_cost_filename}: {min_cost:.3g}"))
+        output_to_display.append(output)
         continue
     # If the lowest cost is equal to the lowest value encountered so far, save this.
     if current_minimum_cost == min_cost:
         min_cost_overflow[filename] = current_minimum_cost
-        print("Equal min cost found, saving")
+        print((output := "Equal min cost found, saving"))
+        output_to_display.append(output)
+
+print("Min cost file {}".format(min_cost_filename))
+output_to_display.append(f"Min cost of {min_cost} in {min_cost_filename}")
+
+with open("../min_cost_analysis.txt", "w") as f:
+    f.writelines(output_to_display)
 
 ##########################################
 # HPC min-cost search in parallel planes #
@@ -1207,7 +1244,7 @@ with open(f"pv_t_1262_st_318_tank_49_{algorithm}.json", "w") as f:
 default_optimisation = {
     "location": "fujairah_united_arab_emirates",
     (output_key := "output"): "parallel_optimisation_output_1",
-    "profile_types": ["avr", "usd", "lsd", "max", "min"],
+    "profile_types": ["avr", "ler", "uer"],
     (scenario_key := "scenario"): "default",
     (system_lifetime_key := "system_lifetime"): 25,
 }
@@ -1235,20 +1272,33 @@ import json
 import matplotlib.pyplot as plt
 import os
 import seaborn as sns
+from scipy.signal import lfilter
+
+# Noise-filtering parameters
+n = 5  # the larger n is, the smoother curve will be
+b = [1.0 / n] * n
+a = 1
 
 sns.set_palette("colorblind")
 
-with open("parallel_optimisation_results.json", "r") as f:
+with open("hpc_grid_optimisations_probe.json", "r") as f:
     data = json.load(f)
 
-keys = {
+keys = [
     "total_cost",
     "auxiliary_heating_fraction",
     "dumped_electricity",
     "grid_electricity_fraction",
     "solar_electricity_fraction",
     "storage_electricity_fraction",
-}
+]
+
+optimisation_titles = [
+    "Four parameter",
+    "No-PV optimisation (PV-T, ST, Storage)",
+    "No-PV-T optimisation (PV, ST, Storage)",
+    "No-ST optimisation (PV, PV-T, Storage)",
+]
 
 x = [entry["optimisation"]["scenario"] for entry in data]
 x = [
@@ -1257,52 +1307,356 @@ x = [
         entry_1.split("_dr_")[-1] for entry_1 in [entry.split("uae")[1] for entry in x]
     ]
 ]
-x[20] = "00"
+x = [entry.replace("--", "-") for entry in x]
+x = [float(entry) for entry in x]
+x = [(-(200 + entry) if entry < 0 else entry) for entry in x]
+
+# Plot the various keys
+for plot_index, title in enumerate(optimisation_titles):
+    sns.set_palette("colorblind")
+    for index, key in enumerate(keys):
+        y = [
+            entry["result"][plot_index][1]["average_weather_conditions"][0][key]
+            for entry in data
+        ]
+        # y_lsd = [
+        #     entry["result"][plot_index][1][
+        #         "lower_standard_deviation_weather_conditions"
+        #     ][0][key]
+        #     for entry in data
+        # ]
+        # y_usd = [
+        #     entry["result"][plot_index][1][
+        #         "upper_standard_deviation_weather_conditions"
+        #     ][0][key]
+        #     for entry in data
+        # ]
+        y_ler = [
+            entry["result"][plot_index][1]["lower_error_bar_weather_conditions"][0][key]
+            for entry in data
+        ]
+        y_uer = [
+            entry["result"][plot_index][1]["upper_error_bar_weather_conditions"][0][key]
+            for entry in data
+        ]
+        # y_max = [
+        #     entry["result"][plot_index][1]["maximum_irradiance_weather_conditions"][0][
+        #         key
+        #     ]
+        #     for entry in data
+        # ]
+        # y_min = [
+        #     min(y_lsd[index], y_usd[index], y_max[index]) for index in range(len(y_max))
+        # ]
+        # y_max = [
+        #     max(y_lsd[index], y_usd[index], y_max[index]) for index in range(len(y_max))
+        # ]
+        # Determine the x range
+        # Plot
+        plt.plot(x, y, color=f"C{index}")
+        plt.fill_between(x, y_ler, y, color=f"C{index}", alpha=0.5)
+        plt.fill_between(x, y, y_uer, color=f"C{index}", alpha=0.5)
+        # plt.plot(x, y_min, "--", color=f"C{index}")
+        # plt.plot(x, y_max, "--", color=f"C{index}")
+        plt.plot(x, y_uer, "--", color=f"C{index}")
+        plt.plot(x, y_ler, "--", color=f"C{index}")
+        plt.ylabel(key.replace("_", " ").capitalize())
+        plt.xlabel("Mean grid discount rate / %/year")
+        plt.xlim(-25, 25)
+        plt.ylim(0, 1.5 * max(y[75:125]))
+        plt.title(f"{key.replace('_', ' ').capitalize()} (unsmoothed) for {title.capitalize()}")
+        plt.show()
+        plt.plot(x, lfilter(b, a, y), color=f"C{index}")
+        plt.fill_between(x, lfilter(b, a, y_ler), lfilter(b, a, y), color=f"C{index}", alpha=0.5)
+        plt.fill_between(x, lfilter(b, a, y), lfilter(b, a, y_uer), color=f"C{index}", alpha=0.5)
+        # plt.plot(x, y_min, "--", color=f"C{index}")
+        # plt.plot(x, y_max, "--", color=f"C{index}")
+        plt.plot(x, lfilter(b, a, y_uer), "--", color=f"C{index}")
+        plt.plot(x, lfilter(b, a, y_ler), "--", color=f"C{index}")
+        plt.ylabel(key.replace("_", " ").capitalize())
+        plt.xlabel("Mean grid discount rate / %/year")
+        plt.xlim(-25, 25)
+        plt.ylim(0, 1.5 * max(y[75:125]))
+        plt.title(f"{key.replace('_', ' ').capitalize()} (smoothed) for {title.capitalize()}")
+        plt.show()
+        with open(f"grid_high_res_weather_error_{key}.json", "w") as f:
+            json.dump(
+                {
+                    "x": x,
+                    key: y,
+                    f"{key}_uer": y_uer,
+                    f"{key}_ler": y_ler,
+                    # f"{key}_usd": y_usd,
+                    # f"{key}_lsd": y_lsd,
+                    # f"{key}_max": y_max,
+                    # f"{key}_min": y_min,
+                },
+                f,
+            )
+    # Plot the fractions of power from storage, pv, and the grid.
+    sns.set_palette("PuBu_r", n_colors=3)
+    storage_fraction = [
+        entry["result"][plot_index][1]["average_weather_conditions"][0][
+            "storage_electricity_fraction"
+        ]
+        for entry in data
+    ]
+    solar_fraction = [
+        entry["result"][plot_index][1]["average_weather_conditions"][0][
+            "solar_electricity_fraction"
+        ]
+        for entry in data
+    ]
+    grid_fraction = [
+        entry["result"][plot_index][1]["average_weather_conditions"][0][
+            "grid_electricity_fraction"
+        ]
+        for entry in data
+    ]
+    plt.plot(
+        x,
+        (
+            grid_line := [
+                solar_fraction[index] + grid_fraction[index] + storage_fraction[index]
+                for index in range(len(storage_fraction))
+            ]
+        ),
+        color=f"C2",
+        label="grid fraction",
+    )
+    plt.plot(
+        x,
+        (
+            solar_line := [
+                storage_fraction[index] + solar_fraction[index]
+                for index in range(len(storage_fraction))
+            ]
+        ),
+        color=f"C1",
+        label="solar fraction",
+    )
+    plt.plot(x, storage_fraction, color=f"C0", label="storage fraction")
+    plt.fill_between(
+        x, [0] * len(storage_fraction), storage_fraction, color="C0", alpha=0.7
+    )
+    plt.fill_between(x, storage_fraction, solar_line, color="C1", alpha=0.7)
+    plt.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
+    plt.xlabel("Mean grid discount rate / %/year")
+    plt.ylabel("Fractional generation of electricity demand")
+    plt.title(f"Fractional electricity sources for {title.capitalize()}")
+    plt.legend()
+    plt.show()
+    # Plot without raised minima
+    storage_fraction = [
+        entry["result"][plot_index][1]["average_weather_conditions"][0][
+            "storage_electricity_fraction"
+        ]
+        for entry in data
+    ]
+    solar_fraction = [
+        entry["result"][plot_index][1]["average_weather_conditions"][0][
+            "solar_electricity_fraction"
+        ]
+        for entry in data
+    ]
+    grid_fraction = [
+        entry["result"][plot_index][1]["average_weather_conditions"][0][
+            "grid_electricity_fraction"
+        ]
+        for entry in data
+    ]
+    plt.plot(x, (grid_line := grid_fraction), color=f"C2", label="grid fraction")
+    plt.plot(x, (solar_line := solar_fraction), color=f"C1", label="solar fraction")
+    plt.plot(x, storage_fraction, color=f"C0", label="storage fraction")
+    plt.fill_between(
+        x, [0] * len(storage_fraction), storage_fraction, color="C0", alpha=0.7
+    )
+    plt.fill_between(x, storage_fraction, solar_line, color="C1", alpha=0.7)
+    plt.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
+    plt.xlabel("Mean grid discount rate / %/year")
+    plt.ylabel("Fractional generation of electricity demand")
+    plt.title(f"Fractional electricity sources for {title.capitalize()}")
+    plt.legend()
+    plt.show()
+
+################################
+# PV degradation probe results #
+################################
+
+import json
+import matplotlib.pyplot as plt
+import os
+import seaborn as sns
+
+sns.set_palette("colorblind")
+
+with open("hpc_pv_degradation_optimisations_probe.json", "r") as f:
+    data = json.load(f)
+
+keys = [
+    "total_cost",
+    "auxiliary_heating_fraction",
+    "dumped_electricity",
+    "grid_electricity_fraction",
+    "solar_electricity_fraction",
+    "storage_electricity_fraction",
+]
+
+optimisation_titles = [
+    "Four parameter",
+    "No-PV optimisation (PV-T, ST, Storage)",
+    "No-PV-T optimisation (PV, ST, Storage)",
+    "No-ST optimisation (PV, PV-T, Storage)",
+]
+
+x = [entry["optimisation"]["scenario"] for entry in data]
+x = [entry.split("deg_")[1].split("%")[0] for entry in x]
 x = [float(entry) for entry in x]
 
 # Plot the various keys
-for index, key in enumerate(keys):
-    y = [entry["result"][0][1]["average_weather_conditions"][0][key] for entry in data]
-    y_lsd = [
-        entry["result"][0][1]["lower_standard_deviation_weather_conditions"][0][key]
-        for entry in data
-    ]
-    y_usd = [
-        entry["result"][0][1]["upper_standard_deviation_weather_conditions"][0][key]
-        for entry in data
-    ]
-    y_min = [
-        min(y_lsd[index], y_usd[index], y_max[index]) for index in range(len(y_max))
-    ]
-    y_max = [
-        entry["result"][0][1]["maximum_irradiance_weather_conditions"][0][key]
-        for entry in data
-    ]
-    y_max = [
-        max(y_lsd[index], y_usd[index], y_max[index]) for index in range(len(y_max))
-    ]
-    # Determine the x range
-    # Plot
-    plt.plot(x, y, color=f"C{index}")
-    plt.fill_between(x, y_lsd, y, color=f"C{index}", alpha=0.5)
-    plt.fill_between(x, y, y_usd, color=f"C{index}", alpha=0.5)
-    plt.plot(x, y_min, "--", color=f"C{index}")
-    plt.plot(x, y_max, "--", color=f"C{index}")
-    plt.ylabel(key.replace("_", " ").capitalize())
-    plt.xlabel("Mean grid discount rate / %/year")
-    plt.show()
-    with open(f"four_param_optimisation_dec_1_pv_t_st_batt_pv_{key}.json", "w") as f:
-        json.dump(
-            {
-                "x": x,
-                key: y,
-                f"{key}_usd": y_usd,
-                f"{key}_lsd": y_lsd,
-                f"{key}_max": y_max,
-                f"{key}_min": y_min,
-            },
-            f,
+for plot_index, title in enumerate(optimisation_titles):
+    sns.set_palette("colorblind")
+    for index, key in enumerate(keys):
+        y = [
+            entry["result"][plot_index][1]["average_weather_conditions"][0][key]
+            for entry in data
+        ]
+        # y_lsd = [
+        #     entry["result"][plot_index][1][
+        #         "lower_standard_deviation_weather_conditions"
+        #     ][0][key]
+        #     for entry in data
+        # ]
+        # y_usd = [
+        #     entry["result"][plot_index][1][
+        #         "upper_standard_deviation_weather_conditions"
+        #     ][0][key]
+        #     for entry in data
+        # ]
+        y_ler = [
+            entry["result"][plot_index][1]["lower_error_bar_weather_conditions"][0][key]
+            for entry in data
+        ]
+        y_uer = [
+            entry["result"][plot_index][1]["upper_error_bar_weather_conditions"][0][key]
+            for entry in data
+        ]
+        # y_max = [
+        #     entry["result"][plot_index][1]["maximum_irradiance_weather_conditions"][0][
+        #         key
+        #     ]
+        #     for entry in data
+        # ]
+        # y_min = [
+        #     min(y_lsd[index], y_usd[index], y_max[index]) for index in range(len(y_max))
+        # ]
+        # y_max = [
+        #     max(y_lsd[index], y_usd[index], y_max[index]) for index in range(len(y_max))
+        # ]
+        # Determine the x range
+        # Plot
+        # Sort the lists
+        sorted_x, sorted_y, sorted_y_ler, sorted_y_uer = zip(
+            *sorted(zip(x, y, y_ler, y_uer))
         )
+        plt.plot(sorted_x, sorted_y, color=f"C{index}")
+        plt.fill_between(sorted_x, sorted_y_ler, sorted_y, color=f"C{index}", alpha=0.5)
+        plt.fill_between(sorted_x, sorted_y, sorted_y_uer, color=f"C{index}", alpha=0.5)
+        # plt.plot(x, y_min, "--", color=f"C{index}")
+        # plt.plot(x, y_max, "--", color=f"C{index}")
+        plt.plot(sorted_x, sorted_y_uer, "--", color=f"C{index}")
+        plt.plot(sorted_x, sorted_y_ler, "--", color=f"C{index}")
+        plt.ylabel(key.replace("_", " ").capitalize())
+        plt.xlabel("PV degradation rate / %/year")
+        plt.title(f"{key.replace('_', ' ').capitalize()} for {title.capitalize()}")
+        plt.show()
+        with open(f"pv_degradation_rate_{key}.json", "w") as f:
+            json.dump(
+                {
+                    "x": sorted_x,
+                    key: sorted_y,
+                    f"{key}_uer": sorted_y_uer,
+                    f"{key}_ler": sorted_y_ler,
+                    # f"{key}_usd": y_usd,
+                    # f"{key}_lsd": y_lsd,
+                    # f"{key}_max": y_max,
+                    # f"{key}_min": y_min,
+                },
+                f,
+            )
+    # Plot the fractions of power from storage, pv, and the grid.
+    sns.set_palette("PuBu_r", n_colors=3)
+    storage_fraction = [
+        entry["result"][plot_index][1]["average_weather_conditions"][0][
+            "storage_electricity_fraction"
+        ]
+        for entry in data
+    ]
+    solar_fraction = [
+        entry["result"][plot_index][1]["average_weather_conditions"][0][
+            "solar_electricity_fraction"
+        ]
+        for entry in data
+    ]
+    grid_fraction = [
+        entry["result"][plot_index][1]["average_weather_conditions"][0][
+            "grid_electricity_fraction"
+        ]
+        for entry in data
+    ]
+    sorted_x, storage_fraction, solar_fraction, grid_fraction = zip(
+        *sorted(zip(x, storage_fraction, solar_fraction, grid_fraction))
+    )
+    plt.plot(
+        sorted_x,
+        (
+            grid_line := [
+                solar_fraction[index] + grid_fraction[index] + storage_fraction[index]
+                for index in range(len(storage_fraction))
+            ]
+        ),
+        color=f"C2",
+        label="grid fraction",
+    )
+    plt.plot(
+        sorted_x,
+        (
+            solar_line := [
+                storage_fraction[index] + solar_fraction[index]
+                for index in range(len(storage_fraction))
+            ]
+        ),
+        color=f"C1",
+        label="solar fraction",
+    )
+    plt.plot(sorted_x, storage_fraction, color=f"C0", label="storage fraction")
+    plt.fill_between(
+        sorted_x, [0] * len(storage_fraction), storage_fraction, color="C0", alpha=0.7
+    )
+    plt.fill_between(sorted_x, storage_fraction, solar_line, color="C1", alpha=0.7)
+    plt.fill_between(sorted_x, solar_line, grid_line, color="C2", alpha=0.7)
+    plt.xlabel("Mean grid discount rate / %/year")
+    plt.ylabel("Fractional generation of electricity demand")
+    plt.title(f"Fractional electricity sources for {title.capitalize()}")
+    plt.legend()
+    plt.show()
+    # Plot without raised minima
+    plt.plot(sorted_x, (grid_line := grid_fraction), color=f"C2", label="grid fraction")
+    plt.plot(
+        sorted_x, (solar_line := solar_fraction), color=f"C1", label="solar fraction"
+    )
+    plt.plot(sorted_x, storage_fraction, color=f"C0", label="storage fraction")
+    plt.fill_between(
+        sorted_x, [0] * len(storage_fraction), storage_fraction, color="C0", alpha=0.7
+    )
+    plt.fill_between(sorted_x, storage_fraction, solar_line, color="C1", alpha=0.7)
+    plt.fill_between(sorted_x, solar_line, grid_line, color="C2", alpha=0.7)
+    plt.xlabel("PV degradation rate / %/year")
+    plt.ylabel("Fractional generation of electricity demand")
+    plt.title(f"Fractional electricity sources for {title.capitalize()}")
+    plt.legend()
+    plt.show()
+
 
 #######################
 # Scenario-generation #
@@ -1312,16 +1666,86 @@ import os
 import yaml
 
 with open((scenarios_filepath := os.path.join("inputs", "scenarios.yaml")), "r") as f:
-    scenarios = yaml.safe_load(f)
+    scenarios = yaml.safe_load(f)[(scenarios_key := "scenarios")]
+
+default_scenario = scenarios[0]
+
+default_optimisation = {
+    "location": "fujairah_united_arab_emirates",
+    "output": "parallel_optimisation_output_1",
+    "profile_types": ["avr", "ler", "uer"],
+    "scenario": "default",
+    "system_lifetime": 25,
+}
 
 
-for discount_rate in range(-200, 200, 1):
+new_scenarios = [default_scenario]
+grid_optimisations = []
+
+for discount_rate in range(-100, 100, 1):
     scenario = default_scenario.copy()
-    scenario["discount_rate"] = discount_rate / 100
+    scenario["discount_rate"] = float(discount_rate / 100)
     scenario[
         "name"
-    ] = f"uae_dr_{'m_' if discount_rate < 0 else ''}{discount_rate // 100}{(discount_rate % 100) // 10}{(discount_rate % 100) % 10}"
-    scenarios["scenarios"].append(scenario)
+    ] = f"uae_dr_{'m_' if discount_rate < 0 else ''}{abs(discount_rate) // 100}{(abs(discount_rate) % 100) // 10}{(abs(discount_rate) % 100) % 10}"
+    new_scenarios.append(scenario)
+    optimisation = default_optimisation.copy()
+    optimisation["scenario"] = scenario["name"]
+    grid_optimisations.append(optimisation)
+
+import numpy as np
+
+pv_degradation_optimisations = []
+
+for pv_degradation in np.linspace(0.007, 0.039, 100):
+    scenario = default_scenario.copy()
+    scenario["pv_degradation_rate"] = float(pv_degradation)
+    scenario[
+        "name"
+    ] = f"uae_pv_deg_{int(round(100*pv_degradation//1,0))}.{int(round(100*round(100*pv_degradation%1,3), 0))}%"
+    new_scenarios.append(scenario)
+    optimisation = default_optimisation.copy()
+    optimisation["scenario"] = scenario["name"]
+    pv_degradation_optimisations.append(optimisation)
+
+
+heat_exchanger_efficiency_optimisations = []
+
+for heat_exchanger_efficiency in np.linspace(0, 1, 100):
+    scenario = default_scenario.copy()
+    scenario["heat_exchanger_efficiency"] = float(heat_exchanger_efficiency)
+    scenario[
+        "name"
+    ] = f"uae_heat_ex_eff_{int(round(100*heat_exchanger_efficiency//1,0))}.{int(round(100*round(100*heat_exchanger_efficiency%1,3), 0))}%"
+    new_scenarios.append(scenario)
+    optimisation = default_optimisation.copy()
+    optimisation["scenario"] = scenario["name"]
+    heat_exchanger_efficiency_optimisations.append(optimisation)
+
+heat_pump_efficiency_optimisations = []
+
+for heat_pump_efficiency in np.linspace(0, 1, 100):
+    scenario = default_scenario.copy()
+    scenario["heat_pump_efficiency"] = float(heat_pump_efficiency)
+    scenario[
+        "name"
+    ] = f"uae_heat_pump_eff_{int(round(100*heat_pump_efficiency//1,0))}.{int(round(100*round(100*heat_pump_efficiency%1,3), 0))}%"
+    new_scenarios.append(scenario)
+    optimisation = default_optimisation.copy()
+    optimisation["scenario"] = scenario["name"]
+    heat_pump_efficiency_optimisations.append(optimisation)
+
 
 with open(scenarios_filepath, "w") as f:
-    yaml.dump(scenarios, f)
+    yaml.dump({"scenarios": new_scenarios}, f)
+
+with open(os.path.join("inputs", "optimisations_pv_degradation.json"), "w") as f:
+    json.dump(pv_degradation_optimisations, f)
+
+with open(
+    os.path.join("inputs", "optimisations_heat_exchanger_efficiency.json"), "w"
+) as f:
+    json.dump(heat_exchanger_efficiency_optimisations, f)
+
+with open(os.path.join("inputs", "optimisations_heat_pump_efficiency.json"), "w") as f:
+    json.dump(heat_pump_efficiency_optimisations, f)
