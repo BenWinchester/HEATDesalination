@@ -688,6 +688,9 @@ def run_simulation(
         logger.debug("No solar-thermal mass flow rate because disabled or zero size.")
 
     # Set up maps for storing variables.
+    auxiliary_heating_demands: Dict[int, float] = {}
+    auxiliary_heating_electricity_demands: Dict[int, float] = {}
+    base_electricity_demands: Dict[int, float] = {}
     collector_input_temperatures: Dict[int, float] = {}
     collector_system_output_temperatures: Dict[int, float] = {}
     electricity_demands: DefaultDict[int, float] = defaultdict(float)
@@ -758,20 +761,28 @@ def run_simulation(
                 )
                 / 1000  # [W/kW]
             ), 0)  # [kW]
-            electricity_demand: float = desalination_plant.requirements(  # [kW]
-                hour
-            ).electricity + max((
+            auxiliary_heating_electricity_demand: float = max((
                 calculate_heat_pump_electricity_consumption(
                     desalination_plant.requirements(hour).hot_water_temperature,
                     ambient_temperatures[hour],
                     auxiliary_heating_demand,
                     scenario.heat_pump_efficiency,
                 )
-            ), 0)
+            ), 0)  # [kW]
+            electricity_demand: float = desalination_plant.requirements(  # [kW]
+                hour
+            ).electricity + auxiliary_heating_electricity_demand
         else:
+            auxiliary_heating_demand = 0
+            auxiliary_heating_electricity_demand = 0
             electricity_demand = desalination_plant.requirements(hour).electricity
 
         # Save these outputs in mappings.
+        auxiliary_heating_demands[hour] = auxiliary_heating_demand
+        auxiliary_heating_electricity_demands[hour] = auxiliary_heating_electricity_demand
+        base_electricity_demands[hour] = desalination_plant.requirements(  # [kW]
+                hour
+            ).electricity
         collector_input_temperatures[hour] = collector_input_temperature
         collector_system_output_temperatures[hour] = collector_system_output_temperature
         electricity_demands[hour] = electricity_demand
@@ -847,6 +858,9 @@ def run_simulation(
     logger.info("Simulation complete, returning outputs.")
     return Solution(
         ambient_temperatures,
+        auxiliary_heating_demands,
+        auxiliary_heating_electricity_demands,
+        base_electricity_demands,
         collector_input_temperatures,
         collector_system_output_temperatures,
         electricity_demands,
@@ -1039,6 +1053,8 @@ def determine_steady_state_simulation(
         battery_storage_profile,
         solar_power_supplied,
     ) = _calculate_storage_profile(battery, battery_capacity, solution, system_lifetime)
+
+    battery_storage_profile.pop(-1)
 
     # Determine the grid profile.
     grid_profile = {

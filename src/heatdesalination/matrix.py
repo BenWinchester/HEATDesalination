@@ -200,7 +200,7 @@ def _tank_temperature(
     tank_replacement_water_temperature: float,
     tank_water_heat_capacity: float,
     time_interval: int = 3600,
-) -> float:
+) -> Tuple[bool, float]:
     """
     Calculate the temperature of the buffer tank.
 
@@ -234,7 +234,11 @@ def _tank_temperature(
             The time interval being considered, measured in seconds.
 
     Outputs:
-        The temperature of the buffer tank, measured in Kelvin.
+        - collectors_connected:
+            Whether the collectors are connected to the tank (True) or disconnected
+            (False).
+        - tank_temperature:
+            The temperature of the buffer tank, measured in Kelvin.
 
     """
 
@@ -271,7 +275,11 @@ def _tank_temperature(
     )
 
     # Calculate and return the tank temperature.
-    return (
+    # NOTE: The tank should only interact with the collectors if the temperature of the
+    # HTF is higher than the temperature of the tank, i.e., if heat would be added to
+    # the tank at this time step. Otherwise, the tank should simply lose heat to the
+    # environment.
+    predicted_tank_temperature: float = (
         tank_heat_capacity_term * previous_tank_temperature
         + heat_exchanger_term * collector_system_output_temperature
         + hot_water_load_term * tank_replacement_water_temperature
@@ -279,6 +287,21 @@ def _tank_temperature(
     ) / (
         tank_heat_capacity_term
         + heat_exchanger_term
+        + hot_water_load_term
+        + environment_heat_transfer_term
+    )
+
+    # If the tank is cooler than the HTF, it gains heat from the collectors.
+    if collector_system_output_temperature >= predicted_tank_temperature:
+        return True, predicted_tank_temperature
+
+    # Otherwise, the tank should remain decoupled from the collectors.
+    return False, (
+        tank_heat_capacity_term * previous_tank_temperature
+        + hot_water_load_term * tank_replacement_water_temperature
+        + environment_heat_transfer_term * tank_ambient_temperature
+    ) / (
+        tank_heat_capacity_term
         + hot_water_load_term
         + environment_heat_transfer_term
     )
@@ -422,7 +445,7 @@ def solve_matrix(
         )
 
         # Calculate the tank temperature based on these parameters.
-        tank_temperature: float = _tank_temperature(
+        collectors_connected, tank_temperature = _tank_temperature(
             buffer_tank,
             collector_system_output_temperature,
             scenario.heat_exchanger_efficiency,
@@ -437,13 +460,16 @@ def solve_matrix(
         )
 
         # Solve for the input temperature.
-        collector_input_temperature: float = _collectors_input_temperature(
-            collector_system_output_temperature,
-            scenario.heat_exchanger_efficiency,
-            scenario.htf_heat_capacity,
-            tank_temperature,
-            buffer_tank.heat_capacity,
-        )
+        if collectors_connected:
+            collector_input_temperature: float = _collectors_input_temperature(
+                collector_system_output_temperature,
+                scenario.heat_exchanger_efficiency,
+                scenario.htf_heat_capacity,
+                tank_temperature,
+                buffer_tank.heat_capacity,
+            )
+        else:
+            collector_input_temperature = collector_system_output_temperature
 
         # Check whether the solution is valid given the hard-coded precision specified.
         if all(
