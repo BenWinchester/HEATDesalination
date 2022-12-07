@@ -1063,7 +1063,8 @@ def determine_steady_state_simulation(
         solar_power_supplied,
     ) = _calculate_storage_profile(battery, battery_capacity, solution, system_lifetime)
 
-    battery_storage_profile.pop(-1)
+    if battery_storage_profile is not None:
+        battery_storage_profile.pop(-1)
 
     # Determine the grid profile.
     grid_profile = {
