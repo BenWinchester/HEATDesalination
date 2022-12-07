@@ -2143,6 +2143,7 @@ for plot_index, title in enumerate(optimisation_titles):
 # Scenario-generation #
 #######################
 
+import json
 import numpy as np
 import os
 import yaml
@@ -2169,7 +2170,7 @@ for discount_rate in np.linspace(-25, 25, 250):
     scenario["discount_rate"] = float(discount_rate / 100)
     scenario[
         "name"
-    ] = f"uae_dr_{'m_' if discount_rate < 0 else ''}" f"{int(round(abs(discount_rate) // 1, 0))}" f"{int(round((abs(discount_rate) % 1) // 0.1, 0))}" f"{int(round((abs(discount_rate) % 1) % 0.1, 0))}"
+    ] = f"uae_dr_{'m_' if discount_rate < 0 else ''}" f"{int(round(abs(discount_rate) // 1, 0))}_" f"{int(round((abs(discount_rate) % 1) // 0.1, 0))}" f"{int(round((abs(discount_rate) % 1) % 0.1, 0))}"
     new_scenarios.append(scenario)
     optimisation = default_optimisation.copy()
     optimisation["scenario"] = scenario["name"]
@@ -2177,12 +2178,12 @@ for discount_rate in np.linspace(-25, 25, 250):
 
 pv_degradation_optimisations = []
 
-for pv_degradation in np.linspace(0.007, 0.039, 100):
+for pv_degradation in np.linspace(0.007, 0.039, 250):
     scenario = default_scenario.copy()
     scenario["pv_degradation_rate"] = float(pv_degradation)
     scenario[
         "name"
-    ] = f"uae_pv_deg_{int(round(100*pv_degradation//1,0))}.{int(round(100*round(100*pv_degradation%1,3), 0))}%"
+    ] = f"uae_pv_deg_{int(round(100*pv_degradation//1,0))}_{int(round(100*round(100*pv_degradation%1,3), 0))}%"
     new_scenarios.append(scenario)
     optimisation = default_optimisation.copy()
     optimisation["scenario"] = scenario["name"]
@@ -2191,7 +2192,7 @@ for pv_degradation in np.linspace(0.007, 0.039, 100):
 
 heat_exchanger_efficiency_optimisations = []
 
-for heat_exchanger_efficiency in np.linspace(0, 1, 100):
+for heat_exchanger_efficiency in np.linspace(0, 1, 250):
     scenario = default_scenario.copy()
     scenario["heat_exchanger_efficiency"] = float(heat_exchanger_efficiency)
     scenario[
@@ -2204,7 +2205,7 @@ for heat_exchanger_efficiency in np.linspace(0, 1, 100):
 
 heat_pump_efficiency_optimisations = []
 
-for heat_pump_efficiency in np.linspace(0, 1, 100):
+for heat_pump_efficiency in np.linspace(0, 1, 250):
     scenario = default_scenario.copy()
     scenario["heat_pump_efficiency"] = float(heat_pump_efficiency)
     scenario[
@@ -2229,3 +2230,6 @@ with open(
 
 with open(os.path.join("inputs", "optimisations_heat_pump_efficiency.json"), "w") as f:
     json.dump(heat_pump_efficiency_optimisations, f)
+
+with open(os.path.join("inputs", "grid_optimisations.json"), "w") as f:
+    json.dump(grid_optimisations, f)
