@@ -353,23 +353,34 @@ hot_water_heat_demand = (average_data['Hot-water demand temperature / degC'] - 4
 tank_heat_supply = (average_data['Tank temperature / degC'] - 40) * average_data['Hot-water demand volume / kg/s'] * 4.184
 
 ax.plot(x, hot_water_heat_demand, "--", c="C0")
-ax.plot(x, tank_heat_supply, c="C1", label="Hot-water tanks")
-ax.fill_between(x, [0] * len(x), tank_heat_supply, color="C1", alpha=ALPHA)
-ax.plot(x, tank_heat_supply + average_data['Auxiliary heating demand / kWh(th)'], c="C2", label="Auxiliary heating")
-ax.fill_between(x, tank_heat_supply, tank_heat_supply + average_data['Auxiliary heating demand / kWh(th)'], color="C2", alpha=ALPHA)
+# ax.plot(x, tank_heat_supply, c="C1", label="Hot-water tanks")
+ax.fill_between(x, [0] * len(x), tank_heat_supply, color="C1", alpha=ALPHA, label="Heat supplied from tank(s)")
+# ax.plot(x, tank_heat_supply + average_data['Auxiliary heating demand / kWh(th)'], c="C2", label="Auxiliary heating")
+ax.fill_between(x, tank_heat_supply, tank_heat_supply + average_data['Auxiliary heating demand / kWh(th)'], color="C2", alpha=ALPHA, label="Heat supplied from heat pump(s)")
 
 ax2 = ax.twinx()
 ax2.plot(x, average_data['Tank temperature / degC'], "--", c="C3", label="Tank temperature")
 
-plt.legend()
-plt.xlabel("Hour of day")
-plt.ylabel("Thermal Energy Supplied / kWh(th)")
+ax.legend()
+ax2.legend()
+ax.set_xlabel("Hour of day")
+ax.set_ylabel("Thermal Energy Supplied / kWh(th)")
+ax2.set_ylabel("Tank temperature / degC")
 plt.show()
 
 # Print the total amount of auxiliary heating vs in-house heating that took place
 print(f"Total collector heating: {np.sum(tank_heat_supply)} kWh(th)")
 print(f"Total auxiliary heating: {np.sum(average_data['Auxiliary heating demand / kWh(th)'])} kWh(th)")
 
+# Plot the electrical sources
+sns.set_palette("colorblind")
+plt.plot(x, average_data["Electricity demand / kWh"], "--", c="C0", label="Total electricity demand")
+plt.fill_between(x, average_data["Base electricity dewmand / kWh"], average_data["Base electricity dewmand / kWh"] + average_data["Electrical auxiliary heating demand / kWh(el)"], color="C2", label="Plant auxiliary heating requirements", alpha=ALPHA)
+plt.fill_between(x, [0] * len(x), average_data["Base electricity dewmand / kWh"], color="C1", label="Plant electrical requirements", alpha=ALPHA)
+plt.legend()
+plt.xlabel("Hour of day")
+plt.ylabel("Electrical demand / kWh")
+plt.show()
 
 ##########################################
 # Manual post-simulation cost comparison #
@@ -645,15 +656,38 @@ import pandas as pd
 import seaborn as sns
 
 from src.heatdesalination.__utils__ import ProfileType
-from src.heatdesalination.optimiser import TotalCost
+from src.heatdesalination.optimiser import (
+    AuxiliaryHeatingFraction,
+    GridElectricityFraction,
+    SolarElectricityFraction,
+    StorageElectricityFraction,
+    TotalCost
+)
 
-with open("no_pv_25_by_25_pv_t_st_square.json", "r") as f:
+with open("no_pv_25_by_25_large_pv_t_st_square.json", "r") as f:
     data = json.load(f)
 
-costs = [
-    (entry["results"][ProfileType.AVERAGE.value][1][TotalCost.name] / 10**6)
+auxiliary_heating_fraction = [
+    ((entry["results"][ProfileType.AVERAGE.value][AuxiliaryHeatingFraction.name]) if entry["results"] is not None else None)
     for entry in data
 ]
+grid_fraction = [
+    ((entry["results"][ProfileType.AVERAGE.value][GridElectricityFraction.name]) if entry["results"] is not None else None)
+    for entry in data
+]
+solar_fraction = [
+    ((entry["results"][ProfileType.AVERAGE.value][SolarElectricityFraction.name]) if entry["results"] is not None else None)
+    for entry in data
+]
+storage_fraction = [
+    ((entry["results"][ProfileType.AVERAGE.value][StorageElectricityFraction.name]) if entry["results"] is not None else None)
+    for entry in data
+]
+costs = [
+    ((entry["results"][ProfileType.AVERAGE.value][TotalCost.name] / 10**6) if entry["results"] is not None else None)
+    for entry in data
+]
+
 # palette = sns.color_palette("blend:#0173B2,#64B5CD", as_cmap=True)
 # palette = sns.color_palette("rocket", as_cmap=True)
 
@@ -663,40 +697,85 @@ pv_t_sizes = [entry["simulation"]["pv_t_system_size"] for entry in data]
 solar_thermal_sizes = [entry["simulation"]["solar_thermal_system_size"] for entry in data]
 
 # Generate the frame
-frame = pd.DataFrame(
-    {
-        "Storage capacity / kWh": battery_capacities,
-        "Number of PV panels": pv_sizes,
-        "Cost / MUSD": costs,
-    }
-)
-pivotted_frame = frame.pivot(
-    index="Number of PV panels", columns="Storage capacity / kWh", values="Cost / MUSD"
-)
+# frame = pd.DataFrame(
+#     {
+#         "Storage capacity / kWh": battery_capacities,
+#         "Number of PV panels": pv_sizes,
+#         "Cost / MUSD": costs,
+#     }
+# )
+# pivotted_frame = frame.pivot(
+#     index="Number of PV panels", columns="Storage capacity / kWh", values="Cost / MUSD"
+# )
 
 # PV-T and solar-thermal
 frame = pd.DataFrame(
     {
         "Solar-thermal capacity / collectors": solar_thermal_sizes,
         "PV-T capacity / collectors": pv_t_sizes,
-        "Cost / MUSD": costs,
+        # "Cost / MUSD": costs,
+        "Auxiliary heating fraction": auxiliary_heating_fraction
+        # "Grid fraction": grid_fraction
+        # "Solar fraction": solar_fraction
+        # "Storage fraction": storage_fraction
     }
 )
 pivotted_frame = frame.pivot(
-    index="Solar-thermal capacity / collectors", columns="PV-T capacity / collectors", values="Cost / MUSD"
+    index="PV-T capacity / collectors",
+    columns="Solar-thermal capacity / collectors",
+    # values="Cost / MUSD"
+    values="Auxiliary heating fraction"
+    # values="Grid fraction"
+    # values="Solar fraction"
+    # values="Storage fraction"
 )
 
 # Extract the arrays.
 Z = pivotted_frame.values
-X_unique = np.sort(frame["Storage capacity / kWh"].unique())
-Y_unique = np.sort(frame["Number of PV panels"].unique())
+
+# X_unique = np.sort(frame["Storage capacity / kWh"].unique())
+# Y_unique = np.sort(frame["Number of PV panels"].unique())
+
 X_unique = np.sort(frame["Solar-thermal capacity / collectors"].unique())
 Y_unique = np.sort(frame["PV-T capacity / collectors"].unique())
+
 X, Y = np.meshgrid(X_unique, Y_unique)
 
 # Define levels in z-axis where we want lines to appear
 levels = np.array(
     [
+        0.0,
+        0.01,
+        0.02,
+        0.03,
+        0.04,
+        0.05,
+        0.06,
+        0.07,
+        0.08,
+        0.09,
+        0.1,
+        0.11,
+        0.12,
+        0.13,
+        0.14,
+        0.15,
+        0.16,
+        0.17,
+        0.18,
+        0.19,
+        0.2,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1.0,
+        1.1,
+        1.2,
+        1.3,
         1.4,
         1.45,
         1.5,
@@ -740,10 +819,20 @@ line_colors = ["black" for l in cpf.levels]
 # Make plot and customize axes
 contours = ax.contour(X, Y, Z, levels=levels, colors=line_colors)
 ax.clabel(contours, fontsize=10, colors=line_colors)
-ax.set_xlabel("Storage size / kWh")
-_ = ax.set_ylabel("PV size / number of collectors")
 
-fig.colorbar(cpf, ax=ax, label="Total lifetime cost / MUSD")
+# ax.set_xlabel("Storage size / kWh")
+# _ = ax.set_ylabel("PV size / number of collectors")
+
+ax.set_xlabel("Solar-thermal capacity / collectors")
+ax.set_ylabel("PV-T capacity / collectors")
+
+# fig.colorbar(cpf, ax=ax, label="Total lifetime cost / MUSD")
+# fig.colorbar(cpf, ax=ax, label="Auxiliary heating fraction")
+# fig.colorbar(cpf, ax=ax, label="Grid fraction")
+fig.colorbar(cpf, ax=ax, label="Solar fraction")
+# fig.colorbar(cpf, ax=ax, label="Storage fraction")
+
+plt.show()
 
 min_cost_index = {cost: index for index, cost in enumerate(costs)}[min(costs)]
 
@@ -891,8 +980,10 @@ plt.legend()
 
 plt.xlabel("Storage capacity / kWh")
 plt.ylabel("Number of PV panels")
+
 plt.xlabel("Solar-thermal collector capacity / collectors")
 plt.ylabel("PV-T collector capacity / collectors")
+
 plt.xlim(min(battery_capacities), max(battery_capacities))
 plt.ylim(min(pv_sizes), max(pv_sizes))
 
@@ -1077,8 +1168,8 @@ from tqdm import tqdm
 
 default_entry = {
     (batt_key := "battery_capacity"): 170,
-    (tank_key := "buffer_tank_capacity"): 100000,
-    "mass_flow_rate": 20,
+    (tank_key := "buffer_tank_capacity"): 30000,
+    "mass_flow_rate": 200,
     (pv_key := "pv_system_size"): 0,
     (pv_t_key := "pv_t_system_size"): 300,
     (st_key := "solar_thermal_system_size"): 300,
@@ -1086,18 +1177,18 @@ default_entry = {
     "start_hour": 8,
     "system_lifetime": 25,
     "output": None,
-    "profile_types": ["avr", "usd", "lsd", "max", "min"],
+    "profile_types": ["avr", "uer", "ler"],
 }
 
 battery_capacities = range(0, 1001, 100)
 pv_sizes = range(0, 10001, 1000)
-pv_t_sizes = range(72, 3600, 145)
-solar_thermal_sizes = range(218, 1283, 44)
+pv_t_sizes = range(0, 36000, 1440)
+solar_thermal_sizes = range(0, 12830, 514)
 tank_capacities = range(15, 100, 80)
 
 runs = []
 for batt in battery_capacities:
-    for pv in pv_sizesf:
+    for pv in pv_sizes:
         entry = default_entry.copy()
         entry[batt_key] = batt
         entry[pv_key] = pv
@@ -1159,7 +1250,9 @@ for pv_t in pv_t_sizes:
         entry[st_key] = st
         runs.append(entry)
 
-with open(os.path.join("inputs", "no_pv_pv_t_st_square_simulations.json"), "w") as f:
+runs.pop(0)
+
+with open(os.path.join("inputs", "pv_t_st_square_simulations.json"), "w") as f:
     json.dump(runs, f)
 
 runs = []
@@ -1178,6 +1271,13 @@ for batt in tqdm(battery_capacities, desc="batt"):
 
 with open(os.path.join("inputs", "fifty_by_fifth_simulations.json"), "w") as f:
     json.dump(runs, f)
+
+import shutil
+
+shutil.copy2(
+    os.path.join("inputs", "pv_t_st_square_simulations.json"),
+    os.path.join("inputs", "simulations.json")
+)
 
 # Runs for the HPC
 basename = os.path.join("inputs", "pv_t_{pv_t}_st_{st}_tank_{tank}_runs.json")

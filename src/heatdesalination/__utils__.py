@@ -1236,7 +1236,7 @@ class Solution(NamedTuple):
             },
             "Hot-water demand volume / kg/s": self.hot_water_demand_volume,
             "PV-T collector output temperature / degC": {
-                key: value - ZERO_CELCIUS_OFFSET
+                key: (value - ZERO_CELCIUS_OFFSET if value is not None else None)
                 for key, value in self.pv_t_htf_output_temperatures.items()
             },
             "Renewable heating fraction": self.renewable_heating_fraction,
@@ -1304,7 +1304,7 @@ class Solution(NamedTuple):
                         ProfileDegradationType.DEGRADED.value
                     ],
                     "PV-T output temperature / degC": {
-                        key: value - ZERO_CELCIUS_OFFSET
+                        key: (value - ZERO_CELCIUS_OFFSET if value is not None else None)
                         for key, value in self.pv_t_htf_output_temperatures.items()
                     },
                     "PV-T reduced temperature / degC/W/m^2": self.pv_t_reduced_temperatures,
