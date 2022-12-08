@@ -907,11 +907,11 @@ def run_optimisation(
             ),
         }
     else:
-        # algorithm = "Nelder-Mead"
+        algorithm = "Nelder-Mead"
         # algorithm = "Powell"
         # algorithm = "CG"
         # algorithm = "BFGS"
-        algorithm = "L-BFGS-B"
+        # algorithm = "L-BFGS-B"
         # algorithm = "TNC"
         # algorithm = "COBYLA"
         # algorithm = "SLSQP"
@@ -985,10 +985,11 @@ def run_optimisation(
         additional_arguments,
         method=algorithm,
         bounds=bounds,
-        callback=_callback_function if not disable_tqdm else None,
+        callback=_callback_function,
+        # callback=_callback_function if not disable_tqdm else None,
         constraints=constraints if constraints is not None else None,
-        # options={"disp": True, "maxiter": 10000, "maxfev": 10000, "return_all": True},
-        options={"disp": not disable_tqdm, "maxiter": 10000},
+        options={"disp": True, "maxiter": 10000, "maxfev": 10000, "return_all": True},
+        # options={"disp": not disable_tqdm, "maxiter": 10000},
     )
 
     # Calculate the optimisation criterion value and return this also.

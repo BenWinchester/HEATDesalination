@@ -1661,9 +1661,9 @@ x = [
         entry_1.split("_dr_")[-1] for entry_1 in [entry.split("uae")[1] for entry in x]
     ]
 ]
-x = [entry.replace("--", "-") for entry in x]
+x = [entry.replace("--", "-").replace("_", ".") for entry in x]
 x = [float(entry) for entry in x]
-x = [(-(200 + entry) if entry < 0 else entry) for entry in x]
+# x = [(-(200 + entry) if entry < 0 else entry) for entry in x]
 
 # Plot the various keys
 for plot_index, title in enumerate(optimisation_titles):
@@ -1728,7 +1728,7 @@ for plot_index, title in enumerate(optimisation_titles):
     plt.xlim(-25, 25)
     plt.ylabel("Component size")
     plt.ylim(0, 1.25 * max(
-        uer_batt[75:125] + uer_pv[75:125] + uer_pv_t[75:125] + uer_st[75:125]
+        uer_batt + uer_pv + uer_pv_t + uer_st
     ))
     plt.legend()
     plt.show()
