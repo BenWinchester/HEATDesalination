@@ -11,8 +11,8 @@ cd $PBS_O_WORKDIR
 
 # OPTIMISATIONS_FILE="optimisations_pv_degradation"
 # OPTIMISATIONS_FILE="grid_optimisations"
-# OPTIMISATIONS_FILE="inputs/optimisations_heat_pump_efficiency.json"
-OPTIMISATIONS_FILE="inputs/optimisations_heat_exchanger_efficiency.json"
+# OPTIMISATIONS_FILE="optimisations_heat_pump_efficiency"
+OPTIMISATIONS_FILE="optimisations_heat_exchanger_efficiency"
 
 OUTPUT_NAME="hpc_heat_exchanger_efficiency_optimisations_probe"
 # OUTPUT_NAME="hpc_heat_pump_efficiency_optimisations_probe"
