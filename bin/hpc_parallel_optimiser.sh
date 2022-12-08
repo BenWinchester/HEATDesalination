@@ -9,15 +9,22 @@ source activate py310
 
 cd $PBS_O_WORKDIR
 
-# OPTIMISATIONS_FILE="optimisations_pv_degradation"
+OPTIMISATIONS_FILE="optimisations_pv_degradation"
 # OPTIMISATIONS_FILE="grid_optimisations"
 # OPTIMISATIONS_FILE="optimisations_heat_pump_efficiency"
-OPTIMISATIONS_FILE="optimisations_heat_exchanger_efficiency"
+# OPTIMISATIONS_FILE="optimisations_heat_exchanger_efficiency"
 
-OUTPUT_NAME="hpc_heat_exchanger_efficiency_optimisations_probe"
+# NM-named output files
+# OUTPUT_NAME="hpc_nm_heat_exchanger_efficiency_optimisations_probe"
+# OUTPUT_NAME="hpc_nm_heat_pump_efficiency_optimisations_probe"
+# OUTPUT_NAME="hpc_nm_grid_optimisations_probe"
+# OUTPUT_NAME="hpc_nm_pv_degradation_optimisations_probe"
+
+# Non-NM-named output files
+# OUTPUT_NAME="hpc_heat_exchanger_efficiency_optimisations_probe"
 # OUTPUT_NAME="hpc_heat_pump_efficiency_optimisations_probe"
 # OUTPUT_NAME="hpc_grid_optimisations_probe"
-# OUTPUT_NAME="hpc_pv_degradation_optimisations_probe"
+OUTPUT_NAME="hpc_pv_degradation_optimisations_probe"
 
 # Sending runs to the HPC
 echo -e "Running parallel simulation module..."
