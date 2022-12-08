@@ -96,7 +96,7 @@ ax.bar(
 plt.xlabel("Hour of day")
 plt.ylabel("Average hourly power flow / kWh")
 
-ax.legend()
+ax.legend(bbox_to_anchor=(1.0, 1.0))
 plt.show()
 
 ###################
@@ -208,7 +208,7 @@ ax.bar(
 plt.xlabel("Hour of day")
 plt.ylabel("Average hourly power flow / kWh")
 
-ax.legend()
+ax.legend(bbox_to_anchor=(1.0, 1.0))
 plt.show()
 
 
@@ -298,7 +298,7 @@ for index, keyword in enumerate(keywords_to_plot):
     )
     plt.xlabel("Hour of day")
     plt.ylabel(ylabels[index])
-    plt.legend()
+    plt.legend(bbox_to_anchor=(1.0, 1.0))
     plt.show()
 
 #####################################
@@ -350,7 +350,7 @@ for index, key in enumerate(keys):
     # plt.plot(x, list(upper_error_data[key]), "--", c=f"C{index}")
     # plt.fill_between(x, list(lower_error_data[key]), list(upper_error_data[key]), color=f"C{index}", alpha=0.1)
 
-plt.legend()
+plt.legend(bbox_to_anchor=(1.0, 1.0))
 plt.xlabel("Hour of day")
 plt.ylabel("Temperature / degC")
 plt.show()
@@ -396,8 +396,8 @@ ax2.plot(
     x, average_data["Tank temperature / degC"], "--", c="C3", label="Tank temperature"
 )
 
-ax.legend()
-ax2.legend()
+ax.legend(bbox_to_anchor=(1.0, 1.0))
+ax2.legend(bbox_to_anchor=(1.0, 1.0))
 ax.set_xlabel("Hour of day")
 ax.set_ylabel("Thermal Energy Supplied / kWh(th)")
 ax2.set_ylabel("Tank temperature / degC")
@@ -434,7 +434,7 @@ plt.fill_between(
     label="Plant electrical requirements",
     alpha=ALPHA,
 )
-plt.legend()
+plt.legend(bbox_to_anchor=(1.0, 1.0))
 plt.xlabel("Hour of day")
 plt.ylabel("Electrical demand / kWh")
 plt.show()
@@ -504,7 +504,7 @@ plt.plot(
     c="C0",
     label="Electricity demand / kWh"
 )
-plt.legend()
+plt.legend(bbox_to_anchor=(1.0, 1.0))
 plt.xlabel("Hour of day")
 plt.ylabel("Source of electrical power / kWh")
 plt.show()
@@ -1126,7 +1126,7 @@ plt.plot(
     marker="x",
 )
 
-plt.legend()
+plt.legend(bbox_to_anchor=(1.0, 1.0))
 
 plt.xlabel("Storage capacity / kWh")
 plt.ylabel("Number of PV panels")
@@ -1629,14 +1629,18 @@ n = 5  # the larger n is, the smoother curve will be
 b = [1.0 / n] * n
 a = 1
 
-
 ALPHA = 0.5
+DPI = 600
 sns.set_style("whitegrid")
-sns.set_context("notebook")
+sns.set_context((context:="notebook"))
 sns.set_palette("colorblind")
 
-with open("hpc_grid_optimisations_probe.json", "r") as f:
+# !! Update both name and fig identifier
+with open("hpc_nm_grid_optimisations_probe.json", "r") as f:
     data = json.load(f)
+
+fig_identifier: str = f"nm_grid_discount_{context}"
+FIGURE_DIMENSIONS = (8.27, 8.27)
 
 keys = [
     "total_cost",
@@ -1655,6 +1659,8 @@ optimisation_titles = [
 ]
 
 x = [entry["optimisation"]["scenario"] for entry in data]
+
+# Grid discount processing
 x = [
     entry_2.replace("m_", "-")
     for entry_2 in [
@@ -1665,73 +1671,254 @@ x = [entry.replace("--", "-").replace("_", ".") for entry in x]
 x = [float(entry) for entry in x]
 # x = [(-(200 + entry) if entry < 0 else entry) for entry in x]
 
+# Heat-exchanger efficiency processing
+# x = [float(entry.split("_")[-1].split("%")[0]) for entry in x]
+
+# PV degradation efficiency processing
+# x = [float(".".join(entry.split("deg_")[1:]).replace("%", "")) / 100 for entry in x]
+
+# Plot the various component sizes for each of the runs.
+# Result 0 - four-parameter optimisation
+plt.figure()#figsize=FIGURE_DIMENSIONS)
+sns.set_palette("colorblind")
+batt = [
+    entry["result"][0][1][ProfileType.AVERAGE.value][1][0]
+    for entry in data
+]
+ler_batt = [
+    entry["result"][0][1][ProfileType.LOWER_ERROR_BAR.value][1][0]
+    for entry in data
+]
+uer_batt = [
+    entry["result"][0][1][ProfileType.UPPER_ERROR_BAR.value][1][0]
+    for entry in data
+]
+pv = [
+    entry["result"][0][1][ProfileType.AVERAGE.value][1][1]
+    for entry in data
+]
+ler_pv = [
+    entry["result"][0][1][ProfileType.LOWER_ERROR_BAR.value][1][1]
+    for entry in data
+]
+uer_pv = [
+    entry["result"][0][1][ProfileType.UPPER_ERROR_BAR.value][1][1]
+    for entry in data
+]
+pv_t = [
+    entry["result"][0][1][ProfileType.AVERAGE.value][1][2]
+    for entry in data
+]
+ler_pv_t = [
+    entry["result"][0][1][ProfileType.LOWER_ERROR_BAR.value][1][2]
+    for entry in data
+]
+uer_pv_t = [
+    entry["result"][0][1][ProfileType.UPPER_ERROR_BAR.value][1][2]
+    for entry in data
+]
+st = [
+    entry["result"][0][1][ProfileType.AVERAGE.value][1][3]
+    for entry in data
+]
+ler_st = [
+    entry["result"][0][1][ProfileType.LOWER_ERROR_BAR.value][1][3]
+    for entry in data
+]
+uer_st = [
+    entry["result"][0][1][ProfileType.UPPER_ERROR_BAR.value][1][3]
+    for entry in data
+]
+plt.plot(x, batt, color="C0", label="Battery capacity / kWh")
+plt.fill_between(x, ler_batt, uer_batt, color="C0", alpha=ALPHA)
+plt.plot(x, pv, color="C1", label="Num. PV collectors")
+plt.fill_between(x, ler_pv, uer_pv, color="C1", alpha=ALPHA)
+plt.plot(x, pv_t, color="C2", label="Num. PV-T collectors")
+plt.fill_between(x, ler_pv_t, uer_pv_t, color="C2", alpha=ALPHA)
+plt.plot(x, st, color="C3", label="Num. solar-thermal collectors")
+plt.fill_between(x, ler_st, uer_st, color="C3", alpha=ALPHA)
+plt.xlabel("Mean grid discount rate / %/year")
+plt.xlim(min(x), max(x))
+plt.ylabel("Component size")
+plt.ylim(0, 1.1 * max(
+    ler_batt + ler_pv + ler_pv_t + ler_st + batt + pv + pv_t + st
+))
+plt.legend(bbox_to_anchor=(1.0, 1.0))
+plt.savefig(f"{fig_identifier}_four_param_component_sizes.png", dpi=1200, transparent=True, bbox_inches="tight")
+plt.close()
+
+plt.figure()#figsize=FIGURE_DIMENSIONS)
+
+# Result 1 - no-PV optimisation
+sns.set_palette("colorblind")
+batt = [
+    entry["result"][1][1][ProfileType.AVERAGE.value][1][0]
+    for entry in data
+]
+ler_batt = [
+    entry["result"][1][1][ProfileType.LOWER_ERROR_BAR.value][1][0]
+    for entry in data
+]
+uer_batt = [
+    entry["result"][1][1][ProfileType.UPPER_ERROR_BAR.value][1][0]
+    for entry in data
+]
+pv_t = [
+    entry["result"][1][1][ProfileType.AVERAGE.value][1][1]
+    for entry in data
+]
+ler_pv_t = [
+    entry["result"][1][1][ProfileType.LOWER_ERROR_BAR.value][1][1]
+    for entry in data
+]
+uer_pv_t = [
+    entry["result"][1][1][ProfileType.UPPER_ERROR_BAR.value][1][1]
+    for entry in data
+]
+st = [
+    entry["result"][1][1][ProfileType.AVERAGE.value][1][2]
+    for entry in data
+]
+ler_st = [
+    entry["result"][1][1][ProfileType.LOWER_ERROR_BAR.value][1][2]
+    for entry in data
+]
+uer_st = [
+    entry["result"][1][1][ProfileType.UPPER_ERROR_BAR.value][1][2]
+    for entry in data
+]
+plt.plot(x, batt, color="C0", label="Battery capacity / kWh")
+plt.fill_between(x, ler_batt, uer_batt, color="C0", alpha=ALPHA)
+plt.plot(x, pv_t, color="C2", label="Num. PV-T collectors")
+plt.fill_between(x, ler_pv_t, uer_pv_t, color="C2", alpha=ALPHA)
+plt.plot(x, st, color="C3", label="Num. solar-thermal collectors")
+plt.fill_between(x, ler_st, uer_st, color="C3", alpha=ALPHA)
+plt.xlabel("Mean grid discount rate / %/year")
+plt.xlim(-25, 25)
+plt.ylabel("Component size")
+plt.ylim(0, 1.25 * max(
+    uer_batt + uer_pv_t + uer_st + batt + pv_t + st
+))
+plt.legend(bbox_to_anchor=(1.0, 1.0))
+plt.savefig(f"{fig_identifier}_no_pv_component_sizes.png", dpi=DPI, transparent=True, bbox_inches="tight")
+plt.close()
+
+plt.figure()#figsize=FIGURE_DIMENSIONS)
+
+# Result 2 - no-PV-T optimisation
+sns.set_palette("colorblind")
+batt = [
+    entry["result"][2][1][ProfileType.AVERAGE.value][1][0]
+    for entry in data
+]
+ler_batt = [
+    entry["result"][2][1][ProfileType.LOWER_ERROR_BAR.value][1][0]
+    for entry in data
+]
+uer_batt = [
+    entry["result"][2][1][ProfileType.UPPER_ERROR_BAR.value][1][0]
+    for entry in data
+]
+pv = [
+    entry["result"][2][1][ProfileType.AVERAGE.value][1][1]
+    for entry in data
+]
+ler_pv = [
+    entry["result"][2][1][ProfileType.LOWER_ERROR_BAR.value][1][1]
+    for entry in data
+]
+uer_pv = [
+    entry["result"][2][1][ProfileType.UPPER_ERROR_BAR.value][1][1]
+    for entry in data
+]
+st = [
+    entry["result"][2][1][ProfileType.AVERAGE.value][1][2]
+    for entry in data
+]
+ler_st = [
+    entry["result"][2][1][ProfileType.LOWER_ERROR_BAR.value][1][2]
+    for entry in data
+]
+uer_st = [
+    entry["result"][2][1][ProfileType.UPPER_ERROR_BAR.value][1][2]
+    for entry in data
+]
+plt.plot(x, batt, color="C0", label="Battery capacity / kWh")
+plt.fill_between(x, ler_batt, uer_batt, color="C0", alpha=ALPHA)
+plt.plot(x, pv, color="C1", label="Num. PV collectors")
+plt.fill_between(x, ler_pv, uer_pv, color="C1", alpha=ALPHA)
+plt.plot(x, st, color="C3", label="Num. solar-thermal collectors")
+plt.fill_between(x, ler_st, uer_st, color="C3", alpha=ALPHA)
+plt.xlabel("Mean grid discount rate / %/year")
+plt.xlim(-25, 25)
+plt.ylabel("Component size")
+plt.ylim(0, 1.25 * max(
+    uer_batt + uer_pv + uer_st + batt + pv + st
+))
+plt.legend(bbox_to_anchor=(1.0, 1.0))
+plt.savefig(f"{fig_identifier}_no_pv_t_component_sizes.png", dpi=DPI, transparent=True, bbox_inches="tight")
+plt.close()
+
+plt.figure()#figsize=FIGURE_DIMENSIONS)
+
+# Result 3 - no-st-parameter optimisation
+sns.set_palette("colorblind")
+batt = [
+    entry["result"][3][1][ProfileType.AVERAGE.value][1][0]
+    for entry in data
+]
+ler_batt = [
+    entry["result"][3][1][ProfileType.LOWER_ERROR_BAR.value][1][0]
+    for entry in data
+]
+uer_batt = [
+    entry["result"][3][1][ProfileType.UPPER_ERROR_BAR.value][1][0]
+    for entry in data
+]
+pv = [
+    entry["result"][3][1][ProfileType.AVERAGE.value][1][1]
+    for entry in data
+]
+ler_pv = [
+    entry["result"][3][1][ProfileType.LOWER_ERROR_BAR.value][1][1]
+    for entry in data
+]
+uer_pv = [
+    entry["result"][3][1][ProfileType.UPPER_ERROR_BAR.value][1][1]
+    for entry in data
+]
+pv_t = [
+    entry["result"][3][1][ProfileType.AVERAGE.value][1][2]
+    for entry in data
+]
+ler_pv_t = [
+    entry["result"][3][1][ProfileType.LOWER_ERROR_BAR.value][1][2]
+    for entry in data
+]
+uer_pv_t = [
+    entry["result"][3][1][ProfileType.UPPER_ERROR_BAR.value][1][2]
+    for entry in data
+]
+plt.plot(x, batt, color="C0", label="Battery capacity / kWh")
+plt.fill_between(x, ler_batt, uer_batt, color="C0", alpha=ALPHA)
+plt.plot(x, pv, color="C1", label="Num. PV collectors")
+plt.fill_between(x, ler_pv, uer_pv, color="C1", alpha=ALPHA)
+plt.plot(x, pv_t, color="C2", label="Num. PV-T collectors")
+plt.fill_between(x, ler_pv_t, uer_pv_t, color="C2", alpha=ALPHA)
+plt.xlabel("Mean grid discount rate / %/year")
+plt.xlim(-25, 25)
+plt.ylabel("Component size")
+plt.ylim(0, 1.25 * max(
+    uer_batt + uer_pv + uer_pv_t + batt + pv + pv_t
+))
+plt.legend(bbox_to_anchor=(1.0, 1.0))
+plt.savefig(f"{fig_identifier}_no_st_component_sizes.png", dpi=DPI, transparent=True, bbox_inches="tight")
+plt.close()
+
+plt.figure()#figsize=FIGURE_DIMENSIONS)
+
 # Plot the various keys
 for plot_index, title in enumerate(optimisation_titles):
-    sns.set_palette("colorblind")
-    batt = [
-        entry["result"][plot_index][1][ProfileType.AVERAGE.value][1][0]
-        for entry in data
-    ]
-    ler_batt = [
-        entry["result"][plot_index][1][ProfileType.LOWER_ERROR_BAR.value][1][0]
-        for entry in data
-    ]
-    uer_batt = [
-        entry["result"][plot_index][1][ProfileType.UPPER_ERROR_BAR.value][1][0]
-        for entry in data
-    ]
-    pv = [
-        entry["result"][plot_index][1][ProfileType.AVERAGE.value][1][1]
-        for entry in data
-    ]
-    ler_pv = [
-        entry["result"][plot_index][1][ProfileType.LOWER_ERROR_BAR.value][1][1]
-        for entry in data
-    ]
-    uer_pv = [
-        entry["result"][plot_index][1][ProfileType.UPPER_ERROR_BAR.value][1][1]
-        for entry in data
-    ]
-    pv_t = [
-        entry["result"][plot_index][1][ProfileType.AVERAGE.value][1][2]
-        for entry in data
-    ]
-    ler_pv_t = [
-        entry["result"][plot_index][1][ProfileType.LOWER_ERROR_BAR.value][1][2]
-        for entry in data
-    ]
-    uer_pv_t = [
-        entry["result"][plot_index][1][ProfileType.UPPER_ERROR_BAR.value][1][2]
-        for entry in data
-    ]
-    st = [
-        entry["result"][plot_index][1][ProfileType.AVERAGE.value][1][3]
-        for entry in data
-    ]
-    ler_st = [
-        entry["result"][plot_index][1][ProfileType.LOWER_ERROR_BAR.value][1][3]
-        for entry in data
-    ]
-    uer_st = [
-        entry["result"][plot_index][1][ProfileType.UPPER_ERROR_BAR.value][1][3]
-        for entry in data
-    ]
-    plt.plot(x, batt, color="C0", label="Battery capacity / kWh")
-    plt.fill_between(x, ler_batt, uer_batt, color="C0", alpha=ALPHA)
-    plt.plot(x, pv, color="C1", label="Num. PV collectors")
-    plt.fill_between(x, ler_pv, uer_pv, color="C1", alpha=ALPHA)
-    plt.plot(x, pv_t, color="C2", label="Num. PV-T collectors")
-    plt.fill_between(x, ler_pv_t, uer_pv_t, color="C2", alpha=ALPHA)
-    plt.plot(x, st, color="C3", label="Num. solar-thermal collectors")
-    plt.fill_between(x, ler_st, uer_st, color="C3", alpha=ALPHA)
-    plt.xlabel("Mean grid discount rate / %/year")
-    plt.xlim(-25, 25)
-    plt.ylabel("Component size")
-    plt.ylim(0, 1.25 * max(
-        uer_batt + uer_pv + uer_pv_t + uer_st
-    ))
-    plt.legend()
-    plt.show()
     for index, key in enumerate(keys):
         y = [
             entry["result"][plot_index][1]["average_weather_conditions"][0][key]
@@ -1771,7 +1958,7 @@ for plot_index, title in enumerate(optimisation_titles):
         # ]
         # Determine the x range
         # Plot
-        plt.plot(x, y, color=f"C{index}")
+        plt.plot(x, y, color=f"C{index}", label=f"{key.replace('_', ' ').capitalize()} (unsmoothed)")
         plt.fill_between(x, y_ler, y, color=f"C{index}", alpha=0.5)
         plt.fill_between(x, y, y_uer, color=f"C{index}", alpha=0.5)
         # plt.plot(x, y_min, "--", color=f"C{index}")
@@ -1781,12 +1968,15 @@ for plot_index, title in enumerate(optimisation_titles):
         plt.ylabel(key.replace("_", " ").capitalize())
         plt.xlabel("Mean grid discount rate / %/year")
         plt.xlim(-25, 25)
-        plt.ylim(0, 1.5 * max(y[75:125]))
+        plt.ylim(0, 1.5 * max(y))
         plt.title(
             f"{key.replace('_', ' ').capitalize()} (unsmoothed) for {title.capitalize()}"
         )
-        plt.show()
-        plt.plot(x, lfilter(b, a, y), color=f"C{index}")
+        plt.legend(bbox_to_anchor=(1.0, 1.0))
+        plt.savefig(f"{fig_identifier}_{key}_unsmoothed_{title}.png", dpi=DPI, transparent=True, bbox_inches="tight")
+        plt.close()
+        plt.figure()#figsize=FIGURE_DIMENSIONS)
+        plt.plot(x, lfilter(b, a, y), color=f"C{index}", label=f"{key.replace('_', ' ').capitalize()} (smoothed)")
         plt.fill_between(
             x, lfilter(b, a, y_ler), lfilter(b, a, y), color=f"C{index}", alpha=0.5
         )
@@ -1800,11 +1990,14 @@ for plot_index, title in enumerate(optimisation_titles):
         plt.ylabel(key.replace("_", " ").capitalize())
         plt.xlabel("Mean grid discount rate / %/year")
         plt.xlim(-25, 25)
-        plt.ylim(0, 1.5 * max(y[75:125]))
+        plt.ylim(0, 1.5 * max(y))
         plt.title(
             f"{key.replace('_', ' ').capitalize()} (smoothed) for {title.capitalize()}"
         )
-        plt.show()
+        plt.legend(bbox_to_anchor=(1.0, 1.0))
+        plt.savefig(f"{fig_identifier}_{key}_smoothed_{title}.png", dpi=DPI, transparent=True, bbox_inches="tight")
+        plt.close()
+        plt.figure()#figsize=FIGURE_DIMENSIONS)
         with open(f"grid_high_res_weather_error_{key}.json", "w") as f:
             json.dump(
                 {
@@ -1870,9 +2063,11 @@ for plot_index, title in enumerate(optimisation_titles):
     plt.xlabel("Mean grid discount rate / %/year")
     plt.ylabel("Fractional generation of electricity demand")
     plt.title(f"Fractional electricity sources for {title.capitalize()}")
-    plt.legend()
+    plt.legend(bbox_to_anchor=(1.0, 1.0))
     plt.xlim(-25, 25)
-    plt.show()
+    plt.savefig(f"{fig_identifier}_{key}_unsmoothed_electricity_sources.png", dpi=DPI, transparent=True, bbox_inches="tight")
+    plt.close()
+    plt.figure()#figsize=FIGURE_DIMENSIONS)
     # Plot the smoothed fractions of power from storage, pv, and the grid.
     sns.set_palette("PuBu_r", n_colors=3)
     storage_fraction = lfilter(b, a, [
@@ -1924,9 +2119,11 @@ for plot_index, title in enumerate(optimisation_titles):
     plt.xlabel("Mean grid discount rate / %/year")
     plt.ylabel("Fractional generation of electricity demand")
     plt.title(f"Fractional electricity sources for {title.capitalize()}")
-    plt.legend()
+    plt.legend(bbox_to_anchor=(1.0, 1.0))
     plt.xlim(-25, 25)
-    plt.show()    # Plot without raised minima
+    plt.savefig(f"{fig_identifier}_{key}_smoothed_electricity_sources.png", dpi=DPI, transparent=True, bbox_inches="tight")
+    plt.close()
+    plt.figure()#figsize=FIGURE_DIMENSIONS)
     storage_fraction = [
         entry["result"][plot_index][1]["average_weather_conditions"][0][
             "storage_electricity_fraction"
@@ -1956,9 +2153,11 @@ for plot_index, title in enumerate(optimisation_titles):
     plt.xlabel("Mean grid discount rate / %/year")
     plt.ylabel("Fractional generation of electricity demand")
     plt.title(f"Fractional electricity sources for {title.capitalize()}")
-    plt.legend()
+    plt.legend(bbox_to_anchor=(1.0, 1.0))
     plt.xlim(-25, 25)
-    plt.show()
+    plt.savefig(f"{fig_identifier}_{key}_overlapping_electricity_sources.png", dpi=DPI, transparent=True, bbox_inches="tight")
+    plt.close()
+    plt.figure()#figsize=FIGURE_DIMENSIONS)
 
 ################################
 # PV degradation probe results #
@@ -2119,7 +2318,7 @@ for plot_index, title in enumerate(optimisation_titles):
     plt.xlabel("Mean grid discount rate / %/year")
     plt.ylabel("Fractional generation of electricity demand")
     plt.title(f"Fractional electricity sources for {title.capitalize()}")
-    plt.legend()
+    plt.legend(bbox_to_anchor=(1.0, 1.0))
     plt.show()
     # Plot without raised minima
     plt.plot(sorted_x, (grid_line := grid_fraction), color=f"C2", label="grid fraction")
@@ -2135,7 +2334,7 @@ for plot_index, title in enumerate(optimisation_titles):
     plt.xlabel("PV degradation rate / %/year")
     plt.ylabel("Fractional generation of electricity demand")
     plt.title(f"Fractional electricity sources for {title.capitalize()}")
-    plt.legend()
+    plt.legend(bbox_to_anchor=(1.0, 1.0))
     plt.show()
 
 
@@ -2192,7 +2391,7 @@ for pv_degradation in np.linspace(0.007, 0.039, 250):
 
 heat_exchanger_efficiency_optimisations = []
 
-for heat_exchanger_efficiency in np.linspace(0, 1, 250):
+for heat_exchanger_efficiency in np.linspace(0.01, 1, 100):
     scenario = default_scenario.copy()
     scenario["heat_exchanger_efficiency"] = float(heat_exchanger_efficiency)
     scenario[
@@ -2205,7 +2404,7 @@ for heat_exchanger_efficiency in np.linspace(0, 1, 250):
 
 heat_pump_efficiency_optimisations = []
 
-for heat_pump_efficiency in np.linspace(0, 1, 250):
+for heat_pump_efficiency in np.linspace(0.01, 1, 100):
     scenario = default_scenario.copy()
     scenario["heat_pump_efficiency"] = float(heat_pump_efficiency)
     scenario[
