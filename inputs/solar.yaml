@@ -112,6 +112,23 @@ solar_collectors:
       zeroth_order: !!float 0.621
       first_order: !!float -7.4  # [W/m^2K]
       second_order: !!float 0
+  - name: !!str dualsun_spring_insulated_discounted
+    type: !!str pv_t
+    area: !!float 1.876  # [m^2]
+    cost: !!float 150  # [USD/panel]
+    land_use: !!float 1.876  # [m^2]
+    max_mass_flow_rate: null  # [NaN]
+    min_mass_flow_rate: !!float 20  # [l/h]
+    nominal_mass_flow_rate: !!float 60  # [l/h]
+    pv_module_characteristics:
+      nominal_power: !!float 0.400  # [W]
+      reference_efficiency: !!float 0.213  # Between 0 and 1
+      reference_temperature: !!float 25  # [degC]
+      thermal_coefficient: !!float 0.0034  # [%/degC]
+    thermal_performance_curve:
+      zeroth_order: !!float 0.621
+      first_order: !!float -7.4  # [W/m^2K]
+      second_order: !!float 0
 
   #########################
   # Flat-plate collectors #
