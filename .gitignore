@@ -135,4 +135,7 @@ dmypy.json
 auto_generated/
 
 # Runs files
-inputs/*_runs.json
+*_runs.json
+
+# Plots
+*.png
