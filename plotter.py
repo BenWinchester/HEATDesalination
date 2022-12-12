@@ -1727,10 +1727,10 @@ sns.set_context((context := "notebook"))
 sns.set_palette("colorblind")
 
 # !! Update both name and fig identifier
-with open("hpc_nm_pv_degradation_optimisations_probe.json", "r") as f:
+with open("hpc_nm_low_tol_grid_optimisations_probe.json", "r") as f:
     data = json.load(f)
 
-fig_identifier: str = f"nm_heat_exhcnager_efficiency_{context}"
+fig_identifier: str = f"nm_low_tol_grid_optimisations_{context}"
 FIGURE_DIMENSIONS = (8.27, 8.27)
 
 keys = [

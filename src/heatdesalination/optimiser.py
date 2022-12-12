@@ -989,7 +989,7 @@ def run_optimisation(
         # callback=_callback_function if not disable_tqdm else None,
         constraints=constraints if constraints is not None else None,
         options={
-            "disp": True,
+            "disp": False,
             "ftol": 2.22 * 10 ** (-12),
             "gtol": 10 ** (-6),
             "maxiter": 10000,
