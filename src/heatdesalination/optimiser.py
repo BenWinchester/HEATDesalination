@@ -988,7 +988,14 @@ def run_optimisation(
         callback=_callback_function,
         # callback=_callback_function if not disable_tqdm else None,
         constraints=constraints if constraints is not None else None,
-        options={"disp": True, "maxiter": 10000, "maxfev": 10000, "return_all": True},
+        options={
+            "disp": True,
+            "ftol": 2.22 * 10 ** (-12),
+            "gtol": 10 ** (-6),
+            "maxiter": 10000,
+            "maxfev": 10000,
+            "return_all": True,
+        },
         # options={"disp": not disable_tqdm, "maxiter": 10000},
     )
 
