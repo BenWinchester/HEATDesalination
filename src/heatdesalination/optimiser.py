@@ -990,11 +990,13 @@ def run_optimisation(
         constraints=constraints if constraints is not None else None,
         options={
             "disp": False,
+            "fatol": 10 ** -(6),
             "ftol": 2.22 * 10 ** (-12),
             "gtol": 10 ** (-6),
             "maxiter": 10000,
             "maxfev": 10000,
             "return_all": True,
+            "xatol": 10 ** -(6),
         },
         # options={"disp": not disable_tqdm, "maxiter": 10000},
     )
