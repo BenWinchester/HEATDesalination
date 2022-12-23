@@ -427,7 +427,7 @@ def _recursive_degraded_storage_solver(
         """
 
         try:
-            return (x // 1) / x + (x % 1) ** 2 / x
+            return 0.5 * (x // 1) / x + (x % 1) ** 2 / x
         except ZeroDivisionError:
             return 0
 
