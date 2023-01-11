@@ -1062,8 +1062,8 @@ ax.clabel(contours, fontsize=10, colors=line_colors)
 ax.set_xlabel("Solar-thermal capacity / collectors")
 ax.set_ylabel("PV-T capacity / collectors")
 
-# fig.colorbar(cpf, ax=ax, label="Total lifetime cost / MUSD")
-fig.colorbar(cpf, ax=ax, label="Auxiliary heating fraction")
+fig.colorbar(cpf, ax=ax, label="Total lifetime cost / MUSD")
+# fig.colorbar(cpf, ax=ax, label="Auxiliary heating fraction")
 # fig.colorbar(cpf, ax=ax, label="Grid fraction")
 # fig.colorbar(cpf, ax=ax, label="Solar fraction")
 # fig.colorbar(cpf, ax=ax, label="Storage fraction")
@@ -1226,7 +1226,7 @@ plt.ylim(min(pv_sizes), max(pv_sizes))
 plt.show()
 
 plt.savefig(
-    "parameter_optimisation_heatmap.png",
+    "pv_batt_parameter_optimisation_heatmap.png",
     dpi=1200,
     transparent=True,
     bbox_inches="tight",

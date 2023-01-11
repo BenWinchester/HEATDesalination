@@ -24,7 +24,7 @@ import enum
 import math
 
 from logging import Logger
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Tuple
 
 from pvlib import temperature
 
@@ -36,6 +36,7 @@ from .__utils__ import (
     InputFileError,
     NAME,
     reduced_temperature,
+    TEMPERATURE_PRECISION,
     ZERO_CELCIUS_OFFSET,
 )
 
@@ -99,6 +100,10 @@ REFERENCE_TEMPERATURE: str = "reference_temperature"
 #   Keyword for parsing second-order coefficient.
 SECOND_ORDER: str = "second_order"
 
+# STEFAN_BOLTZMAN_CONSTANT:
+#   The Stefan-Boltzman constant in SI units.
+STEFAN_BOLTZMAN_CONSTANT: float = 5.670374419 * (10**-8)
+
 # THERMAL_COEFFICIENT:
 #   Keyword for the temperature coefficient for the performance of a PV panel.
 THERMAL_COEFFICIENT: str = "thermal_coefficient"
@@ -130,6 +135,62 @@ class SolarPanelType(enum.Enum):
     PV: str = "pv"
     PV_T: str = "pv_t"
     SOLAR_THERMAL: str = "solar_thermal"
+
+
+def _conductive_air_heat_transfer_coefficient(wind_speed: float) -> float:
+    """
+    Calculates the conductive heat-transfer coefficient between PV panels and the air.
+
+    The heat transfer coefficient is given by:
+        h_air = 3.97(13) sWm^3K v_wind
+              + 6.90(5) W/m^2K
+
+    """
+
+    return float(3.97 * wind_speed + 6.90)
+
+
+def _sky_temperature(ambient_temperature: float) -> float:
+    """
+    Determines the radiative temperature of the sky.
+
+    The "sky," as a black body, has a radiative temperature different to that of the
+    surrounding air, or the ambient temperature. This function converts between them and
+    outputs the sky's radiative temperature.
+
+    Outputs:
+        The radiative temperature of the "sky" in Kelvin.
+
+    """
+
+    return float(0.0552 * (ambient_temperature**1.5))
+
+
+def _radiation_to_sky_coefficient(
+    collector_emissivity: float, collector_temperature: float, sky_temperature: float
+) -> float:
+    """
+    Returns the heat-transfer coefficient between a collector and the sky in W/m^2.
+
+    Inputs:
+        - collector_emissivity:
+            The emissivity of the collector.
+        - collector_temperature:
+            The temperature of the collector, measured in Kelvin.
+        - sky_temperature:
+            The sky temperature, measured in Kelvin.
+
+    Outputs:
+        The heat-transfer coefficient between the collector and the sky, measured in
+        Watts per meter squared.
+
+    """
+    return (
+        STEFAN_BOLTZMAN_CONSTANT  # [W/m^2*K^4]
+        * collector_emissivity
+        * (collector_temperature**2 + sky_temperature**2)  # [K^2]
+        * (collector_temperature + sky_temperature)  # [K]
+    )
 
 
 @dataclasses.dataclass
@@ -247,7 +308,7 @@ def _thermal_performance(
     mass_flow_rate: float,
     performance_curve: PerformanceCurve,
     solar_irradiance: float,
-) -> Tuple[float, float]:
+) -> Tuple[float | None, float]:
     """
     Calculates the roots for the thermal performance of the collectors.
 
@@ -447,6 +508,7 @@ class SolarPanel(abc.ABC, CostableComponent):  # pylint: disable=too-few-public-
         htf_heat_capacity: float | None,
         input_temperature: float | None,
         mass_flow_rate: float | None,
+        wind_speed: float | None,
     ) -> Tuple[float | None, float | None, float | None, float | None,]:
         """
         Abstract method for calculation of collector performance.
@@ -468,6 +530,8 @@ class SolarPanel(abc.ABC, CostableComponent):  # pylint: disable=too-few-public-
             - solar_irradiance:
                 The solar irradiance incident on the surface of the collector, measured
                 in Watts per meter squared.
+            - wind_speed:
+                The wind speed in meters per second.
 
         Outputs:
             - electrical_efficiency:
@@ -504,6 +568,15 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
     """
     Represents a photovoltaic panel.
 
+    .. attribute:: absorptivity
+        The absorptivity of the panel, defined between 0 (none of the incident light is
+        absorbed by the panel) to 1 (all of the incident light is absorbed by the
+        panel).
+
+    .. attribute:: emissivity
+        The emissivity of the panel, defined between 0 (none of the incident light on
+        the panel is emitted) to 1 (the panel radiates all incoming light).
+
     .. attribute:: pv_unit
         The unit of PV power being considered, defaulting to 1 kWp.
 
@@ -522,8 +595,10 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
 
     def __init__(
         self,
+        absorptivity: float,
         area: float,
         cost: float,
+        emissivity: float,
         land_use: float,
         name: str,
         pv_unit: float,
@@ -535,10 +610,14 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
         Instantiate a :class:`PVPanel` instance.
 
         Inputs:
+            - absorptivity:
+                The absorptivity of the panel.
             - area:
                 The surface area of the panel in meters squared.
             - cost:
                 The cost of the :class:`PVPanel`.
+            - emissivity:
+                The emissivity of the panel.
             - land_use:
                 The land occupied by the panel in meters squared.
             - name:
@@ -565,10 +644,12 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
             name,
         )
 
+        self.absorptivity = absorptivity
+        self.emissivity = emissivity
         self.pv_unit: float = pv_unit
-        self.reference_efficiency: float | None = reference_efficiency
-        self._reference_temperature: float | None = reference_temperature
-        self.thermal_coefficient: float | None = thermal_coefficient
+        self.reference_efficiency: float = reference_efficiency
+        self._reference_temperature: float = reference_temperature
+        self.thermal_coefficient: float = thermal_coefficient
 
     @property
     def reference_temperature(self) -> float:
@@ -619,17 +700,120 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
         """
 
         logger.info("Attempting to create PVPanel from solar input data.")
+        try:
+            solar_inputs.pop("type")
+        except KeyError:
+            pass
 
         return cls(
-            solar_inputs[AREA],
-            solar_inputs[COST],
-            solar_inputs[LAND_USE],
-            solar_inputs[NAME],
-            solar_inputs[PV_UNIT],
-            solar_inputs[REFERENCE_EFFICIENCY],
-            solar_inputs[REFERENCE_TEMPERATURE],
-            solar_inputs[THERMAL_COEFFICIENT],
+            **solar_inputs,
         )
+
+    def _average_module_temperature(
+        self,
+        ambient_temperature: float,
+        logger: Logger,
+        solar_irradiance: float,
+        wind_speed: float,
+    ) -> float:
+        """
+        Calculate the temperature of the PV module in Kelvin.
+
+        Uses a heat-balance calculation iteratively to solve for the average temperature of
+        the PV module:
+            0W = a_pv G (1 - eta_el)
+                 + h_air (T_air - T_pv)
+                 + e' sigma (T_sky - Tpv),
+            where:
+                a_pv    is the absorptivity of the collector,
+                G       the solar irradiance in Watts per meter squared,
+                eta_el  the electrical efficiency of the collector,
+                h_air   the conductive heat-transfer coefficient between the collector
+                        and the surrounding air,
+                e'      the effective emissivity made linear by combining temperature
+                        terms of higher orders,
+            and sigma   is the Stefan-Boltzman coefficient.
+
+        This can be rearranged to the form employed here:
+            T_pv = (
+                a_pv G (1 - eta_ref (1 + beta T_ref))
+                + h_air T_amb
+                + e' sigma T_sky
+            ) / (
+                e' sigma + h_air - a_pv beta eta_ref G
+            )
+        which is linear in temperature and can be solved iteratively as the value of e'
+        contains higher-order terms in temperature.
+
+        Inputs:
+            - ambient_temperature:
+                The ambient temperature, measured in degrees Kelvin.
+            - logger:
+                The logger to use for the run.
+            - solar_irradiance:
+                The solar irradiance incident on the collector, measured in Watts per
+                meter squared.
+            - wind_speed:
+                The wind speed in meters per second.
+
+        Outputs:
+            The average temperature of the PV module installed.
+
+        """
+
+        # Calculate variable values which remain constant throughout the iteration
+        sky_temperature: float = _sky_temperature(ambient_temperature)
+
+        # Setup inputs for the iterative loop
+        best_guess_average_temperature: float = ambient_temperature
+        solution_found: bool = False
+
+        # Loop through until a solution is found
+        logger.debug("Beginning iterative calculation for the PV module temperature.")
+        while not solution_found:
+            # Compute the necessary coefficients
+            radiation_to_sky_coefficient = _radiation_to_sky_coefficient(
+                self.emissivity, best_guess_average_temperature, sky_temperature
+            )
+
+            # Calculate the average temperature of the collector
+            average_temperature: float = (
+                (self.absorptivity * solar_irradiance)
+                * (
+                    1
+                    - self.reference_efficiency
+                    * (1 + self.thermal_coefficient * self.reference_temperature)
+                )
+                + _conductive_air_heat_transfer_coefficient(wind_speed)
+                * ambient_temperature
+                + radiation_to_sky_coefficient * sky_temperature
+            ) / (
+                radiation_to_sky_coefficient
+                + _conductive_air_heat_transfer_coefficient(wind_speed)
+                - self.absorptivity
+                * self.thermal_coefficient
+                * self.reference_efficiency
+                * solar_irradiance
+            )
+
+            # Break if this average temperature is within the required precision.
+            if (
+                abs(best_guess_average_temperature - average_temperature)
+                < TEMPERATURE_PRECISION
+            ):
+                solution_found = True
+                logger.debug(
+                    "Solution for PV-module temperature of %s found, returning.",
+                    average_temperature,
+                )
+
+            best_guess_average_temperature = average_temperature
+            logger.debug(
+                "No solution found yet, re-iterating. Best guess: %s",
+                best_guess_average_temperature,
+            )
+
+        return average_temperature
 
     def calculate_performance(
         self,
@@ -639,18 +823,22 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
         htf_heat_capacity: float | None = None,
         input_temperature: float | None = None,
         mass_flow_rate: float | None = None,
+        wind_speed: float | None = None,
     ) -> Tuple[float | None, float | None, float | None, float | None,]:
         """
         Calcuates the electrical performance of the collector.
 
-        NOTE: The calculation for determining the temperature of the PV modules uses
-        default temperature characteristics from
+        NOTE: The default temperature characteristics from
           Faiman, D. (2008). "Assessing the outdoor operating temperature of
           photovoltaic modules." Progress in Photovoltaics 16(4): 307-315.
-        as implemented in the pvlib module.
+        as implemented in the pvlib module are provided in a commented-out form should a
+        developer or user which to use this calculation in-lieu of the in-house
+        calculation.
 
-        Should non-Silicon panels wish to be considered, these default values should be
-        altered accordingly or a more-accurate module-temperature module employed.
+        Should non-Silicon panels wish to be considered, the default valuesfor the pvlib
+        calculation should be altered accordingly or a more-accurate module-temperature
+        module employed. For the in-house calculation, the parameters for the collector
+        should be adjusted in the inputs file.
 
         Inputs:
             - ambient_temperature:
@@ -669,22 +857,30 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
             - solar_irradiance:
                 The solar irradiance incident on the surface of the collector, measured
                 in Watts per meter squared.
+            - wind_speed:
+                The wind speed in meters per second.
 
         Outputs:
             - electrical_efficiency:
                 The electrical efficiency of the PV panel.
             - `None`:
                 There is no HTF outputted from a PV panel.
-            - reduced_temperature:
-                The reduced temperature of the collector.
+            - average_temperature:
+                The average temperature of the collector.
             - `None`:
                 There is no thermal efficiency associated with a PV panel.
 
         """
 
         # Determine the average temperature of the panel using empirical PVLib modules.
-        average_temperature = temperature.faiman(
-            solar_irradiance, ambient_temperature - ZERO_CELCIUS_OFFSET
+        # average_temperature = temperature.faiman(
+        #     solar_irradiance, ambient_temperature - ZERO_CELCIUS_OFFSET
+        # )
+
+        # Determine the average temperature of the panel using an in-house heat-balance
+        # calculation.
+        average_temperature = self._average_module_temperature(
+            ambient_temperature, logger, solar_irradiance, wind_speed
         )
 
         # Determine the fractional electrical performance and electrical efficiency of
@@ -702,7 +898,7 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
             solar_irradiance,
         )
 
-        return electrical_efficiency, None, reduced_panel_temperature, None
+        return electrical_efficiency, None, average_temperature, None
 
 
 class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
@@ -727,7 +923,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
 
     def __init__(
         self,
-        electric_performance_curve: PerformanceCurve | None,
+        electric_performance_curve: PerformanceCurve,
         pv_module_characteristics: PVModuleCharacteristics | None,
         solar_inputs: Dict[str, Any],
         thermal_performance_curve: PerformanceCurve,
@@ -761,7 +957,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         self.thermal_performance_curve: PerformanceCurve = thermal_performance_curve
 
     @property
-    def max_mass_flow_rate(self) -> float:
+    def max_mass_flow_rate(self) -> float | None:
         """
         Return the maximum mass flow rate in kg/s.
 
@@ -916,6 +1112,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         htf_heat_capacity: float | None,
         input_temperature: float | None,
         mass_flow_rate: float | None,
+        wind_speed: float | None = None,
     ) -> Tuple[float | None, float | None, float | None, float | None,]:
         """
         Calculates the performance characteristics of the hybrid PV-T collector.
@@ -940,6 +1137,8 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
             - solar_irradiance:
                 The solar irradiance incident on the surface of the collector, measured
                 in Watts per meter squared.
+            - wind_speed:
+                The wind speed in meters per second.
 
         Outputs:
             - electrical_efficiency:
@@ -1166,6 +1365,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
         htf_heat_capacity: float | None,
         input_temperature: float | None,
         mass_flow_rate: float | None,
+        wind_speed: float | None = None,
     ) -> Tuple[float | None, float | None, float | None, float | None,]:
         """
         Calculates the performance characteristics of the solar-thermal collector.
@@ -1187,6 +1387,8 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
             - solar_irradiance:
                 The solar irradiance incident on the surface of the collector, measured
                 in Watts per meter squared.
+            - wind_speed:
+                The wind speed in meters per second.
 
         Outputs:
             - `None`:

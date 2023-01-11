@@ -621,6 +621,7 @@ def run_simulation(
     solar_irradiances: Dict[int, float],
     solar_thermal_collector: SolarThermalPanel | None,
     solar_thermal_system_size: int | None,
+    wind_speeds: Dict[int, float],
     *,
     disable_tqdm: bool = False,
     tank_start_temperature: float,
@@ -655,6 +656,8 @@ def run_simulation(
             The :class:`SolarThermalCollector` associated with the run.
         - solar_thermal_system_size:
             The size of the solar-thermal system.
+        - wind_speeds:
+            The wind speeds at each time step, measured in meters per second.
         - disable_tqdm:
             Whether to disable the progress bar.
         - tank_start_temperature:
@@ -829,11 +832,22 @@ def run_simulation(
     # Compute the PV performance characteristics.
     if scenario.pv:
         logger.info("Computing PV performance characteristics.")
-        pv_electrical_efficiencies: Dict[int, float] | None = {
+        pv_performance_characteristics: Dict[
+            int, Tuple[float, float | None, float, float | None]
+        ] = {
             hour: pv_panel.calculate_performance(
-                ambient_temperatures[hour], logger, solar_irradiances[hour]
-            )[0]
+                ambient_temperatures[hour],
+                logger,
+                solar_irradiances[hour],
+                wind_speed=wind_speeds[hour],
+            )
             for hour in range(len(ambient_temperatures))
+        }
+        pv_electrical_efficiencies: Dict[int, float] | None = {
+            hour: entry[0] for hour, entry in pv_performance_characteristics.items()
+        }
+        pv_average_temperatures: Dict[int, float] | None = {
+            hour: entry[2] for hour, entry in pv_performance_characteristics.items()
         }
         pv_electrical_output_power: Dict[int, float] | None = {
             hour: (
@@ -855,6 +869,7 @@ def run_simulation(
     else:
         pv_electrical_efficiencies = None
         pv_electrical_output_power = None
+        pv_average_temperatures = None
         pv_system_electrical_output_power = None
 
     # Compute the output power from the various collectors.
@@ -875,6 +890,7 @@ def run_simulation(
         electricity_demands,
         hot_water_demand_temperatures,
         hot_water_demand_volumes,
+        pv_average_temperatures if scenario.pv else None,
         {ProfileDegradationType.UNDEGRADED.value: pv_electrical_efficiencies}
         if scenario.pv
         else None,
@@ -924,6 +940,7 @@ def determine_steady_state_simulation(
     solar_thermal_collector: SolarThermalPanel | None,
     solar_thermal_system_size: int | None,
     system_lifetime: int,
+    wind_speeds: Dict[int, float],
     *,
     disable_tqdm: bool = False,
 ) -> Solution:
@@ -969,6 +986,8 @@ def determine_steady_state_simulation(
             The size of the solar-thermal system.
         - system_lifetime:
             The lifetime of the system in years.
+        - wind_speeds:
+            The wind speeds at each time step, measured in meters per second.
         - default_tank_temperature:
             The default tank temperature to use for running for consistency.
         - disable_tqdm:
@@ -998,6 +1017,7 @@ def determine_steady_state_simulation(
         solar_irradiances,
         solar_thermal_collector,
         solar_thermal_system_size,
+        wind_speeds,
         tank_start_temperature=tank_start_temperature,
         disable_tqdm=disable_tqdm,
     )
@@ -1035,6 +1055,7 @@ def determine_steady_state_simulation(
                 solar_irradiances,
                 solar_thermal_collector,
                 solar_thermal_system_size,
+                wind_speeds,
                 disable_tqdm=disable_tqdm,
                 tank_start_temperature=tank_start_temperature,
             )

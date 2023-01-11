@@ -35,13 +35,13 @@ from .__utils__ import (
     AMBIENT_TEMPERATURE,
     AUTO_GENERATED_FILES_DIRECTORY,
     NAME,
-    SOLAR_IRRADIANCE,
-    ZERO_CELCIUS_OFFSET,
     OptimisationParameters,
     ProfileType,
     read_yaml,
     Scenario,
-    TIMEZONE,
+    SOLAR_IRRADIANCE,
+    WIND_SPEED,
+    ZERO_CELCIUS_OFFSET,
 )
 from .plant import DesalinationPlant
 
@@ -161,6 +161,7 @@ def parse_input_files(
     Scenario,
     Dict[ProfileType, Dict[int, float]],
     SolarThermalPanel | None,
+    Dict[ProfileType, Dict[int, float]],
 ]:
     """
     Parses the various input files.
@@ -178,11 +179,7 @@ def parse_input_files(
 
     Outputs:
         - ambient_temperatures:
-            The ambient temperature measured in degrees Kelvin keyed by profile type
-            for:
-            - the day with maximum irradiance,
-            - the day with minimum irradiance,
-            - an average over all days.
+            The ambient temperature measured in degrees Kelvin keyed by profile type.
         - battery:
             The :class:`Battery` to use for the modelling.
         - desalination_plant:
@@ -197,12 +194,11 @@ def parse_input_files(
         - scenario:
             The :class:`Scenario` to use for the mode
         - solar_irradiances:
-            The solar irradiance keyed by profile type for:
-            - the day with maximum irradiance,
-            - the day with minimum irradiance,
-            - an average over all days.
+            The solar irradiance keyed by profile type.
         - solar_thermal_collector:
             The :class:`SolarThermalCollector` to use for the modelling.
+        - wind_speeds:
+            The wind speeds, keyed by profile type.
 
     """
 
@@ -360,6 +356,7 @@ def parse_input_files(
 
     ambient_temperatures: Dict[ProfileType, Dict[int, float]] = {}
     solar_irradiances: Dict[ProfileType, Dict[int, float]] = {}
+    wind_speeds: Dict[ProfileType, Dict[int, float]] = {}
 
     # Extend profiles to 25 hours.
     for profile_type in ProfileType:
@@ -372,6 +369,10 @@ def parse_input_files(
         solar_irradiances[profile_type] = {
             int(key) % 24: value
             for key, value in weather_data[profile_type.value][SOLAR_IRRADIANCE].items()
+        }
+        wind_speeds[profile_type] = {
+            int(key) % 24: value
+            for key, value in weather_data[profile_type.value][WIND_SPEED].items()
         }
 
     # Return the information.
@@ -386,4 +387,5 @@ def parse_input_files(
         scenario,
         solar_irradiances,
         solar_thermal_collector,
+        wind_speeds,
     )

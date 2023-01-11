@@ -211,6 +211,7 @@ def main(
         scenario,
         solar_irradiances,
         solar_thermal_collector,
+        wind_speeds,
     ) = parse_input_files(location, logger, scenario_name, start_hour)
 
     if simulation:
@@ -270,6 +271,7 @@ def main(
                 solar_thermal_collector,
                 solar_thermal_system_size,
                 system_lifetime,
+                wind_speeds[profile_type],
                 disable_tqdm=disable_tqdm,
             )
             for profile_type in profile_types
@@ -355,6 +357,7 @@ def main(
                             solar_irradiances[profile_type],
                             solar_thermal_collector,
                             system_lifetime,
+                            wind_speeds[profile_type],
                         )
                         for profile_type in tqdm(
                             profile_types,

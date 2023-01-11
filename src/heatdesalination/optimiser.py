@@ -87,8 +87,10 @@ def _total_cost(
     # ) * (1 + fractional_price_change)
 
     # UAE-specific code
-    monthly_grid_consumption = (
-        sum(solution.grid_electricity_supply_profile.values()) * (days_per_month:=30)
+    monthly_grid_consumption = sum(
+        solution.grid_electricity_supply_profile.values()
+    ) * (
+        days_per_month := 30
     )  # [kWh/month]
     lower_tier_consumption = min(monthly_grid_consumption, 10000)
     upper_tier_consumption = max(monthly_grid_consumption - 10000, 0)
@@ -584,6 +586,7 @@ def _simulate_and_calculate_criterion(
     solar_thermal_collector: SolarThermalPanel | None,
     solar_thermal_system_size: int | None,
     system_lifetime: int,
+    wind_speeds: Dict[int, float],
     disable_tqdm: bool = False,
 ) -> float:
     """
@@ -648,6 +651,8 @@ def _simulate_and_calculate_criterion(
             `None` if it should be optimised.
         - system_lifetime:
             The lifetime of the system measured in years.
+        - wind_speeds:
+            The wind speeds at each time step, measured in meters per second.
         - disable_tqdm:
             Whether to disable the progress bar.
 
@@ -716,6 +721,7 @@ def _simulate_and_calculate_criterion(
             solar_thermal_collector,
             solar_thermal_system_size,
             system_lifetime,
+            wind_speeds,
             disable_tqdm=disable_tqdm,
         )
     except FlowRateError:
@@ -853,6 +859,7 @@ def run_optimisation(
     solar_irradiances: Dict[int, float],
     solar_thermal_collector: SolarThermalPanel,
     system_lifetime: int,
+    wind_speeds: Dict[int, float],
     *,
     disable_tqdm: bool = True,
 ) -> Tuple[Dict[str, float], List[float]]:
@@ -884,6 +891,8 @@ def run_optimisation(
             The :class:`SolarThermalCollector` associated with the run.
         - system_lifetime:
             The lifetime of the system, measured in years.
+        - wind_speeds:
+            The wind speeds at each time step, measured in meters per second.
         - disable_tqdm:
             Whether to disable the progress bar.
 
@@ -950,6 +959,7 @@ def run_optimisation(
         solar_thermal_collector,
         optimisation_parameters.fixed_st_value,
         system_lifetime,
+        wind_speeds,
         disable_tqdm,
     )
 
@@ -1057,6 +1067,7 @@ def run_optimisation(
         solar_thermal_collector,
         solar_thermal_system_size,
         system_lifetime,
+        wind_speeds,
         disable_tqdm=disable_tqdm,
     )
 

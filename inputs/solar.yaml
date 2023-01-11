@@ -8,14 +8,20 @@
 # License: Open source                                                         #
 ################################################################################
 
+# Values for the absorptivity and emissivity of the collectors were taken as
+# average values from Guarracino et al.
+#
+
 solar_collectors:
   ##############
   # PV Modules #
   ##############
   - name: !!str dusol_ds60275_m
     type: !!str pv
+    absorptivity: 0.93
     area: !!float 1.638  # [m^2]
     cost: !!float 100  # [USD/panel]
+    emissivity: 0.9
     land_use: !!float 1.638  # [m^2]
     reference_efficiency: !!float 0.1692
     reference_temperature: !!float 25  # [degC]
@@ -23,8 +29,10 @@ solar_collectors:
     pv_unit: !!float 0.275   # [kWp]
   - name: !!str dusol_ds60280_m
     type: !!str pv
+    absorptivity: 0.93
     area: !!float 1.638  # [m^2]
     cost: !!float 100  # [USD/panel]
+    emissivity: 0.9
     land_use: !!float 1.638  # [m^2]
     reference_efficiency: !!float 0.1723
     reference_temperature: !!float 25  # [degC]
@@ -32,8 +40,10 @@ solar_collectors:
     pv_unit: !!float 0.280   # [kWp]
   - name: !!str dusol_ds60280_m
     type: !!str pv
+    absorptivity: 0.93
     area: !!float 1.638  # [m^2]
     cost: !!float 100  # [USD/panel]
+    emissivity: 0.9
     land_use: !!float 1.65  # [m^2]
     reference_efficiency: !!float 0.1754
     reference_temperature: !!float 25  # [degC]
@@ -41,8 +51,10 @@ solar_collectors:
     pv_unit: !!float 0.285   # [kWp]
   - name: !!str dusol_ds60280_m
     type: !!str pv
+    absorptivity: 0.93
     area: !!float 1.638  # [m^2]
     cost: !!float 100  # [USD/panel]
+    emissivity: 0.9
     land_use: !!float 1.638  # [m^2]
     reference_efficiency: !!float 0.1784
     reference_temperature: !!float 25  # [degC]

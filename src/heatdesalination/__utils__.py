@@ -53,6 +53,7 @@ __all__ = (
     "ResourceType",
     "Scenario",
     "Solution",
+    "TEMPERATURE_PRECISION",
     "TIMEZONE",
 )
 
@@ -143,6 +144,10 @@ SOLAR_ELEVATION: str = "solar_elevation"
 # SOLAR_IRRADIANCE:
 #   Keyword for the solar irradiance.
 SOLAR_IRRADIANCE: str = "irradiance"
+
+# TEMPERATURE_PRECISION:
+#   The precision required when solving the matrix equation for the system temperatures.
+TEMPERATURE_PRECISION: float = 0.1
 
 # TIMEZONE:
 #   Keyword for parsing timezone.
@@ -1008,6 +1013,10 @@ class Solution(NamedTuple):
         The electrcial output power of the PV collectors at each time step for each year
         of the simulation.
 
+    .. attribute:: pv_reduced_temperatures
+        The reduced temperatures of the PV collectors at each time step for each year of
+        the simulation.
+
     .. attribute:: pv_system_electrical_output_power
         The electrcial output power from all of the installed PV collectors at each time
         step, measured in kWh, for each year of the simulation.
@@ -1085,6 +1094,7 @@ class Solution(NamedTuple):
     electricity_demands: Dict[int, float]
     hot_water_demand_temperature: Dict[int, float | None]
     hot_water_demand_volume: Dict[int, float | None]
+    pv_average_temperatures: Dict[ProfileDegradationType, Dict[int, float | None]]
     pv_electrical_efficiencies: Dict[ProfileDegradationType, Dict[int, float | None]]
     pv_electrical_output_power: Dict[ProfileDegradationType, Dict[int, float | None]]
     pv_system_electrical_output_power: Dict[
@@ -1278,6 +1288,10 @@ class Solution(NamedTuple):
                     "Degraded Total PV electric power produced / kW": self.pv_system_electrical_output_power[
                         ProfileDegradationType.DEGRADED.value
                     ],
+                    "Average PV temperature / degC": {
+                        key: value - ZERO_CELCIUS_OFFSET
+                        for key, value in self.pv_average_temperatures.items()
+                    },
                 }
             )
 

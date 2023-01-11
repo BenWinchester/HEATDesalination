@@ -20,19 +20,19 @@ configuration.
 """
 
 from logging import Logger
-from typing import Optional, Tuple
+from typing import Tuple
 
 
-from .__utils__ import ZERO_CELCIUS_OFFSET, InputFileError, Scenario
+from .__utils__ import (
+    ZERO_CELCIUS_OFFSET,
+    InputFileError,
+    Scenario,
+    TEMPERATURE_PRECISION,
+)
 from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel
 from .storage.storage_utils import HotWaterTank
 
 __all__ = ("solve_matrix",)
-
-
-# Temperature precision:
-#   The precision required when solving the matrix equation for the system temperatures.
-TEMPERATURE_PRECISION: float = 0.1
 
 
 def _collectors_input_temperature(
