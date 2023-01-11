@@ -63,9 +63,9 @@ DESALINATION_PLANT_INPUTS: str = "plants.yaml"
 #   Keyword for desalination plants.
 DESALINATION_PLANTS: str = "desalination_plants"
 
-# DISCOUNT_RATE:
-#   The discount rate keyword.
-DISCOUNT_RATE: str = "discount_rate"
+# FRACTIONAL_GRID_PRICE_CHANGE:
+#   The fractional change in the price of grid electricity.
+FRACTIONAL_GRID_PRICE_CHANGE: str = "fractional_grid_price_change"
 
 # GRID_COST:
 #   Keyword for the cost of grid (alternative/unmet) electricity.
@@ -222,7 +222,7 @@ def parse_input_files(
             entry[PV],
             entry[PV_T],
             entry[SOLAR_THERMAL],
-            entry.get(DISCOUNT_RATE, 0),
+            entry.get(FRACTIONAL_GRID_PRICE_CHANGE, 0),
         )
         for entry in scenario_inputs[SCENARIOS]
     ]

@@ -77,29 +77,29 @@ def _total_cost(
     }
     total_component_cost = sum(component_costs.values())
 
-    # # Calculate the undiscounted cost of grid electricity.
+    # Calculate the undiscounted cost of grid electricity.
+    fractional_price_change = scenario.fractional_grid_price_change
     # total_grid_cost = (
     #     DAYS_PER_YEAR  # [days/year]
     #     * system_lifetime  # [year]
     #     * sum(solution.grid_electricity_supply_profile.values())  # [kWh/day]
     #     * scenario.grid_cost  # [$/kWh]
-    # )
+    # ) * (1 + fractional_price_change)
 
     # UAE-specific code
-    discount_rate = scenario.discount_rate
     monthly_grid_consumption = (
-        sum(solution.grid_electricity_supply_profile.values()) * 30
+        sum(solution.grid_electricity_supply_profile.values()) * (days_per_month:=30)
     )  # [kWh/month]
     lower_tier_consumption = min(monthly_grid_consumption, 10000)
     upper_tier_consumption = max(monthly_grid_consumption - 10000, 0)
     total_grid_cost = (
-        (DAYS_PER_YEAR / 30)
-        * system_lifetime
+        (DAYS_PER_YEAR / days_per_month)  # [months/year]
+        * system_lifetime  # [years]
         * (
-            lower_tier_consumption * (0.23 * ((1 - discount_rate) ** system_lifetime))
-            + upper_tier_consumption * (0.38 * ((1 - discount_rate) ** system_lifetime))
+            lower_tier_consumption * (0.23 * (1 + fractional_price_change))
+            + upper_tier_consumption * (0.38 * (1 + fractional_price_change))
         )
-    )
+    )  # [USD]
 
     # Add the costs of any consumables such as diesel fuel or grid electricity.
     total_cost = total_component_cost + abs(

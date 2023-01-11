@@ -842,8 +842,8 @@ class Scenario:
     .. attribute:: solar_thermal_panel_name
         The name of the solar-thermal panel being considered.
 
-    .. attribute:: discount_rate
-        The discount rate for grid electricity if provided, else 0.
+    .. attribute:: fractional_grid_price_change
+        The fractional change in the price of grid electricity.
 
     """
 
@@ -859,7 +859,7 @@ class Scenario:
     _pv: bool | str
     _pv_t: bool | str
     _solar_thermal: bool | str
-    discount_rate: float = 0
+    fractional_grid_price_change: float = 0
 
     @property
     def pv(self) -> bool:  # pylint: disable=invalid-name
