@@ -788,10 +788,13 @@ from src.heatdesalination.optimiser import (
 )
 
 sns.set_palette("PuBu")
-sns.set_context("notebook")
+sns.set_context("paper")
 sns.set_style("whitegrid")
 
 with open("pv_t_1262_st_318_tank_49_output.json", "r") as f:
+    data = json.load(f)
+
+with open("pv_pv_t_square_25_x_25.json", "r") as f:
     data = json.load(f)
 
 try:

@@ -56,6 +56,8 @@ solar_collectors:
   # Abora datasheet:
   #     https://abora-solar.com/wp-content/uploads/2022/07/
   # ... Panel-aH72SK_EN_v5_220718_compressed.pdf
+  # WARNING: Abora manufacturer data has not been validated
+  # !! Use this data sheet with caution !!
   - name: !!str abora_h72sk
     type: !!str pv_t
     area: !!float 1.9602  # [m^2]
