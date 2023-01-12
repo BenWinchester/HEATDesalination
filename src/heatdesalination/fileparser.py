@@ -21,16 +21,6 @@ from typing import Dict, List, Tuple
 
 import json
 
-from .storage.storage_utils import Battery, HotWaterTank
-
-from .solar import (
-    COLLECTOR_FROM_TYPE,
-    HybridPVTPanel,
-    PVPanel,
-    SolarPanelType,
-    SolarThermalPanel,
-)
-
 from .__utils__ import (
     AMBIENT_TEMPERATURE,
     AUTO_GENERATED_FILES_DIRECTORY,
@@ -43,7 +33,16 @@ from .__utils__ import (
     WIND_SPEED,
     ZERO_CELCIUS_OFFSET,
 )
+from .heat_pump import HeatPump
 from .plant import DesalinationPlant
+from .solar import (
+    COLLECTOR_FROM_TYPE,
+    HybridPVTPanel,
+    PVPanel,
+    SolarPanelType,
+    SolarThermalPanel,
+)
+from .storage.storage_utils import Battery, HotWaterTank
 
 __all__ = ("parse_input_files",)
 
@@ -75,9 +74,17 @@ GRID_COST: str = "grid_cost"
 #   Keyword for parsing the heat capacity of the heat exchangers.
 HEAT_EXCHANGER_EFFICIENCY: str = "heat_exchanger_efficiency"
 
-# HEAT_PUMP_EFFICIENCY:
-#   Keyword for parsing the system efficiency of the installed heat pump.
-HEAT_PUMP_EFFICIENCY: str = "heat_pump_efficiency"
+# HEAT_PUMP:
+#   Keyword for parsing the name of the installed heat pump.
+HEAT_PUMP: str = "heat_pump"
+
+# HEAT_PUMPS:
+#   Keyword for parsing the heat-pump information.
+HEAT_PUMPS: str = "heat_pumps"
+
+# HEAT_PUMP_INPUTS:
+#   The name of the heat-pumps input file.
+HEAT_PUMP_INPUTS: str = "heat_pumps.yaml"
 
 # HOT_WATER_TANK:
 #   Keyword for hot-water tank.
@@ -154,6 +161,7 @@ def parse_input_files(
     Dict[ProfileType, Dict[int, float]],
     Battery,
     HotWaterTank,
+    HeatPump,
     DesalinationPlant,
     HybridPVTPanel | None,
     List[OptimisationParameters],
@@ -184,6 +192,8 @@ def parse_input_files(
             The :class:`Battery` to use for the modelling.
         - desalination_plant:
             The :class:`DesalinationPlant` to use for the modelling.
+        - heat_pump:
+            The :class:`HeatPump` to use for the modelling.
         - hybrid_pv_t_panel:
             The :class:`HybridPVTPanel` to use for the modelling.
         - optimisations:
@@ -209,7 +219,7 @@ def parse_input_files(
             entry[BATTERY],
             entry[GRID_COST],
             entry[HEAT_EXCHANGER_EFFICIENCY],
-            entry[HEAT_PUMP_EFFICIENCY],
+            entry[HEAT_PUMP],
             entry[HOT_WATER_TANK],
             entry[HTF_HEAT_CAPACITY],
             entry[NAME],
@@ -242,6 +252,23 @@ def parse_input_files(
         ][0]
     except IndexError:
         logger.error("Could not find plant '%s' in input file.", scenario.plant)
+        raise
+
+    # Parse the heat-pump inputs.
+    heat_pump_inputs = read_yaml(
+        os.path.join(INPUTS_DIRECTORY, HEAT_PUMP_INPUTS), logger
+    )
+    heat_pumps = [HeatPump(**entry) for entry in heat_pump_inputs[HEAT_PUMPS]]
+    try:
+        heat_pump = [entry for entry in heat_pumps if entry.name == scenario.heat_pump][
+            0
+        ]
+    except IndexError:
+        logger.error(
+            "Could not find heat pump '%s' in input file. Valid pumps: %s",
+            scenario.heat_pump,
+            ", ".join(pump.name for pump in heat_pumps),
+        )
         raise
 
     # Parse the optimisation inputs
@@ -381,6 +408,7 @@ def parse_input_files(
         battery,
         buffer_tank,
         desalination_plant,
+        heat_pump,
         hybrid_pv_t_panel,
         optimisations,
         pv_panel,

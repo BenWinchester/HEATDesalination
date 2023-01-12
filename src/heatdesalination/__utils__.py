@@ -810,9 +810,8 @@ class Scenario:
     .. attribute:: heat_exchanger_efficiency
         The efficiency of the heat exchanger.
 
-    .. attribute:: heat_pump_efficiency
-        The system efficiency of the heat pump installed, expressed as a fraction of the
-        Carnot efficiency.
+    .. attribute:: heat_pump
+        The name of the heat pump to use.
 
     .. attribute:: hot_water_tank
         The name of the hot-water tank.
@@ -855,7 +854,7 @@ class Scenario:
     battery: str
     grid_cost: float
     heat_exchanger_efficiency: float
-    heat_pump_efficiency: float
+    heat_pump: str
     hot_water_tank: str
     htf_heat_capacity: float
     name: str
@@ -999,6 +998,10 @@ class Solution(NamedTuple):
     .. attribute:: electricity_demands
         The electricity demands placed on the system in kWh at each time step.
 
+    .. attribute:: heat_pump_cost
+        The cost of the heat pump installed in USD, sized based on the maximum cost
+        required to meet demand.
+
     .. attribute:: hot_water_demand_temperature
         The temperature of the hot-water demand at each time step.
 
@@ -1092,6 +1095,7 @@ class Solution(NamedTuple):
     collector_input_temperatures: Dict[int, float]
     collector_system_output_temperatures: Dict[int, float]
     electricity_demands: Dict[int, float]
+    heat_pump_cost: float
     hot_water_demand_temperature: Dict[int, float | None]
     hot_water_demand_volume: Dict[int, float | None]
     pv_average_temperatures: Dict[ProfileDegradationType, Dict[int, float | None]]

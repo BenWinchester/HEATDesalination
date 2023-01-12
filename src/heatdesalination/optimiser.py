@@ -36,6 +36,7 @@ from .__utils__ import (
     Scenario,
     Solution,
 )
+from .heat_pump import HeatPump
 from .plant import DesalinationPlant
 from .simulator import determine_steady_state_simulation
 from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel
@@ -104,8 +105,8 @@ def _total_cost(
     )  # [USD]
 
     # Add the costs of any consumables such as diesel fuel or grid electricity.
-    total_cost = total_component_cost + abs(
-        total_grid_cost
+    total_cost = (
+        total_component_cost + max(total_grid_cost, 0) + max(solution.heat_pump_cost, 0)
     )  # + diesel_fuel_cost + grid_cost
 
     return total_cost
@@ -573,6 +574,7 @@ def _simulate_and_calculate_criterion(
     buffer_tank: HotWaterTank,
     buffer_tank_capacity: float | None,
     desalination_plant: DesalinationPlant,
+    heat_pump: HeatPump,
     htf_mass_flow_rate: float | None,
     hybrid_pv_t_panel: HybridPVTPanel | None,
     logger: Logger,
@@ -623,6 +625,8 @@ def _simulate_and_calculate_criterion(
             the capacity of the tank should be optimised.
         - desalination_plant:
             The :class:`DesalinationPlant` for which the systme is being simulated.
+        - heat_pump:
+            The :class:`HeatPump` to use for the run.
         - htf_mass_flow_rate:
             The mass flow rate of the HTF through the collectors if this should not be
             optimised, or `None` if it should be optimised.
@@ -710,6 +714,7 @@ def _simulate_and_calculate_criterion(
             battery_capacity,
             buffer_tank,
             desalination_plant,
+            heat_pump,
             htf_mass_flow_rate,
             hybrid_pv_t_panel,
             logger,
@@ -851,6 +856,7 @@ def run_optimisation(
     battery: Battery,
     buffer_tank: HotWaterTank,
     desalination_plant: DesalinationPlant,
+    heat_pump: HeatPump,
     hybrid_pv_t_panel: HybridPVTPanel,
     logger: Logger,
     optimisation_parameters: OptimisationParameters,
@@ -875,6 +881,8 @@ def run_optimisation(
             The :class:`HotWaterTank` associated with the system.
         - desalination_plant:
             The :class:`DesalinationPlant` for which the systme is being simulated.
+        - heat_pump:
+            The :class:`HeatPump` to use for the run.
         - hybrid_pv_t_panel:
             The :class:`HybridPVTPanel` associated with the run.
         - logger:
@@ -946,6 +954,7 @@ def run_optimisation(
         buffer_tank,
         optimisation_parameters.fixed_buffer_tank_capacity_value,
         desalination_plant,
+        heat_pump,
         optimisation_parameters.fixed_mass_flow_rate_value,
         hybrid_pv_t_panel,
         logger,
@@ -1056,6 +1065,7 @@ def run_optimisation(
         battery_capacity,
         buffer_tank,
         desalination_plant,
+        heat_pump,
         htf_mass_flow_rate,
         hybrid_pv_t_panel,
         logger,

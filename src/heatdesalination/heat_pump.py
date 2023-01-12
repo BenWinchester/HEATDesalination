@@ -16,7 +16,70 @@ The heat-pump module contains functionality for modelling a heat pump's performa
 
 """
 
+import dataclasses
+
+from typing import List, Tuple
+
+from scipy import interpolate
+
 __all__ = ("calculate_heat_pump_electricity_consumption",)
+
+
+@dataclasses.dataclass
+class HeatPump:
+    """
+    Represents a heat pump.
+
+    .. attribute:: cop_data
+        The data points for interpolation for COP.
+
+    .. attribute:: efficiency
+        The system efficiency of the heat pump installed, expressed as a fraction of the
+        Carnot efficiency.
+
+    .. attribute:: name
+        The name of the heat pump.
+
+    .. attribute:: specific_cost_data
+        The data points for interpolation for specific cost in USD per kW.
+
+    """
+
+    # Private attributes:
+    # .. attribute:: _interpolator
+    #   Used for storing the scipy interpolator created.
+    #
+
+    cop_data: List[float]
+    efficiency: float
+    name: str
+    specific_costs_data: str
+    _interpolator: interpolate.PchipInterpolator | None = None
+
+    def get_cost(self, cop: float, thermal_power: float) -> float:
+        """
+        Calculate the cost of the heat pump given its COP and thermal power.
+
+        Inputs:
+            - cop:
+                The COP of the heat pump.
+            - thermal_power:
+                The thermal power rating of the heat pump, i.e., its maximum thermal
+                power output in kWh_th.
+
+        Outputs:
+            The cost of the heat pump in USD.
+
+        """
+
+        # Set the interpolator if not already calculated.
+        if self._interpolator is None:
+            self._interpolator = interpolate.PchipInterpolator(
+                self.cop_data, self.specific_costs_data
+            )
+
+        # Determine the cost
+        return self._interpolator(cop) * thermal_power
 
 
 def _coefficient_of_performance(
@@ -63,14 +126,14 @@ def _coefficient_of_performance(
     )
 
 
-def calculate_heat_pump_electricity_consumption(
+def calculate_heat_pump_electricity_consumption_and_cost(
     condensation_temperature: float,
     evaporation_temperature: float,
     heat_demand: float,
-    system_efficiency: float,
-) -> float:
+    heat_pump: HeatPump,
+) -> Tuple[float, float]:
     """
-    Calculate the electricity comsumption of the heat pump.
+    Calculate the electricity comsumption and cost of the heat pump.
 
     The coefficient of performance of a heat pump gives the ratio between the heat
     demand which can be achieved and the electricity input which is required to achieve
@@ -96,15 +159,20 @@ def calculate_heat_pump_electricity_consumption(
             measured in degrees Kelvin.
         - heat_demand:
             The heat demand flux, measured in kiloWatts.
-        - system_efficiency:
-            The efficiency of the heat pump system given as a fraction of its efficiency
-            against the Carnot efficiency.
+        - heat_pump:
+            The heat pump currently being considered.
 
     Outputs:
-        The electricity consumption, measured in kiloWatts.
+        - The cost of the heat pump in USD,
+        - The electricity consumption, measured in kiloWatts.
 
     """
 
-    return heat_demand / _coefficient_of_performance(
-        condensation_temperature, evaporation_temperature, system_efficiency
+    power_consumption = heat_demand / (
+        cop := _coefficient_of_performance(
+            condensation_temperature, evaporation_temperature, heat_pump.efficiency
+        )
     )
+    cost = heat_pump.get_cost(cop, heat_demand)
+
+    return (cost, power_consumption)

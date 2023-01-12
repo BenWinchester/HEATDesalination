@@ -33,7 +33,7 @@ from .__utils__ import (
     Solution,
     ZERO_CELCIUS_OFFSET,
 )
-from .heat_pump import calculate_heat_pump_electricity_consumption
+from .heat_pump import calculate_heat_pump_electricity_consumption_and_cost, HeatPump
 from .matrix import solve_matrix
 from .plant import DesalinationPlant
 from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel, electric_output
@@ -611,6 +611,7 @@ def run_simulation(
     ambient_temperatures: Dict[int, float],
     buffer_tank: HotWaterTank,
     desalination_plant: DesalinationPlant,
+    heat_pump: HeatPump,
     htf_mass_flow_rate: float,
     hybrid_pv_t_panel: HybridPVTPanel | None,
     logger: Logger,
@@ -636,6 +637,8 @@ def run_simulation(
             The :class:`HotWaterTank` associated with the system.
         - desalination_plant:
             The :class:`DesalinationPlant` for which the systme is being simulated.
+        - heat_pump:
+            The :class:`HeatPump` to use for the run.
         - htf_mass_flow_rate:
             The mass flow rate of the HTF through the collectors.
         - hybrid_pv_t_panel:
@@ -699,6 +702,7 @@ def run_simulation(
     electricity_demands: DefaultDict[int, float] = defaultdict(float)
     hot_water_demand_temperatures: Dict[int, float | None] = {}
     hot_water_demand_volumes: Dict[int, float | None] = {}
+    max_heat_pump_cost: float = 0
     pv_t_electrical_efficiencies: Dict[int, float | None] = {}
     pv_t_electrical_output_power: Dict[int, float | None] = {}
     pv_t_htf_output_temperatures: Dict[int, float | None] = {}
@@ -767,21 +771,27 @@ def run_simulation(
                 ),
                 0,
             )  # [kW]
+
+            # Calculate the power consumption.
+            (
+                heat_pump_cost,
+                heat_pump_power_consumpion,
+            ) = calculate_heat_pump_electricity_consumption_and_cost(
+                desalination_plant.requirements(hour).hot_water_temperature,
+                ambient_temperatures[hour],
+                auxiliary_heating_demand,
+                heat_pump,
+            )
+
             auxiliary_heating_electricity_demand: float = max(
-                (
-                    calculate_heat_pump_electricity_consumption(
-                        desalination_plant.requirements(hour).hot_water_temperature,
-                        ambient_temperatures[hour],
-                        auxiliary_heating_demand,
-                        scenario.heat_pump_efficiency,
-                    )
-                ),
+                heat_pump_power_consumpion,
                 0,
             )  # [kW]
             electricity_demand: float = (
                 desalination_plant.requirements(hour).electricity  # [kW]
                 + auxiliary_heating_electricity_demand
             )
+            max_heat_pump_cost = max(heat_pump_cost, max_heat_pump_cost)
         else:
             auxiliary_heating_demand = 0
             auxiliary_heating_electricity_demand = 0
@@ -888,6 +898,7 @@ def run_simulation(
         collector_input_temperatures,
         collector_system_output_temperatures,
         electricity_demands,
+        max_heat_pump_cost,
         hot_water_demand_temperatures,
         hot_water_demand_volumes,
         pv_average_temperatures if scenario.pv else None,
@@ -929,6 +940,7 @@ def determine_steady_state_simulation(
     battery_capacity: int | None,
     buffer_tank: HotWaterTank,
     desalination_plant: DesalinationPlant,
+    heat_pump: HeatPump,
     htf_mass_flow_rate: float,
     hybrid_pv_t_panel: HybridPVTPanel | None,
     logger: Logger,
@@ -964,6 +976,8 @@ def determine_steady_state_simulation(
             The :class:`HotWaterTank` associated with the system.
         - desalination_plant:
             The :class:`DesalinationPlant` for which the systme is being simulated.
+        - heat_pump:
+            The :class:`HeatPump` to use for the run.
         - htf_mass_flow_rate:
             The mass flow rate of the HTF through the collectors.
         - hybrid_pv_t_panel:
@@ -1007,6 +1021,7 @@ def determine_steady_state_simulation(
         ambient_temperatures,
         buffer_tank,
         desalination_plant,
+        heat_pump,
         htf_mass_flow_rate,
         hybrid_pv_t_panel,
         logger,
@@ -1045,6 +1060,7 @@ def determine_steady_state_simulation(
                 ambient_temperatures,
                 buffer_tank,
                 desalination_plant,
+                heat_pump,
                 htf_mass_flow_rate,
                 hybrid_pv_t_panel,
                 logger,
