@@ -1,0 +1,90 @@
+---
+################################################################################
+# heat_pumps.yaml - The heat-pump input information.                           #
+#                                                                              #
+# Author: Ben Winchester                                                       #
+# Copyright: Ben Winchester, 2022                                              #
+# Date created: 12/01/2023                                                     #
+# License: Open source                                                         #
+################################################################################
+
+# Information on the specific cost per kWh and the cop is coded as a series of
+# points which are then interpolated between during the running of the
+# simulations and optimisations.
+#
+
+heat_pumps:
+  - name: R410a
+    efficiency: 0.5
+    specific_costs_data:
+      - 487.38
+      - 492.23
+      - 503.14
+      - 517.69
+      - 545.58
+      - 596.50
+      - 752.90
+    cop_data:
+      - 2.17
+      - 2.35
+      - 2.56
+      - 2.77
+      - 2.99
+      - 3.17
+      - 3.28
+  - name: R32
+    efficiency: 0.5
+    specific_costs_data:
+      - 472.83
+      - 476.47
+      - 483.75
+      - 495.87
+      - 512.84
+      - 548.00
+      - 621.96
+      - 711.68
+    cop_data:
+      - 2.21
+      - 2.38
+      - 2.59
+      - 2.82
+      - 3.03
+      - 3.2
+      - 3.44
+      - 3.49
+  - name: ammonia
+    efficiency: 0.5
+    specific_costs_data:
+      - 494.66
+      - 498.29
+      - 505.57
+      - 515.27
+      - 532.24
+      - 567.40
+      - 741.99
+    cop_data:
+      - 2.65
+      - 2.84
+      - 3.04
+      - 3.23
+      - 3.43
+      - 3.67
+      - 3.78
+  - name: propane
+    efficiency: 0.5
+    specific_costs_data:
+      - 518.91
+      - 524.97
+      - 532.24
+      - 545.58
+      - 571.04
+      - 613.47
+      - 676.52
+    cop_data:
+      - 2.37
+      - 2.59
+      - 2.78
+      - 2.98
+      - 3.21
+      - 3.4
+      - 3.54
