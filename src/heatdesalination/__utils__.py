@@ -188,17 +188,24 @@ class CostableComponent:
         self.cost = cost
 
 
-def get_logger(logger_name: str, verbose: bool = False) -> logging.Logger:
+def get_logger(
+    logger_name: str, hpc: bool = False, verbose: bool = False
+) -> logging.Logger:
     """
     Set-up and return a logger.
+
     Inputs:
         - logger_name:
             The name for the logger, which is also used to denote the filename with a
             "<logger_name>.log" format.
+        - hpc:
+            Whether the program is being run on the HPC (True) or not (False).
         - verbose:
             Whether the log level should be verbose (True) or standard (False).
+
     Outputs:
         - The logger for the component.
+
     """
 
     # Create a logger and logging directory.
@@ -220,26 +227,24 @@ def get_logger(logger_name: str, verbose: bool = False) -> logging.Logger:
     logger.addHandler(console_handler)
 
     # Delete the existing log if there is one already.
-    # if os.path.isfile(
-    #     (logger_filepath := os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log"))
-    # ):
-    #     try:
-    #         os.remove(logger_filepath)
-    #     except FileNotFoundError:
-    #         pass
+    if os.path.isfile(
+        (logger_filepath := os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log"))
+    ):
+        try:
+            os.remove(logger_filepath)
+        except FileNotFoundError:
+            pass
 
     # Create a file handler.
-    # if not os.path.isfile(
-    #     (logger_filename := os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log"))
-    # ):
-    #     file_handler = logging.FileHandler(
-    #         os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log")
-    #     )
-    #     file_handler.setLevel(logging.DEBUG if verbose else logging.INFO)
-    #     file_handler.setFormatter(formatter)
-    #
-    #     # Add the file handler to the logger.
-    #     logger.addHandler(file_handler)
+    if not hpc:
+        file_handler = logging.FileHandler(
+            os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log")
+        )
+        file_handler.setLevel(logging.DEBUG if verbose else logging.INFO)
+        file_handler.setFormatter(formatter)
+
+        # Add the file handler to the logger.
+        logger.addHandler(file_handler)
 
     return logger
 

@@ -23,6 +23,7 @@ import abc
 from logging import Logger
 from typing import Dict, List, Tuple
 
+import json
 import numpy
 
 from scipy import optimize
@@ -49,6 +50,7 @@ UPPER_LIMIT: float = 10**8
 
 def _total_cost(
     component_sizes: Dict[CostableComponent | None, float],
+    logger: Logger,
     scenario: Scenario,
     solution: Solution,
     system_lifetime: int,
@@ -59,6 +61,8 @@ def _total_cost(
     Inputs:
         - component_sizes:
             The sizes of the various components which are costable.
+        - logger:
+            The :class:`logging.Logger` to use for the run.
         - scenario:
             The scenario being considered.
         - solution:
@@ -77,6 +81,12 @@ def _total_cost(
         for component, size in component_sizes.items()
     }
     total_component_cost = sum(component_costs.values())
+    logger.debug(
+        "Component costs: %s",
+        json.dumps(
+            {str(key): value for key, value in component_costs.items()}, indent=4
+        ),
+    )
 
     # Calculate the undiscounted cost of grid electricity.
     fractional_price_change = scenario.fractional_grid_price_change
@@ -108,6 +118,14 @@ def _total_cost(
     total_cost = (
         total_component_cost + max(total_grid_cost, 0) + max(solution.heat_pump_cost, 0)
     )  # + diesel_fuel_cost + grid_cost
+    logger.info(
+        "Total cost: %s, Total component cost: %s, Total grid cost %s, Heat-pump cost: "
+        "%s",
+        total_cost,
+        total_component_cost,
+        total_grid_cost,
+        solution.heat_pump_cost,
+    )
 
     return total_cost
 
@@ -171,6 +189,7 @@ class Criterion(abc.ABC):
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -181,6 +200,8 @@ class Criterion(abc.ABC):
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -201,6 +222,7 @@ class DumpedElectricity(Criterion, criterion_name="dumped_electricity"):
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -211,6 +233,8 @@ class DumpedElectricity(Criterion, criterion_name="dumped_electricity"):
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -233,6 +257,7 @@ class GridElectricityFraction(Criterion, criterion_name="grid_electricity_fracti
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -243,6 +268,8 @@ class GridElectricityFraction(Criterion, criterion_name="grid_electricity_fracti
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -270,6 +297,7 @@ class LCUE(Criterion, criterion_name="lcue"):
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -280,6 +308,8 @@ class LCUE(Criterion, criterion_name="lcue"):
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -293,7 +323,7 @@ class LCUE(Criterion, criterion_name="lcue"):
         """
 
         return _total_cost(
-            component_sizes, scenario, solution, system_lifetime
+            component_sizes, logger, scenario, solution, system_lifetime
         ) / _total_electricity_supplied(solution, system_lifetime)
 
 
@@ -313,6 +343,7 @@ class RenewableElectricityFraction(
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -323,6 +354,8 @@ class RenewableElectricityFraction(
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -347,6 +380,7 @@ class RenewableHeatingFraction(Criterion, criterion_name="renewable_heating_frac
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -357,6 +391,8 @@ class RenewableHeatingFraction(Criterion, criterion_name="renewable_heating_frac
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -392,6 +428,7 @@ class AuxiliaryHeatingFraction(Criterion, criterion_name="auxiliary_heating_frac
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -405,6 +442,8 @@ class AuxiliaryHeatingFraction(Criterion, criterion_name="auxiliary_heating_frac
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -415,7 +454,7 @@ class AuxiliaryHeatingFraction(Criterion, criterion_name="auxiliary_heating_frac
         """
 
         return 1 - super().calculate_value_map[RenewableHeatingFraction.name](
-            component_sizes, scenario, solution, system_lifetime
+            component_sizes, logger, scenario, solution, system_lifetime
         )
 
 
@@ -426,6 +465,7 @@ class SolarElectricityFraction(Criterion, criterion_name="solar_electricity_frac
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -436,6 +476,8 @@ class SolarElectricityFraction(Criterion, criterion_name="solar_electricity_frac
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -462,6 +504,7 @@ class StorageElectricityFraction(
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -472,6 +515,8 @@ class StorageElectricityFraction(
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -505,6 +550,7 @@ class TotalCost(Criterion, criterion_name="total_cost"):
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -515,6 +561,8 @@ class TotalCost(Criterion, criterion_name="total_cost"):
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -527,7 +575,7 @@ class TotalCost(Criterion, criterion_name="total_cost"):
 
         """
 
-        return _total_cost(component_sizes, scenario, solution, system_lifetime)
+        return _total_cost(component_sizes, logger, scenario, solution, system_lifetime)
 
 
 # class UnmetElectricity(Criterion, criterion_name="unmet_electricity_fraction"):
@@ -747,7 +795,7 @@ def _simulate_and_calculate_criterion(
     # Return the value of the criterion.
     return (
         Criterion.calculate_value_map[optimisation_criterion](
-            component_sizes, scenario, steady_state_solution, system_lifetime
+            component_sizes, logger, scenario, steady_state_solution, system_lifetime
         )
         / 10**6
     ) ** 3
@@ -1093,7 +1141,7 @@ def run_optimisation(
     # Compute various criteria values.
     criterion_map = {
         criterion.name: criterion.calculate_value(
-            component_sizes, scenario, solution, system_lifetime
+            component_sizes, logger, scenario, solution, system_lifetime
         )
         for criterion in [
             AuxiliaryHeatingFraction,

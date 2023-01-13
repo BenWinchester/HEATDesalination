@@ -699,7 +699,7 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
 
         """
 
-        logger.info("Attempting to create PVPanel from solar input data.")
+        logger.debug("Attempting to create PVPanel from solar input data.")
         try:
             solar_inputs.pop("type")
         except KeyError:
@@ -1000,10 +1000,22 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         return (
             "HybridPVTPanel("
             + f"name={self.name}"
-            + f", max_mass_flow_rate={self.max_mass_flow_rate:.2g} kg/s"
-            + f" ({self._max_mass_flow_rate:.2g} l/h)"
-            + f", min_mass_flow_rate={self.min_mass_flow_rate:.2g} kg/s"
-            + f" ({self._min_mass_flow_rate:.2g} l/h)"
+            + (
+                (
+                    f", max_mass_flow_rate={self.max_mass_flow_rate:.2g} kg/s"
+                    + f" ({self._max_mass_flow_rate:.2g} l/h)"
+                )
+                if self.max_mass_flow_rate is not None
+                else ""
+            )
+            + (
+                (
+                    f", min_mass_flow_rate={self.min_mass_flow_rate:.2g} kg/s"
+                    + f" ({self._min_mass_flow_rate:.2g} l/h)"
+                )
+                if self.min_mass_flow_rate is not None
+                else ""
+            )
             + ")"
         )
 
@@ -1024,7 +1036,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
 
         """
 
-        logger.info("Attempting to create SolarThermalPanel from solar input data.")
+        logger.debug("Attempting to create SolarThermalPanel from solar input data.")
 
         try:
             thermal_performance_inputs = solar_inputs[THERMAL_PERFORMANCE_CURVE]
@@ -1068,7 +1080,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                 raise
         else:
             electric_performance_curve = None
-            logger.info(
+            logger.debug(
                 "No performance curve defined for solar-thermal panel '%s'.",
                 solar_inputs["name"],
             )
@@ -1091,7 +1103,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                 )
                 raise
         else:
-            logger.info(
+            logger.debug(
                 "No performance curve defined for solar-thermal panel '%s'.",
                 solar_inputs["name"],
             )
@@ -1347,13 +1359,31 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
         return (
             "SolarThermalPanel("
             + f"area={self.area}"
-            + f", max_mass_flow_rate={self.max_mass_flow_rate:.2g} kg/s"
-            + f" ({self._max_mass_flow_rate:.2g} l/h)"
-            + f", min_mass_flow_rate={self.min_mass_flow_rate:.2g} kg/s"
-            + f" ({self._min_mass_flow_rate:.2g} l/h)"
+            + (
+                (
+                    f", max_mass_flow_rate={self.max_mass_flow_rate:.2g} kg/s"
+                    + f" ({self._max_mass_flow_rate:.2g} l/h)"
+                )
+                if self.max_mass_flow_rate is not None
+                else ""
+            )
+            + (
+                (
+                    f", min_mass_flow_rate={self.min_mass_flow_rate:.2g} kg/s"
+                    + f" ({self._min_mass_flow_rate:.2g} l/h)"
+                )
+                if self.min_mass_flow_rate is not None
+                else ""
+            )
             + f", name={self.name}"
-            + f", nominal_mass_flow_rate={self.nominal_mass_flow_rate:.2g} kg/s"
-            + f" ({self._nominal_mass_flow_rate:.2g} l/h)"
+            + (
+                (
+                    f", nominal_mass_flow_rate={self.nominal_mass_flow_rate:.2g} kg/s"
+                    + f" ({self._nominal_mass_flow_rate:.2g} l/h)"
+                )
+                if self.nominal_mass_flow_rate is not None
+                else ""
+            )
             + ")"
         )
 
@@ -1484,7 +1514,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
 
         """
 
-        logger.info("Attempting to create SolarThermalPanel from solar input data.")
+        logger.debug("Attempting to create SolarThermalPanel from solar input data.")
 
         try:
             performance_curve_inputs = solar_inputs[THERMAL_PERFORMANCE_CURVE]
