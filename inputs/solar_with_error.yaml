@@ -1,0 +1,706 @@
+---
+################################################################################
+# solar_with_error.yaml - The solar collectors being modelled with deviation.  #
+#                                                                              #
+# Author: Ben Winchester                                                       #
+# Copyright: Ben Winchester, 2023                                              #
+# Date created: 13/01/2023                                                     #
+# License: Open source                                                         #
+################################################################################
+
+# Values for the absorptivity and emissivity of the collectors were taken as
+# average values from Guarracino et al.
+#
+# Solar collectors here are the same as elsewhere within the project
+#
+
+solar_collectors:
+- area: 3.018
+  cost: 767.0
+  error: 0.08977452623781676
+  land_use: 4.147
+  max_mass_flow_rate: 300.0
+  min_mass_flow_rate: 100.0
+  name: enersol_hp_70_24_wikosun_hp_70_24_zewotherm_zx_70_24_sunstar_2470_germanstar_hp_70_24
+  nominal_mass_flow_rate: 200.0
+  thermal_performance_curve:
+    first_order: -1.14
+    second_order: -0.0012
+    zeroth_order: 0.608
+  type: solar_thermal
+- area: 1.006
+  cost: 767.0
+  error: 0.11391333731555449
+  land_use: 1.405
+  max_mass_flow_rate: 300.0
+  min_mass_flow_rate: 100.0
+  name: enersol_hp_70_8_wikosun_hp_70_8_zewotherm_zx_70_8_sunstar_0870_germanstar_hp_70_8
+  nominal_mass_flow_rate: 200.0
+  thermal_performance_curve:
+    first_order: -1.17
+    second_order: -0.004
+    zeroth_order: 0.6
+  type: solar_thermal
+- area: 1.332
+  cost: 767.0
+  error: 0.2240749042264254
+  land_use: 2.034
+  max_mass_flow_rate: 175.0
+  min_mass_flow_rate: 75.0
+  name: as_100_hp8
+  nominal_mass_flow_rate: 125.0
+  thermal_performance_curve:
+    first_order: -0.84
+    second_order: -0.0039
+    zeroth_order: 0.534
+  type: solar_thermal
+- area: 2.019
+  cost: 767.0
+  error: 0.13402082936648935
+  land_use: 2.172
+  max_mass_flow_rate: 720.0
+  min_mass_flow_rate: 6.0
+  name: hv12
+  nominal_mass_flow_rate: 72.0
+  thermal_performance_curve:
+    first_order: -0.93
+    second_order: -0.0033
+    zeroth_order: 0.541
+  type: solar_thermal
+- area: 1.601
+  cost: 767.0
+  error: 0.31226332270070034
+  land_use: 2.369
+  max_mass_flow_rate: 200.0
+  min_mass_flow_rate: 100.0
+  name: eurosun_df120_6
+  nominal_mass_flow_rate: 120.0
+  thermal_performance_curve:
+    first_order: -0.75
+    second_order: -0.0041
+    zeroth_order: 0.572
+  type: solar_thermal
+- area: 3.01
+  cost: 767.0
+  error: 0.1491466387383193
+  land_use: 4.613
+  max_mass_flow_rate: 240.0
+  min_mass_flow_rate: 150.0
+  name: olymp_sunstar_500
+  nominal_mass_flow_rate: 180.0
+  thermal_performance_curve:
+    first_order: -1.21
+    second_order: -0.0005
+    zeroth_order: 0.544
+  type: solar_thermal
+- area: 2.007
+  cost: 767.0
+  error: 0.0802375748534769
+  land_use: 3.071
+  max_mass_flow_rate: 160.0
+  min_mass_flow_rate: 100.0
+  name: olymp_sunstar_300
+  nominal_mass_flow_rate: 120.0
+  thermal_performance_curve:
+    first_order: -1.14
+    second_order: -0.0021
+    zeroth_order: 0.544
+  type: solar_thermal
+- area: 3.012
+  cost: 767.0
+  error: 0.14940609995606466
+  land_use: 4.613
+  max_mass_flow_rate: 240.0
+  min_mass_flow_rate: 150.0
+  name: wikosun_df_65_30
+  nominal_mass_flow_rate: 180.0
+  thermal_performance_curve:
+    first_order: -1.21
+    second_order: -0.0013
+    zeroth_order: 0.542
+  type: solar_thermal
+- area: 1.004
+  cost: 767.0
+  error: 0.44801311825955825
+  land_use: 1.538
+  max_mass_flow_rate: 160.0
+  min_mass_flow_rate: 100.0
+  name: wikosun_df_65_10
+  nominal_mass_flow_rate: 120.0
+  thermal_performance_curve:
+    first_order: -1.51
+    second_order: -0.0001
+    zeroth_order: 0.552
+  type: solar_thermal
+- area: None
+  cost: 878.0
+  error: 0.03485533148103842
+  land_use: 1.51
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: as_100_df_6_(augusta_solar,_germany)
+  nominal_mass_flow_rate: 75.0
+  thermal_performance_curve:
+    first_order: -1.03
+    second_order: -0.0052
+    zeroth_order: 0.55
+  type: solar_thermal
+- area: 2.91
+  cost: 549.0
+  error: 0.14969194029671692
+  land_use: 3.43
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: eurotherm_solar_cpc_16r
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -1.21
+    second_order: -0.004
+    zeroth_order: 0.54
+  type: solar_thermal
+- area: 2.84
+  cost: 1287.0
+  error: 0.14799794348405731
+  land_use: 3.26
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: solarbayer_cpc_14_nero_brutto
+  nominal_mass_flow_rate: 200.0
+  thermal_performance_curve:
+    first_order: -0.93
+    second_order: -0.004
+    zeroth_order: 0.63
+  type: solar_thermal
+- area: None
+  cost: 494.0
+  error: 0.4334730143072959
+  land_use: 1.22
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: logasol_skr10_cpc_(buderus,_germany)
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -0.63
+    second_order: -0.0096
+    zeroth_order: 0.53
+  type: solar_thermal
+- area: 2.0
+  cost: 1701.0
+  error: 0.11391333731555449
+  land_use: 2.78
+  max_mass_flow_rate: 300.0
+  min_mass_flow_rate: 100.0
+  name: germanstar_hp_70_16_(eurosun,_germany)
+  nominal_mass_flow_rate: 200.0
+  thermal_performance_curve:
+    first_order: -1.17
+    second_order: -0.004
+    zeroth_order: 0.6
+  type: solar_thermal
+- area: 1.21
+  cost: 767.0
+  error: 0.16736384400757448
+  land_use: 2.267
+  max_mass_flow_rate: 50.0
+  min_mass_flow_rate: 18.0
+  name: nmt_vhp
+  nominal_mass_flow_rate: 30.0
+  thermal_performance_curve:
+    first_order: -1.26
+    second_order: -0.0014
+    zeroth_order: 0.398
+  type: solar_thermal
+- area: 0.516
+  cost: 767.0
+  error: 0.38232145673633294
+  land_use: 1.109
+  max_mass_flow_rate: 50.0
+  min_mass_flow_rate: 18.0
+  name: fk_solinas_3_plus_kurz
+  nominal_mass_flow_rate: 30.0
+  thermal_performance_curve:
+    first_order: -1.47
+    second_order: -0.0038
+    zeroth_order: 0.34
+  type: solar_thermal
+- area: 1.21
+  cost: 767.0
+  error: 0.33739959436992756
+  land_use: 2.267
+  max_mass_flow_rate: 50.0
+  min_mass_flow_rate: 18.0
+  name: fk_solinas_3_plus_kurz
+  nominal_mass_flow_rate: 30.0
+  thermal_performance_curve:
+    first_order: -1.43
+    second_order: -0.0005
+    zeroth_order: 0.394
+  type: solar_thermal
+- area: 1.21
+  cost: 655.0
+  error: 0.19734999345668944
+  land_use: 2.267
+  max_mass_flow_rate: 50.0
+  min_mass_flow_rate: 18.0
+  name: fk_solinas_3
+  nominal_mass_flow_rate: 30.0
+  thermal_performance_curve:
+    first_order: -1.29
+    second_order: -0.0014
+    zeroth_order: 0.398
+  type: solar_thermal
+- area: 2.481
+  cost: 767.0
+  error: 0.5828846150507062
+  land_use: 4.322
+  max_mass_flow_rate: 400.0
+  min_mass_flow_rate: 90.0
+  name: zewotherm_zx_30
+  nominal_mass_flow_rate: 240.0
+  thermal_performance_curve:
+    first_order: -0.51
+    second_order: -0.0114
+    zeroth_order: 0.414
+  type: solar_thermal
+- area: 1.654
+  cost: 767.0
+  error: 0.2283525800739862
+  land_use: 2.919
+  max_mass_flow_rate: 250.0
+  min_mass_flow_rate: 60.0
+  name: zewotherm_zx_20
+  nominal_mass_flow_rate: 160.0
+  thermal_performance_curve:
+    first_order: -1.32
+    second_order: -0.0033
+    zeroth_order: 0.424
+  type: solar_thermal
+- area: 2.401
+  cost: 767.0
+  error: 0.13051483687546053
+  land_use: 4.949
+  max_mass_flow_rate: 300.0
+  min_mass_flow_rate: 120.0
+  name: atmosfera_cbk_a_58_30
+  nominal_mass_flow_rate: 180.0
+  thermal_performance_curve:
+    first_order: -1.22
+    second_order: -0.0051
+    zeroth_order: 0.373
+  type: solar_thermal
+- area: None
+  cost: 797.0
+  error: 0.702960163043715
+  land_use: 1.73
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: sunpur_10hp___sun5hp_(orange_energy)
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -0.39
+    second_order: -0.005
+    zeroth_order: 0.42
+  type: solar_thermal
+- area: 1.87
+  cost: 599.0
+  error: 0.09121803006130134
+  land_use: 3.1
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: eurotherm_solar_pro_20r
+  nominal_mass_flow_rate: 120.0
+  thermal_performance_curve:
+    first_order: -1.01
+    second_order: -0.0104
+    zeroth_order: 0.44
+  type: solar_thermal
+- area: 1.88
+  cost: 420.0
+  error: 0.21316568440596737
+  land_use: 3.1
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: eurotherm_solar_20r
+  nominal_mass_flow_rate: 120.0
+  thermal_performance_curve:
+    first_order: -0.88
+    second_order: -0.012
+    zeroth_order: 0.39
+  type: solar_thermal
+- area: None
+  cost: 664.0
+  error: 0.14993346981878602
+  land_use: 3.61
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: sunex_hp_22
+  nominal_mass_flow_rate: 54.0
+  thermal_performance_curve:
+    first_order: -1.24
+    second_order: -0.004
+    zeroth_order: 0.43
+  type: solar_thermal
+- area: 1.885
+  cost: 735.0
+  error: 0.09802183285803379
+  land_use: 2.106
+  max_mass_flow_rate: 180.0
+  min_mass_flow_rate: 15.0
+  name: fk_basic
+  nominal_mass_flow_rate: 50.0
+  thermal_performance_curve:
+    first_order: -3.53
+    second_order: -0.0047
+    zeroth_order: 0.694
+  type: solar_thermal
+- area: 2.278
+  cost: 735.0
+  error: 0.4307368963003346
+  land_use: 2.516
+  max_mass_flow_rate: 250.0
+  min_mass_flow_rate: 60.0
+  name: gaia_run_2_55_blue_s_c&g_energy_klb_2_5_regulus_kps11
+  nominal_mass_flow_rate: 125.0
+  thermal_performance_curve:
+    first_order: -4.05
+    second_order: -0.0062
+    zeroth_order: 0.716
+  type: solar_thermal
+- area: 1.887
+  cost: 735.0
+  error: 0.31197134072315785
+  land_use: 2.11
+  max_mass_flow_rate: 200.0
+  min_mass_flow_rate: 50.0
+  name: gaia_run_2_15_blue_s
+  nominal_mass_flow_rate: 100.0
+  thermal_performance_curve:
+    first_order: -3.93
+    second_order: -0.0066
+    zeroth_order: 0.702
+  type: solar_thermal
+- area: 3.03
+  cost: 735.0
+  error: 0.29645728122090076
+  land_use: 3.215
+  max_mass_flow_rate: 220.0
+  min_mass_flow_rate: 70.0
+  name: hewalex_ks_3200f
+  nominal_mass_flow_rate: 120.0
+  thermal_performance_curve:
+    first_order: -3.91
+    second_order: -0.0048
+    zeroth_order: 0.793
+  type: solar_thermal
+- area: 2.14
+  cost: 735.0
+  error: 0.3807489062392245
+  land_use: 2.301
+  max_mass_flow_rate: 1600.0
+  min_mass_flow_rate: 46.0
+  name: thermital_tsol_25_4_flex
+  nominal_mass_flow_rate: 70.0
+  thermal_performance_curve:
+    first_order: -4.0
+    second_order: -0.006
+    zeroth_order: 0.75
+  type: solar_thermal
+- area: 2.141
+  cost: 735.0
+  error: 0.5015805127077873
+  land_use: 2.301
+  max_mass_flow_rate: 1000.0
+  min_mass_flow_rate: 30.0
+  name: thermital_tsol_25_2_premium
+  nominal_mass_flow_rate: 70.0
+  thermal_performance_curve:
+    first_order: -4.12
+    second_order: -0.0056
+    zeroth_order: 0.768
+  type: solar_thermal
+- area: 2.325
+  cost: 735.0
+  error: 0.15377219318840687
+  land_use: 2.575
+  max_mass_flow_rate: 185.0
+  min_mass_flow_rate: 100.0
+  name: unical_titanium_xl
+  nominal_mass_flow_rate: 130.0
+  thermal_performance_curve:
+    first_order: -3.77
+    second_order: -0.0025
+    zeroth_order: 0.702
+  type: solar_thermal
+- area: 1.775
+  cost: 735.0
+  error: 0.05175655317507821
+  land_use: 1.998
+  max_mass_flow_rate: 150.0
+  min_mass_flow_rate: 75.0
+  name: unical_titanium
+  nominal_mass_flow_rate: 100.0
+  thermal_performance_curve:
+    first_order: -3.57
+    second_order: -0.0065
+    zeroth_order: 0.719
+  type: solar_thermal
+- area: 1.887
+  cost: 735.0
+  error: 0.31197134072315785
+  land_use: 2.11
+  max_mass_flow_rate: 200.0
+  min_mass_flow_rate: 50.0
+  name: c&g_energy_klb_2_0
+  nominal_mass_flow_rate: 100.0
+  thermal_performance_curve:
+    first_order: -3.93
+    second_order: -0.0066
+    zeroth_order: 0.702
+  type: solar_thermal
+- area: 2.325
+  cost: 735.0
+  error: 0.15377219318840687
+  land_use: 2.575
+  max_mass_flow_rate: 185.0
+  min_mass_flow_rate: 100.0
+  name: sunerg_h1tx+
+  nominal_mass_flow_rate: 130.0
+  thermal_performance_curve:
+    first_order: -3.77
+    second_order: -0.0025
+    zeroth_order: 0.702
+  type: solar_thermal
+- area: 2.39
+  cost: 4201.0
+  error: 0.5314998142114057
+  land_use: 2.61
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: c20_(wagner__&_co)
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -3.09
+    second_order: -0.0095
+    zeroth_order: 0.778
+  type: solar_thermal
+- area: 2.0
+  cost: 755.0
+  error: 0.8103586135773698
+  land_use: 2.3
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: topson_f3_1_(wolf,_germany_t)
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -2.81
+    second_order: -0.0102
+    zeroth_order: 0.699
+  type: solar_thermal
+- area: 2.4
+  cost: 565.0
+  error: 1.700422541255372
+  land_use: 2.5
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: t25s_(termicol,_spain)
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -5.32
+    second_order: -0.0211
+    zeroth_order: 0.728
+  type: solar_thermal
+- area: 1.9
+  cost: 635.0
+  error: 0.30972284550932044
+  land_use: 2.1
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: t8s_(termicol,_spain)
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -3.31
+    second_order: -0.0136
+    zeroth_order: 0.727
+  type: solar_thermal
+- area: 2.4
+  cost: 745.0
+  error: 0.1620379672247707
+  land_use: 2.6
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: t10s_(termicol,_spain)
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -3.78
+    second_order: -0.0009
+    zeroth_order: 0.755
+  type: solar_thermal
+- area: 2.44
+  cost: 345.0
+  error: 0.05168240255125628
+  land_use: 2.65
+  max_mass_flow_rate: 150.0
+  min_mass_flow_rate: 50.0
+  name: es2v_2_65_al_cu_(ensol,_poland)
+  nominal_mass_flow_rate: 90.0
+  thermal_performance_curve:
+    first_order: -3.61
+    second_order: -0.0138
+    zeroth_order: 0.784
+  type: solar_thermal
+- area: 1.94
+  cost: 307.0
+  error: 0.11437954215416113
+  land_use: 2.1
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: ksg_21_premium_gt_(galmet,_poland)
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -3.51
+    second_order: -0.0111
+    zeroth_order: 0.766
+  type: solar_thermal
+- area: 2.06
+  cost: 669.0
+  error: 0.4727039721131711
+  land_use: 2.22
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: rst_sol_4_niox_(reinhard_solartechnik,germany)
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -4.09
+    second_order: -0.004
+    zeroth_order: 0.78
+  type: solar_thermal
+- area: 2.22
+  cost: 379.0
+  error: 0.27038476225547103
+  land_use: 2.52
+  max_mass_flow_rate: 100.8
+  min_mass_flow_rate: 37.8
+  name: fkf_240_alal_(sti_solar,_germany)
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -3.35
+    second_order: -0.015
+    zeroth_order: 0.714
+  type: solar_thermal
+- area: 2.22
+  cost: 469.0
+  error: 0.025645447981980988
+  land_use: 2.52
+  max_mass_flow_rate: 100.8
+  min_mass_flow_rate: 37.8
+  name: fkf_240_cucu_(sti_solar,_germany)
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -3.63
+    second_order: -0.0106
+    zeroth_order: 0.71
+  type: solar_thermal
+- area: 0.896
+  cost: 199.0
+  error: 0.3729203984122652
+  land_use: 0.957
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: sti_fino_(sti_solar,_germany)
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -3.25
+    second_order: -0.0075
+    zeroth_order: 0.684
+  type: solar_thermal
+- area: 2.3
+  cost: 638.0
+  error: 0.4707108699487911
+  land_use: 2.59
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: solarplan_fk_26_wb_serie_b___807227
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -3.15
+    second_order: -0.015
+    zeroth_order: 0.702
+  type: solar_thermal
+- area: 2.31
+  cost: 586.0
+  error: 0.1498992483569961
+  land_use: 2.55
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: solarplan_fk_25_rc_serie_c___807234
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -3.47
+    second_order: -0.0126
+    zeroth_order: 0.725
+  type: solar_thermal
+- area: 2.64
+  cost: 362.0
+  error: 0.6299265554459361
+  land_use: 2.85
+  max_mass_flow_rate: 170.0
+  min_mass_flow_rate: 70.0
+  name: sunex_typ_sx_2_85_al
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -2.99
+    second_order: -0.0176
+    zeroth_order: 0.751
+  type: solar_thermal
+- area: 2.18
+  cost: 672.0
+  error: 0.6597798732422425
+  land_use: 2.37
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: junkers__fkc_2s
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -2.96
+    second_order: -0.014
+    zeroth_order: 0.72
+  type: solar_thermal
+- area: 1.92
+  cost: 436.0
+  error: 0.16288034709367383
+  land_use: 2.09
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: junkers_fcc_2s
+  nominal_mass_flow_rate: 150.0
+  thermal_performance_curve:
+    first_order: -3.78
+    second_order: -0.011
+    zeroth_order: 0.705
+  type: solar_thermal
+- area: 2.35
+  cost: 664.0
+  error: 0.17352942880756855
+  land_use: 2.51
+  max_mass_flow_rate: None
+  min_mass_flow_rate: None
+  name: remasol_c_250_h
+  nominal_mass_flow_rate: 60.0
+  thermal_performance_curve:
+    first_order: -3.45
+    second_order: -0.0083
+    zeroth_order: 0.77
+  type: solar_thermal
+- area: 2.38
+  cost: 902.0
+  error: 0.3997624082630965
+  land_use: 2.53
+  max_mass_flow_rate: 300.0
+  min_mass_flow_rate: 50.0
+  name: stiebel_sol_27_basic
+  nominal_mass_flow_rate: None
+  thermal_performance_curve:
+    first_order: -3.22
+    second_order: -0.0134
+    zeroth_order: 0.743
+  type: solar_thermal
