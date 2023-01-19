@@ -43,6 +43,11 @@ from .storage.storage_utils import Battery, HotWaterTank
 __all__ = ("run_simulation",)
 
 
+# DEFAULT_HOT_WATER_RETURN_TEMPERATURE:
+#   The default return temperature, in degrees Celsius, for hot water leaving the
+# desalination plant.
+DEFAULT_HOT_WATER_RETURN_TEMPERATURE: int = 40
+
 # DEGRADATION_PRECISION:
 #   The precision required when solving recursively for the degradation in terms of
 # decimal places.
@@ -589,22 +594,29 @@ def _tank_ambient_temperature(ambient_temperature: float) -> float:
     return ambient_temperature
 
 
-def _tank_replacement_temperature(hour: int) -> float:
+def _tank_replacement_temperature(ambient_temperature: float, hot_water_return_temperature: float | None) -> float:
     """
     Return the temperature of water which is replacing that taken from the tank.
 
     The number used is that for the final effect of the plant being considered.
 
     Inputs:
-        - hour:
-            The time of day.
+        - ambient_temperature:
+            The ambient temperature, measured in degrees Kelvin.
+        - hot_water_return_temperature:
+            The return temperature of hot water from the plant.
 
     Outputs:
         The temperature of water replacing that taken from the hot-water tank in Kelvin.
 
     """
 
-    return ZERO_CELCIUS_OFFSET + 40
+    # If the plant return temperature isn't specified, return the ambient temperature.
+    if hot_water_return_temperature is None:
+        return ambient_temperature
+
+    # Otherwise, use the plant-specific value.
+    return ZERO_CELCIUS_OFFSET + hot_water_return_temperature
 
 
 def run_simulation(
@@ -753,7 +765,7 @@ def run_simulation(
             solar_thermal_collector,
             solar_thermal_mass_flow_rate,
             _tank_ambient_temperature(ambient_temperatures[hour]),
-            _tank_replacement_temperature(hour),
+            _tank_replacement_temperature(ambient_temperatures[hour], desalination_plant.outputs(hour).hot_water_return_temperature),
         )
 
         # Determine the electricity demands of the plant including any auxiliary

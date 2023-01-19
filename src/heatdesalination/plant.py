@@ -76,15 +76,20 @@ class PlantOutputs:
     Represents the requirements of the plant.
 
     .. attribute:: brine
-        The brine outputted by the plant.
+        The brine outputted by the plant in kg/s.
 
     .. attribute:: clean_water
-        The volume of clean water produced.
+        The volume of clean water produced in kg/s.
+
+    .. attribute:: hot_water_return_temperature
+        The return temperature of the hot water leaving the plant and returning to the
+        HTF buffer tank, measured in degrees Celsius.
 
     """
 
     brine: float
     clean_water: float
+    hot_water_return_temperature: float | None
 
 
 @dataclasses.dataclass
@@ -225,12 +230,10 @@ class DesalinationPlant:
         try:
             plant_outputs = {
                 True: PlantOutputs(
-                    input_data[PLANT_OPERATING][OUTPUTS][BRINE],
-                    input_data[PLANT_OPERATING][OUTPUTS][CLEAN_WATER],
+                    **input_data[PLANT_OPERATING][OUTPUTS]
                 ),
                 False: PlantOutputs(
-                    input_data[PLANT_DISABLED][OUTPUTS][BRINE],
-                    input_data[PLANT_DISABLED][OUTPUTS][CLEAN_WATER],
+                    **input_data[PLANT_DISABLED][OUTPUTS]
                 ),
             }
         except KeyError as exception:
