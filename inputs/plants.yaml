@@ -85,7 +85,6 @@ desalination_plants:
       outputs:
         brine: null  # [kg/s] Volume produced per second
         clean_water: !!float 1.38888888889  # [kg/s] Volume produced per second
-
   - name: default_med
     operating_hours: !!int 10  # Number of operating hours per day
     plant_disabled:
