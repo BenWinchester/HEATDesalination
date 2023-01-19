@@ -71,7 +71,7 @@ optimisations:
         # fixed: 50
         initial_guess: 30  # [m^3]
         min: 15  # [m^3]
-        max: 100  # [m^3]
+        max: 500  # [m^3]
       mass_flow_rate:
         # fixed: 80
         initial_guess: 20  # [kg/s]
@@ -111,7 +111,7 @@ optimisations:
         # fixed: 50
         initial_guess: 30  # [m^3]
         min: 15  # [m^3]
-        max: 100  # [m^3]
+        max: 500  # [m^3]
       mass_flow_rate:
         # fixed: 80
         initial_guess: 20  # [kg/s]
@@ -151,7 +151,7 @@ optimisations:
         # fixed: 50
         initial_guess: 30  # [m^3]
         min: 15  # [m^3]
-        max: 100  # [m^3]
+        max: 500  # [m^3]
       mass_flow_rate:
         # fixed: 80
         initial_guess: 20  # [kg/s]
@@ -191,7 +191,7 @@ optimisations:
         # fixed: 50
         initial_guess: 30  # [m^3]
         min: 15  # [m^3]
-        max: 100  # [m^3]
+        max: 500  # [m^3]
       mass_flow_rate:
         # fixed: 80
         initial_guess: 20  # [kg/s]

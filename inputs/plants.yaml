@@ -9,23 +9,100 @@
 ################################################################################
 
 desalination_plants:
-  - name: med
+  - name: default_med
     operating_hours: !!int 10  # Number of operating hours per day
     plant_disabled:
       requirements:
         electricity: !!float 30  # [kW] Electricity requirements
         hot_water:
           temperature: null  # [degC] Temperature of the hot-water input
-          volume: 0  # [kg/s] Volume requirements per hour
+          volume: 0  # [kg/s] Volume requirements per second
       outputs:
-        brine: !!float 0  # [kg/s] Volume produced per hour
-        clean_water: !!float 0  # [kg/s] Volume produced per hour
+        brine: !!float 0  # [kg/s] Volume produced per second
+        clean_water: !!float 0  # [kg/s] Volume produced per second
+        hot_water_return_temperature: null  # [degC] Hot-water return temp.
     plant_operating:
       requirements:
-        electricity: !!float 204.336  # [kW] Electricity requirements per hour
+        electricity: !!float 204.336  # [kW] Electricity requirements per second
         hot_water:
           temperature: !!float 80  # [degC] Temperature of the hot-water input
-          volume: !!float 4.3  # [kg/s] Volume requirements per hour
+          volume: !!float 4.3  # [kg/s] Volume requirements per second
       outputs:
-        brine: !!float 14.5  # [kg/s] Volume produced per hour
-        clean_water: !!float 7  # [kg/s] Volume produced per hour
+        brine: !!float 14.5  # [kg/s] Volume produced per second
+        clean_water: !!float 7  # [kg/s] Volume produced per second
+        hot_water_return_temperature: 40  # [degC] Hot-water return temp.
+  # Joo H.-J., Kwak H-Y.,
+  # Performance evaluation of multi-effect distiller for optimized solar thermal
+  # desalination.
+  # Appl Therm Eng 2013;61:491–9.
+  # https://doi.org/10.1016/j.applthermaleng.2013.08.006.
+  # NOTE: This plant is capable of producing 3 m^3 of desalinated water per day.
+  - name: joo_med_24_hour
+    operating_hours: !!int 24  # Number of operating hours per day
+    plant_disabled:
+      requirements:
+        electricity: !!float 0  # [kW] Electricity requirements
+        hot_water:
+          temperature: null  # [degC] Temperature of the hot-water input
+          volume: 0  # [kg/s] Volume requirements per second
+      outputs:
+        brine: !!float 0  # [kg/s] Volume produced per second
+        clean_water: !!float 0  # [kg/s] Volume produced per second
+        hot_water_return_temperature: !!float null  # [degC] Hot-water return temp.
+    plant_operating:
+      requirements:
+        electricity: !!float 0.2875  # [kW] Electricity requirements per second
+        hot_water:
+          temperature: !!float 75  # [degC] Temperature of the hot-water input
+          volume: !!float 0.91888888888  # [kg/s] Volume requirements per second
+      outputs:
+        brine: !!float   # [kg/s] Volume produced per second
+        clean_water: !!float 0.01345833333 # [kg/s] Volume produced per second
+        hot_water_return_temperature: !!float 65  # [degC] Hot-water return temp.
+  # El-Nashar A.M., Samad M.,
+  # The solar desalination plant in Abu Dhabi: 13 years of performance and
+  # operation history. Renewable Energy 1998;14:263–74.
+  # https://doi.org/10.1016/S0960-1481(98)00076-7.
+  # NOTE: This plant is capable of producing 120 m^3 of desalinated water per
+  # day and runs for 24 hours of the day.
+  - name: el_nashar_24_hour
+    operating_hours: !!int 24  # Number of operating hours per day
+    plant_disabled:
+      requirements:
+        electricity: !!float 0  # [kW] Electricity requirements
+        hot_water:
+          temperature: null  # [degC] Temperature of the hot-water input
+          volume: 0  # [kg/s] Volume requirements per second
+      outputs:
+        brine: !!float 0  # [kg/s] Volume produced per second
+        clean_water: !!float 0  # [kg/s] Volume produced per second
+    plant_operating:
+      requirements:
+        electricity: !!float 11.5  # [kW] Electricity requirements per second
+        hot_water:
+          temperature: !!float 76.5  # [degC] Temperature of the hot-water input
+          volume: !!float 3.75  # [kg/s] Volume requirements per second
+      outputs:
+        brine: null  # [kg/s] Volume produced per second
+        clean_water: !!float 1.38888888889  # [kg/s] Volume produced per second
+
+  - name: default_med
+    operating_hours: !!int 10  # Number of operating hours per day
+    plant_disabled:
+      requirements:
+        electricity: !!float 30  # [kW] Electricity requirements
+        hot_water:
+          temperature: null  # [degC] Temperature of the hot-water input
+          volume: 0  # [kg/s] Volume requirements per second
+      outputs:
+        brine: !!float 0  # [kg/s] Volume produced per second
+        clean_water: !!float 0  # [kg/s] Volume produced per second
+    plant_operating:
+      requirements:
+        electricity: !!float 204.336  # [kW] Electricity requirements per second
+        hot_water:
+          temperature: !!float 80  # [degC] Temperature of the hot-water input
+          volume: !!float 4.3  # [kg/s] Volume requirements per second
+      outputs:
+        brine: !!float 14.5  # [kg/s] Volume produced per second
+        clean_water: !!float 7  # [kg/s] Volume produced per second
