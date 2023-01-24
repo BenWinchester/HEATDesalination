@@ -85,11 +85,17 @@ desalination_plants:
       outputs:
         brine: null  # [kg/s] Volume produced per second
         clean_water: !!float 1.38888888889  # [kg/s] Volume produced per second
-  - name: default_med
-    operating_hours: !!int 10  # Number of operating hours per day
+  # Rahimi B., May J., Christ A., Regenauer-Lieb K., Chua H.T.,
+  # Thermo-economic analysis of two novel low grade sensible heat driven
+  # desalination processes. Desalination 2015;365:316–28.
+  # https://doi.org/10.1016/j.desal.2015.03.008.
+  # NOTE: This plant is capable of producing 1700 m^3 of desalinated water per
+  # day and runs for 24 hours of the day.
+  - name: rahimi_24_hour
+    operating_hours: !!int 24  # Number of operating hours per day
     plant_disabled:
       requirements:
-        electricity: !!float 30  # [kW] Electricity requirements
+        electricity: !!float 0  # [kW] Electricity requirements
         hot_water:
           temperature: null  # [degC] Temperature of the hot-water input
           volume: 0  # [kg/s] Volume requirements per second
@@ -98,10 +104,10 @@ desalination_plants:
         clean_water: !!float 0  # [kg/s] Volume produced per second
     plant_operating:
       requirements:
-        electricity: !!float 204.336  # [kW] Electricity requirements per second
+        electricity: !!float 106.580833333  # [kW] Electricity requirements
         hot_water:
           temperature: !!float 80  # [degC] Temperature of the hot-water input
-          volume: !!float 4.3  # [kg/s] Volume requirements per second
+          volume: !!float 100  # [kg/s] Volume requirements per second
       outputs:
-        brine: !!float 14.5  # [kg/s] Volume produced per second
-        clean_water: !!float 7  # [kg/s] Volume produced per second
+        brine: !!float 19.4  # [kg/s] Volume produced per second
+        clean_water: !!float 36  # [kg/s] Volume produced per second
