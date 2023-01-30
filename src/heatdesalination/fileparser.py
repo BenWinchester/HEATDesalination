@@ -21,8 +21,20 @@ from typing import Dict, List, Tuple
 
 import json
 
-from .storage.storage_utils import Battery, HotWaterTank
-
+from .__utils__ import (
+    AMBIENT_TEMPERATURE,
+    AUTO_GENERATED_FILES_DIRECTORY,
+    NAME,
+    OptimisationParameters,
+    ProfileType,
+    read_yaml,
+    Scenario,
+    SOLAR_IRRADIANCE,
+    WIND_SPEED,
+    ZERO_CELCIUS_OFFSET,
+)
+from .heat_pump import HeatPump
+from .plant import DesalinationPlant
 from .solar import (
     COLLECTOR_FROM_TYPE,
     HybridPVTPanel,
@@ -30,20 +42,7 @@ from .solar import (
     SolarPanelType,
     SolarThermalPanel,
 )
-
-from .__utils__ import (
-    AMBIENT_TEMPERATURE,
-    AUTO_GENERATED_FILES_DIRECTORY,
-    NAME,
-    SOLAR_IRRADIANCE,
-    ZERO_CELCIUS_OFFSET,
-    OptimisationParameters,
-    ProfileType,
-    read_yaml,
-    Scenario,
-    TIMEZONE,
-)
-from .plant import DesalinationPlant
+from .storage.storage_utils import Battery, HotWaterTank
 
 __all__ = ("parse_input_files",)
 
@@ -63,9 +62,9 @@ DESALINATION_PLANT_INPUTS: str = "plants.yaml"
 #   Keyword for desalination plants.
 DESALINATION_PLANTS: str = "desalination_plants"
 
-# DISCOUNT_RATE:
-#   The discount rate keyword.
-DISCOUNT_RATE: str = "discount_rate"
+# FRACTIONAL_GRID_PRICE_CHANGE:
+#   The fractional change in the price of grid electricity.
+FRACTIONAL_GRID_PRICE_CHANGE: str = "fractional_grid_price_change"
 
 # GRID_COST:
 #   Keyword for the cost of grid (alternative/unmet) electricity.
@@ -75,9 +74,17 @@ GRID_COST: str = "grid_cost"
 #   Keyword for parsing the heat capacity of the heat exchangers.
 HEAT_EXCHANGER_EFFICIENCY: str = "heat_exchanger_efficiency"
 
-# HEAT_PUMP_EFFICIENCY:
-#   Keyword for parsing the system efficiency of the installed heat pump.
-HEAT_PUMP_EFFICIENCY: str = "heat_pump_efficiency"
+# HEAT_PUMP:
+#   Keyword for parsing the name of the installed heat pump.
+HEAT_PUMP: str = "heat_pump"
+
+# HEAT_PUMPS:
+#   Keyword for parsing the heat-pump information.
+HEAT_PUMPS: str = "heat_pumps"
+
+# HEAT_PUMP_INPUTS:
+#   The name of the heat-pumps input file.
+HEAT_PUMP_INPUTS: str = "heat_pumps.yaml"
 
 # HOT_WATER_TANK:
 #   Keyword for hot-water tank.
@@ -154,6 +161,7 @@ def parse_input_files(
     Dict[ProfileType, Dict[int, float]],
     Battery,
     HotWaterTank,
+    HeatPump,
     DesalinationPlant,
     HybridPVTPanel | None,
     List[OptimisationParameters],
@@ -161,6 +169,7 @@ def parse_input_files(
     Scenario,
     Dict[ProfileType, Dict[int, float]],
     SolarThermalPanel | None,
+    Dict[ProfileType, Dict[int, float]],
 ]:
     """
     Parses the various input files.
@@ -178,15 +187,13 @@ def parse_input_files(
 
     Outputs:
         - ambient_temperatures:
-            The ambient temperature measured in degrees Kelvin keyed by profile type
-            for:
-            - the day with maximum irradiance,
-            - the day with minimum irradiance,
-            - an average over all days.
+            The ambient temperature measured in degrees Kelvin keyed by profile type.
         - battery:
             The :class:`Battery` to use for the modelling.
         - desalination_plant:
             The :class:`DesalinationPlant` to use for the modelling.
+        - heat_pump:
+            The :class:`HeatPump` to use for the modelling.
         - hybrid_pv_t_panel:
             The :class:`HybridPVTPanel` to use for the modelling.
         - optimisations:
@@ -197,12 +204,11 @@ def parse_input_files(
         - scenario:
             The :class:`Scenario` to use for the mode
         - solar_irradiances:
-            The solar irradiance keyed by profile type for:
-            - the day with maximum irradiance,
-            - the day with minimum irradiance,
-            - an average over all days.
+            The solar irradiance keyed by profile type.
         - solar_thermal_collector:
             The :class:`SolarThermalCollector` to use for the modelling.
+        - wind_speeds:
+            The wind speeds, keyed by profile type.
 
     """
 
@@ -213,7 +219,7 @@ def parse_input_files(
             entry[BATTERY],
             entry[GRID_COST],
             entry[HEAT_EXCHANGER_EFFICIENCY],
-            entry[HEAT_PUMP_EFFICIENCY],
+            entry[HEAT_PUMP],
             entry[HOT_WATER_TANK],
             entry[HTF_HEAT_CAPACITY],
             entry[NAME],
@@ -222,7 +228,7 @@ def parse_input_files(
             entry[PV],
             entry[PV_T],
             entry[SOLAR_THERMAL],
-            entry.get(DISCOUNT_RATE, 0),
+            entry.get(FRACTIONAL_GRID_PRICE_CHANGE, 0),
         )
         for entry in scenario_inputs[SCENARIOS]
     ]
@@ -246,6 +252,23 @@ def parse_input_files(
         ][0]
     except IndexError:
         logger.error("Could not find plant '%s' in input file.", scenario.plant)
+        raise
+
+    # Parse the heat-pump inputs.
+    heat_pump_inputs = read_yaml(
+        os.path.join(INPUTS_DIRECTORY, HEAT_PUMP_INPUTS), logger
+    )
+    heat_pumps = [HeatPump(**entry) for entry in heat_pump_inputs[HEAT_PUMPS]]
+    try:
+        heat_pump = [entry for entry in heat_pumps if entry.name == scenario.heat_pump][
+            0
+        ]
+    except IndexError:
+        logger.error(
+            "Could not find heat pump '%s' in input file. Valid pumps: %s",
+            scenario.heat_pump,
+            ", ".join(pump.name for pump in heat_pumps),
+        )
         raise
 
     # Parse the optimisation inputs
@@ -360,6 +383,7 @@ def parse_input_files(
 
     ambient_temperatures: Dict[ProfileType, Dict[int, float]] = {}
     solar_irradiances: Dict[ProfileType, Dict[int, float]] = {}
+    wind_speeds: Dict[ProfileType, Dict[int, float]] = {}
 
     # Extend profiles to 25 hours.
     for profile_type in ProfileType:
@@ -373,6 +397,10 @@ def parse_input_files(
             int(key) % 24: value
             for key, value in weather_data[profile_type.value][SOLAR_IRRADIANCE].items()
         }
+        wind_speeds[profile_type] = {
+            int(key) % 24: value
+            for key, value in weather_data[profile_type.value][WIND_SPEED].items()
+        }
 
     # Return the information.
     return (
@@ -380,10 +408,12 @@ def parse_input_files(
         battery,
         buffer_tank,
         desalination_plant,
+        heat_pump,
         hybrid_pv_t_panel,
         optimisations,
         pv_panel,
         scenario,
         solar_irradiances,
         solar_thermal_collector,
+        wind_speeds,
     )

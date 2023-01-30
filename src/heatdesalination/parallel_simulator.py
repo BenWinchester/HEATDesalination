@@ -180,7 +180,7 @@ def _parse_args(args: List[Any]) -> argparse.Namespace:
 
 
 def heatdesalination_wrapper(
-    simulation: Simulation, location: str
+    simulation: Simulation, hpc: bool, location: str
 ) -> Dict[ProfileType, Solution] | None:
     """
     Run a steady-state simulation
@@ -188,6 +188,8 @@ def heatdesalination_wrapper(
     Inputs:
         - simulation:
             The simulation to carry out.
+        - hpc:
+            Whether the program is being run on the HPC (True) or not (False).
         - location:
             The location for which to run the simulation.
 
@@ -215,6 +217,7 @@ def heatdesalination_wrapper(
             simulation.start_hour,
             disable_tqdm=True,
             save_outputs=False,
+            hpc=hpc,
         )
     except FlowRateError:
         print("Flow-rate error, skipping results.")
@@ -227,6 +230,7 @@ def main(
     output: str,
     simulations_file: str,
     full_results: bool = True,
+    hpc: bool = False,
 ) -> List[Any]:
     """
     Main method for carrying out multiple simulations.
@@ -242,6 +246,8 @@ def main(
             The name of the simulations file to use.
         - full_results:
             Whether to record the full results (True) or reduced results (False).
+        - hpc:
+            Whether the script is being run on the HPC (True) or not (False).
 
     """
 
@@ -264,7 +270,9 @@ def main(
         results = list(
             tqdm(
                 worker_pool.imap(
-                    functools.partial(heatdesalination_wrapper, location=location),
+                    functools.partial(
+                        heatdesalination_wrapper, hpc=hpc, location=location
+                    ),
                     simulations,
                 ),
                 total=len(simulations),

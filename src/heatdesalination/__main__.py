@@ -147,7 +147,9 @@ def main(
     start_hour: int | None = None,
     *,
     disable_tqdm: bool = False,
+    hpc: bool = False,
     save_outputs: bool = True,
+    verbose: bool = False,
 ) -> Any:
     """
     Main module responsible for the flow of the HEATDesalination program.
@@ -188,16 +190,21 @@ def main(
             `None` if not.
         - disable_tqdm:
             Whether to disable tqdm or not.
+        - hpc:
+            Whether running on the HPC (True) or not (False).
         - save_outputs:
             Whether to save the outputs from the simulation/optimisation (True) or
             return them (False).
+        - verbose:
+            Whether to use verbose logging (True) or not (False).
 
     Outputs:
         - The result of the optimisations or simulations.
 
     """
 
-    logger = get_logger(f"{location}_heat_desalination")
+    logger = get_logger(f"{location}_heat_desalination", hpc, verbose)
+    logger.info("Heat-desalination module instantiated. Main method.")
 
     # Parse the various input files.
     (
@@ -205,13 +212,16 @@ def main(
         battery,
         buffer_tank,
         desalination_plant,
+        heat_pump,
         hybrid_pv_t_panel,
         optimisations,
         pv_panel,
         scenario,
         solar_irradiances,
         solar_thermal_collector,
+        wind_speeds,
     ) = parse_input_files(location, logger, scenario_name, start_hour)
+    logger.info("Input files successfully parsed.")
 
     if simulation:
         # Raise exceptions if the arguments are invalid.
@@ -259,6 +269,7 @@ def main(
                 battery_capacity,
                 buffer_tank,
                 desalination_plant,
+                heat_pump,
                 mass_flow_rate,
                 hybrid_pv_t_panel,
                 logger,
@@ -270,6 +281,7 @@ def main(
                 solar_thermal_collector,
                 solar_thermal_system_size,
                 system_lifetime,
+                wind_speeds[profile_type],
                 disable_tqdm=disable_tqdm,
             )
             for profile_type in profile_types
@@ -312,6 +324,7 @@ def main(
                         hybrid_pv_t_panel: pv_t_system_size,
                         solar_thermal_collector: solar_thermal_system_size,
                     },
+                    logger,
                     scenario,
                     result,
                     system_lifetime,
@@ -347,6 +360,7 @@ def main(
                             battery,
                             buffer_tank,
                             desalination_plant,
+                            heat_pump,
                             hybrid_pv_t_panel,
                             logger,
                             optimisation_parameters,
@@ -355,6 +369,7 @@ def main(
                             solar_irradiances[profile_type],
                             solar_thermal_collector,
                             system_lifetime,
+                            wind_speeds[profile_type],
                         )
                         for profile_type in tqdm(
                             profile_types,
@@ -410,4 +425,5 @@ if __name__ == "__main__":
         parsed_args.simulation,
         parsed_args.solar_thermal_system_size,
         parsed_args.start_hour,
+        verbose=parsed_args.verbose,
     )

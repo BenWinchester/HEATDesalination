@@ -53,6 +53,7 @@ __all__ = (
     "ResourceType",
     "Scenario",
     "Solution",
+    "TEMPERATURE_PRECISION",
     "TIMEZONE",
 )
 
@@ -144,6 +145,10 @@ SOLAR_ELEVATION: str = "solar_elevation"
 #   Keyword for the solar irradiance.
 SOLAR_IRRADIANCE: str = "irradiance"
 
+# TEMPERATURE_PRECISION:
+#   The precision required when solving the matrix equation for the system temperatures.
+TEMPERATURE_PRECISION: float = 0.1
+
 # TIMEZONE:
 #   Keyword for parsing timezone.
 TIMEZONE: str = "timezone"
@@ -183,17 +188,24 @@ class CostableComponent:
         self.cost = cost
 
 
-def get_logger(logger_name: str, verbose: bool = False) -> logging.Logger:
+def get_logger(
+    logger_name: str, hpc: bool = False, verbose: bool = False
+) -> logging.Logger:
     """
     Set-up and return a logger.
+
     Inputs:
         - logger_name:
             The name for the logger, which is also used to denote the filename with a
             "<logger_name>.log" format.
+        - hpc:
+            Whether the program is being run on the HPC (True) or not (False).
         - verbose:
             Whether the log level should be verbose (True) or standard (False).
+
     Outputs:
         - The logger for the component.
+
     """
 
     # Create a logger and logging directory.
@@ -215,26 +227,24 @@ def get_logger(logger_name: str, verbose: bool = False) -> logging.Logger:
     logger.addHandler(console_handler)
 
     # Delete the existing log if there is one already.
-    # if os.path.isfile(
-    #     (logger_filepath := os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log"))
-    # ):
-    #     try:
-    #         os.remove(logger_filepath)
-    #     except FileNotFoundError:
-    #         pass
+    if os.path.isfile(
+        (logger_filepath := os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log"))
+    ):
+        try:
+            os.remove(logger_filepath)
+        except FileNotFoundError:
+            pass
 
     # Create a file handler.
-    # if not os.path.isfile(
-    #     (logger_filename := os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log"))
-    # ):
-    #     file_handler = logging.FileHandler(
-    #         os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log")
-    #     )
-    #     file_handler.setLevel(logging.DEBUG if verbose else logging.INFO)
-    #     file_handler.setFormatter(formatter)
-    #
-    #     # Add the file handler to the logger.
-    #     logger.addHandler(file_handler)
+    if not hpc:
+        file_handler = logging.FileHandler(
+            os.path.join(LOGGER_DIRECTORY, f"{logger_name}.log")
+        )
+        file_handler.setLevel(logging.DEBUG if verbose else logging.INFO)
+        file_handler.setFormatter(formatter)
+
+        # Add the file handler to the logger.
+        logger.addHandler(file_handler)
 
     return logger
 
@@ -805,9 +815,8 @@ class Scenario:
     .. attribute:: heat_exchanger_efficiency
         The efficiency of the heat exchanger.
 
-    .. attribute:: heat_pump_efficiency
-        The system efficiency of the heat pump installed, expressed as a fraction of the
-        Carnot efficiency.
+    .. attribute:: heat_pump
+        The name of the heat pump to use.
 
     .. attribute:: hot_water_tank
         The name of the hot-water tank.
@@ -842,15 +851,15 @@ class Scenario:
     .. attribute:: solar_thermal_panel_name
         The name of the solar-thermal panel being considered.
 
-    .. attribute:: discount_rate
-        The discount rate for grid electricity if provided, else 0.
+    .. attribute:: fractional_grid_price_change
+        The fractional change in the price of grid electricity.
 
     """
 
     battery: str
     grid_cost: float
     heat_exchanger_efficiency: float
-    heat_pump_efficiency: float
+    heat_pump: str
     hot_water_tank: str
     htf_heat_capacity: float
     name: str
@@ -859,7 +868,7 @@ class Scenario:
     _pv: bool | str
     _pv_t: bool | str
     _solar_thermal: bool | str
-    discount_rate: float = 0
+    fractional_grid_price_change: float = 0
 
     @property
     def pv(self) -> bool:  # pylint: disable=invalid-name
@@ -994,6 +1003,10 @@ class Solution(NamedTuple):
     .. attribute:: electricity_demands
         The electricity demands placed on the system in kWh at each time step.
 
+    .. attribute:: heat_pump_cost
+        The cost of the heat pump installed in USD, sized based on the maximum cost
+        required to meet demand.
+
     .. attribute:: hot_water_demand_temperature
         The temperature of the hot-water demand at each time step.
 
@@ -1007,6 +1020,10 @@ class Solution(NamedTuple):
     .. attribute:: pv_electrical_output_power
         The electrcial output power of the PV collectors at each time step for each year
         of the simulation.
+
+    .. attribute:: pv_reduced_temperatures
+        The reduced temperatures of the PV collectors at each time step for each year of
+        the simulation.
 
     .. attribute:: pv_system_electrical_output_power
         The electrcial output power from all of the installed PV collectors at each time
@@ -1083,8 +1100,10 @@ class Solution(NamedTuple):
     collector_input_temperatures: Dict[int, float]
     collector_system_output_temperatures: Dict[int, float]
     electricity_demands: Dict[int, float]
+    heat_pump_cost: float
     hot_water_demand_temperature: Dict[int, float | None]
     hot_water_demand_volume: Dict[int, float | None]
+    pv_average_temperatures: Dict[ProfileDegradationType, Dict[int, float | None]]
     pv_electrical_efficiencies: Dict[ProfileDegradationType, Dict[int, float | None]]
     pv_electrical_output_power: Dict[ProfileDegradationType, Dict[int, float | None]]
     pv_system_electrical_output_power: Dict[
@@ -1278,6 +1297,10 @@ class Solution(NamedTuple):
                     "Degraded Total PV electric power produced / kW": self.pv_system_electrical_output_power[
                         ProfileDegradationType.DEGRADED.value
                     ],
+                    "Average PV temperature / degC": {
+                        key: value - ZERO_CELCIUS_OFFSET
+                        for key, value in self.pv_average_temperatures.items()
+                    },
                 }
             )
 

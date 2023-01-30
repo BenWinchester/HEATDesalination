@@ -23,6 +23,7 @@ import abc
 from logging import Logger
 from typing import Dict, List, Tuple
 
+import json
 import numpy
 
 from scipy import optimize
@@ -36,6 +37,7 @@ from .__utils__ import (
     Scenario,
     Solution,
 )
+from .heat_pump import HeatPump
 from .plant import DesalinationPlant
 from .simulator import determine_steady_state_simulation
 from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel
@@ -48,6 +50,7 @@ UPPER_LIMIT: float = 10**8
 
 def _total_cost(
     component_sizes: Dict[CostableComponent | None, float],
+    logger: Logger,
     scenario: Scenario,
     solution: Solution,
     system_lifetime: int,
@@ -58,6 +61,8 @@ def _total_cost(
     Inputs:
         - component_sizes:
             The sizes of the various components which are costable.
+        - logger:
+            The :class:`logging.Logger` to use for the run.
         - scenario:
             The scenario being considered.
         - solution:
@@ -76,35 +81,51 @@ def _total_cost(
         for component, size in component_sizes.items()
     }
     total_component_cost = sum(component_costs.values())
+    logger.debug(
+        "Component costs: %s",
+        json.dumps(
+            {str(key): value for key, value in component_costs.items()}, indent=4
+        ),
+    )
 
-    # # Calculate the undiscounted cost of grid electricity.
+    # Calculate the undiscounted cost of grid electricity.
+    fractional_price_change = scenario.fractional_grid_price_change
     # total_grid_cost = (
     #     DAYS_PER_YEAR  # [days/year]
     #     * system_lifetime  # [year]
     #     * sum(solution.grid_electricity_supply_profile.values())  # [kWh/day]
     #     * scenario.grid_cost  # [$/kWh]
-    # )
+    # ) * (1 + fractional_price_change)
 
     # UAE-specific code
-    discount_rate = scenario.discount_rate
-    monthly_grid_consumption = (
-        sum(solution.grid_electricity_supply_profile.values()) * 30
+    monthly_grid_consumption = sum(
+        solution.grid_electricity_supply_profile.values()
+    ) * (
+        days_per_month := 30
     )  # [kWh/month]
     lower_tier_consumption = min(monthly_grid_consumption, 10000)
     upper_tier_consumption = max(monthly_grid_consumption - 10000, 0)
     total_grid_cost = (
-        (DAYS_PER_YEAR / 30)
-        * system_lifetime
+        (DAYS_PER_YEAR / days_per_month)  # [months/year]
+        * system_lifetime  # [years]
         * (
-            lower_tier_consumption * (0.23 * ((1 - discount_rate) ** system_lifetime))
-            + upper_tier_consumption * (0.38 * ((1 - discount_rate) ** system_lifetime))
+            lower_tier_consumption * (0.23 * (1 + fractional_price_change))
+            + upper_tier_consumption * (0.38 * (1 + fractional_price_change))
         )
-    )
+    )  # [USD]
 
     # Add the costs of any consumables such as diesel fuel or grid electricity.
-    total_cost = total_component_cost + abs(
-        total_grid_cost
+    total_cost = (
+        total_component_cost + max(total_grid_cost, 0) + max(solution.heat_pump_cost, 0)
     )  # + diesel_fuel_cost + grid_cost
+    logger.info(
+        "Total cost: %s, Total component cost: %s, Total grid cost %s, Heat-pump cost: "
+        "%s",
+        total_cost,
+        total_component_cost,
+        total_grid_cost,
+        solution.heat_pump_cost,
+    )
 
     return total_cost
 
@@ -168,6 +189,7 @@ class Criterion(abc.ABC):
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -178,6 +200,8 @@ class Criterion(abc.ABC):
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -198,6 +222,7 @@ class DumpedElectricity(Criterion, criterion_name="dumped_electricity"):
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -208,6 +233,8 @@ class DumpedElectricity(Criterion, criterion_name="dumped_electricity"):
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -230,6 +257,7 @@ class GridElectricityFraction(Criterion, criterion_name="grid_electricity_fracti
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -240,6 +268,8 @@ class GridElectricityFraction(Criterion, criterion_name="grid_electricity_fracti
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -267,6 +297,7 @@ class LCUE(Criterion, criterion_name="lcue"):
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -277,6 +308,8 @@ class LCUE(Criterion, criterion_name="lcue"):
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -290,7 +323,7 @@ class LCUE(Criterion, criterion_name="lcue"):
         """
 
         return _total_cost(
-            component_sizes, scenario, solution, system_lifetime
+            component_sizes, logger, scenario, solution, system_lifetime
         ) / _total_electricity_supplied(solution, system_lifetime)
 
 
@@ -310,6 +343,7 @@ class RenewableElectricityFraction(
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -320,6 +354,8 @@ class RenewableElectricityFraction(
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -344,6 +380,7 @@ class RenewableHeatingFraction(Criterion, criterion_name="renewable_heating_frac
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -354,6 +391,8 @@ class RenewableHeatingFraction(Criterion, criterion_name="renewable_heating_frac
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -389,6 +428,7 @@ class AuxiliaryHeatingFraction(Criterion, criterion_name="auxiliary_heating_frac
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -402,6 +442,8 @@ class AuxiliaryHeatingFraction(Criterion, criterion_name="auxiliary_heating_frac
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -412,7 +454,7 @@ class AuxiliaryHeatingFraction(Criterion, criterion_name="auxiliary_heating_frac
         """
 
         return 1 - super().calculate_value_map[RenewableHeatingFraction.name](
-            component_sizes, scenario, solution, system_lifetime
+            component_sizes, logger, scenario, solution, system_lifetime
         )
 
 
@@ -423,6 +465,7 @@ class SolarElectricityFraction(Criterion, criterion_name="solar_electricity_frac
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -433,6 +476,8 @@ class SolarElectricityFraction(Criterion, criterion_name="solar_electricity_frac
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -459,6 +504,7 @@ class StorageElectricityFraction(
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -469,6 +515,8 @@ class StorageElectricityFraction(
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -502,6 +550,7 @@ class TotalCost(Criterion, criterion_name="total_cost"):
     def calculate_value(
         cls,
         component_sizes: Dict[CostableComponent | None, float],
+        logger: Logger,
         scenario: Scenario,
         solution: Solution,
         system_lifetime: int,
@@ -512,6 +561,8 @@ class TotalCost(Criterion, criterion_name="total_cost"):
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
             - scenario:
                 The scenario being considered.
             - solution:
@@ -524,7 +575,7 @@ class TotalCost(Criterion, criterion_name="total_cost"):
 
         """
 
-        return _total_cost(component_sizes, scenario, solution, system_lifetime)
+        return _total_cost(component_sizes, logger, scenario, solution, system_lifetime)
 
 
 # class UnmetElectricity(Criterion, criterion_name="unmet_electricity_fraction"):
@@ -571,6 +622,7 @@ def _simulate_and_calculate_criterion(
     buffer_tank: HotWaterTank,
     buffer_tank_capacity: float | None,
     desalination_plant: DesalinationPlant,
+    heat_pump: HeatPump,
     htf_mass_flow_rate: float | None,
     hybrid_pv_t_panel: HybridPVTPanel | None,
     logger: Logger,
@@ -584,6 +636,7 @@ def _simulate_and_calculate_criterion(
     solar_thermal_collector: SolarThermalPanel | None,
     solar_thermal_system_size: int | None,
     system_lifetime: int,
+    wind_speeds: Dict[int, float],
     disable_tqdm: bool = False,
 ) -> float:
     """
@@ -620,6 +673,8 @@ def _simulate_and_calculate_criterion(
             the capacity of the tank should be optimised.
         - desalination_plant:
             The :class:`DesalinationPlant` for which the systme is being simulated.
+        - heat_pump:
+            The :class:`HeatPump` to use for the run.
         - htf_mass_flow_rate:
             The mass flow rate of the HTF through the collectors if this should not be
             optimised, or `None` if it should be optimised.
@@ -648,6 +703,8 @@ def _simulate_and_calculate_criterion(
             `None` if it should be optimised.
         - system_lifetime:
             The lifetime of the system measured in years.
+        - wind_speeds:
+            The wind speeds at each time step, measured in meters per second.
         - disable_tqdm:
             Whether to disable the progress bar.
 
@@ -705,6 +762,7 @@ def _simulate_and_calculate_criterion(
             battery_capacity,
             buffer_tank,
             desalination_plant,
+            heat_pump,
             htf_mass_flow_rate,
             hybrid_pv_t_panel,
             logger,
@@ -716,6 +774,7 @@ def _simulate_and_calculate_criterion(
             solar_thermal_collector,
             solar_thermal_system_size,
             system_lifetime,
+            wind_speeds,
             disable_tqdm=disable_tqdm,
         )
     except FlowRateError:
@@ -736,7 +795,7 @@ def _simulate_and_calculate_criterion(
     # Return the value of the criterion.
     return (
         Criterion.calculate_value_map[optimisation_criterion](
-            component_sizes, scenario, steady_state_solution, system_lifetime
+            component_sizes, logger, scenario, steady_state_solution, system_lifetime
         )
         / 10**6
     ) ** 3
@@ -845,6 +904,7 @@ def run_optimisation(
     battery: Battery,
     buffer_tank: HotWaterTank,
     desalination_plant: DesalinationPlant,
+    heat_pump: HeatPump,
     hybrid_pv_t_panel: HybridPVTPanel,
     logger: Logger,
     optimisation_parameters: OptimisationParameters,
@@ -853,6 +913,7 @@ def run_optimisation(
     solar_irradiances: Dict[int, float],
     solar_thermal_collector: SolarThermalPanel,
     system_lifetime: int,
+    wind_speeds: Dict[int, float],
     *,
     disable_tqdm: bool = True,
 ) -> Tuple[Dict[str, float], List[float]]:
@@ -868,6 +929,8 @@ def run_optimisation(
             The :class:`HotWaterTank` associated with the system.
         - desalination_plant:
             The :class:`DesalinationPlant` for which the systme is being simulated.
+        - heat_pump:
+            The :class:`HeatPump` to use for the run.
         - hybrid_pv_t_panel:
             The :class:`HybridPVTPanel` associated with the run.
         - logger:
@@ -884,6 +947,8 @@ def run_optimisation(
             The :class:`SolarThermalCollector` associated with the run.
         - system_lifetime:
             The lifetime of the system, measured in years.
+        - wind_speeds:
+            The wind speeds at each time step, measured in meters per second.
         - disable_tqdm:
             Whether to disable the progress bar.
 
@@ -937,6 +1002,7 @@ def run_optimisation(
         buffer_tank,
         optimisation_parameters.fixed_buffer_tank_capacity_value,
         desalination_plant,
+        heat_pump,
         optimisation_parameters.fixed_mass_flow_rate_value,
         hybrid_pv_t_panel,
         logger,
@@ -950,6 +1016,7 @@ def run_optimisation(
         solar_thermal_collector,
         optimisation_parameters.fixed_st_value,
         system_lifetime,
+        wind_speeds,
         disable_tqdm,
     )
 
@@ -989,10 +1056,10 @@ def run_optimisation(
         # callback=_callback_function if not disable_tqdm else None,
         constraints=constraints if constraints is not None else None,
         options={
-            "disp": True,
-            "fatol": 10 ** -(21),
+            "disp": False,
+            "fatol": 10 ** -(6),
             "ftol": 2.22 * 10 ** (-12),
-            "gtol": 10 ** (-21),
+            "gtol": 10 ** (-6),
             "maxiter": 10000,
             "maxfev": 10000,
             "return_all": True,
@@ -1046,6 +1113,7 @@ def run_optimisation(
         battery_capacity,
         buffer_tank,
         desalination_plant,
+        heat_pump,
         htf_mass_flow_rate,
         hybrid_pv_t_panel,
         logger,
@@ -1057,6 +1125,7 @@ def run_optimisation(
         solar_thermal_collector,
         solar_thermal_system_size,
         system_lifetime,
+        wind_speeds,
         disable_tqdm=disable_tqdm,
     )
 
@@ -1072,7 +1141,7 @@ def run_optimisation(
     # Compute various criteria values.
     criterion_map = {
         criterion.name: criterion.calculate_value(
-            component_sizes, scenario, solution, system_lifetime
+            component_sizes, logger, scenario, solution, system_lifetime
         )
         for criterion in [
             AuxiliaryHeatingFraction,

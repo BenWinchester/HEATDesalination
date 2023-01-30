@@ -187,6 +187,18 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
         help="Run an optimisation.",
     )
 
+    ####################
+    # Hidden arguments #
+    ####################
+
+    parser.add_argument(
+        "--verbose",
+        "-v",
+        action="store_true",
+        default=False,
+        help=argparse.SUPPRESS,
+    )
+
     return parser.parse_args(args)
 
 

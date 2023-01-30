@@ -33,7 +33,7 @@ from .__utils__ import (
     Solution,
     ZERO_CELCIUS_OFFSET,
 )
-from .heat_pump import calculate_heat_pump_electricity_consumption
+from .heat_pump import calculate_heat_pump_electricity_consumption_and_cost, HeatPump
 from .matrix import solve_matrix
 from .plant import DesalinationPlant
 from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel, electric_output
@@ -42,6 +42,11 @@ from .storage.storage_utils import Battery, HotWaterTank
 
 __all__ = ("run_simulation",)
 
+
+# DEFAULT_HOT_WATER_RETURN_TEMPERATURE:
+#   The default return temperature, in degrees Celsius, for hot water leaving the
+# desalination plant.
+DEFAULT_HOT_WATER_RETURN_TEMPERATURE: int = 40
 
 # DEGRADATION_PRECISION:
 #   The precision required when solving recursively for the degradation in terms of
@@ -246,6 +251,7 @@ def _storage_profile_iteration_step(
             )
         if net_storage_flow == 0:
             # Batteries leak provide there is power to leak out.
+            electricity_to_batteries = 0
             power_to_storage_map[hour] = 0
             storage_power_supplied_map[hour] = 0
             storage_profile[hour] = max(
@@ -589,28 +595,36 @@ def _tank_ambient_temperature(ambient_temperature: float) -> float:
     return ambient_temperature
 
 
-def _tank_replacement_temperature(hour: int) -> float:
+def _tank_replacement_temperature(ambient_temperature: float, hot_water_return_temperature: float | None) -> float:
     """
     Return the temperature of water which is replacing that taken from the tank.
 
     The number used is that for the final effect of the plant being considered.
 
     Inputs:
-        - hour:
-            The time of day.
+        - ambient_temperature:
+            The ambient temperature, measured in degrees Kelvin.
+        - hot_water_return_temperature:
+            The return temperature of hot water from the plant.
 
     Outputs:
         The temperature of water replacing that taken from the hot-water tank in Kelvin.
 
     """
 
-    return ZERO_CELCIUS_OFFSET + 40
+    # If the plant return temperature isn't specified, return the ambient temperature.
+    if hot_water_return_temperature is None:
+        return ambient_temperature
+
+    # Otherwise, use the plant-specific value.
+    return ZERO_CELCIUS_OFFSET + hot_water_return_temperature
 
 
 def run_simulation(
     ambient_temperatures: Dict[int, float],
     buffer_tank: HotWaterTank,
     desalination_plant: DesalinationPlant,
+    heat_pump: HeatPump,
     htf_mass_flow_rate: float,
     hybrid_pv_t_panel: HybridPVTPanel | None,
     logger: Logger,
@@ -621,6 +635,7 @@ def run_simulation(
     solar_irradiances: Dict[int, float],
     solar_thermal_collector: SolarThermalPanel | None,
     solar_thermal_system_size: int | None,
+    wind_speeds: Dict[int, float],
     *,
     disable_tqdm: bool = False,
     tank_start_temperature: float,
@@ -635,6 +650,8 @@ def run_simulation(
             The :class:`HotWaterTank` associated with the system.
         - desalination_plant:
             The :class:`DesalinationPlant` for which the systme is being simulated.
+        - heat_pump:
+            The :class:`HeatPump` to use for the run.
         - htf_mass_flow_rate:
             The mass flow rate of the HTF through the collectors.
         - hybrid_pv_t_panel:
@@ -655,6 +672,8 @@ def run_simulation(
             The :class:`SolarThermalCollector` associated with the run.
         - solar_thermal_system_size:
             The size of the solar-thermal system.
+        - wind_speeds:
+            The wind speeds at each time step, measured in meters per second.
         - disable_tqdm:
             Whether to disable the progress bar.
         - tank_start_temperature:
@@ -696,6 +715,7 @@ def run_simulation(
     electricity_demands: DefaultDict[int, float] = defaultdict(float)
     hot_water_demand_temperatures: Dict[int, float | None] = {}
     hot_water_demand_volumes: Dict[int, float | None] = {}
+    max_heat_pump_cost: float = 0
     pv_t_electrical_efficiencies: Dict[int, float | None] = {}
     pv_t_electrical_output_power: Dict[int, float | None] = {}
     pv_t_htf_output_temperatures: Dict[int, float | None] = {}
@@ -746,7 +766,7 @@ def run_simulation(
             solar_thermal_collector,
             solar_thermal_mass_flow_rate,
             _tank_ambient_temperature(ambient_temperatures[hour]),
-            _tank_replacement_temperature(hour),
+            _tank_replacement_temperature(ambient_temperatures[hour], desalination_plant.outputs(hour).hot_water_return_temperature),
         )
 
         # Determine the electricity demands of the plant including any auxiliary
@@ -764,21 +784,27 @@ def run_simulation(
                 ),
                 0,
             )  # [kW]
+
+            # Calculate the power consumption.
+            (
+                heat_pump_cost,
+                heat_pump_power_consumpion,
+            ) = calculate_heat_pump_electricity_consumption_and_cost(
+                desalination_plant.requirements(hour).hot_water_temperature,
+                ambient_temperatures[hour],
+                auxiliary_heating_demand,
+                heat_pump,
+            )
+
             auxiliary_heating_electricity_demand: float = max(
-                (
-                    calculate_heat_pump_electricity_consumption(
-                        desalination_plant.requirements(hour).hot_water_temperature,
-                        ambient_temperatures[hour],
-                        auxiliary_heating_demand,
-                        scenario.heat_pump_efficiency,
-                    )
-                ),
+                heat_pump_power_consumpion,
                 0,
             )  # [kW]
             electricity_demand: float = (
                 desalination_plant.requirements(hour).electricity  # [kW]
                 + auxiliary_heating_electricity_demand
             )
+            max_heat_pump_cost = max(heat_pump_cost, max_heat_pump_cost)
         else:
             auxiliary_heating_demand = 0
             auxiliary_heating_electricity_demand = 0
@@ -829,11 +855,22 @@ def run_simulation(
     # Compute the PV performance characteristics.
     if scenario.pv:
         logger.info("Computing PV performance characteristics.")
-        pv_electrical_efficiencies: Dict[int, float] | None = {
+        pv_performance_characteristics: Dict[
+            int, Tuple[float, float | None, float, float | None]
+        ] = {
             hour: pv_panel.calculate_performance(
-                ambient_temperatures[hour], logger, solar_irradiances[hour]
-            )[0]
+                ambient_temperatures[hour],
+                logger,
+                solar_irradiances[hour],
+                wind_speed=wind_speeds[hour],
+            )
             for hour in range(len(ambient_temperatures))
+        }
+        pv_electrical_efficiencies: Dict[int, float] | None = {
+            hour: entry[0] for hour, entry in pv_performance_characteristics.items()
+        }
+        pv_average_temperatures: Dict[int, float] | None = {
+            hour: entry[2] for hour, entry in pv_performance_characteristics.items()
         }
         pv_electrical_output_power: Dict[int, float] | None = {
             hour: (
@@ -855,6 +892,7 @@ def run_simulation(
     else:
         pv_electrical_efficiencies = None
         pv_electrical_output_power = None
+        pv_average_temperatures = None
         pv_system_electrical_output_power = None
 
     # Compute the output power from the various collectors.
@@ -873,8 +911,10 @@ def run_simulation(
         collector_input_temperatures,
         collector_system_output_temperatures,
         electricity_demands,
+        max_heat_pump_cost,
         hot_water_demand_temperatures,
         hot_water_demand_volumes,
+        pv_average_temperatures if scenario.pv else None,
         {ProfileDegradationType.UNDEGRADED.value: pv_electrical_efficiencies}
         if scenario.pv
         else None,
@@ -913,6 +953,7 @@ def determine_steady_state_simulation(
     battery_capacity: int | None,
     buffer_tank: HotWaterTank,
     desalination_plant: DesalinationPlant,
+    heat_pump: HeatPump,
     htf_mass_flow_rate: float,
     hybrid_pv_t_panel: HybridPVTPanel | None,
     logger: Logger,
@@ -924,6 +965,7 @@ def determine_steady_state_simulation(
     solar_thermal_collector: SolarThermalPanel | None,
     solar_thermal_system_size: int | None,
     system_lifetime: int,
+    wind_speeds: Dict[int, float],
     *,
     disable_tqdm: bool = False,
 ) -> Solution:
@@ -947,6 +989,8 @@ def determine_steady_state_simulation(
             The :class:`HotWaterTank` associated with the system.
         - desalination_plant:
             The :class:`DesalinationPlant` for which the systme is being simulated.
+        - heat_pump:
+            The :class:`HeatPump` to use for the run.
         - htf_mass_flow_rate:
             The mass flow rate of the HTF through the collectors.
         - hybrid_pv_t_panel:
@@ -969,6 +1013,8 @@ def determine_steady_state_simulation(
             The size of the solar-thermal system.
         - system_lifetime:
             The lifetime of the system in years.
+        - wind_speeds:
+            The wind speeds at each time step, measured in meters per second.
         - default_tank_temperature:
             The default tank temperature to use for running for consistency.
         - disable_tqdm:
@@ -988,6 +1034,7 @@ def determine_steady_state_simulation(
         ambient_temperatures,
         buffer_tank,
         desalination_plant,
+        heat_pump,
         htf_mass_flow_rate,
         hybrid_pv_t_panel,
         logger,
@@ -998,6 +1045,7 @@ def determine_steady_state_simulation(
         solar_irradiances,
         solar_thermal_collector,
         solar_thermal_system_size,
+        wind_speeds,
         tank_start_temperature=tank_start_temperature,
         disable_tqdm=disable_tqdm,
     )
@@ -1025,6 +1073,7 @@ def determine_steady_state_simulation(
                 ambient_temperatures,
                 buffer_tank,
                 desalination_plant,
+                heat_pump,
                 htf_mass_flow_rate,
                 hybrid_pv_t_panel,
                 logger,
@@ -1035,6 +1084,7 @@ def determine_steady_state_simulation(
                 solar_irradiances,
                 solar_thermal_collector,
                 solar_thermal_system_size,
+                wind_speeds,
                 disable_tqdm=disable_tqdm,
                 tank_start_temperature=tank_start_temperature,
             )

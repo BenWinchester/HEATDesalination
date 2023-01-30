@@ -1,0 +1,868 @@
+---
+################################################################################
+# solar.yaml - The solar collectors being modelled.                            #
+#                                                                              #
+# Author: Ben Winchester                                                       #
+# Copyright: Ben Winchester, 2022                                              #
+# Date created: 18/10/2022                                                     #
+# License: Open source                                                         #
+################################################################################
+
+# Values for the absorptivity and emissivity of the collectors were taken as
+# average values from Guarracino et al.
+#
+
+solar_collectors:
+  ##############
+  # PV Modules #
+  ##############
+  - name: !!str dusol_ds60275_m
+    type: !!str pv
+    absorptivity: 0.93
+    area: !!float 1.638  # [m^2]
+    cost: !!float 100  # [USD/panel]
+    emissivity: 0.9
+    land_use: !!float 1.638  # [m^2]
+    reference_efficiency: !!float 0.1692
+    reference_temperature: !!float 25  # [degC]
+    thermal_coefficient: !!float 0.0044  # [%/degC]
+    pv_unit: !!float 0.275   # [kWp]
+  - name: !!str dusol_ds60280_m
+    type: !!str pv
+    absorptivity: 0.93
+    area: !!float 1.638  # [m^2]
+    cost: !!float 100  # [USD/panel]
+    emissivity: 0.9
+    land_use: !!float 1.638  # [m^2]
+    reference_efficiency: !!float 0.1723
+    reference_temperature: !!float 25  # [degC]
+    thermal_coefficient: !!float 0.0044  # [%/degC]
+    pv_unit: !!float 0.280   # [kWp]
+  - name: !!str dusol_ds60280_m
+    type: !!str pv
+    absorptivity: 0.93
+    area: !!float 1.638  # [m^2]
+    cost: !!float 100  # [USD/panel]
+    emissivity: 0.9
+    land_use: !!float 1.65  # [m^2]
+    reference_efficiency: !!float 0.1754
+    reference_temperature: !!float 25  # [degC]
+    thermal_coefficient: !!float 0.0044  # [%/degC]
+    pv_unit: !!float 0.285   # [kWp]
+  - name: !!str dusol_ds60280_m
+    type: !!str pv
+    absorptivity: 0.93
+    area: !!float 1.638  # [m^2]
+    cost: !!float 100  # [USD/panel]
+    emissivity: 0.9
+    land_use: !!float 1.638  # [m^2]
+    reference_efficiency: !!float 0.1784
+    reference_temperature: !!float 25  # [degC]
+    thermal_coefficient: !!float 0.0044  # [%/degC]
+    pv_unit: !!float 0.290   # [kWp]
+
+  ###################
+  # PV-T Collectors #
+  ###################
+
+  # Abora datasheet:
+  #     https://abora-solar.com/wp-content/uploads/2022/07/
+  # ... Panel-aH72SK_EN_v5_220718_compressed.pdf
+  # WARNING: Abora manufacturer data has not been validated
+  # !! Use this data sheet with caution !!
+  - name: !!str abora_h72sk
+    type: !!str pv_t
+    area: !!float 1.9602  # [m^2]
+    cost: !!float 350  # [USD/panel]
+    land_use: !!float 1.9602  # [m^2]
+    max_mass_flow_rate: null  # [NaN]
+    min_mass_flow_rate: !!float 20  # [l/h]
+    nominal_mass_flow_rate: !!float 60  # [l/h]
+    pv_module_characteristics:
+      nominal_power: !!float 0.350  # [W]
+      reference_efficiency: !!float 0.178
+      reference_temperature: !!float 25  # [degC]
+      thermal_coefficient: !!float 0.0036  # [%/degC]
+    thermal_performance_curve:
+      zeroth_order: !!float 0.700
+      first_order: !!float -5.98  # [W/degC]
+      second_order: !!float 0
+
+  # Dualsun datasheet:
+  #     https://my.dualsun.com/wp-content/uploads/sites/2/2021/11/
+  # ... DualSun-EN-Datasheet-SPRING-400-Shingle-Black.pdf
+
+  - name: !!str dualsun_spring_uninsulated
+    type: !!str pv_t
+    area: !!float 1.876  # [m^2]
+    cost: !!float 300  # [USD/panel]
+    land_use: !!float 1.876  # [m^2]
+    max_mass_flow_rate: null  # [NaN]
+    min_mass_flow_rate: !!float 20  # [l/h]
+    nominal_mass_flow_rate: !!float 60  # [l/h]
+    pv_module_characteristics:
+      nominal_power: !!float 0.400  # [W]
+      reference_efficiency: !!float 0.213  # Between 0 and 1
+      reference_temperature: !!float 25  # [degC]
+      thermal_coefficient: !!float 0.0034  # [%/degC]
+    thermal_performance_curve:
+      zeroth_order: !!float 0.633
+      first_order: !!float -11.5  # [W/m^2K]
+      second_order: !!float 0
+  - name: !!str dualsun_spring_insulated
+    type: !!str pv_t
+    area: !!float 1.876  # [m^2]
+    cost: !!float 300  # [USD/panel]
+    land_use: !!float 1.876  # [m^2]
+    max_mass_flow_rate: null  # [NaN]
+    min_mass_flow_rate: !!float 20  # [l/h]
+    nominal_mass_flow_rate: !!float 60  # [l/h]
+    pv_module_characteristics:
+      nominal_power: !!float 0.400  # [W]
+      reference_efficiency: !!float 0.213  # Between 0 and 1
+      reference_temperature: !!float 25  # [degC]
+      thermal_coefficient: !!float 0.0034  # [%/degC]
+    thermal_performance_curve:
+      zeroth_order: !!float 0.621
+      first_order: !!float -7.4  # [W/m^2K]
+      second_order: !!float 0
+  - name: !!str dualsun_spring_insulated_discounted
+    type: !!str pv_t
+    area: !!float 1.876  # [m^2]
+    cost: !!float 150  # [USD/panel]
+    land_use: !!float 1.876  # [m^2]
+    max_mass_flow_rate: null  # [NaN]
+    min_mass_flow_rate: !!float 20  # [l/h]
+    nominal_mass_flow_rate: !!float 60  # [l/h]
+    pv_module_characteristics:
+      nominal_power: !!float 0.400  # [W]
+      reference_efficiency: !!float 0.213  # Between 0 and 1
+      reference_temperature: !!float 25  # [degC]
+      thermal_coefficient: !!float 0.0034  # [%/degC]
+    thermal_performance_curve:
+      zeroth_order: !!float 0.621
+      first_order: !!float -7.4  # [W/m^2K]
+      second_order: !!float 0
+
+  #########################
+  # Flat-plate collectors #
+  #########################
+  - area: !!float 1.885
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
+    land_use: !!float 2.106
+    max_mass_flow_rate: !!float 180
+    min_mass_flow_rate: !!float 15
+    name: !!str fk_basic
+    nominal_mass_flow_rate: !!float 50
+    thermal_performance_curve:
+      first_order: !!float -3.53
+      second_order: !!float -0.0047
+      zeroth_order: !!float 0.694
+    type: !!str solar_thermal
+  - area: !!float 2.278
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
+    land_use: !!float 2.516
+    max_mass_flow_rate: !!float 250
+    min_mass_flow_rate: !!float 60
+    name: !!str gaia_run_2_55_blue_s_c&g_energy_klb_2_5_regulus_kps11
+    nominal_mass_flow_rate: !!float 125
+    thermal_performance_curve:
+      first_order: !!float -4.05
+      second_order: !!float -0.0062
+      zeroth_order: !!float 0.716
+    type: !!str solar_thermal
+  - area: !!float 1.887
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
+    land_use: !!float 2.11
+    max_mass_flow_rate: !!float 200
+    min_mass_flow_rate: !!float 50
+    name: !!str gaia_run_2_15_blue_s
+    nominal_mass_flow_rate: !!float 100
+    thermal_performance_curve:
+      first_order: !!float -3.93
+      second_order: !!float -0.0066
+      zeroth_order: !!float 0.702
+    type: !!str solar_thermal
+  - area: !!float 3.03
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
+    land_use: !!float 3.215
+    max_mass_flow_rate: !!float 220
+    min_mass_flow_rate: !!float 70
+    name: !!str hewalex_ks_3200f
+    nominal_mass_flow_rate: !!float 120
+    thermal_performance_curve:
+      first_order: !!float -3.91
+      second_order: !!float -0.0048
+      zeroth_order: !!float 0.793
+    type: !!str solar_thermal
+  - area: !!float 2.14
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
+    land_use: !!float 2.301
+    max_mass_flow_rate: !!float 1600
+    min_mass_flow_rate: !!float 46
+    name: !!str thermital_tsol_25_4_flex
+    nominal_mass_flow_rate: !!float 70
+    thermal_performance_curve:
+      first_order: !!float -4
+      second_order: !!float -0.006
+      zeroth_order: !!float 0.75
+    type: !!str solar_thermal
+  - area: !!float 2.141
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
+    land_use: !!float 2.301
+    max_mass_flow_rate: !!float 1000
+    min_mass_flow_rate: !!float 30
+    name: !!str thermital_tsol_25_2_premium
+    nominal_mass_flow_rate: !!float 70
+    thermal_performance_curve:
+      first_order: !!float -4.12
+      second_order: !!float -0.0056
+      zeroth_order: !!float 0.768
+    type: !!str solar_thermal
+  - area: !!float 2.325
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
+    land_use: !!float 2.575
+    max_mass_flow_rate: !!float 185
+    min_mass_flow_rate: !!float 100
+    name: !!str unical_titanium_xl
+    nominal_mass_flow_rate: !!float 130
+    thermal_performance_curve:
+      first_order: !!float -3.77
+      second_order: !!float -0.0025
+      zeroth_order: !!float 0.702
+    type: !!str solar_thermal
+  - area: !!float 1.775
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
+    land_use: !!float 1.998
+    max_mass_flow_rate: !!float 150
+    min_mass_flow_rate: !!float 75
+    name: !!str unical_titanium
+    nominal_mass_flow_rate: !!float 100
+    thermal_performance_curve:
+      first_order: !!float -3.57
+      second_order: !!float -0.0065
+      zeroth_order: !!float 0.719
+    type: !!str solar_thermal
+  - area: !!float 1.887
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
+    land_use: !!float 2.11
+    max_mass_flow_rate: !!float 200
+    min_mass_flow_rate: !!float 50
+    name: !!str c&g_energy_klb_2_0
+    nominal_mass_flow_rate: !!float 100
+    thermal_performance_curve:
+      first_order: !!float -3.93
+      second_order: !!float -0.0066
+      zeroth_order: !!float 0.702
+    type: !!str solar_thermal
+  - area: !!float 2.325
+    # Mean FPC cost value used
+    cost: !!float 735  # [USD/collector]
+    land_use: !!float 2.575
+    max_mass_flow_rate: !!float 185
+    min_mass_flow_rate: !!float 100
+    name: !!str sunerg_h1tx+
+    nominal_mass_flow_rate: !!float 130
+    thermal_performance_curve:
+      first_order: !!float -3.77
+      second_order: !!float -0.0025
+      zeroth_order: !!float 0.702
+    type: !!str solar_thermal
+  - area: !!float 2.39
+    cost: !!float 4201  # [USD/collector]
+    land_use: !!float 2.61
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str c20_(wagner__&_co)
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -3.09
+      second_order: !!float -0.0095
+      zeroth_order: !!float 0.778
+    type: !!str solar_thermal
+  - area: !!float 2
+    cost: !!float 755  # [USD/collector]
+    land_use: !!float 2.3
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str topson_f3_1_(wolf,_germany_t)
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -2.81
+      second_order: !!float -0.0102
+      zeroth_order: !!float 0.699
+    type: !!str solar_thermal
+  - area: !!float 2.4
+    cost: !!float 565  # [USD/collector]
+    land_use: !!float 2.5
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str t25s_(termicol,_spain)
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -5.32
+      second_order: !!float -0.0211
+      zeroth_order: !!float 0.728
+    type: !!str solar_thermal
+  - area: !!float 1.9
+    cost: !!float 635  # [USD/collector]
+    land_use: !!float 2.1
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str t8s_(termicol,_spain)
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -3.31
+      second_order: !!float -0.0136
+      zeroth_order: !!float 0.727
+    type: !!str solar_thermal
+  - area: !!float 2.4
+    cost: !!float 745  # [USD/collector]
+    land_use: !!float 2.6
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str t10s_(termicol,_spain)
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -3.78
+      second_order: !!float -0.0009
+      zeroth_order: !!float 0.755
+    type: !!str solar_thermal
+  - area: !!float 2.44
+    cost: !!float 345  # [USD/collector]
+    land_use: !!float 2.65
+    max_mass_flow_rate: !!float 150
+    min_mass_flow_rate: !!float 50
+    name: !!str es2v_2_65_al_cu_(ensol,_poland)
+    nominal_mass_flow_rate: !!float 90
+    thermal_performance_curve:
+      first_order: !!float -3.61
+      second_order: !!float -0.0138
+      zeroth_order: !!float 0.784
+    type: !!str solar_thermal
+  - area: !!float 1.94
+    cost: !!float 307  # [USD/collector]
+    land_use: !!float 2.1
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str ksg_21_premium_gt_(galmet,_poland)
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -3.51
+      second_order: !!float -0.0111
+      zeroth_order: !!float 0.766
+    type: !!str solar_thermal
+  - area: !!float 2.06
+    cost: !!float 669  # [USD/collector]
+    land_use: !!float 2.22
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str rst_sol_4_niox_(reinhard_solartechnik,germany)
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -4.09
+      second_order: !!float -0.0040
+      zeroth_order: !!float 0.780
+    type: !!str solar_thermal
+  - area: !!float 2.22
+    cost: !!float 379  # [USD/collector]
+    land_use: !!float 2.52
+    max_mass_flow_rate: !!float 100.8
+    min_mass_flow_rate: !!float 37.8
+    name: !!str fkf_240_alal_(sti_solar,_germany)
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -3.35
+      second_order: !!float -0.0150
+      zeroth_order: !!float 0.714
+    type: !!str solar_thermal
+  - area: !!float 2.22
+    cost: !!float 469  # [USD/collector]
+    land_use: !!float 2.52
+    max_mass_flow_rate: !!float 100.8
+    min_mass_flow_rate: !!float 37.8
+    name: !!str fkf_240_cucu_(sti_solar,_germany)
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -3.63
+      second_order: !!float -0.0106
+      zeroth_order: !!float 0.710
+    type: !!str solar_thermal
+  - area: !!float 0.896
+    cost: !!float 199  # [USD/collector]
+    land_use: !!float 0.957
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str sti_fino_(sti_solar,_germany)
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -3.25
+      second_order: !!float -0.0075
+      zeroth_order: !!float 0.684
+    type: !!str solar_thermal
+  - area: !!float 2.3
+    cost: !!float 638  # [USD/collector]
+    land_use: !!float 2.59
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str solarplan_fk_26_wb_serie_b___807227
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -3.15
+      second_order: !!float -0.0150
+      zeroth_order: !!float 0.702
+    type: !!str solar_thermal
+  - area: !!float 2.31
+    cost: !!float 586  # [USD/collector]
+    land_use: !!float 2.55
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str solarplan_fk_25_rc_serie_c___807234
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -3.47
+      second_order: !!float -0.0126
+      zeroth_order: !!float 0.725
+    type: !!str solar_thermal
+  - area: !!float 2.64
+    cost: !!float 362  # [USD/collector]
+    land_use: !!float 2.85
+    max_mass_flow_rate: !!float 170
+    min_mass_flow_rate: !!float 70
+    name: !!str sunex_typ_sx_2_85_al
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -2.99
+      second_order: !!float -0.0176
+      zeroth_order: !!float 0.751
+    type: !!str solar_thermal
+  - area: !!float 2.18
+    cost: !!float 672  # [USD/collector]
+    land_use: !!float 2.37
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str junkers__fkc_2s
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -2.96
+      second_order: !!float -0.0140
+      zeroth_order: !!float 0.720
+    type: !!str solar_thermal
+  - area: !!float 1.92
+    cost: !!float 436  # [USD/collector]
+    land_use: !!float 2.09
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str junkers_fcc_2s
+    nominal_mass_flow_rate: !!float 150
+    thermal_performance_curve:
+      first_order: !!float -3.78
+      second_order: !!float -0.0110
+      zeroth_order: !!float 0.705
+    type: !!str solar_thermal
+  - area: !!float 2.35
+    cost: !!float 664  # [USD/collector]
+    land_use: !!float 2.51
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str remasol_c_250_h
+    nominal_mass_flow_rate: !!float 60
+    thermal_performance_curve:
+      first_order: !!float -3.45
+      second_order: !!float -0.0083
+      zeroth_order: !!float 0.770
+    type: !!str solar_thermal
+  - area: !!float 2.38
+    cost: !!float 902  # [USD/collector]
+    land_use: !!float 2.53
+    max_mass_flow_rate: !!float 300
+    min_mass_flow_rate: !!float 50
+    name: !!str stiebel_sol_27_basic
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -3.22
+      second_order: !!float -0.0134
+      zeroth_order: !!float 0.743
+    type: !!str solar_thermal
+  - area: !!float 2.169965517
+    # cost: !!float 735  # [USD/collector]
+    cost: !!float 700  # [USD/collector]
+    land_use: !!float 2.375310345
+    max_mass_flow_rate: null
+    min_mass_flow_rate: !!float 56.10666667
+    name: !!str mean_fpc
+    nominal_mass_flow_rate: !!float 97.85714286
+    thermal_performance_curve:
+      first_order: !!float -3.619626844
+      second_order: !!float -0.009328034801
+      zeroth_order: !!float 0.7334194095
+    type: !!str solar_thermal
+
+  #############################
+  # Evacuated-tube collectors #
+  #############################
+
+  - area: !!float 1.21
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    land_use: !!float 2.267
+    max_mass_flow_rate: !!float 50
+    min_mass_flow_rate: !!float 18
+    name: !!str nmt_vhp
+    nominal_mass_flow_rate: !!float 30
+    thermal_performance_curve:
+      first_order: !!float -1.26
+      second_order: !!float -0.0014
+      zeroth_order: !!float 0.398
+    type: !!str solar_thermal
+  - area: !!float 0.516
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    land_use: !!float 1.109
+    max_mass_flow_rate: !!float 50
+    min_mass_flow_rate: !!float 18
+    name: !!str fk_solinas_3_plus_kurz
+    nominal_mass_flow_rate: !!float 30
+    thermal_performance_curve:
+      first_order: !!float -1.47
+      second_order: !!float -0.0038
+      zeroth_order: !!float 0.34
+    type: !!str solar_thermal
+  - area: !!float 1.21
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    land_use: !!float 2.267
+    max_mass_flow_rate: !!float 50
+    min_mass_flow_rate: !!float 18
+    name: !!str fk_solinas_3_plus_kurz
+    nominal_mass_flow_rate: !!float 30
+    thermal_performance_curve:
+      first_order: !!float -1.43
+      second_order: !!float -0.0005
+      zeroth_order: !!float 0.394
+    type: !!str solar_thermal
+  - area: !!float 1.21
+    cost: !!float 655  # [USD/collector]
+    land_use: !!float 2.267
+    max_mass_flow_rate: !!float 50
+    min_mass_flow_rate: !!float 18
+    name: !!str fk_solinas_3
+    nominal_mass_flow_rate: !!float 30
+    thermal_performance_curve:
+      first_order: !!float -1.29
+      second_order: !!float -0.0014
+      zeroth_order: !!float 0.398
+    type: !!str solar_thermal
+  - area: !!float 3.018
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    land_use: !!float 4.147
+    max_mass_flow_rate: !!float 300
+    min_mass_flow_rate: !!float 100
+    name: !!str enersol_hp_70_24_wikosun_hp_70_24_zewotherm_zx_70_24_sunstar_2470_germanstar_hp_70_24
+    nominal_mass_flow_rate: !!float 200
+    thermal_performance_curve:
+      first_order: !!float -1.14
+      second_order: !!float -0.0012
+      zeroth_order: !!float 0.608
+    type: !!str solar_thermal
+  - area: !!float 1.006
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    land_use: !!float 1.405
+    max_mass_flow_rate: !!float 300
+    min_mass_flow_rate: !!float 100
+    name: !!str enersol_hp_70_8_wikosun_hp_70_8_zewotherm_zx_70_8_sunstar_0870_germanstar_hp_70_8
+    nominal_mass_flow_rate: !!float 200
+    thermal_performance_curve:
+      first_order: !!float -1.17
+      second_order: !!float -0.004
+      zeroth_order: !!float 0.6
+    type: !!str solar_thermal
+  - area: !!float 1.332
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    land_use: !!float 2.034
+    max_mass_flow_rate: !!float 175
+    min_mass_flow_rate: !!float 75
+    name: !!str as_100_hp8
+    nominal_mass_flow_rate: !!float 125
+    thermal_performance_curve:
+      first_order: !!float -0.84
+      second_order: !!float -0.0039
+      zeroth_order: !!float 0.534
+    type: !!str solar_thermal
+  - area: !!float 2.019
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    land_use: !!float 2.172
+    max_mass_flow_rate: !!float 720
+    min_mass_flow_rate: !!float 6
+    name: !!str hv12
+    nominal_mass_flow_rate: !!float 72
+    thermal_performance_curve:
+      first_order: !!float -0.93
+      second_order: !!float -0.0033
+      zeroth_order: !!float 0.541
+    type: !!str solar_thermal
+  - area: !!float 1.601
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    land_use: !!float 2.369
+    max_mass_flow_rate: !!float 200
+    min_mass_flow_rate: !!float 100
+    name: !!str eurosun_df120_6
+    nominal_mass_flow_rate: !!float 120
+    thermal_performance_curve:
+      first_order: !!float -0.75
+      second_order: !!float -0.0041
+      zeroth_order: !!float 0.572
+    type: !!str solar_thermal
+  - area: !!float 2.481
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    land_use: !!float 4.322
+    max_mass_flow_rate: !!float 400
+    min_mass_flow_rate: !!float 90
+    name: !!str zewotherm_zx_30
+    nominal_mass_flow_rate: !!float 240
+    thermal_performance_curve:
+      first_order: !!float -0.51
+      second_order: !!float -0.0114
+      zeroth_order: !!float 0.414
+    type: !!str solar_thermal
+  - area: !!float 1.654
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    land_use: !!float 2.919
+    max_mass_flow_rate: !!float 250
+    min_mass_flow_rate: !!float 60
+    name: !!str zewotherm_zx_20
+    nominal_mass_flow_rate: !!float 160
+    thermal_performance_curve:
+      first_order: !!float -1.32
+      second_order: !!float -0.0033
+      zeroth_order: !!float 0.424
+    type: !!str solar_thermal
+  - area: !!float 3.01
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    land_use: !!float 4.613
+    max_mass_flow_rate: !!float 240
+    min_mass_flow_rate: !!float 150
+    name: !!str olymp_sunstar_500
+    nominal_mass_flow_rate: !!float 180
+    thermal_performance_curve:
+      first_order: !!float -1.21
+      second_order: !!float -0.0005
+      zeroth_order: !!float 0.544
+    type: !!str solar_thermal
+  - area: !!float 2.007
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    land_use: !!float 3.071
+    max_mass_flow_rate: !!float 160
+    min_mass_flow_rate: !!float 100
+    name: !!str olymp_sunstar_300
+    nominal_mass_flow_rate: !!float 120
+    thermal_performance_curve:
+      first_order: !!float -1.14
+      second_order: !!float -0.0021
+      zeroth_order: !!float 0.544
+    type: !!str solar_thermal
+  - area: !!float 2.401
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    land_use: !!float 4.949
+    max_mass_flow_rate: !!float 300
+    min_mass_flow_rate: !!float 120
+    name: !!str atmosfera_cbk_a_58_30
+    nominal_mass_flow_rate: !!float 180
+    thermal_performance_curve:
+      first_order: !!float -1.22
+      second_order: !!float -0.0051
+      zeroth_order: !!float 0.373
+    type: !!str solar_thermal
+  - area: !!float 3.012
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    land_use: !!float 4.613
+    max_mass_flow_rate: !!float 240
+    min_mass_flow_rate: !!float 150
+    name: !!str wikosun_df_65_30
+    nominal_mass_flow_rate: !!float 180
+    thermal_performance_curve:
+      first_order: !!float -1.21
+      second_order: !!float -0.0013
+      zeroth_order: !!float 0.542
+    type: !!str solar_thermal
+  - area: !!float 1.004
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    land_use: !!float 1.538
+    max_mass_flow_rate: !!float 160
+    min_mass_flow_rate: !!float 100
+    name: !!str wikosun_df_65_10
+    nominal_mass_flow_rate: !!float 120
+    thermal_performance_curve:
+      first_order: !!float -1.51
+      second_order: !!float -0.0001
+      zeroth_order: !!float 0.552
+    type: !!str solar_thermal
+  - area: None
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    land_use: !!float 3.08
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str pe20_58_16_(projprzem_eko,_poland)
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: None
+      second_order: None
+      zeroth_order: None
+    type: !!str solar_thermal
+  - area: None
+    cost: !!float 797  # [USD/collector]
+    land_use: !!float 1.73
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str sunpur_10hp___sun5hp_(orange_energy)
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -0.39
+      second_order: !!float -0.0050
+      zeroth_order: !!float 0.42
+    type: !!str solar_thermal
+  - area: None
+    cost: !!float 878  # [USD/collector]
+    land_use: !!float 1.51
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str as_100_df_6_(augusta_solar,_germany)
+    nominal_mass_flow_rate: !!float 75
+    thermal_performance_curve:
+      first_order: !!float -1.03
+      second_order: !!float -0.0052
+      zeroth_order: !!float 0.55
+    type: !!str solar_thermal
+  - area: !!float 1.87
+    cost: !!float 599  # [USD/collector]
+    land_use: !!float 3.1
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str eurotherm_solar_pro_20r
+    nominal_mass_flow_rate: !!float 120
+    thermal_performance_curve:
+      first_order: !!float -1.01
+      second_order: !!float -0.0104
+      zeroth_order: !!float 0.44
+    type: !!str solar_thermal
+  - area: !!float 1.88
+    cost: !!float 420  # [USD/collector]
+    land_use: !!float 3.1
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str eurotherm_solar_20r
+    nominal_mass_flow_rate: !!float 120
+    thermal_performance_curve:
+      first_order: !!float -0.88
+      second_order: !!float -0.0120
+      zeroth_order: !!float 0.39
+    type: !!str solar_thermal
+  - area: !!float 2.91
+    cost: !!float 549  # [USD/collector]
+    land_use: !!float 3.43
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str eurotherm_solar_cpc_16r
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -1.21
+      second_order: !!float -0.0040
+      zeroth_order: !!float 0.54
+    type: !!str solar_thermal
+  - area: !!float 2.84
+    cost: !!float 1287  # [USD/collector]
+    land_use: !!float 3.26
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str solarbayer_cpc_14_nero_brutto
+    nominal_mass_flow_rate: !!float 200
+    thermal_performance_curve:
+      first_order: !!float -0.93
+      second_order: !!float -0.0040
+      zeroth_order: !!float 0.63
+    type: !!str solar_thermal
+  - area: None
+    cost: !!float 664  # [USD/collector]
+    land_use: !!float 3.61
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str sunex_hp_22
+    nominal_mass_flow_rate: !!float 54
+    thermal_performance_curve:
+      first_order: !!float -1.24
+      second_order: !!float -0.0040
+      zeroth_order: !!float 0.43
+    type: !!str solar_thermal
+  - area: !!float 1.1
+    cost: !!float 702  # [USD/collector]
+    land_use: !!float 2.05
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str sunex_pr_2_09
+    nominal_mass_flow_rate: !!float 60
+    thermal_performance_curve:
+      first_order: None
+      second_order: None
+      zeroth_order: !!float 0.45
+    type: !!str solar_thermal
+  - area: None
+    cost: !!float 494  # [USD/collector]
+    land_use: !!float 1.22
+    max_mass_flow_rate: None
+    min_mass_flow_rate: None
+    name: !!str logasol_skr10_cpc_(buderus,_germany)
+    nominal_mass_flow_rate: None
+    thermal_performance_curve:
+      first_order: !!float -0.63
+      second_order: !!float -0.0096
+      zeroth_order: !!float 0.53
+    type: !!str solar_thermal
+  - area: !!float 2
+    cost: !!float 1701  # [USD/collector]
+    land_use: !!float 2.78
+    max_mass_flow_rate: !!float 300
+    min_mass_flow_rate: !!float 100
+    name: !!str germanstar_hp_70_16_(eurosun,_germany)
+    nominal_mass_flow_rate: !!float 200
+    thermal_performance_curve:
+      first_order: !!float -1.17
+      second_order: !!float -0.0040
+      zeroth_order: !!float 0.60
+    type: !!str solar_thermal
+  - area: !!float 1.876863636
+    # Mean ETC value used.
+    cost: !!float 767  # [USD/collector]
+    land_use: !!float 2.775259259
+    max_mass_flow_rate: !!float 232.0588235
+    min_mass_flow_rate: !!float 77.82352941
+    name: !!str mean_etc
+    nominal_mass_flow_rate: !!float 123.7391304
+    thermal_performance_curve:
+      first_order: !!float -1.075591267
+      second_order: !!float -0.004223480543
+      zeroth_order: !!float 0.4906945674
+    type: !!str solar_thermal

@@ -1062,8 +1062,8 @@ ax.clabel(contours, fontsize=10, colors=line_colors)
 ax.set_xlabel("Solar-thermal capacity / collectors")
 ax.set_ylabel("PV-T capacity / collectors")
 
-# fig.colorbar(cpf, ax=ax, label="Total lifetime cost / MUSD")
-fig.colorbar(cpf, ax=ax, label="Auxiliary heating fraction")
+fig.colorbar(cpf, ax=ax, label="Total lifetime cost / MUSD")
+# fig.colorbar(cpf, ax=ax, label="Auxiliary heating fraction")
 # fig.colorbar(cpf, ax=ax, label="Grid fraction")
 # fig.colorbar(cpf, ax=ax, label="Solar fraction")
 # fig.colorbar(cpf, ax=ax, label="Storage fraction")
@@ -1226,7 +1226,7 @@ plt.ylim(min(pv_sizes), max(pv_sizes))
 plt.show()
 
 plt.savefig(
-    "parameter_optimisation_heatmap.png",
+    "pv_batt_parameter_optimisation_heatmap.png",
     dpi=1200,
     transparent=True,
     bbox_inches="tight",
@@ -2544,3 +2544,22 @@ with open(os.path.join("inputs", "grid_optimisations.json"), "w") as f:
 
 with open(os.path.join("inputs", "cheap_pv_t_grid_optimisations.json"), "w") as f:
     json.dump(cheap_pv_t_grid_optimisations, f)
+
+##############################################
+# Plotting collector performance information #
+##############################################
+
+plt.scatter([entry[(THERMAL_PERFORMANCE_CURVE:="thermal_performance_curve")][(ZEROTH_ORDER:="zeroth_order")] for entry in fpc_data], [entry[THERMAL_PERFORMANCE_CURVE][(FIRST_ORDER:="first_order")] for entry in fpc_data], marker="x", label="flat-plate")
+plt.scatter([entry[(THERMAL_PERFORMANCE_CURVE:="thermal_performance_curve")][(ZEROTH_ORDER:="zeroth_order")] for entry in etc_data], [entry[THERMAL_PERFORMANCE_CURVE][(FIRST_ORDER:="first_order")] for entry in etc_data], marker="x", label="evacuated-tube")
+plt.scatter(mean_fpc[THERMAL_PERFORMANCE_CURVE][ZEROTH_ORDER], mean_fpc[THERMAL_PERFORMANCE_CURVE][FIRST_ORDER], marker="o", color="C0", label="mean flat-plate")
+plt.scatter(mean_etc[THERMAL_PERFORMANCE_CURVE][ZEROTH_ORDER], mean_etc[THERMAL_PERFORMANCE_CURVE][FIRST_ORDER], marker="o", color="C1", label="mean evacuated-tube")
+plt.legend()
+plt.xlabel("Zeroth-order performance curve coefficient")
+plt.ylabel("First-order performance curve coefficient")
+plt.show()
+plt.savefig(
+    "solar_thermal_parameter_comparison.png",
+    dpi=1200,
+    transparent=True,
+    bbox_inches="tight",
+)
