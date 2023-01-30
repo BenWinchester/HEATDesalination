@@ -824,6 +824,12 @@ class Scenario:
     .. attribute:: htf_heat_capacity
         The heat capacity of the HTF.
 
+    .. attribute:: inverter_cost
+        The cost of the inverter for the solar system in USD/kW.
+
+    .. attribute:: inverter_lifetime
+        The lifetime of the inverter in years.
+
     .. attribute:: name
         The name of the scenario.
 
@@ -851,7 +857,7 @@ class Scenario:
     .. attribute:: solar_thermal_panel_name
         The name of the solar-thermal panel being considered.
 
-    .. attribute:: fractional_grid_price_change
+    .. attribute:: fractional_grid_cost_change
         The fractional change in the price of grid electricity.
 
     """
@@ -862,13 +868,15 @@ class Scenario:
     heat_pump: str
     hot_water_tank: str
     htf_heat_capacity: float
+    inverter_cost: float
+    inverter_lifetime: int
     name: str
     plant: str
     pv_degradation_rate: float
     _pv: bool | str
     _pv_t: bool | str
     _solar_thermal: bool | str
-    fractional_grid_price_change: float = 0
+    fractional_grid_cost_change: float = 0
 
     @property
     def pv(self) -> bool:  # pylint: disable=invalid-name
