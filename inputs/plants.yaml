@@ -37,7 +37,7 @@ desalination_plants:
   # Appl Therm Eng 2013;61:491–9.
   # https://doi.org/10.1016/j.applthermaleng.2013.08.006.
   # NOTE: This plant is capable of producing 3 m^3 of desalinated water per day.
-  - name: joo_med_24_hour
+  - name: !!str joo_med_24_hour
     operating_hours: !!int 24  # Number of operating hours per day
     plant_disabled:
       requirements:
@@ -48,7 +48,7 @@ desalination_plants:
       outputs:
         brine: !!float 0  # [kg/s] Volume produced per second
         clean_water: !!float 0  # [kg/s] Volume produced per second
-        hot_water_return_temperature: !!float null  # [degC] Hot-water return temp.
+        hot_water_return_temperature: null  # [degC] Hot-water return temp.
     plant_operating:
       requirements:
         electricity: !!float 0.2875  # [kW] Electricity requirements per second
@@ -56,8 +56,8 @@ desalination_plants:
           temperature: !!float 75  # [degC] Temperature of the hot-water input
           volume: !!float 0.91888888888  # [kg/s] Volume requirements per second
       outputs:
-        brine: !!float   # [kg/s] Volume produced per second
-        clean_water: !!float 0.01345833333 # [kg/s] Volume produced per second
+        brine: !!float 0.04583333333  # [kg/s] Volume produced per second
+        clean_water: !!float 0.01345833333  # [kg/s] Volume produced per second
         hot_water_return_temperature: !!float 65  # [degC] Hot-water return temp.
   # El-Nashar A.M., Samad M.,
   # The solar desalination plant in Abu Dhabi: 13 years of performance and
@@ -65,7 +65,7 @@ desalination_plants:
   # https://doi.org/10.1016/S0960-1481(98)00076-7.
   # NOTE: This plant is capable of producing 120 m^3 of desalinated water per
   # day and runs for 24 hours of the day.
-  - name: el_nashar_24_hour
+  - name: !!str el_nashar_24_hour
     operating_hours: !!int 24  # Number of operating hours per day
     plant_disabled:
       requirements:
@@ -76,6 +76,7 @@ desalination_plants:
       outputs:
         brine: !!float 0  # [kg/s] Volume produced per second
         clean_water: !!float 0  # [kg/s] Volume produced per second
+        hot_water_return_temperature: null
     plant_operating:
       requirements:
         electricity: !!float 11.5  # [kW] Electricity requirements per second
@@ -85,13 +86,15 @@ desalination_plants:
       outputs:
         brine: null  # [kg/s] Volume produced per second
         clean_water: !!float 1.38888888889  # [kg/s] Volume produced per second
+        # NOTE: I am not confident about the 31 degC figure
+        hot_water_return_temperature: !!float 31  # [degC]
   # Rahimi B., May J., Christ A., Regenauer-Lieb K., Chua H.T.,
   # Thermo-economic analysis of two novel low grade sensible heat driven
   # desalination processes. Desalination 2015;365:316–28.
   # https://doi.org/10.1016/j.desal.2015.03.008.
   # NOTE: This plant is capable of producing 1700 m^3 of desalinated water per
   # day and runs for 24 hours of the day.
-  - name: rahimi_24_hour
+  - name: !!str rahimi_24_hour
     operating_hours: !!int 24  # Number of operating hours per day
     plant_disabled:
       requirements:
@@ -102,6 +105,7 @@ desalination_plants:
       outputs:
         brine: !!float 0  # [kg/s] Volume produced per second
         clean_water: !!float 0  # [kg/s] Volume produced per second
+        hot_water_return_temperature: null
     plant_operating:
       requirements:
         electricity: !!float 106.580833333  # [kW] Electricity requirements
@@ -111,3 +115,4 @@ desalination_plants:
       outputs:
         brine: !!float 19.4  # [kg/s] Volume produced per second
         clean_water: !!float 36  # [kg/s] Volume produced per second
+        hot_water_return_temperature: !!float 54.2  # [degC]

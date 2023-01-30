@@ -1,3 +1,13 @@
+---
+################################################################################
+# scenarios.yaml - The scenarios being considered.                             #
+#                                                                              #
+# Author: Ben Winchester                                                       #
+# Copyright: Ben Winchester, 2023                                              #
+# Date created: 30/01/2023                                                     #
+# License: Open source                                                         #
+################################################################################
+
 scenarios:
 - battery: default_battery
   fractional_grid_price_change: 0.0
@@ -7,11 +17,11 @@ scenarios:
   hot_water_tank: hot_water_tank
   htf_heat_capacity: 4182.0
   name: default_uae
-  plant: med
-  pv: dusol_ds60280_m
+  plant: joo_med_24_hour
+  pv: lg_solar_330_wpcello
   pv_degradation_rate: 0.011
-  pv_t: dualsun_spring_insulated
-  solar_thermal: mean_fpc
+  pv_t: dualsun_spring_300m_insulated
+  solar_thermal: eurotherm_solar_pro_20r
 - battery: default_battery
   fractional_grid_price_change: -0.25
   grid_cost: 0.1

@@ -56,6 +56,8 @@ solar_collectors:
   ############################
 
   # Flat-plate solar-thermal collectors
+  # STI Solar: FKF 240 CuCu
+  # https://www.sti-solar.de/zertifikate.html?file=files/sti-solar/content/download/zertifikate/fkf/FKF%20Datasheet%20Cu-Cu.pdf
   - area: !!float 2.22
     cost: !!float 494  # [USD/collector]
     land_use: !!float 2.52
@@ -63,6 +65,7 @@ solar_collectors:
     min_mass_flow_rate: !!float 37.8
     name: !!str sti_fkf_240_cucu
     nominal_mass_flow_rate: null
+    stagnation_temperature: !!float 183.4  # [degC]
     thermal_performance_curve:
       first_order: !!float -3.63
       second_order: !!float -0.0106
@@ -70,6 +73,8 @@ solar_collectors:
     type: !!str solar_thermal
 
   # Evacuated-tube solar-thermal collectors
+  # solardirekt24 gmbh: Eurotherm Solar Pro 20R
+  # https://www.solardirekt24.de/media/pdf/c5/7f/d2/vakuumrohrenkollektor_eurotherm_solar_pro_frauenhofer_ise_leistungsnachweis.pdf
   - area: !!float 1.87
     cost: !!float 631  # [USD/collector]
     land_use: !!float 3.1
@@ -77,11 +82,14 @@ solar_collectors:
     min_mass_flow_rate: null
     name: !!str eurotherm_solar_pro_20r
     nominal_mass_flow_rate: !!float 120
+    stagnation_temperature: 208  # [degC]
     thermal_performance_curve:
       first_order: !!float -1.01
       second_order: !!float -0.0104
       zeroth_order: !!float 0.44
     type: !!str solar_thermal
+  # Augusta Solar: AS 100 DF 6
+  # https://www.heatinglabel.de/sites/default/files/data/augusta-solar/files_public/15_09_26_Datenblatt_DF.pdf
   - area: 1.11
     cost: !!float 925  # [USD/collector]
     land_use: !!float 1.51
@@ -89,6 +97,7 @@ solar_collectors:
     min_mass_flow_rate: null
     name: !!str augusta_solar_as_100_df_6
     nominal_mass_flow_rate: !!float 75
+    stagnation_temperature: 271  # [degC]
     thermal_performance_curve:
       first_order: !!float -1.03
       second_order: !!float -0.0052
@@ -99,6 +108,8 @@ solar_collectors:
   # Hybrid photovoltaic-thermal collectors #
   ##########################################
 
+  # Dualsun: Spring 300M Insulated
+  # https://my.dualsun.com/wp-content/uploads/sites/2/DualSun-US-Datasheet-SPRING-300-Black.pdf
   - area: !!float 1.64
     cost: !!float 556
     land_use: !!float 1.64
@@ -111,11 +122,14 @@ solar_collectors:
       reference_efficiency: !!float 0.183
       reference_temperature: !!float 25  # [degC]
       thermal_coefficient: !!float 0.0039  # [%/degC]
+    stagnation_temperature: 75.6  # [degC]
     thermal_performance_curve:
       first_order: !!float -10.8
       second_order: !!float 0
       zeroth_order: !!float 0.852
     type: !!str pv_t
+  # Dualsun: Spring 400 Insulated (Shingle Black)
+  # https://my.dualsun.com/wp-content/uploads/sites/2/2021/11/DualSun-EN-Datasheet-SPRING-400-Shingle-Black.pdf
   - name: !!str dualsun_spring_400_insulated
     type: !!str pv_t
     area: !!float 1.876  # [m^2]
@@ -129,10 +143,14 @@ solar_collectors:
       reference_efficiency: !!float 0.213  # Between 0 and 1
       reference_temperature: !!float 25  # [degC]
       thermal_coefficient: !!float 0.0034  # [%/degC]
+    stagnation_temperature: !!float 90  # [degC]
     thermal_performance_curve:
       zeroth_order: !!float 0.621
       first_order: !!float -7.4  # [W/m^2K]
-      second_order: !!float 0  - area: !!float 1.64
+      second_order: !!float 0
+  # Solimpeks: Powervolt
+  # https://solimpeks.com.tr/wp-content/uploads/Solimpeks_English_Catalogue.pdf
+  - area: !!float 1.64
     cost: !!float 545
     land_use: !!float 1.37
     max_mass_flow_rate: null
@@ -144,6 +162,7 @@ solar_collectors:
       reference_efficiency: !!float 0.1508
       reference_temperature: !!float 25  # [degC]
       thermal_coefficient: !!float 0.0045  # [%/degC]
+    stagnation_temperature: 101  # [degC]
     thermal_performance_curve:
       first_order: !!float -8.37
       second_order: !!float -0.586
