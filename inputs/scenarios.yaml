@@ -20,7 +20,7 @@ scenarios:
   heat_pump: ammonia  # Name of the heat pump
   hot_water_tank: hot_water_tank  # Name of the hot-water tank
   htf_heat_capacity: 4182.0  # [J/kgK]
-  inverter_cost: 200  # [USD/kW]
+  inverter_cost: 148.5  # [USD/kW]
   inverter_lifetime: 13  # [years]
   name: default_uae  # Name of the scenario
   plant: joo_med_24_hour  # Name of the desalination plant to use
