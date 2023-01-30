@@ -10,12 +10,14 @@
 
 batteries:
   - name: !!str default_battery
-    capacity: !!float 1  # [kWh]
+    capacity: !!float 153.6  # [kWh]
     c_rate_charging: !!float 0.33  # Charge rate
     c_rate_discharging: !!float 0.33  # Discharge rate
     conversion_in: !!float 0.95  # Conversion efficiency (0.0 - 1.0)
     conversion_out: !!float 0.95  # Conversion efficiency (0.0 - 1.0)
-    cost: !!float 700  # [USD/kWh]
+    # Cost information from:
+    # https://uk.rs-online.com/web/p/speciality-size-rechargeable-batteries/1890274
+    cost: !!float 128.26  # [USD/kWh]
     cycle_lifetime: !!float 1500  # Expected number of cycles over lifetime
     maximum_charge: !!float 0.9  # State of charge (0.0 - 1.0)
     minimum_charge: !!float 0.4  # State of charge (0.0 - 1.0)

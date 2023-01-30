@@ -62,9 +62,9 @@ DESALINATION_PLANT_INPUTS: str = "plants.yaml"
 #   Keyword for desalination plants.
 DESALINATION_PLANTS: str = "desalination_plants"
 
-# FRACTIONAL_GRID_PRICE_CHANGE:
+# FRACTIONAL_GRID_cost_CHANGE:
 #   The fractional change in the price of grid electricity.
-FRACTIONAL_GRID_PRICE_CHANGE: str = "fractional_grid_price_change"
+FRACTIONAL_GRID_cost_CHANGE: str = "fractional_grid_cost_change"
 
 # GRID_COST:
 #   Keyword for the cost of grid (alternative/unmet) electricity.
@@ -101,6 +101,14 @@ HTF_HEAT_CAPACITY: str = "htf_heat_capacity"
 # INPUTS_DIRECTORY:
 #   The name of the inputs directory.
 INPUTS_DIRECTORY: str = "inputs"
+
+# INVERTER_COST:
+#   Keyword for the cost of the inverter installed.
+INVERTER_COST: str = "inverter_cost"
+
+# INVERTER_LIFETIME:
+#   Keyword for the lifetime of the inverter installed.
+INVERTER_LIFETIME: str = "inverter_lifetime"
 
 # OPTIMISATION_INPUTS:
 #   The name of the optimisation inputs file.
@@ -222,13 +230,15 @@ def parse_input_files(
             entry[HEAT_PUMP],
             entry[HOT_WATER_TANK],
             entry[HTF_HEAT_CAPACITY],
+            entry[INVERTER_COST],
+            entry[INVERTER_LIFETIME],
             entry[NAME],
             entry[PLANT],
             entry[PV_DEGRADATION_RATE],
             entry[PV],
             entry[PV_T],
             entry[SOLAR_THERMAL],
-            entry.get(FRACTIONAL_GRID_PRICE_CHANGE, 0),
+            entry.get(FRACTIONAL_GRID_cost_CHANGE, 0),
         )
         for entry in scenario_inputs[SCENARIOS]
     ]
