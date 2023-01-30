@@ -1,0 +1,151 @@
+---
+################################################################################
+# solar.yaml - The solar collectors being modelled.                            #
+#                                                                              #
+# Author: Ben Winchester                                                       #
+# Copyright: Ben Winchester, 2023                                              #
+# Date created: 25/01/2023                                                     #
+# License: Open source                                                         #
+################################################################################
+
+# This file contains a list of the solar collectors which were selected for
+# consideration for submission to ECOS, 2023.
+#
+
+# Values for the absorptivity and emissivity of the collectors were taken as
+# average values used in Guarracino et al. and Hoang et al., originally
+# published in Aly et al.:
+#
+# Aly S.P., John J.J., Mathiak G., Albadwawi O., Pomares L., Alberts V.,
+# A thermal model for bifacial PV panels.
+# 2022 IEEE 49th Photovoltaics Specialists Conference (PVSC), 2022, p. 0457–9.
+# https://doi.org/10.1109/PVSC48317.2022.9938549.
+#
+# Hoang P., Bourdin V., Liu Q., Caruso G., Archambault V.,
+# Coupling optical and thermal models to accurately predict PV panel
+# electricity production.
+# Solar Energy Materials and Solar Cells 2014;125:325–38.
+# https://doi.org/10.1016/j.solmat.2013.11.032.
+#
+# Guarracino I., Mellor A., Ekins-Daukes N.J., Markides C.N.,
+# Dynamic coupled thermal-and-electrical modelling of sheet-and-tube hybrid
+# photovoltaic/thermal (PVT) collectors.
+# Applied Thermal Engineering 2016;101:778–95.
+# https://doi.org/10.1016/j.applthermaleng.2016.02.056.
+#
+
+solar_collectors:
+
+  #################
+  # PV collectors #
+  #################
+  - name: !!str lg_solar_330_wpcello
+    type: !!str pv
+    absorptivity: 0.93
+    area: !!float 1.71  # [m^2]
+    cost: !!float 313  # [USD/panel]
+    emissivity: 0.9
+    land_use: !!float 1.71  # [m^2]
+    reference_efficiency: !!float 0.193
+    reference_temperature: !!float 25  # [degC]
+    thermal_coefficient: !!float 0.0037  # [perf./degC]
+    pv_unit: !!float 0.330   # [kWp]
+
+  ############################
+  # Solar-thermal collectors #
+  ############################
+
+  # Flat-plate solar-thermal collectors
+  - area: !!float 2.22
+    cost: !!float 494  # [USD/collector]
+    land_use: !!float 2.52
+    max_mass_flow_rate: !!float 100.8
+    min_mass_flow_rate: !!float 37.8
+    name: !!str sti_fkf_240_cucu
+    nominal_mass_flow_rate: null
+    thermal_performance_curve:
+      first_order: !!float -3.63
+      second_order: !!float -0.0106
+      zeroth_order: !!float 0.710
+    type: !!str solar_thermal
+
+  # Evacuated-tube solar-thermal collectors
+  - area: !!float 1.87
+    cost: !!float 631  # [USD/collector]
+    land_use: !!float 3.1
+    max_mass_flow_rate: null
+    min_mass_flow_rate: null
+    name: !!str eurotherm_solar_pro_20r
+    nominal_mass_flow_rate: !!float 120
+    thermal_performance_curve:
+      first_order: !!float -1.01
+      second_order: !!float -0.0104
+      zeroth_order: !!float 0.44
+    type: !!str solar_thermal
+  - area: 1.11
+    cost: !!float 925  # [USD/collector]
+    land_use: !!float 1.51
+    max_mass_flow_rate: null
+    min_mass_flow_rate: null
+    name: !!str augusta_solar_as_100_df_6
+    nominal_mass_flow_rate: !!float 75
+    thermal_performance_curve:
+      first_order: !!float -1.03
+      second_order: !!float -0.0052
+      zeroth_order: !!float 0.55
+    type: !!str solar_thermal
+
+  ##########################################
+  # Hybrid photovoltaic-thermal collectors #
+  ##########################################
+
+  - area: !!float 1.64
+    cost: !!float 556
+    land_use: !!float 1.64
+    max_mass_flow_rate: null
+    min_mass_flow_rate: null
+    name: dualsun_spring_300m_insulated
+    nominal_flow_rate: !!float 60
+    pv_module_characteristics:
+      nominal_power: !!float 0.300  # [kWp]
+      reference_efficiency: !!float 0.183
+      reference_temperature: !!float 25  # [degC]
+      thermal_coefficient: !!float 0.0039  # [%/degC]
+    thermal_performance_curve:
+      first_order: !!float -10.8
+      second_order: !!float 0
+      zeroth_order: !!float 0.852
+    type: !!str pv_t
+  - name: !!str dualsun_spring_400_insulated
+    type: !!str pv_t
+    area: !!float 1.876  # [m^2]
+    cost: !!float 1022  # [USD/panel]
+    land_use: !!float 1.876  # [m^2]
+    max_mass_flow_rate: null  # [NaN]
+    min_mass_flow_rate: !!float 20  # [l/h]
+    nominal_mass_flow_rate: !!float 60  # [l/h]
+    pv_module_characteristics:
+      nominal_power: !!float 0.400  # [W]
+      reference_efficiency: !!float 0.213  # Between 0 and 1
+      reference_temperature: !!float 25  # [degC]
+      thermal_coefficient: !!float 0.0034  # [%/degC]
+    thermal_performance_curve:
+      zeroth_order: !!float 0.621
+      first_order: !!float -7.4  # [W/m^2K]
+      second_order: !!float 0  - area: !!float 1.64
+    cost: !!float 545
+    land_use: !!float 1.37
+    max_mass_flow_rate: null
+    min_mass_flow_rate: null
+    name: solimpeks_powervolt
+    nominal_flow_rate: !!float 60
+    pv_module_characteristics:
+      nominal_power: !!float 0.325  # [kWp]
+      reference_efficiency: !!float 0.1508
+      reference_temperature: !!float 25  # [degC]
+      thermal_coefficient: !!float 0.0045  # [%/degC]
+    thermal_performance_curve:
+      first_order: !!float -8.37
+      second_order: !!float -0.586
+      zeroth_order: !!float 0.475
+    type: !!str pv_t

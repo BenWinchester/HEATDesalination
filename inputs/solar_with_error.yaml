@@ -592,7 +592,7 @@ solar_collectors:
     error: 0.025645447981980988
     land_use: 2.52
     max_mass_flow_rate: 100.8
-    min_mass_flow_rate: 37.8
+    min_mass_flow_rate: 37.8  # [kg/h]
     name: fkf_240_cucu_(sti_solar,_germany)
     nominal_mass_flow_rate: None
     thermal_performance_curve:
