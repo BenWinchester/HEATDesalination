@@ -100,6 +100,10 @@ REFERENCE_TEMPERATURE: str = "reference_temperature"
 #   Keyword for parsing second-order coefficient.
 SECOND_ORDER: str = "second_order"
 
+# STAGNATION_TEMPERATURE:
+#   Keyword for the stagnation temperature of the collector.
+STAGNATION_TEMPERATURE: str = "stagnation_temperature"
+
 # STEFAN_BOLTZMAN_CONSTANT:
 #   The Stefan-Boltzman constant in SI units.
 STEFAN_BOLTZMAN_CONSTANT: float = 5.670374419 * (10**-8)
@@ -1265,6 +1269,12 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
         The nominal mass-flow rate of heat-transfer fluid through the PV-T collector,
         measured in litres per hour.
 
+    .. attribute:: stagnation_temperature
+        The stagnation temperature of the collector. This is the temperature at which
+        the heat losses from the collector are equal to the potential heat gain from any
+        incident solar irradiance. At temperatures beyond this value, the collector can
+        only output heat-transfer fluid (HTF) at its stagnation temperature.
+
     .. attribute:: thermal_performance_curve
         The performance curve for the collector.
 
@@ -1297,6 +1307,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
         self._max_mass_flow_rate = solar_inputs[MAX_MASS_FLOW_RATE]
         self._min_mass_flow_rate = solar_inputs[MIN_MASS_FLOW_RATE]
         self._nominal_mass_flow_rate = solar_inputs.get(NOMINAL_MASS_FLOW_RATE)
+        self._stagnation_temperature = solar_inputs[STAGNATION_TEMPERATURE]
         self.thermal_performance_curve = performance_curve
 
     @property
@@ -1387,6 +1398,18 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
             + ")"
         )
 
+    @property
+    def stagnation_temperature(self) -> float:
+        """
+        Return the stagnation temperature of the collector in degrees Kelvin.
+
+        Outputs:
+            The stagnation temperature of the collector, measured in degrees Kelvin.
+
+        """
+
+        return self._stagnation_temperature + ZERO_CELCIUS_OFFSET
+
     def calculate_performance(
         self,
         ambient_temperature: float,
@@ -1470,6 +1493,17 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
             self.thermal_performance_curve,
             solar_irradiance,
         )
+
+        # Ensure that the collector has not stagnated.
+        if negative_root > self.stagnation_temperature:
+            logger.debug(
+                "Collector %s outputted HTF at %s degC, above its stagnation ""temperature of %s degC",
+                self.name,
+                negative_root,
+                self.stagnation_temperature
+            )
+            negative_root = self.stagnation_temperature
+
 
         # Compute temperature quantities.
         average_temperature = 0.5 * (negative_root + input_temperature)  # [K]

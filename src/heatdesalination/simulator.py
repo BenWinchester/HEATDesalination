@@ -251,6 +251,7 @@ def _storage_profile_iteration_step(
             )
         if net_storage_flow == 0:
             # Batteries leak provide there is power to leak out.
+            electricity_to_batteries = 0
             power_to_storage_map[hour] = 0
             storage_power_supplied_map[hour] = 0
             storage_profile[hour] = max(
