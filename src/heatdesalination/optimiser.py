@@ -21,6 +21,7 @@ __all__ = ("run_optimisation",)
 
 import abc
 from logging import Logger
+import os
 from typing import Dict, List, Tuple
 
 import json
@@ -29,9 +30,12 @@ import numpy
 from scipy import optimize
 
 from .__utils__ import (
-    DAYS_PER_YEAR,
     CostableComponent,
+    CostType,
+    DAYS_PER_YEAR,
     FlowRateError,
+    GridCostScheme,
+    InputFileError,
     OptimisableComponent,
     OptimisationParameters,
     Scenario,
@@ -51,7 +55,7 @@ UPPER_LIMIT: float = 10**8
 def _inverter_cost(
     component_sizes: Dict[CostableComponent | None, float],
     scenario: Scenario,
-    system_lifetime: int
+    system_lifetime: int,
 ) -> float:
     """
     Calculate the costs associated with the inverter in the system.
@@ -71,23 +75,132 @@ def _inverter_cost(
 
     """
 
-    solar_component_sizes = {key: value for key, value in component_sizes.items() if isinstance(key, SolarPanel) and not isinstance(key, SolarThermalPanel)}
+    solar_component_sizes = {
+        key: value
+        for key, value in component_sizes.items()
+        if isinstance(key, SolarPanel) and not isinstance(key, SolarThermalPanel)
+    }
 
     # Determine the PV and PV-T capacities.
     if scenario.pv:
-        pv_system_size = sum(key.pv_unit * value for key, value in solar_component_sizes.items() if isinstance(key, PVPanel))
+        pv_system_size = sum(
+            key.pv_unit * value
+            for key, value in solar_component_sizes.items()
+            if isinstance(key, PVPanel)
+        )
     else:
         pv_system_size = 0
 
     if scenario.pv_t:
-        pv_t_system_size = sum(key.pv_module_characteristics.nominal_power * value for key, value in solar_component_sizes.items() if isinstance(key, HybridPVTPanel))
+        pv_t_system_size = sum(
+            key.pv_module_characteristics.nominal_power * value
+            for key, value in solar_component_sizes.items()
+            if isinstance(key, HybridPVTPanel)
+        )
     else:
         pv_t_system_size = 0
 
     # Determine the inverter sizing and costs associated
-    inverter_cost = (pv_system_size + pv_t_system_size) * scenario.inverter_cost * (system_lifetime // scenario.inverter_lifetime)
+    inverter_cost = (
+        (pv_system_size + pv_t_system_size)
+        * scenario.inverter_cost
+        * (system_lifetime // scenario.inverter_lifetime)
+    )
 
     return inverter_cost
+
+
+def _total_component_costs(
+    component_sizes: Dict[CostableComponent | None, float], logger: Logger
+) -> float:
+    """
+    Calculate the total cost of the costable components installed.
+
+    Inputs:
+        - component_sizes:
+            The mapping between :class:`CostableComponent` instances and their installed
+            capacities.
+        - logger:
+            The :class:`logging.Logger` to use for the run.
+
+    Outputs:
+        The total cost of these components.
+
+    """
+
+    component_costs = {
+        component: component.cost * abs(size)
+        for component, size in component_sizes.items()
+    }
+    logger.debug(
+        "Component costs: %s",
+        json.dumps(
+            {str(key): value for key, value in component_costs.items()}, indent=4
+        ),
+    )
+
+    return sum(component_costs.values())
+
+
+def _total_grid_cost(
+    logger: Logger,
+    scenario: Scenario,
+    solution: Solution,
+    system_lifetime: int,
+) -> float:
+    """
+    Calculate the total cost of the grid electricity used.
+
+    Inputs:
+        - logger:
+            The :class:`logging.Logger` to use for the run.
+        - scenario:
+            The scenario being considered.
+        - solution:
+            The steady-state solution for the simulation.
+        - system_lifetime:
+            The lifetime of the system in years.
+
+    Outputs:
+        The total costs associated with the grid.
+
+    """
+
+    # Calculate the undiscounted cost of grid electricity.
+    fractional_cost_change = scenario.fractional_grid_cost_change
+    # total_grid_cost = (
+    #     DAYS_PER_YEAR  # [days/year]
+    #     * system_lifetime  # [year]
+    #     * sum(solution.grid_electricity_supply_profile.values())  # [kWh/day]
+    #     * scenario.grid_cost  # [$/kWh]
+    # ) * (1 + fractional_cost_change)
+
+    if scenario.grid_cost_scheme == GridCostScheme.UAE:
+        # UAE-specific code
+        monthly_grid_consumption = sum(
+            solution.grid_electricity_supply_profile.values()
+        ) * (
+            days_per_month := 30
+        )  # [kWh/month]
+        lower_tier_consumption = min(monthly_grid_consumption, 10000)
+        upper_tier_consumption = max(monthly_grid_consumption - 10000, 0)
+        total_grid_cost = (
+            (DAYS_PER_YEAR / days_per_month)  # [months/year]
+            * system_lifetime  # [years]
+            * (
+                lower_tier_consumption * (0.23 * (1 + fractional_cost_change))
+                + upper_tier_consumption * (0.38 * (1 + fractional_cost_change))
+            )
+        )  # [USD]
+    else:
+        logger.error("Grid cost scheme undefined: %s", scenario.grid_cost_scheme.value)
+        raise InputFileError(
+            os.path.join("inputs", "scenarios.yaml"),
+            f"Grid cost scheme f{scenario.grid_cost_scheme.value} not well defined.",
+        )
+
+    return total_grid_cost
+
 
 def _total_cost(
     component_sizes: Dict[CostableComponent | None, float],
@@ -117,55 +230,20 @@ def _total_cost(
     """
 
     # Calculate the cost of the various components which can be costed.
-    component_costs = {
-        component: component.cost * abs(size)
-        for component, size in component_sizes.items()
-    }
-    total_component_cost = sum(component_costs.values())
-    logger.debug(
-        "Component costs: %s",
-        json.dumps(
-            {str(key): value for key, value in component_costs.items()}, indent=4
-        ),
-    )
+    total_component_cost = _total_component_costs(component_sizes, logger)
 
-    # Calculate the undiscounted cost of grid electricity.
-    fractional_cost_change = scenario.fractional_grid_cost_change
-    # total_grid_cost = (
-    #     DAYS_PER_YEAR  # [days/year]
-    #     * system_lifetime  # [year]
-    #     * sum(solution.grid_electricity_supply_profile.values())  # [kWh/day]
-    #     * scenario.grid_cost  # [$/kWh]
-    # ) * (1 + fractional_cost_change)
-
-    # UAE-specific code
-    monthly_grid_consumption = sum(
-        solution.grid_electricity_supply_profile.values()
-    ) * (
-        days_per_month := 30
-    )  # [kWh/month]
-    lower_tier_consumption = min(monthly_grid_consumption, 10000)
-    upper_tier_consumption = max(monthly_grid_consumption - 10000, 0)
-    total_grid_cost = (
-        (DAYS_PER_YEAR / days_per_month)  # [months/year]
-        * system_lifetime  # [years]
-        * (
-            lower_tier_consumption * (0.23 * (1 + fractional_cost_change))
-            + upper_tier_consumption * (0.38 * (1 + fractional_cost_change))
-        )
-    )  # [USD]
+    total_grid_cost = _total_grid_cost(logger, scenario, solution, system_lifetime)
 
     # Add the costs of installing an inverter for dealing with solar power
     # generated
     inverter_cost = _inverter_cost(component_sizes, scenario, system_lifetime)
 
-    import pdb
-
-    pdb.set_trace()
-
     # Add the costs of any consumables such as diesel fuel or grid electricity.
     total_cost = (
-        total_component_cost + max(total_grid_cost, 0) + max(solution.heat_pump_cost, 0)
+        total_component_cost
+        + max(total_grid_cost, 0)
+        + max(solution.heat_pump_cost, 0)
+        + max(inverter_cost, 0)
     )  # + diesel_fuel_cost + grid_cost
     logger.info(
         "Total cost: %s, Total component cost: %s, Total grid cost %s, Heat-pump cost: "
@@ -1002,7 +1080,10 @@ def run_optimisation(
             Whether to disable the progress bar.
 
     Outputs:
-        The optimised system.
+        - A mapping containing information about the values of all the optimisation
+          criteria defined, as well as the costs of the various parts of the overall
+          system;
+        - The optimised system.
 
     """
 
@@ -1201,6 +1282,20 @@ def run_optimisation(
             TotalCost,
         ]
     }
+
+    # Compute the costs of the various parts of the system and append this.
+    criterion_map.update(
+        {
+            CostType.COMPONENTS: _total_component_costs(component_sizes, logger),
+            CostType.GRID: _total_grid_cost(
+                logger, scenario, solution, system_lifetime
+            ),
+            CostType.HEAT_PUMP: float(max(solution.heat_pump_cost, 0)),
+            CostType.INVERTERS: _inverter_cost(
+                component_sizes, scenario, system_lifetime
+            ),
+        }
+    )
 
     # Return the value of the criterion along with the result from the simulation.
     return criterion_map, list(optimisation_result.x)

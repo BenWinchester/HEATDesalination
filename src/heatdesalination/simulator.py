@@ -595,7 +595,9 @@ def _tank_ambient_temperature(ambient_temperature: float) -> float:
     return ambient_temperature
 
 
-def _tank_replacement_temperature(ambient_temperature: float, hot_water_return_temperature: float | None) -> float:
+def _tank_replacement_temperature(
+    ambient_temperature: float, hot_water_return_temperature: float | None
+) -> float:
     """
     Return the temperature of water which is replacing that taken from the tank.
 
@@ -766,7 +768,10 @@ def run_simulation(
             solar_thermal_collector,
             solar_thermal_mass_flow_rate,
             _tank_ambient_temperature(ambient_temperatures[hour]),
-            _tank_replacement_temperature(ambient_temperatures[hour], desalination_plant.outputs(hour).hot_water_return_temperature),
+            _tank_replacement_temperature(
+                ambient_temperatures[hour],
+                desalination_plant.outputs(hour).hot_water_return_temperature,
+            ),
         )
 
         # Determine the electricity demands of the plant including any auxiliary
