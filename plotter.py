@@ -2549,10 +2549,48 @@ with open(os.path.join("inputs", "cheap_pv_t_grid_optimisations.json"), "w") as 
 # Plotting collector performance information #
 ##############################################
 
-plt.scatter([entry[(THERMAL_PERFORMANCE_CURVE:="thermal_performance_curve")][(ZEROTH_ORDER:="zeroth_order")] for entry in fpc_data], [entry[THERMAL_PERFORMANCE_CURVE][(FIRST_ORDER:="first_order")] for entry in fpc_data], marker="x", label="flat-plate")
-plt.scatter([entry[(THERMAL_PERFORMANCE_CURVE:="thermal_performance_curve")][(ZEROTH_ORDER:="zeroth_order")] for entry in etc_data], [entry[THERMAL_PERFORMANCE_CURVE][(FIRST_ORDER:="first_order")] for entry in etc_data], marker="x", label="evacuated-tube")
-plt.scatter(mean_fpc[THERMAL_PERFORMANCE_CURVE][ZEROTH_ORDER], mean_fpc[THERMAL_PERFORMANCE_CURVE][FIRST_ORDER], marker="o", color="C0", label="mean flat-plate")
-plt.scatter(mean_etc[THERMAL_PERFORMANCE_CURVE][ZEROTH_ORDER], mean_etc[THERMAL_PERFORMANCE_CURVE][FIRST_ORDER], marker="o", color="C1", label="mean evacuated-tube")
+plt.scatter(
+    [
+        entry[(THERMAL_PERFORMANCE_CURVE := "thermal_performance_curve")][
+            (ZEROTH_ORDER := "zeroth_order")
+        ]
+        for entry in fpc_data
+    ],
+    [
+        entry[THERMAL_PERFORMANCE_CURVE][(FIRST_ORDER := "first_order")]
+        for entry in fpc_data
+    ],
+    marker="x",
+    label="flat-plate",
+)
+plt.scatter(
+    [
+        entry[(THERMAL_PERFORMANCE_CURVE := "thermal_performance_curve")][
+            (ZEROTH_ORDER := "zeroth_order")
+        ]
+        for entry in etc_data
+    ],
+    [
+        entry[THERMAL_PERFORMANCE_CURVE][(FIRST_ORDER := "first_order")]
+        for entry in etc_data
+    ],
+    marker="x",
+    label="evacuated-tube",
+)
+plt.scatter(
+    mean_fpc[THERMAL_PERFORMANCE_CURVE][ZEROTH_ORDER],
+    mean_fpc[THERMAL_PERFORMANCE_CURVE][FIRST_ORDER],
+    marker="o",
+    color="C0",
+    label="mean flat-plate",
+)
+plt.scatter(
+    mean_etc[THERMAL_PERFORMANCE_CURVE][ZEROTH_ORDER],
+    mean_etc[THERMAL_PERFORMANCE_CURVE][FIRST_ORDER],
+    marker="o",
+    color="C1",
+    label="mean evacuated-tube",
+)
 plt.legend()
 plt.xlabel("Zeroth-order performance curve coefficient")
 plt.ylabel("First-order performance curve coefficient")
