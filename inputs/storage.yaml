@@ -9,7 +9,7 @@
 ################################################################################
 
 batteries:
-  - name: !!str default_battery
+  - name: !!str lifos_lb_0012
     capacity: !!float 153.6  # [kWh]
     c_rate_charging: !!float 0.33  # Charge rate
     c_rate_discharging: !!float 0.33  # Discharge rate
@@ -26,10 +26,10 @@ batteries:
     leakage: !!float 0.000042  # Fractional leakage per hour
     lifetime_loss: !!float 0.2   # Fractional loss over lifetime (0.0 - 1.0)
 hot_water_tanks:
-  - name: !!str hot_water_tank
-    area: !!float 1900  # [m^2]
-    capacity: !!float 30000  # [kg or litres]
-    cost: !!float 4.15  # [USD/litre]
+  - name: !!str grant_hpmono_ind150
+    area: !!float 0.248  # [m^2]
+    capacity: !!float 150  # [kg or litres]
+    cost: !!float 8.35  # [USD/litre]
     cycle_lifetime: !!float 1500  # Expected number of cycles over lifetime
     heat_loss_coefficient: !!float 1.9  # [W/m^2*K]
     leakage: !!float 0  # Fractional leakage per hour

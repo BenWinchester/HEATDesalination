@@ -10,14 +10,15 @@
 
 scenarios:
 - battery: default_battery  # Name of the battery, must be in `inputs/storage`
-  fractional_grid_cost_change: 0.0  # Fractional change to the grid price
+  fractional_grid_cost_change: 0.0  # Fractional change to the grid cost
+  fractional_hw_tank_cost_change: 0.0  # Fractional change to the hw tank cost
   fractional_pv_cost_change: 0.0  # Fractional change to the PV cost
   fractional_pvt_cost_change: 0.0  # Fractional change to the PV-T cost
   fractional_st_cost_change: 0.0  # Fractional change to the solar-thermal cost
   grid_cost_scheme: uae  # Gives the name of the grid cost scheme
   heat_exchanger_efficiency: 0.4  # System efficiency, 0-1
   heat_pump: ammonia  # Name of the heat pump
-  hot_water_tank: hot_water_tank  # Name of the hot-water tank
+  hot_water_tank: grant_hpmono_ind150  # Name of the hot-water tank
   htf_heat_capacity: 4182.0  # [J/kgK]
   inverter_cost: 148.5  # [USD/kW]
   inverter_lifetime: 13  # [years]
