@@ -14,7 +14,6 @@ scenarios:
   fractional_pv_cost_change: 0.0  # Fractional change to the PV cost
   fractional_pvt_cost_change: 0.0  # Fractional change to the PV-T cost
   fractional_st_cost_change: 0.0  # Fractional change to the solar-thermal cost
-  grid_cost: 0.1
   grid_cost_scheme: uae  # Gives the name of the grid cost scheme
   heat_exchanger_efficiency: 0.4  # System efficiency, 0-1
   heat_pump: ammonia  # Name of the heat pump
