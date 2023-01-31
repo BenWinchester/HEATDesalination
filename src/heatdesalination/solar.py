@@ -1497,13 +1497,13 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
         # Ensure that the collector has not stagnated.
         if negative_root > self.stagnation_temperature:
             logger.debug(
-                "Collector %s outputted HTF at %s degC, above its stagnation ""temperature of %s degC",
+                "Collector %s outputted HTF at %s degC, above its stagnation "
+                "temperature of %s degC",
                 self.name,
                 negative_root,
-                self.stagnation_temperature
+                self.stagnation_temperature,
             )
             negative_root = self.stagnation_temperature
-
 
         # Compute temperature quantities.
         average_temperature = 0.5 * (negative_root + input_temperature)  # [K]

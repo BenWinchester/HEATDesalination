@@ -229,12 +229,8 @@ class DesalinationPlant:
 
         try:
             plant_outputs = {
-                True: PlantOutputs(
-                    **input_data[PLANT_OPERATING][OUTPUTS]
-                ),
-                False: PlantOutputs(
-                    **input_data[PLANT_DISABLED][OUTPUTS]
-                ),
+                True: PlantOutputs(**input_data[PLANT_OPERATING][OUTPUTS]),
+                False: PlantOutputs(**input_data[PLANT_DISABLED][OUTPUTS]),
             }
         except KeyError as exception:
             logger.error(

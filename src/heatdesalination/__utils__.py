@@ -188,6 +188,30 @@ class CostableComponent:
         self.cost = cost
 
 
+class CostType(enum.Enum):
+    """
+    Denotes the part of the system which is contributing to the total cost.
+
+    - COMPONENTS:
+        The grid pricing structure used on Gran Canaria, Spain.
+
+    - GRID:
+        The grid pricing structure used in La Paz, Mexico.
+
+    - HEAT_PUMP:
+        The grid pricing structure used in Tijuana, Mexico.
+
+    - INVERTERS:
+        The tiered pricing structure used in the UAE.
+
+    """
+
+    COMPONENTS: str = "components"
+    GRID: str = "grid"
+    HEAT_PUMP: str = "heat_pump"
+    INVERTERS: str = "inverters"
+
+
 def get_logger(
     logger_name: str, hpc: bool = False, verbose: bool = False
 ) -> logging.Logger:
@@ -265,6 +289,34 @@ class FlowRateError(Exception):
         """
 
         super().__init__(f"Flow-rate mismatch for collector '{collector_name}': {msg}")
+
+
+class GridCostScheme(enum.Enum):
+    """
+    Denotes the grid-cost scheme used.
+
+    - ABU_DHABI_UAE:
+        The tiered pricing structure used in the emirate of Abu Dhabi in the UAE.
+
+    - DUBAI_UAE:
+        The tiered pricing structure used in the emirate of Dubai in the UAE.
+
+    - GRAN_CANARIA_SPAIN:
+        The grid pricing structure used on Gran Canaria, Spain.
+
+    - LA_PAZ_MEXICO:
+        The grid pricing structure used in La Paz, Mexico.
+
+    - TIJUANA:
+        The grid pricing structure used in Tijuana, Mexico.
+
+    """
+
+    ABU_DHABI_UAE: str = "abu_dhabi_uae"
+    DUBAI_UAE: str = "dubai_uae"
+    GRAN_CANARIA_SPAIN: str = "gran_canaria"
+    LA_PAZ_MEXICO: str = "la_paz_mexico"
+    TIJUANA_MEXICO: str = "tijuana_mexico"
 
 
 @dataclasses.dataclass
@@ -808,9 +860,8 @@ class Scenario:
     .. attribute:: battery
         The name of the battery.
 
-    .. attribute:: grid_cost
-        The cost of grid electricity (i.e., alternative or unmet electricity) in USD per
-        kWh/
+    .. attribute:: grid_cost_scheme
+        The name of the grid-cost scheme to use.
 
     .. attribute:: heat_exchanger_efficiency
         The efficiency of the heat exchanger.
@@ -863,7 +914,7 @@ class Scenario:
     """
 
     battery: str
-    grid_cost: float
+    grid_cost_scheme: GridCostScheme
     heat_exchanger_efficiency: float
     heat_pump: str
     hot_water_tank: str

@@ -24,6 +24,7 @@ import json
 from .__utils__ import (
     AMBIENT_TEMPERATURE,
     AUTO_GENERATED_FILES_DIRECTORY,
+    GridCostScheme,
     NAME,
     OptimisationParameters,
     ProfileType,
@@ -62,13 +63,14 @@ DESALINATION_PLANT_INPUTS: str = "plants.yaml"
 #   Keyword for desalination plants.
 DESALINATION_PLANTS: str = "desalination_plants"
 
-# FRACTIONAL_GRID_cost_CHANGE:
+# FRACTIONAL_GRID_COST_CHANGE:
 #   The fractional change in the price of grid electricity.
-FRACTIONAL_GRID_cost_CHANGE: str = "fractional_grid_cost_change"
+FRACTIONAL_GRID_COST_CHANGE: str = "FRACTIONAL_GRID_COST_CHANGE"
 
-# GRID_COST:
-#   Keyword for the cost of grid (alternative/unmet) electricity.
-GRID_COST: str = "grid_cost"
+# GRID_COST_SCHEME:
+#   Keyword for the name of the pricing scheme for the cost of grid (alternative/unmet)
+# electricity.
+GRID_COST_SCHEME: str = "grid_cost_scheme"
 
 # HEAT_EXCHANGER_EFFICIENCY:
 #   Keyword for parsing the heat capacity of the heat exchangers.
@@ -225,7 +227,7 @@ def parse_input_files(
     scenarios = [
         Scenario(
             entry[BATTERY],
-            entry[GRID_COST],
+            GridCostScheme(entry[GRID_COST_SCHEME]),
             entry[HEAT_EXCHANGER_EFFICIENCY],
             entry[HEAT_PUMP],
             entry[HOT_WATER_TANK],
@@ -238,7 +240,7 @@ def parse_input_files(
             entry[PV],
             entry[PV_T],
             entry[SOLAR_THERMAL],
-            entry.get(FRACTIONAL_GRID_cost_CHANGE, 0),
+            entry.get(FRACTIONAL_GRID_COST_CHANGE, 0),
         )
         for entry in scenario_inputs[SCENARIOS]
     ]
