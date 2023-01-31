@@ -175,8 +175,10 @@ def _total_grid_cost(
     #     * scenario.grid_cost  # [$/kWh]
     # ) * (1 + fractional_cost_change)
 
-    if scenario.grid_cost_scheme == GridCostScheme.UAE:
-        # UAE-specific code
+    if scenario.grid_cost_scheme == GridCostScheme.DUBAI_UAE:
+        # Dubai, UAE-specific code - a tiered tariff applied based on monthly usage.
+        # The industrial slab tariff is used with an exchange rate to USD applied of
+        # 1 AED to 0.27 USD as fixed due to currency pegging.
         monthly_grid_consumption = sum(
             solution.grid_electricity_supply_profile.values()
         ) * (
@@ -184,22 +186,109 @@ def _total_grid_cost(
         )  # [kWh/month]
         lower_tier_consumption = min(monthly_grid_consumption, 10000)
         upper_tier_consumption = max(monthly_grid_consumption - 10000, 0)
-        total_grid_cost = (
+        return (
             (DAYS_PER_YEAR / days_per_month)  # [months/year]
             * system_lifetime  # [years]
             * (
-                lower_tier_consumption * (0.23 * (1 + fractional_cost_change))
-                + upper_tier_consumption * (0.38 * (1 + fractional_cost_change))
+                lower_tier_consumption * (0.063 * (1 + fractional_cost_change))
+                + upper_tier_consumption * (0.10 * (1 + fractional_cost_change))
             )
         )  # [USD]
-    else:
-        logger.error("Grid cost scheme undefined: %s", scenario.grid_cost_scheme.value)
-        raise InputFileError(
-            os.path.join("inputs", "scenarios.yaml"),
-            f"Grid cost scheme f{scenario.grid_cost_scheme.value} not well defined.",
+
+    # The following schemes use lifetime power consumption, so calculate this
+    grid_lifetime_electricity_consumption = (DAYS_PER_YEAR  # [days/year]
+                * system_lifetime # [years]
+                * sum(
+                solution.grid_electricity_supply_profile.values()
+                ) # [kWh/day]
+    )
+
+    if scenario.grid_cost_scheme == GridCostScheme.ABU_DHABI_UAE:
+        # Abu Dhabi, UAE-specific code - a tiered tariff applied based on monthly usage.
+        # The industrial fixed-rate tariff for <1MW installations is used.
+        return (
+            grid_lifetime_electricity_consumption
+        ) * 0.078  # [USD/kWh]
+
+    if scenario.grid_cost_scheme == GridCostScheme.GRAN_CANARIA_SPAIN:
+        # Gran-Canaria-specific code - a flat tariff per kWh consumed.
+        # Gran Canaria grid-cost information obtained from:
+        # Qiblawey Y, Alassi A, Zain ul Abideen M, Banales S.
+        # Techno-economic assessment of increasing the renewable energy supply in the
+        # Canary Islands: The case of Tenerife and Gran Canaria.
+        # Energy Policy 2022;162:112791.
+        # doi: 10.1016/j.enpol.2022.112791.
+        return (
+            DAYS_PER_YEAR  # [days/year]
+            * system_lifetime # [years]
+            * sum(
+            solution.grid_electricity_supply_profile.values()
+            ) # [kWh/day]
+        ) * 0.1537  # [USD/kWh]
+
+    if scenario.grid_cost_scheme in {GridCostScheme.TIJUANA_MEXICO, GridCostScheme.LA_PAZ_MEXICO}:
+        # Mexico grid costs operate using a tiered structure and three costs:
+        #   - a monthly flat-rate cost for using a grid connection,
+        #   - a specific cost which depends on the amount of electricity used,
+        #   - and a cost based on the peak power consumption.
+        # All these values were obtained from the Comisión Federal de Electricidad.
+        if scenario.grid_cost_scheme == GridCostScheme.TIJUANA_MEXICO:
+            # Tijuana-specific code - a two-tier tariff based on power consumption.
+            if 0 < (peak_power:=max(solution.grid_electricity_supply_profile.values())) <= 25:
+                fixed_monthly_cost: float = 59.85  # [USD/month]
+                power_cost: float = 0  # [USD/kW]
+                specific_electricity_cost: float = 2.466  # [USD/kWh]
+            elif peak_power > 25:
+                fixed_monthly_cost = 598.55
+                power_cost = 499.39
+                specific_electricity_cost = 0.826
+            else:
+                fixed_monthly_cost = 0
+                power_cost = 0
+                specific_electricity_cost = 0
+        elif scenario.grid_cost_scheme == GridCostScheme.LA_PAZ_MEXICO:
+            # La-Paz-specific code - a two-tier tariff based on power consumption.
+            if 0 < (peak_power:=max(solution.grid_electricity_supply_profile.values())) <= 25:
+                fixed_monthly_cost: float = 59.85
+                power_cost: float = 0
+                specific_electricity_cost: float = 3.817
+            elif peak_power > 25:
+                fixed_monthly_cost = 598.55
+                power_cost = 454.36
+                specific_electricity_cost = 2.907
+            else:
+                fixed_monthly_cost = 0
+                power_cost = 0
+                specific_electricity_cost = 0
+        else:
+            logger.error("Grid cost scheme undefined: %s", scenario.grid_cost_scheme.value)
+            raise InputFileError(
+                os.path.join("inputs", "scenarios.yaml"),
+                f"Grid cost scheme f{scenario.grid_cost_scheme.value} not well defined.",
+            )
+
+        # Use the fixed monthly cost along with the electricity specific costs to
+        # determine the total grid cost.
+        total_fixed_monthly_cost = (system_lifetime # [years]
+            * 12 # [months/year]
+            * fixed_monthly_cost # [USD/month]
+        )
+        total_power_cost = (
+            peak_power # [kW]
+            * power_cost # [USD/kW]
+        )
+        total_specific_electricity_cost = (
+            specific_electricity_cost # [USD/kWh]
+            * grid_lifetime_electricity_consumption
         )
 
-    return total_grid_cost
+        return total_fixed_monthly_cost + total_power_cost + total_specific_electricity_cost
+
+    logger.error("Grid cost scheme undefined: %s", scenario.grid_cost_scheme.value)
+    raise InputFileError(
+        os.path.join("inputs", "scenarios.yaml"),
+        f"Grid cost scheme f{scenario.grid_cost_scheme.value} not well defined.",
+    )
 
 
 def _total_cost(

@@ -295,6 +295,12 @@ class GridCostScheme(enum.Enum):
     """
     Denotes the grid-cost scheme used.
 
+    - ABU_DHABI_UAE:
+        The tiered pricing structure used in the emirate of Abu Dhabi in the UAE.
+
+    - DUBAI_UAE:
+        The tiered pricing structure used in the emirate of Dubai in the UAE.
+
     - GRAN_CANARIA_SPAIN:
         The grid pricing structure used on Gran Canaria, Spain.
 
@@ -304,15 +310,13 @@ class GridCostScheme(enum.Enum):
     - TIJUANA:
         The grid pricing structure used in Tijuana, Mexico.
 
-    - UAE:
-        The tiered pricing structure used in the UAE.
-
     """
 
+    ABU_DHABI_UAE: str = "abu_dhabi_uae"
+    DUBAI_UAE: str = "dubai_uae"
     GRAN_CANARIA_SPAIN: str = "gran_canaria"
     LA_PAZ_MEXICO: str = "la_paz_mexico"
     TIJUANA_MEXICO: str = "tijuana_mexico"
-    UAE: str = "uae"
 
 
 @dataclasses.dataclass
