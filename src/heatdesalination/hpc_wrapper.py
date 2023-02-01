@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 ########################################################################################
-# hpc.py - Wrapper script around CLOVER when run on Imperial College's HPC.            #
+# hpc.py - Wrapper script around HEATDesalination when run on Imperial College's HPC.  #
 #                                                                                      #
 # Authors: Phil Sandwell, Ben Winchester                                               #
 # Copyright: Phil Sandwell, 2022                                                       #
@@ -12,11 +12,11 @@
 #   philip.sandwell@gmail.com                                                          #
 ########################################################################################
 """
-hpc.py - The wrapper script for running CLOVER on the HPC.
+hpc.py - The wrapper script for running HEATDesalination on the HPC.
 
 Imperial College London owns a series of high-performance computers. This module
-provides a wrapper around the main functionality of CLOVER to enable it to be run on
-the HPC.
+provides a wrapper around the main functionality of HEATDesalination to enable it to be
+run on the HPC.
 
 """
 
