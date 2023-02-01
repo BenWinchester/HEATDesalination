@@ -2435,21 +2435,113 @@ import numpy as np
 import os
 import yaml
 
+from typing import Dict, List
+
+from tqdm import tqdm
+
+from src.heatdesalination.__utils__ import GridCostScheme
+
 with open((scenarios_filepath := os.path.join("inputs", "scenarios.yaml")), "r") as f:
     scenarios = yaml.safe_load(f)[(scenarios_key := "scenarios")]
 
-default_scenario = scenarios[0]
+DEFAULT_SCENARIO = scenarios[0]
 
-default_optimisation = {
-    "location": "fujairah_united_arab_emirates",
-    "output": "parallel_optimisation_output_1",
+DEFAULT_OPTIMISATION = {
+    (location := "location"): "fujairah_united_arab_emirates",
+    (output := "output"): "parallel_optimisation_output",
     "profile_types": ["avr", "ler", "uer"],
-    "scenario": "default",
-    "system_lifetime": 25,
+    (scenario := "scenario"): "default",
+    "system_lifetime": 30,
 }
 
+# Grid cost schemes
+GRID_COST_SCHEMES = {
+    (abu_dhabi := "abu_dhabi"): GridCostScheme.ABU_DHABI_UAE.value,
+    (gran_canaria := "gran_canaria"): GridCostScheme.GRAN_CANARIA_SPAIN.value,
+    (la_paz := "la_paz"): GridCostScheme.LA_PAZ_MEXICO.value,
+    (tijuana := "tijuana"): GridCostScheme.TIJUANA_MEXICO.value,
+}
 
-new_scenarios = [default_scenario]
+# The mapping between location name and the corresponding filename
+LOCATIONS = {
+    abu_dhabi: "sas_al_nakhl_united_arab_emirates",
+    gran_canaria: "gando_gran_canaria_spain",
+    la_paz: "la_paz_mexico",
+    tijuana: "municipio_de_tijuana_mexico",
+}
+
+# The list of plants
+PLANTS: List[str] = ["joo_med_24_hour", "el_nashar_24_hour", "rahimi_24_hour"]
+
+# Lists of various collectors
+PV_PANELS: List[str] = ["lg_solar_330_wpcello", "sharp_nd_af"]
+PV_T_PANELS: List[str] = [
+    "dualsun_spring_300m_insulated",
+    "dualsun_spring_400_insulated",
+    "solimpeks_powervolt",
+]
+ST_COLLECTORS: List[str] = [
+    "sti_fkf_240_cucu",
+    "eurotherm_solar_pro_20r",
+    "augusta_solar_as_100_df_6",
+]
+
+# Set up a list of new scenarios for each location
+new_scenarios: List[Dict[str, str]] = []
+new_optimisations: List[Dict[str, str]] = []
+
+# Keyword arguments for changing parameters in the scenarios.
+fractional_battery_cost_change = "fractional_battery_cost_change"
+fractional_grid_cost_change = "fractional_grid_cost_change"
+fractional_heat_pump_cost_change = "fractional_heat_pump_cost_change"
+fractional_hw_tank_cost_change = "fractional_hw_tank_cost_change"
+fractional_inverter_cost_change = "fractional_inverter_cost_change"
+fractional_pv_cost_change = "fractional_pv_cost_change"
+fractional_pvt_cost_change = "fractional_pvt_cost_change"
+fractional_st_cost_change = "fractional_st_cost_change"
+grid_cost_scheme = "grid_cost_scheme"
+heat_exchanger_efficiency = "heat_exchanger_efficiency"
+heat_pump = "heat_pump"
+hot_water_tank = "hot_water_tank"
+htf_heat_capacity = "htf_heat_capacity"
+inverter_cost = "inverter_cost"
+inverter_lifetime = "inverter_lifetime"
+name = "name"
+plant = "plant"
+pv = "pv"
+pv_degradation_rate = "pv_degradation_rate"
+pv_t = "pv_t"
+solar_thermal = "solar_thermal"
+
+for location_name, location_filename in tqdm(LOCATIONS.items(), desc="locations"):
+    # Change the grid-cost scheme to match the scenario.
+    scenario[grid_cost_scheme] = GRID_COST_SCHEMES[location_name]
+    # Cycle through the plants
+    for plant in tqdm(PLANTS, desc="plants", leave=False):
+        scenario[plant] = plant
+        # Cycle through the PV options available
+        for pv_panel in tqdm(PV_PANELS, desc="pv panels", leave=False):
+            scenario[pv] = pv_panel
+            # Cycle through the PV-T options available
+            for pv_t_panel in PV_T_PANELS:
+                scenario[pv_t] = pv_t_panel
+                for st_panel in ST_COLLECTORS:
+                    scenario = DEFAULT_SCENARIO.copy()
+                    scenario[st_panel] = st_panel
+                    scenario_name = (
+                        f"{location_name}_"
+                        f"{plant.split('_')[0]}_"
+                        f"{pv_panel.split('_')[0]}_"
+                        f"{pv_t_panel.split('m')[0].split('_')[-1]}_"
+                        f"{st_panel.split('_')[0]}"
+                    )
+                    scenario[name] = scenario_name
+                    new_scenarios.append(scenario)
+                    optimisation = DEFAULT_OPTIMISATION.copy()
+                    optimisation["scenario"] = scenario_name
+                    new_optimisations.append(optimisation)
+
+
 grid_optimisations = []
 
 for discount_rate in np.linspace(-25, 25, 250):

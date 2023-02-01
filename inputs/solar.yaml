@@ -46,10 +46,22 @@ solar_collectors:
     cost: !!float 313  # [USD/panel]
     emissivity: 0.9
     land_use: !!float 1.71  # [m^2]
+    pv_unit: !!float 0.330   # [kWp]
     reference_efficiency: !!float 0.193
     reference_temperature: !!float 25  # [degC]
     thermal_coefficient: !!float 0.0037  # [perf./degC]
-    pv_unit: !!float 0.330   # [kWp]
+
+  - name: !!str sharp_nd_af
+    type: !!str pv
+    absorptivity: 0.93
+    area: !!float 1.94
+    cost: !!float 111.74
+    emissivity: 0.9
+    land_use: !!float 1.94
+    pv_unit: !!float 0.33
+    reference_efficiency: !!float 0.17
+    reference_temperature: !!float 25
+    thermal_coefficient: 0.38
 
   ############################
   # Solar-thermal collectors #

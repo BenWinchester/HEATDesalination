@@ -1,0 +1,33 @@
+---
+################################################################################
+# scenarios.yaml - The scenarios being considered.                             #
+#                                                                              #
+# Author: Ben Winchester                                                       #
+# Copyright: Ben Winchester, 2023                                              #
+# Date created: 30/01/2023                                                     #
+# License: Open source                                                         #
+################################################################################
+
+scenarios:
+- battery: lifos_lb_0012  # Name of the battery, must be in `inputs/storage`
+  fractional_battery_cost_change: 0.0  # Fractional change to the battery cost
+  fractional_grid_cost_change: 0.0  # Fractional change to the grid cost
+  fractional_heat_pump_cost_change: 0.0  # Fractional change to heat-pump cost
+  fractional_hw_tank_cost_change: 0.0  # Fractional change to the hw tank cost
+  fractional_inverter_cost_change: 0.0  # Fractional change to the inverter(s)
+  fractional_pv_cost_change: 0.0  # Fractional change to the PV cost
+  fractional_pvt_cost_change: 0.0  # Fractional change to the PV-T cost
+  fractional_st_cost_change: 0.0  # Fractional change to the solar-thermal cost
+  grid_cost_scheme: la_paz_mexico  # Gives the name of the grid cost scheme
+  heat_exchanger_efficiency: 0.4  # System efficiency, 0-1
+  heat_pump: ammonia  # Name of the heat pump
+  hot_water_tank: grant_hpmono_ind150  # Name of the hot-water tank
+  htf_heat_capacity: 4182.0  # [J/kgK]
+  inverter_cost: 148.5  # [USD/kW]
+  inverter_lifetime: 13  # [years]
+  name: default_uae  # Name of the scenario
+  plant: joo_med_24_hour  # Name of the desalination plant to use
+  pv: lg_solar_330_wpcello  # Name of the PV panel, must be in `inputs/solar`
+  pv_degradation_rate: 0.011  # Annual degradation rate of the PV collectors
+  pv_t: dualsun_spring_300m_insulated  # Name of the PV-T collector, ditto
+  solar_thermal: eurotherm_solar_pro_20r  # Name of the solar-thermal collector
