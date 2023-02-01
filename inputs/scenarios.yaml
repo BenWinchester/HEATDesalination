@@ -1,3 +1,4 @@
+scenarios:
 - battery: lifos_lb_0012
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
