@@ -865,6 +865,11 @@ class Scenario:
         of the cost has been removed and the component is now free) and any positive
         number (indicating the fraction added to the original cost).
 
+    .. attribute:: fractional_heat_pump_cost_change
+        The fractional change in the cost of the heat pump(s) installed, defined between
+        -1 (all of the cost has been removed and the component is now free) and any
+        positive number (indicating the fraction added to the original cost).
+
     .. attribute:: fractional_hw_tank_cost_change
         The fractional change in the cost of the hot-water tank installed, defined
         between -1 (all of the cost has been removed and the component is now free) and
@@ -954,6 +959,7 @@ class Scenario:
     _pv_t: bool | str
     _solar_thermal: bool | str
     fractional_grid_cost_change: float = 0
+    fractional_heat_pump_cost_change: float = 0
     fractional_hw_tank_cost_change: float = 0
     fractional_pv_cost_change: float = 0
     fractional_pvt_cost_change: float = 0
