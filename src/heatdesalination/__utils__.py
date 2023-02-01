@@ -860,6 +860,32 @@ class Scenario:
     .. attribute:: battery
         The name of the battery.
 
+    .. attribute:: fractional_grid_cost_change
+        The fractional change in the cost of grid electricity, defined between -1 (all
+        of the cost has been removed and the component is now free) and any positive
+        number (indicating the fraction added to the original cost).
+
+    .. attribute:: fractional_hw_tank_cost_change
+        The fractional change in the cost of the hot-water tank installed, defined
+        between -1 (all of the cost has been removed and the component is now free) and
+        any positive number (indicating the fraction added to the original cost).
+
+    .. attribute:: fractional_pv_cost_change
+        The fractional change in the cost of the PV panels installed, defined between -1
+        (all of the cost has been removed and the component is now free) and any
+        positive number (indicating the fraction added to the original cost).
+
+    .. attribute:: fractional_pvt_cost_change
+        The fractional change in the cost of the PV-T panels installed, defined between
+        -1 (all of the cost has been removed and the component is now free) and any
+        positive number (indicating the fraction added to the original cost).
+
+    .. attribute:: fractional_st_cost_change
+        The fractional change in the cost of the solar-thermal collectors installed,
+        defined between -1 (all of the cost has been removed and the component is now
+        free) and any positive number (indicating the fraction added to the original
+        cost).
+
     .. attribute:: grid_cost_scheme
         The name of the grid-cost scheme to use.
 
@@ -928,6 +954,10 @@ class Scenario:
     _pv_t: bool | str
     _solar_thermal: bool | str
     fractional_grid_cost_change: float = 0
+    fractional_hw_tank_cost_change: float = 0
+    fractional_pv_cost_change: float = 0
+    fractional_pvt_cost_change: float = 0
+    fractional_st_cost_change: float = 0
 
     @property
     def pv(self) -> bool:  # pylint: disable=invalid-name
