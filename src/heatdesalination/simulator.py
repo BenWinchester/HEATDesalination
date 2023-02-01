@@ -809,7 +809,9 @@ def run_simulation(
                 desalination_plant.requirements(hour).electricity  # [kW]
                 + auxiliary_heating_electricity_demand
             )
-            max_heat_pump_cost = max(heat_pump_cost, max_heat_pump_cost)
+            max_heat_pump_cost = max(heat_pump_cost, max_heat_pump_cost) * (
+                1 + scenario.fractional_heat_pump_cost_change
+            )
         else:
             auxiliary_heating_demand = 0
             auxiliary_heating_electricity_demand = 0
