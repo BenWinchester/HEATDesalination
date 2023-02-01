@@ -85,15 +85,15 @@ optimisations:
       pv_t:
         # fixed: 1262
         initial_guess: 3000  # Number of PV-T collectors
-        min: null
+        min: 0
         max: 14400
       st:
         # fixed: 0
         initial_guess: 500  # Number of solar-thermal collectors
-        min: null
+        min: 0
         max: 7619
       start_hour:
-        fixed: 8
+        fixed: 0
         # initial_guess: 10  # [o'clock] using 24-hour clock
         # min: 0
         # max: 23

@@ -171,8 +171,9 @@ def _solar_system_output_temperatures(
     elif pv_t_htf_output_temperature is not None:
         collector_system_output_temperature = pv_t_htf_output_temperature
     else:
-        raise InputFileError(
-            "scenario", "Neither PV-T or solar-thermal were requested."
+        collector_system_output_temperature = collector_system_input_temperature
+        logger.info(
+            "Neither PV-T or solar-thermal were requested."
         )
 
     return (

@@ -1000,6 +1000,8 @@ def _simulate_and_calculate_criterion(
     battery_capacity: float = (
         battery_capacity if battery_capacity is not None else parameter_list.pop(0)
     )
+
+    # Buffer-tank capacities
     existing_buffer_tank_capacity: float = buffer_tank.capacity
     buffer_tank.capacity = (
         buffer_tank_capacity
@@ -1007,7 +1009,8 @@ def _simulate_and_calculate_criterion(
         else parameter_list.pop(0)
     )
     # Sanitise the units on the area of the buffer tank
-    buffer_tank.capacity = buffer_tank_capacity * 1000
+    buffer_tank.capacity = buffer_tank.capacity * 1000
+    buffer_tank_capacity = buffer_tank.capacity
 
     # Increase the area of the tank by a factor of the volume increase accordingly.
     buffer_tank.area *= (buffer_tank.capacity / existing_buffer_tank_capacity) ** (
