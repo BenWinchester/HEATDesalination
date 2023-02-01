@@ -10,8 +10,11 @@
 
 scenarios:
 - battery: lifos_lb_0012  # Name of the battery, must be in `inputs/storage`
+  fractional_battery_cost_change: 0.0  # Fractional change to the battery cost
   fractional_grid_cost_change: 0.0  # Fractional change to the grid cost
+  fractional_heat_pump_cost_change: 0.0  # Fractional change to heat-pump cost
   fractional_hw_tank_cost_change: 0.0  # Fractional change to the hw tank cost
+  fractional_inverter_cost_change: 0.0  # Fractional change to the inverter(s)
   fractional_pv_cost_change: 0.0  # Fractional change to the PV cost
   fractional_pvt_cost_change: 0.0  # Fractional change to the PV-T cost
   fractional_st_cost_change: 0.0  # Fractional change to the solar-thermal cost

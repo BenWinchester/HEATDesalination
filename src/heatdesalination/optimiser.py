@@ -105,13 +105,15 @@ def _inverter_cost(
         (pv_system_size + pv_t_system_size)
         * scenario.inverter_cost
         * (system_lifetime // scenario.inverter_lifetime)
-    )
+    ) * (1 + scenario.fractional_inverter_cost_change)
 
     return inverter_cost
 
 
 def _total_component_costs(
-    component_sizes: Dict[CostableComponent | None, float], logger: Logger
+    component_sizes: Dict[CostableComponent | None, float],
+    logger: Logger,
+    scenario: Scenario,
 ) -> float:
     """
     Calculate the total cost of the costable components installed.
@@ -122,6 +124,8 @@ def _total_component_costs(
             capacities.
         - logger:
             The :class:`logging.Logger` to use for the run.
+        - scenario:
+            The scenario being considered.
 
     Outputs:
         The total cost of these components.
@@ -132,6 +136,21 @@ def _total_component_costs(
         component: component.cost * abs(size)
         for component, size in component_sizes.items()
     }
+
+    # Cycle through the component costs and multiply by the fractional change values.
+    # (Apologies for the inelegant switch statement...)
+    for component in component_costs:
+        if isinstance(component, Battery):
+            component_costs[component] *= 1 + scenario.fractional_grid_cost_change
+        if isinstance(component, HotWaterTank):
+            component_costs[component] *= 1 + scenario.fractional_hw_tank_cost_change
+        if isinstance(component, PVPanel):
+            component_costs[component] *= 1 + scenario.fractional_pv_cost_change
+        if isinstance(component, HybridPVTPanel):
+            component_costs[component] *= 1 + scenario.fractional_pvt_cost_change
+        if isinstance(component, SolarThermalPanel):
+            component_costs[component] *= 1 + scenario.fractional_st_cost_change
+
     logger.debug(
         "Component costs: %s",
         json.dumps(
@@ -329,7 +348,7 @@ def _total_cost(
     """
 
     # Calculate the cost of the various components which can be costed.
-    total_component_cost = _total_component_costs(component_sizes, logger)
+    total_component_cost = _total_component_costs(component_sizes, logger, scenario)
 
     total_grid_cost = _total_grid_cost(logger, scenario, solution, system_lifetime)
 
@@ -339,10 +358,10 @@ def _total_cost(
 
     # Add the costs of any consumables such as diesel fuel or grid electricity.
     total_cost = (
-        total_component_cost
-        + max(total_grid_cost, 0)
-        + max(solution.heat_pump_cost, 0)
-        + max(inverter_cost, 0)
+        total_component_cost  # Already adjusted for cost change
+        + max(total_grid_cost, 0)  # Already adjusted for cost change
+        + max(solution.heat_pump_cost, 0)  # Already adjusted for cost change
+        + max(inverter_cost, 0)  # Already adjusted for cost change
     )  # + diesel_fuel_cost + grid_cost
     logger.info(
         "Total cost: %s, Total component cost: %s, Total grid cost %s, Heat-pump cost: "
