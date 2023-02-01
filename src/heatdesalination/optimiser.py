@@ -166,6 +166,21 @@ def _total_component_costs(
     return sum(component_costs.values())
 
 
+def _grid_infrastructure_cost() -> float:
+    """
+    Calculate the costs associated with the infrastructure required for grid connections
+
+    NOTE: Currently, this function includes no calculation for these costs but is left
+    here as a hook for future development.
+
+    Outputs:
+        The costs, in USD, associated with the grid infrastructure.
+
+    """
+
+    return 0
+
+
 def _total_grid_cost(
     logger: Logger,
     scenario: Scenario,
@@ -177,6 +192,9 @@ def _total_grid_cost(
 
     NOTE: The fractional change in the grid electricity costs are accounted for within
     this function.
+
+    NOTE: There are currently no fixed grid infrastructure costs available, though a
+    hook has been provided for including this functionality later on if required.
 
     Inputs:
         - logger:
@@ -192,6 +210,9 @@ def _total_grid_cost(
         The total costs associated with the grid.
 
     """
+
+    # Calculate the fixed grid infrastructure costs
+    fixed_grid_infrastructure_cost = _grid_infrastructure_cost()
 
     # Calculate the undiscounted cost of grid electricity.
     fractional_cost_change = scenario.fractional_grid_cost_change
@@ -220,7 +241,7 @@ def _total_grid_cost(
                 lower_tier_consumption * (0.063 * (1 + fractional_cost_change))
                 + upper_tier_consumption * (0.10 * (1 + fractional_cost_change))
             )
-        )  # [USD]
+        ) + fixed_grid_infrastructure_cost  # [USD]
 
     # The following schemes use lifetime power consumption, so calculate this
     grid_lifetime_electricity_consumption = (
@@ -232,7 +253,11 @@ def _total_grid_cost(
     if scenario.grid_cost_scheme == GridCostScheme.ABU_DHABI_UAE:
         # Abu Dhabi, UAE-specific code - a tiered tariff applied based on monthly usage.
         # The industrial fixed-rate tariff for <1MW installations is used.
-        return (grid_lifetime_electricity_consumption) * 0.078  # [USD/kWh]
+        return (
+            (grid_lifetime_electricity_consumption)
+            * 0.078
+            * fixed_grid_infrastructure_cost
+        )  # [USD/kWh]
 
     if scenario.grid_cost_scheme == GridCostScheme.GRAN_CANARIA_SPAIN:
         # Gran-Canaria-specific code - a flat tariff per kWh consumed.
@@ -243,10 +268,14 @@ def _total_grid_cost(
         # Energy Policy 2022;162:112791.
         # doi: 10.1016/j.enpol.2022.112791.
         return (
-            DAYS_PER_YEAR  # [days/year]
-            * system_lifetime  # [years]
-            * sum(solution.grid_electricity_supply_profile.values())  # [kWh/day]
-        ) * 0.1537  # [USD/kWh]
+            (
+                DAYS_PER_YEAR  # [days/year]
+                * system_lifetime  # [years]
+                * sum(solution.grid_electricity_supply_profile.values())  # [kWh/day]
+            )
+            * 0.1537
+            * fixed_grid_infrastructure_cost
+        )  # [USD/kWh]
 
     if scenario.grid_cost_scheme in {
         GridCostScheme.TIJUANA_MEXICO,
@@ -316,7 +345,8 @@ def _total_grid_cost(
         )
 
         return (
-            total_fixed_monthly_cost
+            fixed_grid_infrastructure_cost
+            + total_fixed_monthly_cost
             + total_power_cost
             + total_specific_electricity_cost
         )
