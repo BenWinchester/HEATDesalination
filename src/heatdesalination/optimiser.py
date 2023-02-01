@@ -60,6 +60,9 @@ def _inverter_cost(
     """
     Calculate the costs associated with the inverter in the system.
 
+    NOTE: The fractional change in the inverter costs are taken account of in this
+    funciton.
+
     Inputs:
         - component_sizes:
             The sizes of the various components which are costable.
@@ -118,6 +121,8 @@ def _total_component_costs(
     """
     Calculate the total cost of the costable components installed.
 
+    NOTE: The cost-increase factors are accounted for in this function.
+
     Inputs:
         - component_sizes:
             The mapping between :class:`CostableComponent` instances and their installed
@@ -169,6 +174,9 @@ def _total_grid_cost(
 ) -> float:
     """
     Calculate the total cost of the grid electricity used.
+
+    NOTE: The fractional change in the grid electricity costs are accounted for within
+    this function.
 
     Inputs:
         - logger:
@@ -1408,7 +1416,8 @@ def run_optimisation(
             CostType.GRID: _total_grid_cost(
                 logger, scenario, solution, system_lifetime
             ),
-            CostType.HEAT_PUMP: float(max(solution.heat_pump_cost, 0)),
+            CostType.HEAT_PUMP: float(max(solution.heat_pump_cost, 0))
+            * (1 + scenario.fractional_heat_pump_cost_change),
             CostType.INVERTERS: _inverter_cost(
                 component_sizes, scenario, system_lifetime
             ),
