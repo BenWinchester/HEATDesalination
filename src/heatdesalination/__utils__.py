@@ -860,6 +860,11 @@ class Scenario:
     .. attribute:: battery
         The name of the battery.
 
+    .. attribute:: fractional_battery_cost_change
+        The fractional change in the cost of the batteries installed, defined between -1
+        (all of the cost has been removed and the component is now free) and any
+        positive number (indicating the fraction added to the original cost).
+
     .. attribute:: fractional_grid_cost_change
         The fractional change in the cost of grid electricity, defined between -1 (all
         of the cost has been removed and the component is now free) and any positive
@@ -874,6 +879,11 @@ class Scenario:
         The fractional change in the cost of the hot-water tank installed, defined
         between -1 (all of the cost has been removed and the component is now free) and
         any positive number (indicating the fraction added to the original cost).
+
+    .. attribute:: fractional_inverter_cost_change
+        The fractional change in the cost of the inverter(s) installed, defined between
+        -1 (all of the cost has been removed and the component is now free) and any
+        positive number (indicating the fraction added to the original cost).
 
     .. attribute:: fractional_pv_cost_change
         The fractional change in the cost of the PV panels installed, defined between -1
@@ -958,9 +968,11 @@ class Scenario:
     _pv: bool | str
     _pv_t: bool | str
     _solar_thermal: bool | str
+    fractional_battery_cost_change: float = 0
     fractional_grid_cost_change: float = 0
     fractional_heat_pump_cost_change: float = 0
     fractional_hw_tank_cost_change: float = 0
+    fractional_inverter_cost_change: float = 0
     fractional_pv_cost_change: float = 0
     fractional_pvt_cost_change: float = 0
     fractional_st_cost_change: float = 0

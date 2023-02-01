@@ -63,6 +63,10 @@ DESALINATION_PLANT_INPUTS: str = "plants.yaml"
 #   Keyword for desalination plants.
 DESALINATION_PLANTS: str = "desalination_plants"
 
+# FRACTIONAL_BATTERY_COST_CHANGE:
+#   Keyword for the fractional change in the price of the batteries installed.
+FRACTIONAL_BATTERY_COST_CHANGE: str = "fractional_battery_cost_change"
+
 # FRACTIONAL_GRID_COST_CHANGE:
 #   Keyword for the fractional change in the price of grid electricity.
 FRACTIONAL_GRID_COST_CHANGE: str = "fractional_grid_cost_change"
@@ -74,6 +78,10 @@ FRACTIONAL_HEAT_PUMP_COST_CHANGE: str = "fractional_heat_pump_cost_change"
 # FRACTIONAL_HW_TANK_COST_CHANGE:
 #   Keyword for the fractional change in the cost of the hot-water tanks installed.
 FRACTIONAL_HW_TANK_COST_CHANGE: str = "fractional_hw_tank_cost_change"
+
+# FRACTIONAL_INVERTER_COST_CHANGE:
+#   Keyword for the fractional change in the price of the inverter(s) installed.
+FRACTIONAL_INVERTER_COST_CHANGE: str = "fractional_inverter_cost_change"
 
 # FRACTIONAL_PV_COST_CHANGE:
 #   Keyword for the fractional change in the price of grid electricity.
@@ -260,9 +268,11 @@ def parse_input_files(
             entry[PV],
             entry[PV_T],
             entry[SOLAR_THERMAL],
+            entry.get(FRACTIONAL_BATTERY_COST_CHANGE, 0),
             entry.get(FRACTIONAL_GRID_COST_CHANGE, 0),
             entry.get(FRACTIONAL_HEAT_PUMP_COST_CHANGE, 0),
             entry.get(FRACTIONAL_HW_TANK_COST_CHANGE, 0),
+            entry.get(FRACTIONAL_INVERTER_COST_CHANGE, 0),
             entry.get(FRACTIONAL_PV_COST_CHANGE, 0),
             entry.get(FRACTIONAL_PV_T_COST_CHANGE, 0),
             entry.get(FRACTIONAL_ST_COST_CHANGE, 0),
