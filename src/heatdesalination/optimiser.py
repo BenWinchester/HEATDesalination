@@ -22,7 +22,7 @@ __all__ = ("run_optimisation",)
 import abc
 from logging import Logger
 import os
-from typing import Tuple
+from typing import Callable, Tuple
 
 import json
 import numpy
@@ -38,6 +38,8 @@ from .__utils__ import (
     InputFileError,
     OptimisableComponent,
     OptimisationParameters,
+    ProfileDegradationType,
+    ProgrammerJudgementFault,
     Scenario,
     Solution,
 )
@@ -223,13 +225,22 @@ def _total_grid_cost(
     #     * scenario.grid_cost  # [$/kWh]
     # ) * (1 + fractional_cost_change)
 
+    if (grid_supply_profile := solution.grid_electricity_supply_profile) is None:
+        logger.error("No grid-supply profile provided despite grid cost required.")
+        raise ProgrammerJudgementFault(
+            "optimiser:_total_grid_cost", "No grid-supply profile defined."
+        )
+
+    daily_grid_consumption: float = sum(
+        [entry for entry in grid_supply_profile.values() if entry is not None]
+    )
+    peak_grid_power = max(grid_supply_profile.values())
+
     if scenario.grid_cost_scheme == GridCostScheme.DUBAI_UAE:
         # Dubai, UAE-specific code - a tiered tariff applied based on monthly usage.
         # The industrial slab tariff is used with an exchange rate to USD applied of
         # 1 AED to 0.27 USD as fixed due to currency pegging.
-        monthly_grid_consumption = sum(
-            solution.grid_electricity_supply_profile.values()
-        ) * (
+        monthly_grid_consumption = daily_grid_consumption * (
             days_per_month := 30
         )  # [kWh/month]
         lower_tier_consumption = min(monthly_grid_consumption, 10000)
@@ -244,17 +255,17 @@ def _total_grid_cost(
         ) + fixed_grid_infrastructure_cost  # [USD]
 
     # The following schemes use lifetime power consumption, so calculate this
-    grid_lifetime_electricity_consumption = (
+    grid_lifetime_electricity_consumption: float = (
         DAYS_PER_YEAR  # [days/year]
         * system_lifetime  # [years]
-        * sum(solution.grid_electricity_supply_profile.values())  # [kWh/day]
+        * daily_grid_consumption  # [kWh/day]
     )
 
     if scenario.grid_cost_scheme == GridCostScheme.ABU_DHABI_UAE:
         # Abu Dhabi, UAE-specific code - a tiered tariff applied based on monthly usage.
         # The industrial fixed-rate tariff for <1MW installations is used.
         return (
-            (grid_lifetime_electricity_consumption)
+            grid_lifetime_electricity_consumption
             * 0.078
             * fixed_grid_infrastructure_cost
         )  # [USD/kWh]
@@ -268,11 +279,7 @@ def _total_grid_cost(
         # Energy Policy 2022;162:112791.
         # doi: 10.1016/j.enpol.2022.112791.
         return (
-            (
-                DAYS_PER_YEAR  # [days/year]
-                * system_lifetime  # [years]
-                * sum(solution.grid_electricity_supply_profile.values())  # [kWh/day]
-            )
+            grid_lifetime_electricity_consumption
             * 0.1537
             * fixed_grid_infrastructure_cost
         )  # [USD/kWh]
@@ -288,11 +295,7 @@ def _total_grid_cost(
         # All these values were obtained from the Comisión Federal de Electricidad.
         if scenario.grid_cost_scheme == GridCostScheme.TIJUANA_MEXICO:
             # Tijuana-specific code - a two-tier tariff based on power consumption.
-            if (
-                0
-                < (peak_power := max(solution.grid_electricity_supply_profile.values()))
-                <= 25
-            ):
+            if 0 < peak_grid_power <= 25:
                 fixed_monthly_cost: float = 59.85  # [USD/month]
                 power_cost: float = 0  # [USD/kW]
                 specific_electricity_cost: float = 2.466  # [USD/kWh]
@@ -306,14 +309,10 @@ def _total_grid_cost(
                 specific_electricity_cost = 0
         elif scenario.grid_cost_scheme == GridCostScheme.LA_PAZ_MEXICO:
             # La-Paz-specific code - a two-tier tariff based on power consumption.
-            if (
-                0
-                < (peak_power := max(solution.grid_electricity_supply_profile.values()))
-                <= 25
-            ):
-                fixed_monthly_cost: float = 59.85
-                power_cost: float = 0
-                specific_electricity_cost: float = 3.817
+            if 0 < peak_grid_power <= 25:
+                fixed_monthly_cost = 59.85
+                power_cost = 0
+                specific_electricity_cost = 3.817
             elif peak_power > 25:
                 fixed_monthly_cost = 598.55
                 power_cost = 454.36
@@ -338,7 +337,7 @@ def _total_grid_cost(
             * 12  # [months/year]
             * fixed_monthly_cost  # [USD/month]
         )
-        total_power_cost = peak_power * power_cost  # [kW]  # [USD/kW]
+        total_power_cost = peak_grid_power * power_cost  # [kW]  # [USD/kW]
         total_specific_electricity_cost = (
             specific_electricity_cost  # [USD/kWh]
             * grid_lifetime_electricity_consumption
@@ -428,16 +427,38 @@ def _total_electricity_supplied(solution: Solution, system_lifetime: int) -> flo
 
     """
 
+    # Sum the battery power supplied to the system.
+    if (battery_output_power := solution.battery_electricity_suppy_profile) is None:
+        total_battery_output_power: float = 0
+    else:
+        total_battery_output_power = sum(
+            [entry for entry in battery_output_power.values() if entry is not None]
+        )  # [kWh/day]
+
+    # Sum the collector power supplied to the system.
+    if (
+        collector_output_power := solution.total_collector_electrical_output_power[
+            ProfileDegradationType.DEGRADED
+        ]
+    ) is None:
+        total_collector_output_power: float = 0
+    else:
+        total_collector_output_power = sum(
+            [entry for entry in collector_output_power.values() if entry is not None]
+        )  # [kWh/day]
+
+    # Sum the grid power supplied to the system.
+    if (grid_power := solution.grid_electricity_supply_profile) is None:
+        total_grid_power: float = 0
+    else:
+        total_grid_power = sum(
+            [entry for entry in grid_power.values() if entry is not None]
+        )  # [kWh/day]
+
     return (
         DAYS_PER_YEAR  # [days/year]
         * system_lifetime  # [year]
-        * (
-            sum(solution.battery_electricity_suppy_profile.values())  # [kWh/day]
-            + sum(solution.grid_electricity_supply_profile.values())  # [kWh/day]
-            + sum(
-                solution.total_collector_electrical_output_power.values()
-            )  # [kWh/day]
-        )
+        * (total_battery_output_power + total_collector_output_power + total_grid_power)
     )
 
 
@@ -451,7 +472,7 @@ class Criterion(abc.ABC):
 
     """
 
-    calculate_value_map = {}
+    calculate_value_map: dict[str, Callable] = {}
     name: str
 
     def __init_subclass__(cls, criterion_name: str):
@@ -530,7 +551,11 @@ class DumpedElectricity(Criterion, criterion_name="dumped_electricity"):
 
         """
 
-        return sum(solution.dumped_solar.values()) * DAYS_PER_YEAR * system_lifetime
+        # If no solar was dumped, return 0.
+        if (dumped_solar := solution.dumped_solar) is None:
+            return 0
+
+        return sum(dumped_solar.values()) * DAYS_PER_YEAR * system_lifetime
 
 
 class GridElectricityFraction(Criterion, criterion_name="grid_electricity_fraction"):
@@ -565,7 +590,13 @@ class GridElectricityFraction(Criterion, criterion_name="grid_electricity_fracti
 
         """
 
-        grid_power_supplied = sum(solution.grid_electricity_supply_profile.values())
+        # Return 0 if no grid power was used.
+        if (grid_profile := solution.grid_electricity_supply_profile) is None:
+            return 0
+
+        grid_power_supplied = sum(
+            [entry for entry in grid_profile.values() if entry is not None]
+        )
         total_electricity_demand = sum(solution.electricity_demands.values())
         return grid_power_supplied / total_electricity_demand
 
@@ -736,7 +767,7 @@ class AuxiliaryHeatingFraction(Criterion, criterion_name="auxiliary_heating_frac
 
         """
 
-        return 1 - super().calculate_value_map[RenewableHeatingFraction.name](
+        return 1 - super().calculate_value_map[RenewableHeatingFraction.name](  # type: ignore [no-any-return]
             component_sizes, logger, scenario, solution, system_lifetime
         )
 
@@ -773,7 +804,11 @@ class SolarElectricityFraction(Criterion, criterion_name="solar_electricity_frac
 
         """
 
-        solar_power_supplied = sum(solution.solar_power_supplied.values())
+        # If no solar power was generated, return 0 as the solar fraction.
+        if (solar_power_map := solution.solar_power_supplied) is None:
+            return 0
+
+        solar_power_supplied = sum(solar_power_map.values())
         total_electricity_demand = sum(solution.electricity_demands.values())
         return solar_power_supplied / total_electricity_demand
 
@@ -812,9 +847,16 @@ class StorageElectricityFraction(
 
         """
 
+        if (battery_profile := solution.battery_electricity_suppy_profile) is None:
+            logger.error("No battery profile provided despite sum requested.")
+            raise ProgrammerJudgementFault(
+                "optimiser:StorageElectricityFraction:calculate_value",
+                "No battery profile provided despite summation requested.",
+            )
+
         try:
             storage_power_supplied: float = sum(
-                solution.battery_electricity_suppy_profile.values()
+                [entry for entry in battery_profile.values() if entry is not None]
             )
         except AttributeError:
             print("No battery profile for scenario %s", str(scenario))
@@ -997,7 +1039,7 @@ def _simulate_and_calculate_criterion(
     parameter_list: list[float] = parameter_vector.tolist()
 
     # Setup input parameters from the vector.
-    battery_capacity: float = (
+    _battery_capacity: float = (
         battery_capacity if battery_capacity is not None else parameter_list.pop(0)
     )
 
@@ -1010,7 +1052,7 @@ def _simulate_and_calculate_criterion(
     )
     # Sanitise the units on the area of the buffer tank
     buffer_tank.capacity = buffer_tank.capacity * 1000
-    buffer_tank_capacity = buffer_tank.capacity
+    _buffer_tank_capacity = buffer_tank.capacity
 
     # Increase the area of the tank by a factor of the volume increase accordingly.
     buffer_tank.area *= (buffer_tank.capacity / existing_buffer_tank_capacity) ** (
@@ -1018,25 +1060,25 @@ def _simulate_and_calculate_criterion(
     )
 
     # Collector parameters
-    htf_mass_flow_rate: float = (
+    _htf_mass_flow_rate: float = (
         htf_mass_flow_rate if htf_mass_flow_rate is not None else parameter_list.pop(0)
     )
-    pv_panel_system_size: float = (
+    _pv_panel_system_size: float = (
         pv_panel_system_size
         if pv_panel_system_size is not None
         else parameter_list.pop(0)
     )
-    pv_t_system_size: float = (
+    _pv_t_system_size: float = (
         pv_t_system_size if pv_t_system_size is not None else parameter_list.pop(0)
     )
-    solar_thermal_system_size: float = (
+    _solar_thermal_system_size: float = (
         solar_thermal_system_size
         if solar_thermal_system_size is not None
         else parameter_list.pop(0)
     )
 
     # Setup plant parameters
-    start_hour: float = start_hour if start_hour is not None else parameter_list.pop(0)
+    _start_hour: float = start_hour if start_hour is not None else parameter_list.pop(0)
     desalination_plant.start_hour = start_hour
     desalination_plant.reset_operating_hours()
 
@@ -1045,20 +1087,20 @@ def _simulate_and_calculate_criterion(
         steady_state_solution: Solution = determine_steady_state_simulation(
             ambient_temperatures,
             battery,
-            battery_capacity,
+            _battery_capacity,
             buffer_tank,
             desalination_plant,
             heat_pump,
-            htf_mass_flow_rate,
+            _htf_mass_flow_rate,
             hybrid_pv_t_panel,
             logger,
             pv_panel,
-            pv_panel_system_size,
-            pv_t_system_size,
+            _pv_panel_system_size,
+            _pv_t_system_size,
             scenario,
             solar_irradiances,
             solar_thermal_collector,
-            solar_thermal_system_size,
+            _solar_thermal_system_size,
             system_lifetime,
             wind_speeds,
             disable_tqdm=disable_tqdm,
@@ -1071,11 +1113,11 @@ def _simulate_and_calculate_criterion(
 
     # Assemble the component sizes mapping.
     component_sizes: dict[CostableComponent, int | float] = {
-        battery: battery_capacity * (1 + steady_state_solution.battery_replacements),  # type: ignore [dict-item,operator]
-        buffer_tank: buffer_tank_capacity,  # type: ignore [dict-item]
-        hybrid_pv_t_panel: pv_t_system_size,  # type: ignore [dict-item]
-        pv_panel: pv_panel_system_size,  # type: ignore [dict-item]
-        solar_thermal_collector: solar_thermal_system_size,  # type: ignore [dict-item]
+        battery: _battery_capacity * (1 + steady_state_solution.battery_replacements),  # type: ignore [dict-item,operator]
+        buffer_tank: _buffer_tank_capacity,  # type: ignore [dict-item]
+        hybrid_pv_t_panel: _pv_t_system_size,  # type: ignore [dict-item]
+        pv_panel: _pv_panel_system_size,  # type: ignore [dict-item]
+        solar_thermal_collector: _solar_thermal_system_size,  # type: ignore [dict-item]
     }
 
     # Return the value of the criterion.
