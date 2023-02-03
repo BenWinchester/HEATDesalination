@@ -6,7 +6,7 @@
 # Author: Ben Winchester                                                               #
 # Copyright: Ben Winchester, 2022                                                      #
 # Date created: 24/10/2022                                                             #
-# License: Open source                                                                 #
+# License: MIT                                                                         #
 ########################################################################################
 """
 test_simulator.py - Tests for the simulation module.

@@ -5,7 +5,7 @@
 # Authors: Phil Sandwell, Ben Winchester                                               #
 # Copyright: Phil Sandwell, 2022                                                       #
 # Date created: 29/03/2022                                                             #
-# License: Open source                                                                 #
+# License: MIT                                                                         #
 #                                                                                      #
 # For more information, please email:                                                  #
 #   benedict.winchester@gmail.com                                                      #

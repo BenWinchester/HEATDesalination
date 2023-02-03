@@ -1291,7 +1291,6 @@ class Solution(NamedTuple):
 
         # Loop through the profiles.
         for profile in ProfileDegradationType:
-
             # Add the output for each hour for which it is not None.
             for hour in range(24):
                 # Add the PV output power.

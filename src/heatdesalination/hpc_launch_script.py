@@ -5,7 +5,7 @@
 # Authors: Ben Winchester                                                              #
 # Copyright: Ben Winchester, 2022                                                      #
 # Date created: 29/11/2022                                                             #
-# License: Open source                                                                 #
+# License: MIT                                                                         #
 #                                                                                      #
 # For more information, please email:                                                  #
 #   benedict.winchester@gmail.com                                                      #

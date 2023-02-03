@@ -6,7 +6,7 @@
 # Author: Ben Winchester, Phil Sandwell                                                #
 # Copyright: Ben Winchester, 2022                                                      #
 # Date created: 21/10/2022                                                             #
-# License: Open source                                                                 #
+# License: MIT                                                                         #
 ########################################################################################
 """
 test_solar.py - Tests for the solar module.
