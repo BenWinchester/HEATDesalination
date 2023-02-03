@@ -22,7 +22,7 @@ __all__ = ("run_optimisation",)
 import abc
 from logging import Logger
 import os
-from typing import Dict, List, Tuple, Type
+from typing import Tuple
 
 import json
 import numpy
@@ -53,7 +53,7 @@ UPPER_LIMIT: float = 10**8
 
 
 def _inverter_cost(
-    component_sizes: Dict[CostableComponent | None, float],
+    component_sizes: dict[CostableComponent | None, float],
     scenario: Scenario,
     system_lifetime: int,
 ) -> float:
@@ -114,7 +114,7 @@ def _inverter_cost(
 
 
 def _total_component_costs(
-    component_sizes: Dict[CostableComponent | None, float],
+    component_sizes: dict[CostableComponent | None, float],
     logger: Logger,
     scenario: Scenario,
 ) -> float:
@@ -359,7 +359,7 @@ def _total_grid_cost(
 
 
 def _total_cost(
-    component_sizes: Dict[CostableComponent | None, float],
+    component_sizes: dict[CostableComponent | None, float],
     logger: Logger,
     scenario: Scenario,
     solution: Solution,
@@ -471,7 +471,7 @@ class Criterion(abc.ABC):
     @abc.abstractmethod
     def calculate_value(
         cls,
-        component_sizes: Dict[CostableComponent | None, float],
+        component_sizes: dict[CostableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -504,7 +504,7 @@ class DumpedElectricity(Criterion, criterion_name="dumped_electricity"):
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: Dict[CostableComponent | None, float],
+        component_sizes: dict[CostableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -539,7 +539,7 @@ class GridElectricityFraction(Criterion, criterion_name="grid_electricity_fracti
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: Dict[CostableComponent | None, float],
+        component_sizes: dict[CostableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -579,7 +579,7 @@ class LCUE(Criterion, criterion_name="lcue"):
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: Dict[CostableComponent | None, float],
+        component_sizes: dict[CostableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -625,7 +625,7 @@ class RenewableElectricityFraction(
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: Dict[CostableComponent | None, float],
+        component_sizes: dict[CostableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -662,7 +662,7 @@ class RenewableHeatingFraction(Criterion, criterion_name="renewable_heating_frac
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: Dict[CostableComponent | None, float],
+        component_sizes: dict[CostableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -710,7 +710,7 @@ class AuxiliaryHeatingFraction(Criterion, criterion_name="auxiliary_heating_frac
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: Dict[CostableComponent | None, float],
+        component_sizes: dict[CostableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -747,7 +747,7 @@ class SolarElectricityFraction(Criterion, criterion_name="solar_electricity_frac
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: Dict[CostableComponent | None, float],
+        component_sizes: dict[CostableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -786,7 +786,7 @@ class StorageElectricityFraction(
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: Dict[CostableComponent | None, float],
+        component_sizes: dict[CostableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -832,7 +832,7 @@ class TotalCost(Criterion, criterion_name="total_cost"):
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: Dict[CostableComponent | None, float],
+        component_sizes: dict[CostableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -899,7 +899,7 @@ class TotalCost(Criterion, criterion_name="total_cost"):
 
 def _simulate_and_calculate_criterion(
     parameter_vector: numpy.ndarray,
-    ambient_temperatures: Dict[int, float],
+    ambient_temperatures: dict[int, float],
     battery: Battery,
     battery_capacity: int | None,
     buffer_tank: HotWaterTank,
@@ -915,11 +915,11 @@ def _simulate_and_calculate_criterion(
     pv_t_system_size: int | None,
     scenario: Scenario,
     start_hour: int | None,
-    solar_irradiances: Dict[int, float],
+    solar_irradiances: dict[int, float],
     solar_thermal_collector: SolarThermalPanel | None,
     solar_thermal_system_size: int | None,
     system_lifetime: int,
-    wind_speeds: Dict[int, float],
+    wind_speeds: dict[int, float],
     disable_tqdm: bool = False,
 ) -> float:
     """
@@ -994,7 +994,7 @@ def _simulate_and_calculate_criterion(
     """
 
     # Convert the parameter vector to a list
-    parameter_list: List[float] = parameter_vector.tolist()
+    parameter_list: list[float] = parameter_vector.tolist()
 
     # Setup input parameters from the vector.
     battery_capacity: float = (
@@ -1070,7 +1070,7 @@ def _simulate_and_calculate_criterion(
         return UPPER_LIMIT
 
     # Assemble the component sizes mapping.
-    component_sizes: Dict[CostableComponent, int | float] = {
+    component_sizes: dict[CostableComponent, int | float] = {
         battery: battery_capacity * (1 + steady_state_solution.battery_replacements),  # type: ignore [dict-item,operator]
         buffer_tank: buffer_tank_capacity,  # type: ignore [dict-item]
         hybrid_pv_t_panel: pv_t_system_size,  # type: ignore [dict-item]
@@ -1183,7 +1183,7 @@ def _constraint_function(
 
 
 def run_optimisation(
-    ambient_temperatures: Dict[int, float],
+    ambient_temperatures: dict[int, float],
     battery: Battery,
     buffer_tank: HotWaterTank,
     desalination_plant: DesalinationPlant,
@@ -1193,13 +1193,13 @@ def run_optimisation(
     optimisation_parameters: OptimisationParameters,
     pv_panel: PVPanel | None,
     scenario: Scenario,
-    solar_irradiances: Dict[int, float],
+    solar_irradiances: dict[int, float],
     solar_thermal_collector: SolarThermalPanel | None,
     system_lifetime: int,
-    wind_speeds: Dict[int, float],
+    wind_speeds: dict[int, float],
     *,
     disable_tqdm: bool = True,
-) -> Tuple[Dict[str, float], List[float]]:
+) -> Tuple[dict[str, float], list[float]]:
     """
     Determine the optimum system conditions.
 
@@ -1307,7 +1307,7 @@ def run_optimisation(
     )
 
     class Bounds:
-        def __init__(self, bounds: List[Tuple[float | None, float | None]]) -> None:
+        def __init__(self, bounds: list[Tuple[float | None, float | None]]) -> None:
             self.bounds = bounds
 
         def __call__(self, **kwargs) -> bool:
@@ -1355,7 +1355,7 @@ def run_optimisation(
     )
 
     # Calculate the optimisation criterion value and return this also.
-    parameter_list: List[float] = list(optimisation_result.x)
+    parameter_list: list[float] = list(optimisation_result.x)
 
     # Setup input parameters from the vector.
     battery_capacity: float = (
@@ -1416,7 +1416,7 @@ def run_optimisation(
     )
 
     # Assemble the component sizes mapping.
-    component_sizes: Dict[CostableComponent | None, float] = {
+    component_sizes: dict[CostableComponent | None, float] = {
         battery: battery_capacity * (1 + solution.battery_replacements),
         buffer_tank: buffer_tank_capacity,
         hybrid_pv_t_panel: pv_t_system_size,

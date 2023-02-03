@@ -21,7 +21,7 @@ permission from the authors under the open-source MIT license.
 
 import dataclasses
 
-from typing import Any, Dict
+from typing import Any
 
 from ..__utils__ import (
     AREA,
@@ -213,7 +213,7 @@ class _BaseStorage(CostableComponent):
         )
 
     @classmethod
-    def from_dict(cls, storage_data: Dict[str, Any]) -> Any:
+    def from_dict(cls, storage_data: dict[str, Any]) -> Any:
         """
         Create a :class:`CleanWaterTank` instance based on the file data passed in.
 
@@ -377,7 +377,7 @@ class Battery(_BaseStorage, label="battery", resource_type=ResourceType.ELECTRIC
         )
 
     @classmethod
-    def from_dict(cls, storage_data: Dict[str, Any]) -> Any:
+    def from_dict(cls, storage_data: dict[str, Any]) -> Any:
         """
         Create a :class:`Battery` instance based on the file data passed in.
 
@@ -599,7 +599,7 @@ class HotWaterTank(
         )
 
     @classmethod
-    def from_dict(cls, storage_data: Dict[str, Any]) -> Any:
+    def from_dict(cls, storage_data: dict[str, Any]) -> Any:
         """
         Create a :class:`HotWaterTank` instance based on the file data passed in.
 

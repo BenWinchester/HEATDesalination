@@ -13,7 +13,6 @@ test_simulator.py - Tests for the simulation module.
 
 """
 
-from typing import Dict
 import unittest
 
 from unittest import mock
@@ -97,7 +96,7 @@ class TestRunSimulation(unittest.TestCase):
     def setUp(self) -> None:
         """Set up mocks in common across test cases."""
 
-        self.ambient_temperatures: Dict[int, float] = {hour: 300 for hour in range(24)}
+        self.ambient_temperatures: dict[int, float] = {hour: 300 for hour in range(24)}
         self.battery = mock.MagicMock()
         self.battery_capacity = mock.MagicMock()
         self.buffer_tank = mock.MagicMock()
@@ -107,7 +106,7 @@ class TestRunSimulation(unittest.TestCase):
         self.logger = mock.MagicMock()
         self.pv_system_size = mock.MagicMock()
         self.pv_t_system_size = 10
-        self.solar_irradiances: Dict[int, float] = {hour: 15 for hour in range(24)}
+        self.solar_irradiances: dict[int, float] = {hour: 15 for hour in range(24)}
         self.solar_thermal_collector = mock.MagicMock()
         self.solar_thermal_system_size = 10
         self.system_lifetime = 25

@@ -26,7 +26,7 @@ import sys
 
 from logging import Logger
 from multiprocessing import pool
-from typing import Any, Dict, List
+from typing import Any
 
 from tqdm import tqdm
 
@@ -71,12 +71,12 @@ class Optimisation:
 
     location: str
     output: str
-    profile_types: List[str]
+    profile_types: list[str]
     scenario: str
     system_lifetime: int
 
     @property
-    def profile_type_instances(self) -> List[ProfileType]:
+    def profile_type_instances(self) -> list[ProfileType]:
         """
         Return :class:`ProfileType` instances.
 
@@ -88,7 +88,7 @@ class Optimisation:
         return [CLI_TO_PROFILE_TYPE[entry] for entry in self.profile_types]
 
 
-def _parse_args(args: List[Any]) -> argparse.Namespace:
+def _parse_args(args: list[Any]) -> argparse.Namespace:
     """
     Parses command-line arguments into a :class:`argparse.NameSpace`.
 
@@ -185,7 +185,7 @@ def main(
     optimisations_file: str,
     output_file: str,
     full_results: bool = True,
-) -> List[Any]:
+) -> list[Any]:
     """
     Main method for carrying out multiple optimisations.
 

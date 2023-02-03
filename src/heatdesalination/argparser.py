@@ -19,7 +19,7 @@ import argparse
 import os
 
 from logging import Logger
-from typing import Any, List, Tuple
+from typing import Any, Tuple
 
 import json
 
@@ -57,7 +57,7 @@ class MissingParametersError(Exception):
         )
 
 
-def parse_args(args: List[Any]) -> argparse.Namespace:
+def parse_args(args: list[Any]) -> argparse.Namespace:
     """
     Parses command-line arguments into a :class:`argparse.NameSpace`.
 
@@ -207,7 +207,7 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
     return parser.parse_args(args)
 
 
-def _parse_hpc_args(args: List[Any]) -> argparse.Namespace:
+def _parse_hpc_args(args: list[Any]) -> argparse.Namespace:
     """
     Parses command-line arguments into a :class:`argparse.NameSpace`.
 
@@ -252,8 +252,8 @@ def _parse_hpc_args(args: List[Any]) -> argparse.Namespace:
 
 
 def parse_hpc_args_and_runs(
-    args: List[Any], logger: Logger
-) -> Tuple[str, List[HPCSimulation], int | None]:
+    args: list[Any], logger: Logger
+) -> Tuple[str, list[HPCSimulation], int | None]:
     """
     Parse the arguments and runs.
 

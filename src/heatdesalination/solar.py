@@ -24,7 +24,7 @@ import enum
 import math
 
 from logging import Logger
-from typing import Any, Dict, Tuple
+from typing import Any, Tuple
 
 from pvlib import temperature
 
@@ -554,7 +554,7 @@ class SolarPanel(abc.ABC, CostableComponent):  # pylint: disable=too-few-public-
     def from_dict(
         cls,
         logger: Logger,
-        solar_inputs: Dict[str, Any],
+        solar_inputs: dict[str, Any],
     ) -> Any:
         """
         Instantiate a :class:`SolarPanel` instance based on the input data.
@@ -688,7 +688,7 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
         )
 
     @classmethod
-    def from_dict(cls, logger: Logger, solar_inputs: Dict[str, Any]) -> Any:
+    def from_dict(cls, logger: Logger, solar_inputs: dict[str, Any]) -> Any:
         """
         Instantiate a :class:`PVPanel` instance based on the input data.
 
@@ -929,7 +929,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         self,
         electric_performance_curve: PerformanceCurve,
         pv_module_characteristics: PVModuleCharacteristics,
-        solar_inputs: Dict[str, Any],
+        solar_inputs: dict[str, Any],
         thermal_performance_curve: PerformanceCurve,
     ) -> None:
         """
@@ -1027,7 +1027,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
     def from_dict(
         cls,
         logger: Logger,
-        solar_inputs: Dict[str, Any],
+        solar_inputs: dict[str, Any],
     ) -> Any:
         """
         Instantiate a :class:`SolarThermalPanel` instance based on the input data.
@@ -1283,7 +1283,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
     def __init__(
         self,
         performance_curve: PerformanceCurve,
-        solar_inputs: Dict[str, Any],
+        solar_inputs: dict[str, Any],
     ) -> None:
         """
         Instantiate a :class:`SolarThermalPanel` instance based on the input data.
@@ -1535,7 +1535,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
     def from_dict(
         cls,
         logger: Logger,
-        solar_inputs: Dict[str, Any],
+        solar_inputs: dict[str, Any],
     ) -> Any:
         """
         Instantiate a :class:`SolarThermalPanel` instance based on the input data.
@@ -1581,7 +1581,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
 
 # COLLECTOR_FROM_TYPE:
 #   Mapping from collector type to collector.
-COLLECTOR_FROM_TYPE: Dict[str, SolarPanel] = {
+COLLECTOR_FROM_TYPE: dict[str, SolarPanel] = {
     SolarPanelType.PV: PVPanel,
     SolarPanelType.PV_T: HybridPVTPanel,
     SolarPanelType.SOLAR_THERMAL: SolarThermalPanel,

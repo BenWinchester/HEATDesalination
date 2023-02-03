@@ -20,7 +20,7 @@ and optimise the desalination systems.
 import os
 import sys
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Tuple
 
 import json
 
@@ -82,7 +82,7 @@ def save_simulation(
     output: str,
     profile_type: str,
     simulation_outputs: Solution,
-    solar_irradiance: Dict[int, float],
+    solar_irradiance: dict[int, float],
 ) -> None:
     """
     Save the outputs from the simulation run.
@@ -110,7 +110,7 @@ def save_simulation(
 
 
 def save_optimisation(
-    optimisation_outputs: List[Any],
+    optimisation_outputs: list[Any],
     output: str,
 ) -> None:
     """
@@ -138,7 +138,7 @@ def save_optimisation(
 
 def main(
     location: str,
-    profile_types: List[ProfileType],
+    profile_types: list[ProfileType],
     scenario_name: str,
     system_lifetime: int,
     battery_capacity: float | None = None,
@@ -231,7 +231,7 @@ def main(
 
     if simulation:
         # Raise exceptions if the arguments are invalid.
-        missing_parameters: List[str] = []
+        missing_parameters: list[str] = []
         if scenario.battery and battery_capacity is None:
             logger.error(
                 "Must specify battery capacity if batteries included in scenario."
@@ -348,8 +348,8 @@ def main(
 
     elif optimisation:
         # Setup a variable for storing the optimisation results.
-        optimisation_results: List[
-            Tuple[Dict[str, Any], Dict[Any, Tuple[Dict[str, float], List[float]]]]
+        optimisation_results: list[
+            Tuple[dict[str, Any], dict[Any, Tuple[dict[str, float], list[float]]]]
         ] = []
 
         for optimisation_parameters in tqdm(

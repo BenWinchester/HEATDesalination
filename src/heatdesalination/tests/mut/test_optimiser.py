@@ -17,7 +17,6 @@ import dataclasses
 import random
 import unittest
 
-from typing import Dict
 from unittest import mock
 
 from src.heatdesalination.__utils__ import Scenario
@@ -52,7 +51,7 @@ class MockSolution:
 
     """
 
-    grid_electricity_supply_profile: Dict[int, float]
+    grid_electricity_supply_profile: dict[int, float]
 
 
 class TestCollectorMassFlowRate(unittest.TestCase):
