@@ -194,13 +194,13 @@ TYPE: str = "type"
 
 
 def parse_input_files(
-    location: str, logger: Logger, scenario_name: str, start_hour: int
+    location: str, logger: Logger, scenario_name: str, start_hour: int | None
 ) -> Tuple[
     Dict[ProfileType, Dict[int, float]],
     Battery,
     HotWaterTank,
-    HeatPump,
     DesalinationPlant,
+    HeatPump,
     HybridPVTPanel | None,
     List[OptimisationParameters],
     PVPanel | None,
@@ -221,7 +221,8 @@ def parse_input_files(
         - scenario_name:
             The name of the scenario to use.
         - start_hour:
-            The start hour for the plant's operation.
+            The start hour for the plant's operation or `None` if running an
+            optimisation and the start-hour is optimisable.
 
     Outputs:
         - ambient_temperatures:

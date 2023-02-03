@@ -23,7 +23,12 @@ from typing import Any, List, Tuple
 
 import json
 
-from src.heatdesalination.__utils__ import CLI_TO_PROFILE_TYPE, HPCSimulation, WALLTIME
+from src.heatdesalination.__utils__ import (
+    CLI_TO_PROFILE_TYPE,
+    DEFAULT_SIMULATION_OUTPUT_FILE,
+    HPCSimulation,
+    WALLTIME,
+)
 
 __all__ = (
     "parse_args",
@@ -145,7 +150,7 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
     simulation_arguments.add_argument(
         "--output",
         "-o",
-        default="simulation_output",
+        default=DEFAULT_SIMULATION_OUTPUT_FILE,
         help="The name of the output file.",
         type=str,
     )

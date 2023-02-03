@@ -928,7 +928,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
     def __init__(
         self,
         electric_performance_curve: PerformanceCurve,
-        pv_module_characteristics: PVModuleCharacteristics | None,
+        pv_module_characteristics: PVModuleCharacteristics,
         solar_inputs: Dict[str, Any],
         thermal_performance_curve: PerformanceCurve,
     ) -> None:

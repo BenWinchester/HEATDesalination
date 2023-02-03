@@ -29,6 +29,7 @@ from tqdm import tqdm
 from .__utils__ import (
     DAYS_PER_YEAR,
     ProfileDegradationType,
+    ProgrammerJudgementFault,
     Scenario,
     Solution,
     ZERO_CELCIUS_OFFSET,
@@ -155,7 +156,7 @@ def _calculate_collector_degradation(
 
 def _storage_profile_iteration_step(
     battery: Battery,
-    battery_system_size: int | None,
+    battery_system_size: int,
     maximum_charge_degradation: float,
     solution: Solution,
     total_collector_generation_profile: Dict[int, float],
@@ -306,7 +307,7 @@ def _maximum_charge_degradation_factor(
 
 def _storage_solver(
     battery: Battery,
-    battery_system_size: int | None,
+    battery_system_size: int,
     maximum_charge_degradation: float,
     solution: Solution,
     total_collector_generation_profile: Dict[int, float],
@@ -387,7 +388,7 @@ def _storage_solver(
 
 def _recursive_degraded_storage_solver(
     battery: Battery,
-    battery_system_size: int | None,
+    battery_system_size: int,
     solution: Solution,
     system_lifetime: int,
     total_collector_generation_profile: Dict[int, float],
@@ -696,8 +697,12 @@ def run_simulation(
         pv_t_mass_flow_rate = None
         logger.debug("No PV-T mass flow rate because disabled or zero size.")
 
-    if scenario.solar_thermal and solar_thermal_system_size > 0:
-        solar_thermal_mass_flow_rate: float = _collector_mass_flow_rate(
+    if (
+        scenario.solar_thermal
+        and solar_thermal_system_size is not None
+        and solar_thermal_system_size > 0
+    ):
+        solar_thermal_mass_flow_rate: float | None = _collector_mass_flow_rate(
             htf_mass_flow_rate, solar_thermal_system_size
         )
         logger.debug(
@@ -777,25 +782,42 @@ def run_simulation(
         # Determine the electricity demands of the plant including any auxiliary
         # heating.
         if desalination_plant.operating(hour):
+            if (
+                hot_water_volume := desalination_plant.requirements(
+                    hour
+                ).hot_water_volume
+            ) is None or (
+                hot_water_temperature := desalination_plant.requirements(
+                    hour
+                ).hot_water_temperature
+            ) is None:
+                logger.error(
+                    "Desalination plant requirements not defined for hour %s.", hour
+                )
+                raise ProgrammerJudgementFault(
+                    "simulator::run_simulation",
+                    "Desalination plant requirements not defined for plant "
+                    f"{desalination_plant.name} for hour {hour} despite plant "
+                    "operating.",
+                )
+
             auxiliary_heating_demand = max(
                 (
-                    desalination_plant.requirements(hour).hot_water_volume  # [kg/s]
+                    hot_water_volume  # [kg/s]
                     * buffer_tank.heat_capacity  # [J/kg*K]
-                    * (
-                        desalination_plant.requirements(hour).hot_water_temperature
-                        - tank_temperature  # [K]
-                    )
+                    * (hot_water_temperature - tank_temperature)  # [K]
                     / 1000  # [W/kW]
                 ),
                 0,
             )  # [kW]
 
             # Calculate the power consumption.
+
             (
                 heat_pump_cost,
                 heat_pump_power_consumpion,
             ) = calculate_heat_pump_electricity_consumption_and_cost(
-                desalination_plant.requirements(hour).hot_water_temperature,
+                hot_water_temperature,
                 ambient_temperatures[hour],
                 auxiliary_heating_demand,
                 heat_pump,
@@ -816,6 +838,8 @@ def run_simulation(
             auxiliary_heating_demand = 0
             auxiliary_heating_electricity_demand = 0
             electricity_demand = desalination_plant.requirements(hour).electricity
+            hot_water_temperature = None
+            hot_water_volume = None
 
         # Save these outputs in mappings.
         auxiliary_heating_demands[hour] = auxiliary_heating_demand
@@ -828,27 +852,28 @@ def run_simulation(
         collector_input_temperatures[hour] = collector_input_temperature
         collector_system_output_temperatures[hour] = collector_system_output_temperature
         electricity_demands[hour] = electricity_demand
-        hot_water_demand_temperatures[hour] = desalination_plant.requirements(
-            hour
-        ).hot_water_temperature
+        hot_water_demand_temperatures[hour] = hot_water_temperature
         hot_water_demand_volumes[hour] = hot_water_demand_volume
         pv_t_electrical_efficiencies[hour] = pv_t_electrical_efficiency
-        pv_t_electrical_output_power[hour] = (
-            (
-                electric_output(
-                    pv_t_electrical_efficiency
-                    if pv_t_electrical_efficiency is not None
-                    else 0,
-                    hybrid_pv_t_panel.pv_module_characteristics.nominal_power,
-                    hybrid_pv_t_panel.pv_module_characteristics.reference_efficiency,
-                    solar_irradiances[hour],
+        if hybrid_pv_t_panel is not None:
+            pv_t_electrical_output_power[hour] = (
+                (
+                    electric_output(
+                        pv_t_electrical_efficiency
+                        if pv_t_electrical_efficiency is not None
+                        else 0,
+                        hybrid_pv_t_panel.pv_module_characteristics.nominal_power,
+                        hybrid_pv_t_panel.pv_module_characteristics.reference_efficiency,
+                        solar_irradiances[hour],
+                    )
+                    if solar_irradiances[hour] > 0
+                    else 0
                 )
-                if solar_irradiances[hour] > 0
-                else 0
+                if scenario.pv_t
+                else None
             )
-            if scenario.pv_t
-            else None
-        )
+        else:
+            pv_t_electrical_output_power[hour] = None
         pv_t_htf_output_temperatures[hour] = pv_t_htf_output_temperature
         pv_t_reduced_temperatures[hour] = pv_t_reduced_temperature
         pv_t_thermal_efficiencies[hour] = pv_t_thermal_efficiency
@@ -957,7 +982,7 @@ def run_simulation(
 def determine_steady_state_simulation(
     ambient_temperatures: Dict[int, float],
     battery: Battery | None,
-    battery_capacity: int | None,
+    battery_capacity: float | int | None,
     buffer_tank: HotWaterTank,
     desalination_plant: DesalinationPlant,
     heat_pump: HeatPump,
@@ -965,12 +990,12 @@ def determine_steady_state_simulation(
     hybrid_pv_t_panel: HybridPVTPanel | None,
     logger: Logger,
     pv_panel: PVPanel | None,
-    pv_system_size: int | None,
-    pv_t_system_size: int | None,
+    pv_system_size: float | int | None,
+    pv_t_system_size: float | int | None,
     scenario: Scenario,
     solar_irradiances: Dict[int, float],
     solar_thermal_collector: SolarThermalPanel | None,
-    solar_thermal_system_size: int | None,
+    solar_thermal_system_size: float | int | None,
     system_lifetime: int,
     wind_speeds: Dict[int, float],
     *,

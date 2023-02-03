@@ -20,13 +20,19 @@ and optimise the desalination systems.
 import os
 import sys
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 import json
 
 from tqdm import tqdm
 
-from .__utils__ import CLI_TO_PROFILE_TYPE, ProfileType, Solution, get_logger
+from .__utils__ import (
+    CLI_TO_PROFILE_TYPE,
+    DEFAULT_SIMULATION_OUTPUT_FILE,
+    ProfileType,
+    Solution,
+    get_logger,
+)
 from .argparser import MissingParametersError, parse_args, validate_args
 from .fileparser import parse_input_files
 from .optimiser import (
@@ -139,11 +145,11 @@ def main(
     buffer_tank_capacity: float | None = None,
     mass_flow_rate: float | None = None,
     optimisation: bool = False,
-    output: str | None = None,
-    pv_t_system_size: float | None = None,
-    pv_system_size: float | None = None,
+    output: str = DEFAULT_SIMULATION_OUTPUT_FILE,
+    pv_t_system_size: int | None = None,
+    pv_system_size: int | None = None,
     simulation: bool = False,
-    solar_thermal_system_size: float | None = None,
+    solar_thermal_system_size: int | None = None,
     start_hour: int | None = None,
     *,
     disable_tqdm: bool = False,
@@ -242,7 +248,7 @@ def main(
                 "included in scenario."
             )
             missing_parameters.append("Solar-thermal system size")
-        if not mass_flow_rate:
+        if mass_flow_rate is None:
             logger.error("Must specify HTF mass flow rate if running a simulation.")
             missing_parameters.append("HTF mass flow rate")
 
@@ -266,11 +272,11 @@ def main(
             profile_type.value: determine_steady_state_simulation(
                 ambient_temperatures[profile_type],
                 battery,
-                battery_capacity,
+                battery_capacity,  # type: ignore [arg-type]
                 buffer_tank,
                 desalination_plant,
                 heat_pump,
-                mass_flow_rate,
+                mass_flow_rate,  # type: ignore [arg-type]
                 hybrid_pv_t_panel,
                 logger,
                 pv_panel,
@@ -342,7 +348,9 @@ def main(
 
     elif optimisation:
         # Setup a variable for storing the optimisation results.
-        optimisation_results: List[Dict[str, Dict[str, Any], List[float]]] = []
+        optimisation_results: List[
+            Tuple[Dict[str, Any], Dict[Any, Tuple[Dict[str, float], List[float]]]]
+        ] = []
 
         for optimisation_parameters in tqdm(
             optimisations,

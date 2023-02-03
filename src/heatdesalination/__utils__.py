@@ -14,7 +14,6 @@ __utils__.py - The utility module for the HEATDeslination program.
 
 """
 
-import argparse
 import dataclasses
 import enum
 import logging
@@ -24,7 +23,6 @@ from collections import defaultdict
 from logging import Logger
 from typing import Any, DefaultDict, Dict, List, NamedTuple, Tuple
 
-import json
 import yaml
 
 import numpy as np
@@ -36,6 +34,7 @@ __all__ = (
     "CLI_TO_PROFILE_TYPE",
     "COST",
     "CostableComponent",
+    "DEFAULT_SIMULATION_OUTPUT_FILE",
     "DONE",
     "FAILED",
     "FlowRateError",
@@ -48,6 +47,7 @@ __all__ = (
     "parse_hpc_args_and_runs",
     "ProfileDegradationType",
     "ProfileType",
+    "ProgrammerJudgementFault",
     "read_yaml",
     "reduced_temperature",
     "ResourceType",
@@ -88,6 +88,10 @@ CRITERION: str = "criterion"
 # DAYS_PER_YEAR:
 #   The number of days per year.
 DAYS_PER_YEAR: float = 365.25
+
+# DEFAULT_SIMULATION_OUTPUT_FILE:
+#   The name of the default output file for simulations.
+DEFAULT_SIMULATION_OUTPUT_FILE: str = "simulation_output"
 
 # DONE:
 #   Keyword for "done".
@@ -341,7 +345,7 @@ class HPCSimulation:
     location: str
     output: str
     simulation: str
-    walltime: int | None = None
+    walltime: int = 1
 
 
 class InputFileError(Exception):
@@ -554,7 +558,7 @@ class OptimisationParameters:
 
     def get_initial_guess_vector_and_bounds(
         self,
-    ) -> Tuple[np.ndarray, List[Tuple[float, float]]]:
+    ) -> Tuple[np.ndarray, List[Tuple[float | None, float | None]]]:
         """
         Fetch the initial guess vector and bounds for the various parameters.
 
@@ -776,6 +780,31 @@ CLI_TO_PROFILE_TYPE: Dict[str, ProfileType] = {
     "uer": ProfileType.UPPER_ERROR_BAR,
     "usd": ProfileType.UPPER_STANDARD_DEVIATION,
 }
+
+
+class ProgrammerJudgementFault(Exception):
+    """
+    Raised when an error occurs in the code.
+
+    .. attribute:: code_location
+        The location within the code where the error occurred.
+
+    """
+
+    def __init__(self, code_location: str, msg: str) -> None:
+        """
+        Instantiate a :class:`ProgrammerJudgementFault`.
+
+        Inputs:
+            - code_location:
+                The location within the code where the error occurred.
+            - msg:
+                The message to append.
+
+        """
+
+        self.code_location = code_location
+        super().__init__(f"{code_location}:: {msg}")
 
 
 def read_yaml(
@@ -1231,7 +1260,7 @@ class Solution(NamedTuple):
     battery_electricity_suppy_profile: Dict[int, float | None] | None = None
     battery_lifetime_degradation: int | None = None
     battery_power_input_profile: Dict[int, float] = None
-    battery_replacements: int | None = None
+    battery_replacements: int = 0
     battery_storage_profile: Dict[int, float | None] | None = None
     dumped_solar: Dict[int, float] | None = None
     grid_electricity_supply_profile: Dict[int, float | None] | None = None

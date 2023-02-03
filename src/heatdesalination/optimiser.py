@@ -22,7 +22,7 @@ __all__ = ("run_optimisation",)
 import abc
 from logging import Logger
 import os
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Type
 
 import json
 import numpy
@@ -1070,16 +1070,16 @@ def _simulate_and_calculate_criterion(
         return UPPER_LIMIT
 
     # Assemble the component sizes mapping.
-    component_sizes: Dict[CostableComponent, float] = {
-        battery: battery_capacity * (1 + steady_state_solution.battery_replacements),
-        buffer_tank: buffer_tank_capacity,
-        hybrid_pv_t_panel: pv_t_system_size,
-        pv_panel: pv_panel_system_size,
-        solar_thermal_collector: solar_thermal_system_size,
+    component_sizes: Dict[CostableComponent, int | float] = {
+        battery: battery_capacity * (1 + steady_state_solution.battery_replacements),  # type: ignore [dict-item,operator]
+        buffer_tank: buffer_tank_capacity,  # type: ignore [dict-item]
+        hybrid_pv_t_panel: pv_t_system_size,  # type: ignore [dict-item]
+        pv_panel: pv_panel_system_size,  # type: ignore [dict-item]
+        solar_thermal_collector: solar_thermal_system_size,  # type: ignore [dict-item]
     }
 
     # Return the value of the criterion.
-    return (
+    return (  # type: ignore [no-any-return]
         Criterion.calculate_value_map[optimisation_criterion](
             component_sizes, logger, scenario, steady_state_solution, system_lifetime
         )
@@ -1115,74 +1115,71 @@ def _constraint_function(
 
     """
 
-    def _constraint_value():
-        # Sanity check on bounds.
-        if (
-            battery_index := optimisation_parameters.optimisable_component_to_index.get(
-                OptimisableComponent.BATTERY_CAPACITY, None
-            )
-        ) is not None:
-            if current_vector[battery_index] < 0:
-                return -10
-        if (
-            pv_index := optimisation_parameters.optimisable_component_to_index.get(
-                OptimisableComponent.PV, None
-            )
-        ) is not None:
-            if current_vector[pv_index] < 0:
-                return -20
+    # Sanity check on bounds.
+    if (
+        battery_index := optimisation_parameters.optimisable_component_to_index.get(
+            OptimisableComponent.BATTERY_CAPACITY, None
+        )
+    ) is not None:
+        if current_vector[battery_index] < 0:
+            return -10
+    if (
+        pv_index := optimisation_parameters.optimisable_component_to_index.get(
+            OptimisableComponent.PV, None
+        )
+    ) is not None:
+        if current_vector[pv_index] < 0:
+            return -20
 
-        # Determine the mass flow rate if fixed or variable.
-        if optimisation_parameters.fixed_mass_flow_rate_value is not None:
-            system_mass_flow_rate: float = (
-                optimisation_parameters.fixed_mass_flow_rate_value
-            )
-        else:
-            system_mass_flow_rate = current_vector[
-                optimisation_parameters.optimisable_component_to_index[
-                    OptimisableComponent.MASS_FLOW_RATE
-                ]
+    # Determine the mass flow rate if fixed or variable.
+    if optimisation_parameters.fixed_mass_flow_rate_value is not None:
+        system_mass_flow_rate: float = (
+            optimisation_parameters.fixed_mass_flow_rate_value
+        )
+    else:
+        system_mass_flow_rate = current_vector[
+            optimisation_parameters.optimisable_component_to_index[
+                OptimisableComponent.MASS_FLOW_RATE
             ]
+        ]
 
-        # If there are PV-T collectors present, ensure that the mass flow rate is valid.
+    # If there are PV-T collectors present, ensure that the mass flow rate is valid.
+    if (
+        pv_t_index := optimisation_parameters.optimisable_component_to_index.get(
+            OptimisableComponent.PV_T, None
+        )
+    ) is not None:
+        collector_flow_rate = system_mass_flow_rate / (
+            pv_t_system_size := current_vector[pv_t_index]
+        )
         if (
-            pv_t_index := optimisation_parameters.optimisable_component_to_index.get(
-                OptimisableComponent.PV_T, None
-            )
-        ) is not None:
-            collector_flow_rate = system_mass_flow_rate / (
-                pv_t_system_size := current_vector[pv_t_index]
-            )
-            if (
-                collector_flow_rate < hybrid_pv_t_panel.min_mass_flow_rate
-                or collector_flow_rate > hybrid_pv_t_panel.max_mass_flow_rate
-            ):
-                return -30
+            collector_flow_rate < hybrid_pv_t_panel.min_mass_flow_rate
+            or collector_flow_rate > hybrid_pv_t_panel.max_mass_flow_rate
+        ):
+            return -30
 
-        # If there are solar-thermal collectors present, ensure that the mass flow rate is
-        # valid.
+    # If there are solar-thermal collectors present, ensure that the mass flow rate is
+    # valid.
+    if (
+        solar_thermal_index := optimisation_parameters.optimisable_component_to_index.get(
+            OptimisableComponent.SOLAR_THERMAL, None
+        )
+    ) is not None:
+        collector_flow_rate = system_mass_flow_rate / (
+            solar_thermal_system_size := current_vector[solar_thermal_index]
+        )
         if (
-            solar_thermal_index := optimisation_parameters.optimisable_component_to_index.get(
-                OptimisableComponent.SOLAR_THERMAL, None
-            )
-        ) is not None:
-            collector_flow_rate = system_mass_flow_rate / (
-                solar_thermal_system_size := current_vector[solar_thermal_index]
-            )
-            if (
-                collector_flow_rate < solar_thermal_collector.min_mass_flow_rate
-                or collector_flow_rate > solar_thermal_collector.max_mass_flow_rate
-            ):
-                return -40
+            collector_flow_rate < solar_thermal_collector.min_mass_flow_rate
+            or collector_flow_rate > solar_thermal_collector.max_mass_flow_rate
+        ):
+            return -40
 
-        # Should also return 0 if both the ST and PV-T sizes are zero.
-        if pv_t_system_size is not None and solar_thermal_system_size is not None:
-            if (pv_t_system_size == 0) and (solar_thermal_system_size == 0):
-                return -50
+    # Should also return 0 if both the ST and PV-T sizes are zero.
+    if pv_t_system_size is not None and solar_thermal_system_size is not None:
+        if (pv_t_system_size == 0) and (solar_thermal_system_size == 0):
+            return -50
 
-        return 0
-
-    return _constraint_value()
+    return 0
 
 
 def run_optimisation(
@@ -1191,13 +1188,13 @@ def run_optimisation(
     buffer_tank: HotWaterTank,
     desalination_plant: DesalinationPlant,
     heat_pump: HeatPump,
-    hybrid_pv_t_panel: HybridPVTPanel,
+    hybrid_pv_t_panel: HybridPVTPanel | None,
     logger: Logger,
     optimisation_parameters: OptimisationParameters,
-    pv_panel: PVPanel,
+    pv_panel: PVPanel | None,
     scenario: Scenario,
     solar_irradiances: Dict[int, float],
-    solar_thermal_collector: SolarThermalPanel,
+    solar_thermal_collector: SolarThermalPanel | None,
     system_lifetime: int,
     wind_speeds: Dict[int, float],
     *,
@@ -1310,14 +1307,14 @@ def run_optimisation(
     )
 
     class Bounds:
-        def __init__(self, bounds: List[Tuple[int | None]]) -> None:
+        def __init__(self, bounds: List[Tuple[float | None, float | None]]) -> None:
             self.bounds = bounds
 
         def __call__(self, **kwargs) -> bool:
             """Determines whether to accept (True) or reject (False)"""
 
             new_point = kwargs.get("x_new")
-            for index, entry in enumerate(new_point):
+            for index, entry in enumerate(new_point):  # type: ignore [arg-type]
                 if self.bounds[index][0] is not None and entry < self.bounds[index][0]:
                     return False
                 if self.bounds[index][1] is not None and entry > self.bounds[index][1]:
@@ -1419,7 +1416,7 @@ def run_optimisation(
     )
 
     # Assemble the component sizes mapping.
-    component_sizes: Dict[CostableComponent, float] = {
+    component_sizes: Dict[CostableComponent | None, float] = {
         battery: battery_capacity * (1 + solution.battery_replacements),
         buffer_tank: buffer_tank_capacity,
         hybrid_pv_t_panel: pv_t_system_size,
@@ -1445,13 +1442,15 @@ def run_optimisation(
     # Compute the costs of the various parts of the system and append this.
     criterion_map.update(
         {
-            CostType.COMPONENTS: _total_component_costs(component_sizes, logger),
-            CostType.GRID: _total_grid_cost(
+            CostType.COMPONENTS.value: _total_component_costs(
+                component_sizes, logger, scenario
+            ),
+            CostType.GRID.value: _total_grid_cost(
                 logger, scenario, solution, system_lifetime
             ),
-            CostType.HEAT_PUMP: float(max(solution.heat_pump_cost, 0))
+            CostType.HEAT_PUMP.value: float(max(solution.heat_pump_cost, 0))
             * (1 + scenario.fractional_heat_pump_cost_change),
-            CostType.INVERTERS: _inverter_cost(
+            CostType.INVERTERS.value: _inverter_cost(
                 component_sizes, scenario, system_lifetime
             ),
         }
