@@ -142,6 +142,7 @@ def _total_component_costs(
     component_costs = {
         component: component.cost * abs(size)
         for component, size in component_sizes.items()
+        if component is not None
     }
 
     # Cycle through the component costs and multiply by the fractional change values.
@@ -234,7 +235,9 @@ def _total_grid_cost(
     daily_grid_consumption: float = sum(
         [entry for entry in grid_supply_profile.values() if entry is not None]
     )
-    peak_grid_power = max(grid_supply_profile.values())
+    peak_grid_power: float = max(
+        {entry for entry in grid_supply_profile.values() if entry is not None}
+    )
 
     if scenario.grid_cost_scheme == GridCostScheme.DUBAI_UAE:
         # Dubai, UAE-specific code - a tiered tariff applied based on monthly usage.
@@ -299,7 +302,7 @@ def _total_grid_cost(
                 fixed_monthly_cost: float = 59.85  # [USD/month]
                 power_cost: float = 0  # [USD/kW]
                 specific_electricity_cost: float = 2.466  # [USD/kWh]
-            elif peak_power > 25:
+            elif peak_grid_power > 25:
                 fixed_monthly_cost = 598.55
                 power_cost = 499.39
                 specific_electricity_cost = 0.826
@@ -313,7 +316,7 @@ def _total_grid_cost(
                 fixed_monthly_cost = 59.85
                 power_cost = 0
                 specific_electricity_cost = 3.817
-            elif peak_power > 25:
+            elif peak_grid_power > 25:
                 fixed_monthly_cost = 598.55
                 power_cost = 454.36
                 specific_electricity_cost = 2.907
@@ -1079,7 +1082,7 @@ def _simulate_and_calculate_criterion(
 
     # Setup plant parameters
     _start_hour: float = start_hour if start_hour is not None else parameter_list.pop(0)
-    desalination_plant.start_hour = start_hour
+    desalination_plant.start_hour = start_hour  # type: ignore [assignment]
     desalination_plant.reset_operating_hours()
 
     # Determine the steady-state solution.
