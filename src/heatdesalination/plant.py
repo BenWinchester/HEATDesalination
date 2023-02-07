@@ -209,7 +209,7 @@ class DesalinationPlant:
 
     @classmethod
     def from_dict(
-        cls, input_data: dict[str, Any], logger: Logger, start_hour: int
+        cls, input_data: dict[str, Any], logger: Logger, start_hour: int | None
     ) -> Any:
         """
         Create a :class:`DesalinationPlant` instance based on the inputs.
@@ -226,6 +226,10 @@ class DesalinationPlant:
             The desalination plant based on the input information.
 
         """
+
+        # Sanitise the start hour
+        if start_hour is None:
+            start_hour = 0
 
         try:
             plant_outputs = {

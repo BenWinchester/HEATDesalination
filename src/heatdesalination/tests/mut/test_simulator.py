@@ -166,14 +166,16 @@ class TestRunSimulation(unittest.TestCase):
 
         # Mock the various functions and methods.
         with mock.patch(
-            "heatdesalination.simulator.solve_matrix", side_effect=solve_matrix_outputs
+            "heatdesalination.simulator.solve_matrix",
+            side_effect=solve_matrix_outputs,
         ) as mock_solve_matrix, mock.patch(
             "heatdesalination.simulator._collector_mass_flow_rate",
             side_effect=[5, 10] * 10,
         ) as mock_collector_mass_flow_rate, mock.patch(
             "heatdesalination.simulator._tank_ambient_temperature", return_value=15
         ) as mock_tank_ambient_temperature, mock.patch(
-            "heatdesalination.simulator._tank_replacement_temperature", return_value=10
+            "heatdesalination.simulator._tank_replacement_temperature",
+            return_value=10,
         ) as mock_tank_replacement_temperature, mock.patch(
             "heatdesalination.simulator.electric_output",
             side_effect=[0.3] * 24 + [0.2] * 24,

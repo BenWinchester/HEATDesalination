@@ -1,6 +1,6 @@
 #!/usr/bin/python3.10
 ########################################################################################
-# water_pump.py - The water-pup for the HEATDesalination program.                        #
+# water_pump.py - The water-pump module for the HEATDesalination program.              #
 #                                                                                      #
 # Author: Ben Winchester                                                               #
 # Copyright: Ben Winchester, 2022                                                      #
@@ -12,5 +12,7 @@
 """
 water_pump.py - The water-pump module for the HEATDeslination program.
 
-The water pump(s) are responsible for 
+The water pump(s) are responsible for pushing heat-transfer fluid (HTF) through the PV-T
+and solar-thermal collectors. In doing so, they consume some amount of power.
+
 """

@@ -17,12 +17,12 @@ given location based on some input files.
 
 """
 
-import argparse
 import dataclasses
-import functools
 import os
 import json
 import sys
+
+import argparse
 
 from logging import Logger
 from multiprocessing import pool
@@ -30,15 +30,14 @@ from typing import Any
 
 from tqdm import tqdm
 
-from src.heatdesalination.__main__ import main as heatdesalination_main
-from src.heatdesalination.__utils__ import (
+from .__main__ import main as heatdesalination_main
+from .__utils__ import (
     CLI_TO_PROFILE_TYPE,
     DONE,
     get_logger,
     ProfileType,
-    Solution,
 )
-from src.heatdesalination.fileparser import INPUTS_DIRECTORY
+from .fileparser import INPUTS_DIRECTORY
 
 # PARALLEL_OPTIMISATIONS_FILEPATH:
 #   The file path to the optimisations file.
@@ -101,8 +100,6 @@ def _parse_args(args: list[Any]) -> argparse.Namespace:
     """
 
     parser = argparse.ArgumentParser()
-
-    required_arguments = parser.add_argument_group("required arguments")
 
     ######################
     # Required arguments #
@@ -184,7 +181,6 @@ def main(
     logger: Logger,
     optimisations_file: str,
     output_file: str,
-    full_results: bool = True,
 ) -> list[Any]:
     """
     Main method for carrying out multiple optimisations.
@@ -194,8 +190,9 @@ def main(
             The logger to use if specified.
         - optimisations_file:
             The name of the optimisations file to use.
-        - full_results:
-            Whether to record the full results (True) or reduced results (False).
+
+    Outputs:
+        - A `list` containing the outputs of the parallel optimisation.
 
     """
 
@@ -208,9 +205,9 @@ def main(
         optimisations_filepath = PARALLEL_OPTIMISATIONS_FILEPATH
 
     # Parse the optimisations file.
-    with open(optimisations_filepath, "r") as optimisations_file:
+    with open(optimisations_filepath, "r", encoding="UTF-8") as open_optimisations_file:
         optimisations = [
-            Optimisation(**entry) for entry in json.load(optimisations_file)
+            Optimisation(**entry) for entry in json.load(open_optimisations_file)
         ]
 
     print(f"Carrying out parallel optimisation{'.'*35} ", end="")
@@ -250,7 +247,7 @@ def main(
     print(DONE)
 
     print(f"Saving output file{'.'*51} ", end="")
-    with open(f"{output_file}.json", "w") as f:
+    with open(f"{output_file}.json", "w", encoding="UTF-8") as f:
         json.dump(output_data, f)
     print(DONE)
 
@@ -262,12 +259,8 @@ if __name__ == "__main__":
     # Parse the command-line arguments.
     parsed_args = _parse_args(sys.argv[1:])
 
-    # Setup the logger.
-    logger = get_logger(f"parallel_optimiser")
-
     main(
-        logger,
+        get_logger("parallel_optimiser"),
         parsed_args.optimisations_file,
         parsed_args.output_file,
-        not parsed_args.partial_results,
     )
