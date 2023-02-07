@@ -895,7 +895,7 @@ def run_simulation(
             )
         logger.info("Computing PV performance characteristics.")
         pv_performance_characteristics: dict[
-            int, Tuple[float, float | None, float, float | None]
+            int, Tuple[float | None, float | None, float | None, float | None]
         ] = {
             hour: pv_panel.calculate_performance(
                 ambient_temperatures[hour],
@@ -905,13 +905,13 @@ def run_simulation(
             )
             for hour in range(len(ambient_temperatures))
         }
-        pv_electrical_efficiencies: dict[int, float] | None = {
+        pv_electrical_efficiencies: dict[int, float | None] | None = {
             hour: entry[0] for hour, entry in pv_performance_characteristics.items()
         }
-        pv_average_temperatures: dict[int, float] | None = {
+        pv_average_temperatures: dict[int, float | None] | None = {
             hour: entry[2] for hour, entry in pv_performance_characteristics.items()
         }
-        pv_electrical_output_power: dict[int, float] | None = {
+        pv_electrical_output_power: dict[int, float | None] | None = {
             hour: (
                 electric_output(
                     pv_electrical_efficiencies[hour],

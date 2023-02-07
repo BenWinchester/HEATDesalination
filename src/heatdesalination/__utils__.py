@@ -1262,7 +1262,7 @@ class Solution(NamedTuple):
     output_power_map: dict[str, dict[int, float]] | None = None
 
     @property
-    def renewable_heating_fraction(self) -> dict[int, float]:
+    def renewable_heating_fraction(self) -> dict[int, float | None]:
         """
         Calculate and return the renewable heating fraction.
 

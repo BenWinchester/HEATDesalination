@@ -830,7 +830,7 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
         input_temperature: float | None = None,
         mass_flow_rate: float | None = None,
         wind_speed: float | None = None,
-    ) -> Tuple[float | None, float | None, float | None, float | None,]:
+    ) -> Tuple[float | None, float | None, float | None, float | None]:
         """
         Calcuates the electrical performance of the collector.
 
