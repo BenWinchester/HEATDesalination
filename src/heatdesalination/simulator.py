@@ -103,56 +103,66 @@ def _calculate_collector_degradation(
 
     # Degrade the PV and PV-T electrical profiles.
     if scenario.pv:
-        solution.pv_electrical_efficiencies[
-            ProfileDegradationType.DEGRADED.value
-        ] = _degrade(
+        if solution.pv_electrical_efficiencies is not None:
             solution.pv_electrical_efficiencies[
-                ProfileDegradationType.UNDEGRADED.value
-            ],
-            average_degradation_rate,
-        )
-        solution.pv_electrical_output_power[
-            ProfileDegradationType.DEGRADED.value
-        ] = _degrade(
+                ProfileDegradationType.DEGRADED.value
+            ] = _degrade(
+                solution.pv_electrical_efficiencies[
+                    ProfileDegradationType.UNDEGRADED.value
+                ],
+                average_degradation_rate,
+            )
+
+        if solution.pv_electrical_output_power is not None:
             solution.pv_electrical_output_power[
-                ProfileDegradationType.UNDEGRADED.value
-            ],
-            average_degradation_rate,
-        )
-        solution.pv_system_electrical_output_power[
-            ProfileDegradationType.DEGRADED.value
-        ] = _degrade(
+                ProfileDegradationType.DEGRADED.value
+            ] = _degrade(
+                solution.pv_electrical_output_power[
+                    ProfileDegradationType.UNDEGRADED.value
+                ],
+                average_degradation_rate,
+            )
+
+        if solution.pv_system_electrical_output_power is not None:
             solution.pv_system_electrical_output_power[
-                ProfileDegradationType.UNDEGRADED.value
-            ],
-            average_degradation_rate,
-        )
+                ProfileDegradationType.DEGRADED.value
+            ] = _degrade(
+                solution.pv_system_electrical_output_power[
+                    ProfileDegradationType.UNDEGRADED.value
+                ],
+                average_degradation_rate,
+            )
 
     if scenario.pv_t:
-        solution.pv_t_electrical_efficiencies[
-            ProfileDegradationType.DEGRADED.value
-        ] = _degrade(
+        if solution.pv_t_electrical_efficiencies is not None:
             solution.pv_t_electrical_efficiencies[
-                ProfileDegradationType.UNDEGRADED.value
-            ],
-            average_degradation_rate,
-        )
-        solution.pv_t_electrical_output_power[
-            ProfileDegradationType.DEGRADED.value
-        ] = _degrade(
+                ProfileDegradationType.DEGRADED.value
+            ] = _degrade(
+                solution.pv_t_electrical_efficiencies[
+                    ProfileDegradationType.UNDEGRADED.value
+                ],
+                average_degradation_rate,
+            )
+
+        if solution.pv_t_electrical_output_power is not None:
             solution.pv_t_electrical_output_power[
-                ProfileDegradationType.UNDEGRADED.value
-            ],
-            average_degradation_rate,
-        )
-        solution.pv_t_system_electrical_output_power[
-            ProfileDegradationType.DEGRADED.value
-        ] = _degrade(
+                ProfileDegradationType.DEGRADED.value
+            ] = _degrade(
+                solution.pv_t_electrical_output_power[
+                    ProfileDegradationType.UNDEGRADED.value
+                ],
+                average_degradation_rate,
+            )
+
+        if solution.pv_t_system_electrical_output_power is not None:
             solution.pv_t_system_electrical_output_power[
-                ProfileDegradationType.UNDEGRADED.value
-            ],
-            average_degradation_rate,
-        )
+                ProfileDegradationType.DEGRADED.value
+            ] = _degrade(
+                solution.pv_t_system_electrical_output_power[
+                    ProfileDegradationType.UNDEGRADED.value
+                ],
+                average_degradation_rate,
+            )
 
 
 def _storage_profile_iteration_step(
@@ -914,7 +924,7 @@ def run_simulation(
         pv_electrical_output_power: dict[int, float | None] | None = {
             hour: (
                 electric_output(
-                    pv_electrical_efficiencies[hour],
+                    pv_electrical_efficiencies[hour],  # type: ignore [index]
                     pv_panel.pv_unit,
                     pv_panel.reference_efficiency,
                     solar_irradiance,
