@@ -25,6 +25,7 @@ from .__utils__ import (
     AMBIENT_TEMPERATURE,
     AUTO_GENERATED_FILES_DIRECTORY,
     GridCostScheme,
+    InputFileError,
     NAME,
     OptimisationParameters,
     ProfileType,
@@ -399,6 +400,16 @@ def parse_input_files(
 
     # Parse the batteries and buffer tank.
     storage_inputs = read_yaml(os.path.join(INPUTS_DIRECTORY, STORAGE_INPUTS), logger)
+    if not isinstance(storage_inputs, dict):
+        logger.error(
+            "Unreadable storage inputs file: must be of type `dict` not `list`."
+        )
+        raise InputFileError(
+            "storage inputs",
+            f"Storagae inputs must be a `dict` containing entries for `{BATTERIES}` "
+            "and `{HOT_WATER_TANKS}`.",
+        )
+
     batteries = [Battery.from_dict(entry) for entry in storage_inputs[BATTERIES]]
     try:
         battery: Battery = [

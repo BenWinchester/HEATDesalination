@@ -24,8 +24,8 @@ from typing import Tuple
 
 
 from .__utils__ import (
-    ZERO_CELCIUS_OFFSET,
     InputFileError,
+    ProgrammerJudgementFault,
     Scenario,
     TEMPERATURE_PRECISION,
 )
@@ -123,6 +123,12 @@ def _solar_system_output_temperatures(
     """
 
     if scenario.pv_t and pv_t_mass_flow_rate is not None:
+        if hybrid_pv_t_panel is None:
+            raise ProgrammerJudgementFault(
+                "matrix:_solar_system_output_temperatures",
+                "Solar-thermal collector is `None` despite scenario being specified.",
+            )
+
         (
             pv_t_electrical_efficiency,
             pv_t_htf_output_temperature,
@@ -143,6 +149,12 @@ def _solar_system_output_temperatures(
         pv_t_thermal_efficiency = None
 
     if scenario.solar_thermal and solar_thermal_mass_flow_rate is not None:
+        if solar_thermal_collector is None:
+            raise ProgrammerJudgementFault(
+                "matrix:_solar_system_output_temperatures",
+                "Solar-thermal collector is `None` despite scenario being specified.",
+            )
+
         (
             _,
             solar_thermal_htf_output_temperature,

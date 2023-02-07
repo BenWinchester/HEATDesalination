@@ -20,7 +20,7 @@ profiles.
 
 from collections import defaultdict
 from logging import Logger
-from typing import Defaultdict, Tuple
+from typing import DefaultDict, Tuple
 
 import math
 
@@ -28,6 +28,7 @@ from tqdm import tqdm
 
 from .__utils__ import (
     DAYS_PER_YEAR,
+    InputFileError,
     ProfileDegradationType,
     ProgrammerJudgementFault,
     Scenario,
@@ -194,7 +195,7 @@ def _storage_profile_iteration_step(
     # Setup a map to keep track of the profiles.
     power_to_storage_map: dict[int, float] = {}
     storage_power_supplied_map: dict[int, float] = {}
-    storage_profile: Defaultdict[int, float] = defaultdict(
+    storage_profile: DefaultDict[int, float] = defaultdict(
         lambda: initial_storage_profile_value
     )
 
@@ -719,7 +720,7 @@ def run_simulation(
     base_electricity_demands: dict[int, float] = {}
     collector_input_temperatures: dict[int, float] = {}
     collector_system_output_temperatures: dict[int, float] = {}
-    electricity_demands: Defaultdict[int, float] = defaultdict(float)
+    electricity_demands: DefaultDict[int, float] = defaultdict(float)
     hot_water_demand_temperatures: dict[int, float | None] = {}
     hot_water_demand_volumes: dict[int, float | None] = {}
     max_heat_pump_cost: float = 0
@@ -731,7 +732,7 @@ def run_simulation(
     solar_thermal_htf_output_temperatures: dict[int, float | None] = {}
     solar_thermal_reduced_temperatures: dict[int, float | None] = {}
     solar_thermal_thermal_efficiencies: dict[int, float | None] = {}
-    tank_temperatures: Defaultdict[int, float] = defaultdict(
+    tank_temperatures: DefaultDict[int, float] = defaultdict(
         lambda: tank_start_temperature
     )
 
@@ -886,6 +887,12 @@ def run_simulation(
 
     # Compute the PV performance characteristics.
     if scenario.pv:
+        if pv_panel is None:
+            logger.error("No PV panel provided despite PV specified in scenario.")
+            raise InputFileError(
+                "scenario inputs",
+                "Scenario specified PV panel, but no PV panel provided.",
+            )
         logger.info("Computing PV performance characteristics.")
         pv_performance_characteristics: dict[
             int, Tuple[float, float | None, float, float | None]
@@ -923,7 +930,7 @@ def run_simulation(
                 if value is not None and pv_system_size is not None
                 else 0
             )
-            for hour, value in pv_electrical_output_power.items()
+            for hour, value in pv_electrical_output_power.items()  # type: ignore [union-attr]
         }
     else:
         pv_electrical_efficiencies = None

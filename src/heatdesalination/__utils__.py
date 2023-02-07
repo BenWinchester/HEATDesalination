@@ -21,7 +21,7 @@ import os
 
 from collections import defaultdict
 from logging import Logger
-from typing import Any, Defaultdict, NamedTuple, Tuple
+from typing import Any, DefaultDict, NamedTuple, Tuple
 
 import yaml
 
@@ -807,9 +807,7 @@ class ProgrammerJudgementFault(Exception):
         super().__init__(f"{code_location}:: {msg}")
 
 
-def read_yaml(
-    filepath: str, logger: Logger
-) -> dict[str, bool | float | int | str] | list[dict[str, bool | float | int | str]]:
+def read_yaml(filepath: str, logger: Logger) -> dict[str, Any] | list[dict[str, Any]]:
     """
     Reads a YAML file and returns the contents.
     """
@@ -1308,7 +1306,7 @@ class Solution(NamedTuple):
         if self.output_power_map is not None:
             return self.output_power_map
 
-        output_power_map: Defaultdict[
+        output_power_map: DefaultDict[
             ProfileDegradationType, dict[int, float]
         ] = defaultdict(lambda: defaultdict(float))
 
@@ -1386,15 +1384,7 @@ class Solution(NamedTuple):
                 for key, value in self.hot_water_demand_temperature.items()
             },
             "Hot-water demand volume / kg/s": self.hot_water_demand_volume,
-            "PV-T collector output temperature / degC": {
-                key: (value - ZERO_CELCIUS_OFFSET if value is not None else None)
-                for key, value in self.pv_t_htf_output_temperatures.items()
-            },
             "Renewable heating fraction": self.renewable_heating_fraction,
-            "Solar-thermal collector output temperature / degC": {
-                key: (value - ZERO_CELCIUS_OFFSET if value is not None else None)
-                for key, value in self.solar_thermal_htf_output_temperatures.items()
-            },
             "Tank temperature / degC": {
                 key: value - ZERO_CELCIUS_OFFSET
                 for key, value in self.tank_temperatures.items()
@@ -1460,12 +1450,6 @@ class Solution(NamedTuple):
                     "Degraded Total PV-T electric power produced / kW": self.pv_t_system_electrical_output_power[
                         ProfileDegradationType.DEGRADED.value
                     ],
-                    "PV-T output temperature / degC": {
-                        key: (
-                            value - ZERO_CELCIUS_OFFSET if value is not None else None
-                        )
-                        for key, value in self.pv_t_htf_output_temperatures.items()
-                    },
                     "PV-T reduced temperature / degC/W/m^2": self.pv_t_reduced_temperatures,
                     "PV-T thermal efficiency": self.pv_t_thermal_efficiencies,
                 }
@@ -1485,5 +1469,26 @@ class Solution(NamedTuple):
                     "Solar-thermal thermal efficiency": self.solar_thermal_thermal_efficiencies,
                 }
             )
+
+        # Update with entries that could be set to `None`.
+        if self.pv_t_htf_output_temperatures is not None:
+            output_information_dict["PV-T collector output temperature / degC"] = {
+                key: (value - ZERO_CELCIUS_OFFSET if value is not None else None)
+                for key, value in self.pv_t_htf_output_temperatures.items()
+            }
+
+        if self.pv_t_htf_output_temperatures is not None:
+            output_information_dict["PV-T output temperature / degC"] = {
+                key: (value - ZERO_CELCIUS_OFFSET if value is not None else None)
+                for key, value in self.pv_t_htf_output_temperatures.items()
+            }
+
+        if self.solar_thermal_htf_output_temperatures is not None:
+            output_information_dict[
+                "Solar-thermal collector output temperature / degC"
+            ] = {
+                key: (value - ZERO_CELCIUS_OFFSET if value is not None else None)
+                for key, value in self.solar_thermal_htf_output_temperatures.items()
+            }
 
         return pd.DataFrame.from_dict(output_information_dict).sort_index()
