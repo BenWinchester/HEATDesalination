@@ -79,7 +79,7 @@ class HeatPump:
             )
 
         # Determine the cost
-        return self._interpolator(cop) * thermal_power
+        return float(self._interpolator(cop)) * thermal_power
 
 
 def _coefficient_of_performance(

@@ -156,7 +156,7 @@ def main(
     hpc: bool = False,
     save_outputs: bool = True,
     verbose: bool = False,
-) -> Any:
+) -> dict[ProfileType, Solution] | None:
     """
     Main module responsible for the flow of the HEATDesalination program.
 

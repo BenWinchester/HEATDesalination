@@ -200,7 +200,7 @@ def heatdesalination_wrapper(
     """
 
     try:
-        return heatdesalination_main(
+        return heatdesalination_main(  # type: ignore [no-any-return]
             location,
             simulation.profile_type_instances,
             simulation.scenario,

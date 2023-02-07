@@ -957,9 +957,9 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         )
 
         self.electric_performance_curve: PerformanceCurve = electric_performance_curve
-        self._max_mass_flow_rate = solar_inputs[MAX_MASS_FLOW_RATE]
-        self._min_mass_flow_rate = solar_inputs[MIN_MASS_FLOW_RATE]
-        self.pv_module_characteristics = pv_module_characteristics
+        self._max_mass_flow_rate: float = solar_inputs[MAX_MASS_FLOW_RATE]
+        self._min_mass_flow_rate: float = solar_inputs[MIN_MASS_FLOW_RATE]
+        self.pv_module_characteristics: PVModuleCharacteristics = pv_module_characteristics
         self.thermal_performance_curve: PerformanceCurve = thermal_performance_curve
 
     @property
@@ -988,10 +988,10 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
 
         """
 
-        return (
+        return float(
             self._min_mass_flow_rate / 3600
             if self._min_mass_flow_rate is not None
-            else None
+            else 0
         )
 
     def __repr__(self) -> str:
@@ -1327,12 +1327,12 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
             solar_inputs[NAME],
         )
 
-        self.area = solar_inputs[AREA]
-        self._max_mass_flow_rate = solar_inputs[MAX_MASS_FLOW_RATE]
-        self._min_mass_flow_rate = solar_inputs[MIN_MASS_FLOW_RATE]
-        self._nominal_mass_flow_rate = solar_inputs.get(NOMINAL_MASS_FLOW_RATE)
-        self._stagnation_temperature = solar_inputs[STAGNATION_TEMPERATURE]
-        self.thermal_performance_curve = performance_curve
+        self.area: float = solar_inputs[AREA]
+        self._max_mass_flow_rate: float = solar_inputs[MAX_MASS_FLOW_RATE]
+        self._min_mass_flow_rate: float = solar_inputs[MIN_MASS_FLOW_RATE]
+        self._nominal_mass_flow_rate: float | None = solar_inputs.get(NOMINAL_MASS_FLOW_RATE, None)
+        self._stagnation_temperature: float = solar_inputs[STAGNATION_TEMPERATURE]
+        self.thermal_performance_curve: PerformanceCurve = performance_curve
 
     @property
     def max_mass_flow_rate(self) -> float:
