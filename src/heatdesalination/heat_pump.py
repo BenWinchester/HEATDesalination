@@ -18,7 +18,7 @@ The heat-pump module contains functionality for modelling a heat pump's performa
 
 import dataclasses
 
-from typing import list, Tuple
+from typing import Tuple
 
 from scipy import interpolate
 
