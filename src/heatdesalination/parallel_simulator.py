@@ -260,7 +260,7 @@ def main(
         simulations_filepath = SIMULATIONS_FILEPATH
 
     # Parse the simulations file.
-    with open(simulations_filepath, "r") as open_simulations_file:
+    with open(simulations_filepath, "r", encoding="UTF-8") as open_simulations_file:
         simulations = [
             Simulation(**entry) for entry in json.load(open_simulations_file)
         ]
@@ -312,7 +312,7 @@ def main(
 
     print(f"Saving output file{'.'*51} ", end="")
     if output is not None:
-        with open(f"{output}.json", "w") as f:
+        with open(f"{output}.json", "w", encoding="UTF-8") as f:
             json.dump(results_map, f)
     print(DONE)
 

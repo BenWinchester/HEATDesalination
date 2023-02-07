@@ -208,7 +208,7 @@ def main(
         optimisations_filepath = PARALLEL_OPTIMISATIONS_FILEPATH
 
     # Parse the optimisations file.
-    with open(optimisations_filepath, "r") as open_optimisations_file:
+    with open(optimisations_filepath, "r", encoding="UTF-8") as open_optimisations_file:
         optimisations = [
             Optimisation(**entry) for entry in json.load(open_optimisations_file)
         ]
@@ -250,7 +250,7 @@ def main(
     print(DONE)
 
     print(f"Saving output file{'.'*51} ", end="")
-    with open(f"{output_file}.json", "w") as f:
+    with open(f"{output_file}.json", "w", encoding="UTF-8") as f:
         json.dump(output_data, f)
     print(DONE)
 

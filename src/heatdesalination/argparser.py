@@ -285,7 +285,7 @@ def parse_hpc_args_and_runs(
 
     # Open the runs file and parse the information.
     logger.info("Parsing runs file.")
-    with open(runs_filename, "r") as f:
+    with open(runs_filename, "r", encoding="UTF-8") as f:
         runs_file_data = json.load(f)
 
     # Update the walltime if necessary.
