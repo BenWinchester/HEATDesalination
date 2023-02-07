@@ -688,7 +688,7 @@ def run_simulation(
     """
 
     # Determine the mass flow rate through each type of collector.
-    if scenario.pv_t and pv_t_system_size > 0:
+    if scenario.pv_t and pv_t_system_size is not None and pv_t_system_size > 0:
         pv_t_mass_flow_rate: float | None = _collector_mass_flow_rate(
             htf_mass_flow_rate, pv_t_system_size
         )
@@ -918,7 +918,11 @@ def run_simulation(
             for hour, solar_irradiance in solar_irradiances.items()
         }
         pv_system_electrical_output_power: dict[int, float] | None = {
-            hour: (value * pv_system_size if value is not None else 0)
+            hour: (
+                value * pv_system_size
+                if value is not None and pv_system_size is not None
+                else 0
+            )
             for hour, value in pv_electrical_output_power.items()
         }
     else:
@@ -930,7 +934,11 @@ def run_simulation(
     # Compute the output power from the various collectors.
     logger.info("Hourly simulation complete, compute the output power.")
     pv_t_system_electrical_output_power: dict[int, float] = {
-        hour: (value * pv_t_system_size if value is not None else 0)
+        hour: (
+            value * pv_t_system_size
+            if value is not None and pv_t_system_size is not None
+            else 0
+        )
         for hour, value in pv_t_electrical_output_power.items()
     }
 

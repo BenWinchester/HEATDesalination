@@ -36,6 +36,7 @@ from .__utils__ import (
     FlowRateError,
     InputFileError,
     NAME,
+    ProgrammerJudgementFault,
     reduced_temperature,
     TEMPERATURE_PRECISION,
     ZERO_CELCIUS_OFFSET,
@@ -435,7 +436,7 @@ def _thermal_performance(
     positive_root: float = (  # pylint: disable=unused-variable
         -b + math.sqrt(b**2 - 4 * a * c)
     ) / (2 * a)
-    negative_root: float = (-b - math.sqrt(b**2 - 4 * a * c)) / (2 * a)
+    negative_root: float = float((-b - math.sqrt(b**2 - 4 * a * c)) / (2 * a))
 
     return positive_root, negative_root
 
@@ -1170,6 +1171,17 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
 
         """
 
+        if mass_flow_rate is None:
+            logger.error(
+                "Cannot calculate solar-thermal collector performance with no mass flow "
+                "rate provided."
+            )
+            raise ProgrammerJudgementFault(
+                "solar:HybridPVTPanel:calculate_performance",
+                "Cannot calculate performance of solar-thermal collector if no mass-"
+                "flow rate provided.",
+            )
+
         # Raise a flow-rate error if the flow rate is insufficient.
         if (
             mass_flow_rate < self.min_mass_flow_rate
@@ -1193,6 +1205,17 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                 "kilograms/second.",
             )
             pass
+
+        if input_temperature is None:
+            logger.error(
+                "Cannot calculate solar-thermal collector performance with no input "
+                "temperature provided."
+            )
+            raise ProgrammerJudgementFault(
+                "solar:HybridPVTPanel:calculate_performance",
+                "Cannot calculate performance of solar-thermal collector if no input "
+                "temperature provided.",
+            )
 
         _, negative_root = _thermal_performance(
             ambient_temperature,
@@ -1461,6 +1484,17 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
 
         """
 
+        if mass_flow_rate is None:
+            logger.error(
+                "Cannot calculate solar-thermal collector performance with no mass flow "
+                "rate provided."
+            )
+            raise ProgrammerJudgementFault(
+                "solar:SolarThermalPanel:calculate_performance",
+                "Cannot calculate performance of solar-thermal collector if no mass-"
+                "flow rate provided.",
+            )
+
         # Raise a flow-rate error if the flow rate is insufficient.
         if (
             mass_flow_rate < self.min_mass_flow_rate
@@ -1483,7 +1517,17 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
                 + f"{self.min_mass_flow_rate} to {self.max_mass_flow_rate} "
                 "kilograms/second.",
             )
-            pass
+
+        if input_temperature is None:
+            logger.error(
+                "Cannot calculate solar-thermal collector performance with no input "
+                "temperature provided."
+            )
+            raise ProgrammerJudgementFault(
+                "solar:SolarThermalPanel:calculate_performance",
+                "Cannot calculate performance of solar-thermal collector if no input "
+                "temperature provided.",
+            )
 
         _, negative_root = _thermal_performance(
             ambient_temperature,

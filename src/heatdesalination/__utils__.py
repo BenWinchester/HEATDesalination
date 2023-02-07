@@ -1239,7 +1239,7 @@ class Solution(NamedTuple):
     heat_pump_cost: float
     hot_water_demand_temperature: dict[int, float | None]
     hot_water_demand_volume: dict[int, float | None]
-    pv_average_temperatures: dict[str, dict[int, float | None]] | None
+    pv_average_temperatures: dict[int, float | None]
     pv_electrical_efficiencies: dict[str, dict[int, float] | None] | None
     pv_electrical_output_power: dict[str, dict[int, float] | None] | None
     pv_system_electrical_output_power: dict[str, dict[int, float] | None] | None
@@ -1281,7 +1281,7 @@ class Solution(NamedTuple):
                 (
                     (self.tank_temperatures[hour] - self.ambient_temperatures[hour])
                     / (
-                        self.hot_water_demand_temperature[hour]
+                        self.hot_water_demand_temperature[hour]  # type: ignore [operator]
                         - self.ambient_temperatures[hour]
                     )
                 )
@@ -1289,6 +1289,7 @@ class Solution(NamedTuple):
                 else None
             )
             for hour, demand_temperature in self.hot_water_demand_temperature.items()
+            if self.hot_water_demand_temperature[hour] is not None
         }
 
     @property
@@ -1429,7 +1430,9 @@ class Solution(NamedTuple):
                         ProfileDegradationType.DEGRADED.value
                     ],
                     "Average PV temperature / degC": {
-                        key: value - ZERO_CELCIUS_OFFSET
+                        key: (
+                            value - ZERO_CELCIUS_OFFSET if value is not None else None
+                        )
                         for key, value in self.pv_average_temperatures.items()
                     },
                 }
