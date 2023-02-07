@@ -24,9 +24,10 @@ import enum
 import math
 
 from logging import Logger
-from typing import Any, Tuple
+from typing import Any, Tuple, Type
 
-from pvlib import temperature
+# Import this package if using pvlib-based calculation
+# from pvlib import temperature
 
 from .__utils__ import (
     AREA,
@@ -1581,7 +1582,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
 
 # COLLECTOR_FROM_TYPE:
 #   Mapping from collector type to collector.
-COLLECTOR_FROM_TYPE: dict[str, SolarPanel] = {
+COLLECTOR_FROM_TYPE: dict[SolarPanelType, Type[SolarPanel]] = {
     SolarPanelType.PV: PVPanel,
     SolarPanelType.PV_T: HybridPVTPanel,
     SolarPanelType.SOLAR_THERMAL: SolarThermalPanel,

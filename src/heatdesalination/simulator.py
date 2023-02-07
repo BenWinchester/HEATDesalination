@@ -492,8 +492,8 @@ def _recursive_degraded_storage_solver(
 
 
 def _calculate_storage_profile(
-    battery: Battery,
-    battery_system_size: int | None,
+    battery: Battery | None,
+    battery_system_size: float | int | None,
     solution: Solution,
     system_lifetime: int,
 ) -> Tuple[
@@ -546,7 +546,7 @@ def _calculate_storage_profile(
     }
 
     # If there is no storage, return purely the solar power map.
-    if battery_system_size == 0:
+    if battery_system_size == 0 or battery is None:
         return 0, None, None, None, solar_power_supplied_map
 
     return _recursive_degraded_storage_solver(
@@ -632,12 +632,12 @@ def run_simulation(
     hybrid_pv_t_panel: HybridPVTPanel | None,
     logger: Logger,
     pv_panel: PVPanel | None,
-    pv_system_size: int | None,
-    pv_t_system_size: int | None,
+    pv_system_size: float | int | None,
+    pv_t_system_size: float | int | None,
     scenario: Scenario,
     solar_irradiances: dict[int, float],
     solar_thermal_collector: SolarThermalPanel | None,
-    solar_thermal_system_size: int | None,
+    solar_thermal_system_size: float | int | None,
     wind_speeds: dict[int, float],
     *,
     disable_tqdm: bool = False,
@@ -1176,20 +1176,20 @@ def determine_steady_state_simulation(
 
     # Save these to the output tuple.
     solution = solution._replace(
-        battery_lifetime_degradation=battery_lifetime_degradation
+        battery_lifetime_degradation=battery_lifetime_degradation  # type: ignore [arg-type]
     )
     solution = solution._replace(
         battery_replacements=int(battery_lifetime_degradation // 1)
     )
     solution = solution._replace(
-        battery_electricity_suppy_profile=battery_power_supplied_profile
+        battery_electricity_suppy_profile=battery_power_supplied_profile  # type: ignore [arg-type]
     )
     solution = solution._replace(dumped_solar=dumped_solar)
-    solution = solution._replace(battery_storage_profile=battery_storage_profile)
+    solution = solution._replace(battery_storage_profile=battery_storage_profile)  # type: ignore [arg-type]
     solution = solution._replace(
         battery_power_input_profile=battery_power_input_profile
     )
-    solution = solution._replace(grid_electricity_supply_profile=grid_profile)
+    solution = solution._replace(grid_electricity_supply_profile=grid_profile)  # type: ignore [arg-type]
     solution = solution._replace(solar_power_supplied=solar_power_supplied)
 
     return solution

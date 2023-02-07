@@ -441,7 +441,7 @@ def _total_electricity_supplied(solution: Solution, system_lifetime: int) -> flo
     # Sum the collector power supplied to the system.
     if (
         collector_output_power := solution.total_collector_electrical_output_power[
-            ProfileDegradationType.DEGRADED
+            ProfileDegradationType.DEGRADED.value
         ]
     ) is None:
         total_collector_output_power: float = 0

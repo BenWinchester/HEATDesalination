@@ -1239,23 +1239,19 @@ class Solution(NamedTuple):
     heat_pump_cost: float
     hot_water_demand_temperature: dict[int, float | None]
     hot_water_demand_volume: dict[int, float | None]
-    pv_average_temperatures: dict[ProfileDegradationType, dict[int, float | None]]
-    pv_electrical_efficiencies: dict[ProfileDegradationType, dict[int, float | None]]
-    pv_electrical_output_power: dict[ProfileDegradationType, dict[int, float | None]]
-    pv_system_electrical_output_power: dict[
-        ProfileDegradationType, dict[int, float | None]
-    ]
-    pv_t_electrical_efficiencies: dict[ProfileDegradationType, dict[int, float | None]]
-    pv_t_electrical_output_power: dict[ProfileDegradationType, dict[int, float | None]]
-    pv_t_htf_output_temperatures: dict[int, float]
-    pv_t_reduced_temperatures: dict[int, float | None]
-    pv_t_system_electrical_output_power: dict[
-        ProfileDegradationType, dict[int, float | None]
-    ]
-    pv_t_thermal_efficiencies: dict[int, float | None]
-    solar_thermal_htf_output_temperatures: dict[int, float]
-    solar_thermal_reduced_temperatures: dict[int, float | None]
-    solar_thermal_thermal_efficiencies: dict[int, float | None]
+    pv_average_temperatures: dict[str, dict[int, float | None]] | None
+    pv_electrical_efficiencies: dict[str, dict[int, float] | None] | None
+    pv_electrical_output_power: dict[str, dict[int, float] | None] | None
+    pv_system_electrical_output_power: dict[str, dict[int, float] | None] | None
+    pv_t_electrical_efficiencies: dict[str, dict[int, float | None]] | None
+    pv_t_electrical_output_power: dict[str, dict[int, float | None]] | None
+    pv_t_htf_output_temperatures: dict[int, float | None] | None
+    pv_t_reduced_temperatures: dict[int, float | None] | None
+    pv_t_system_electrical_output_power: dict[str, dict[int, float] | None] | None
+    pv_t_thermal_efficiencies: dict[int, float | None] | None
+    solar_thermal_htf_output_temperatures: dict[int, float | None] | None
+    solar_thermal_reduced_temperatures: dict[int, float | None] | None
+    solar_thermal_thermal_efficiencies: dict[int, float | None] | None
     tank_temperatures: dict[int, float]
     battery_electricity_suppy_profile: dict[int, float | None] | None = None
     battery_lifetime_degradation: int | None = None
@@ -1265,7 +1261,7 @@ class Solution(NamedTuple):
     dumped_solar: dict[int, float] | None = None
     grid_electricity_supply_profile: dict[int, float | None] | None = None
     solar_power_supplied: dict[int, float] | None = None
-    output_power_map: dict[ProfileDegradationType, dict[int, float]] | None = None
+    output_power_map: dict[str, dict[int, float]] | None = None
 
     @property
     def renewable_heating_fraction(self) -> dict[int, float]:
@@ -1298,7 +1294,7 @@ class Solution(NamedTuple):
     @property
     def total_collector_electrical_output_power(
         self,
-    ) -> dict[ProfileDegradationType, dict[int, float]]:
+    ) -> dict[str, dict[int, float]]:
         """
         The total electrical output power at each time step.
 
