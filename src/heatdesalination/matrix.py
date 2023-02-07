@@ -172,9 +172,7 @@ def _solar_system_output_temperatures(
         collector_system_output_temperature = pv_t_htf_output_temperature
     else:
         collector_system_output_temperature = collector_system_input_temperature
-        logger.info(
-            "Neither PV-T or solar-thermal were requested."
-        )
+        logger.info("Neither PV-T or solar-thermal were requested.")
 
     return (
         collector_system_output_temperature,

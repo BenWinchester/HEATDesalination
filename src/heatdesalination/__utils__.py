@@ -14,7 +14,6 @@ __utils__.py - The utility module for the HEATDeslination program.
 
 """
 
-import argparse
 import dataclasses
 import enum
 import logging
@@ -22,9 +21,8 @@ import os
 
 from collections import defaultdict
 from logging import Logger
-from typing import Any, DefaultDict, Dict, List, NamedTuple, Tuple
+from typing import Any, Defaultdict, NamedTuple, Tuple
 
-import json
 import yaml
 
 import numpy as np
@@ -36,6 +34,7 @@ __all__ = (
     "CLI_TO_PROFILE_TYPE",
     "COST",
     "CostableComponent",
+    "DEFAULT_SIMULATION_OUTPUT_FILE",
     "DONE",
     "FAILED",
     "FlowRateError",
@@ -48,6 +47,7 @@ __all__ = (
     "parse_hpc_args_and_runs",
     "ProfileDegradationType",
     "ProfileType",
+    "ProgrammerJudgementFault",
     "read_yaml",
     "reduced_temperature",
     "ResourceType",
@@ -88,6 +88,10 @@ CRITERION: str = "criterion"
 # DAYS_PER_YEAR:
 #   The number of days per year.
 DAYS_PER_YEAR: float = 365.25
+
+# DEFAULT_SIMULATION_OUTPUT_FILE:
+#   The name of the default output file for simulations.
+DEFAULT_SIMULATION_OUTPUT_FILE: str = "simulation_output"
 
 # DONE:
 #   Keyword for "done".
@@ -341,7 +345,7 @@ class HPCSimulation:
     location: str
     output: str
     simulation: str
-    walltime: int | None = None
+    walltime: int = 1
 
 
 class InputFileError(Exception):
@@ -444,13 +448,13 @@ class OptimisationParameters:
 
     """
 
-    bounds: Dict[OptimisableComponent, Dict[str, float | None]]
+    bounds: dict[OptimisableComponent, dict[str, float | None]]
     constraints: bool
-    optimisable_component_to_index: Dict[OptimisableComponent, int]
-    _criterion: Dict[str, OptimisationMode]
+    optimisable_component_to_index: dict[OptimisableComponent, int]
+    _criterion: dict[str, OptimisationMode]
 
     @property
-    def asdict(self) -> Dict[str, Any]:
+    def asdict(self) -> dict[str, Any]:
         """
         Return a dictionary representing the class.
 
@@ -554,7 +558,7 @@ class OptimisationParameters:
 
     def get_initial_guess_vector_and_bounds(
         self,
-    ) -> Tuple[np.ndarray, List[Tuple[float, float]]]:
+    ) -> Tuple[np.ndarray, list[Tuple[float | None, float | None]]]:
         """
         Fetch the initial guess vector and bounds for the various parameters.
 
@@ -663,7 +667,7 @@ class OptimisationParameters:
         return str(list(self._criterion.keys())[0])
 
     @classmethod
-    def from_dict(cls, logger: Logger, optimisation_inputs: Dict[str, Any]) -> Any:
+    def from_dict(cls, logger: Logger, optimisation_inputs: dict[str, Any]) -> Any:
         """
         Instantiate a :class:`OptimisationParameters` instance based on the input data.
 
@@ -712,7 +716,7 @@ class OptimisationParameters:
 
         # Determine the indicies in the vector of the optimisable components.
         index = 0
-        optimisable_component_to_index: Dict[OptimisableComponent, int] = {}
+        optimisable_component_to_index: dict[OptimisableComponent, int] = {}
         for component in OptimisableComponent:
             if bounds[component].get(FIXED, None) is not None:
                 continue
@@ -767,7 +771,7 @@ class ProfileType(enum.Enum):
     UPPER_STANDARD_DEVIATION: str = "upper_standard_deviation_weather_conditions"
 
 
-CLI_TO_PROFILE_TYPE: Dict[str, ProfileType] = {
+CLI_TO_PROFILE_TYPE: dict[str, ProfileType] = {
     "avr": ProfileType.AVERAGE,
     "ler": ProfileType.LOWER_ERROR_BAR,
     "lsd": ProfileType.LOWER_STANDARD_DEVIATION,
@@ -778,9 +782,34 @@ CLI_TO_PROFILE_TYPE: Dict[str, ProfileType] = {
 }
 
 
+class ProgrammerJudgementFault(Exception):
+    """
+    Raised when an error occurs in the code.
+
+    .. attribute:: code_location
+        The location within the code where the error occurred.
+
+    """
+
+    def __init__(self, code_location: str, msg: str) -> None:
+        """
+        Instantiate a :class:`ProgrammerJudgementFault`.
+
+        Inputs:
+            - code_location:
+                The location within the code where the error occurred.
+            - msg:
+                The message to append.
+
+        """
+
+        self.code_location = code_location
+        super().__init__(f"{code_location}:: {msg}")
+
+
 def read_yaml(
     filepath: str, logger: Logger
-) -> Dict[str, bool | float | int | str] | List[Dict[str, bool | float | int | str]]:
+) -> dict[str, bool | float | int | str] | list[dict[str, bool | float | int | str]]:
     """
     Reads a YAML file and returns the contents.
     """
@@ -788,8 +817,8 @@ def read_yaml(
     # Process the new-location data.
     try:
         with open(filepath, "r", encoding="UTF-8") as filedata:
-            file_contents: Dict[str, bool | float | int | str] | List[
-                Dict[str, bool | float | int | str]
+            file_contents: dict[str, bool | float | int | str] | list[
+                dict[str, bool | float | int | str]
             ] = yaml.safe_load(filedata)
     except FileNotFoundError:
         logger.error(
@@ -1200,46 +1229,46 @@ class Solution(NamedTuple):
 
     """
 
-    ambient_temperatures: Dict[int, float]
-    auxiliary_heating_demands: Dict[int, float]
-    auxiliary_heating_electricity_demands: Dict[int, float]
-    base_electricity_demands: Dict[int, float]
-    collector_input_temperatures: Dict[int, float]
-    collector_system_output_temperatures: Dict[int, float]
-    electricity_demands: Dict[int, float]
+    ambient_temperatures: dict[int, float]
+    auxiliary_heating_demands: dict[int, float]
+    auxiliary_heating_electricity_demands: dict[int, float]
+    base_electricity_demands: dict[int, float]
+    collector_input_temperatures: dict[int, float]
+    collector_system_output_temperatures: dict[int, float]
+    electricity_demands: dict[int, float]
     heat_pump_cost: float
-    hot_water_demand_temperature: Dict[int, float | None]
-    hot_water_demand_volume: Dict[int, float | None]
-    pv_average_temperatures: Dict[ProfileDegradationType, Dict[int, float | None]]
-    pv_electrical_efficiencies: Dict[ProfileDegradationType, Dict[int, float | None]]
-    pv_electrical_output_power: Dict[ProfileDegradationType, Dict[int, float | None]]
-    pv_system_electrical_output_power: Dict[
-        ProfileDegradationType, Dict[int, float | None]
+    hot_water_demand_temperature: dict[int, float | None]
+    hot_water_demand_volume: dict[int, float | None]
+    pv_average_temperatures: dict[ProfileDegradationType, dict[int, float | None]]
+    pv_electrical_efficiencies: dict[ProfileDegradationType, dict[int, float | None]]
+    pv_electrical_output_power: dict[ProfileDegradationType, dict[int, float | None]]
+    pv_system_electrical_output_power: dict[
+        ProfileDegradationType, dict[int, float | None]
     ]
-    pv_t_electrical_efficiencies: Dict[ProfileDegradationType, Dict[int, float | None]]
-    pv_t_electrical_output_power: Dict[ProfileDegradationType, Dict[int, float | None]]
-    pv_t_htf_output_temperatures: Dict[int, float]
-    pv_t_reduced_temperatures: Dict[int, float | None]
-    pv_t_system_electrical_output_power: Dict[
-        ProfileDegradationType, Dict[int, float | None]
+    pv_t_electrical_efficiencies: dict[ProfileDegradationType, dict[int, float | None]]
+    pv_t_electrical_output_power: dict[ProfileDegradationType, dict[int, float | None]]
+    pv_t_htf_output_temperatures: dict[int, float]
+    pv_t_reduced_temperatures: dict[int, float | None]
+    pv_t_system_electrical_output_power: dict[
+        ProfileDegradationType, dict[int, float | None]
     ]
-    pv_t_thermal_efficiencies: Dict[int, float | None]
-    solar_thermal_htf_output_temperatures: Dict[int, float]
-    solar_thermal_reduced_temperatures: Dict[int, float | None]
-    solar_thermal_thermal_efficiencies: Dict[int, float | None]
-    tank_temperatures: Dict[int, float]
-    battery_electricity_suppy_profile: Dict[int, float | None] | None = None
+    pv_t_thermal_efficiencies: dict[int, float | None]
+    solar_thermal_htf_output_temperatures: dict[int, float]
+    solar_thermal_reduced_temperatures: dict[int, float | None]
+    solar_thermal_thermal_efficiencies: dict[int, float | None]
+    tank_temperatures: dict[int, float]
+    battery_electricity_suppy_profile: dict[int, float | None] | None = None
     battery_lifetime_degradation: int | None = None
-    battery_power_input_profile: Dict[int, float] = None
-    battery_replacements: int | None = None
-    battery_storage_profile: Dict[int, float | None] | None = None
-    dumped_solar: Dict[int, float] | None = None
-    grid_electricity_supply_profile: Dict[int, float | None] | None = None
-    solar_power_supplied: Dict[int, float] | None = None
-    output_power_map: Dict[ProfileDegradationType, Dict[int, float]] | None = None
+    battery_power_input_profile: dict[int, float] = None
+    battery_replacements: int = 0
+    battery_storage_profile: dict[int, float | None] | None = None
+    dumped_solar: dict[int, float] | None = None
+    grid_electricity_supply_profile: dict[int, float | None] | None = None
+    solar_power_supplied: dict[int, float] | None = None
+    output_power_map: dict[ProfileDegradationType, dict[int, float]] | None = None
 
     @property
-    def renewable_heating_fraction(self) -> Dict[int, float]:
+    def renewable_heating_fraction(self) -> dict[int, float]:
         """
         Calculate and return the renewable heating fraction.
 
@@ -1269,7 +1298,7 @@ class Solution(NamedTuple):
     @property
     def total_collector_electrical_output_power(
         self,
-    ) -> Dict[ProfileDegradationType, Dict[int, float]]:
+    ) -> dict[ProfileDegradationType, dict[int, float]]:
         """
         The total electrical output power at each time step.
 
@@ -1282,8 +1311,8 @@ class Solution(NamedTuple):
         if self.output_power_map is not None:
             return self.output_power_map
 
-        output_power_map: DefaultDict[
-            ProfileDegradationType, Dict[int, float]
+        output_power_map: Defaultdict[
+            ProfileDegradationType, dict[int, float]
         ] = defaultdict(lambda: defaultdict(float))
 
         pv = self.pv_system_electrical_output_power is not None
@@ -1291,7 +1320,6 @@ class Solution(NamedTuple):
 
         # Loop through the profiles.
         for profile in ProfileDegradationType:
-
             # Add the output for each hour for which it is not None.
             for hour in range(24):
                 # Add the PV output power.

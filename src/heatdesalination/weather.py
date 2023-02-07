@@ -24,7 +24,7 @@ import os
 import sys
 
 from logging import Logger
-from typing import Any, Dict, List, Tuple
+from typing import Any, Tuple
 
 import json
 import numpy as np
@@ -171,7 +171,7 @@ def _get_location_name(
     return location_name, output_name
 
 
-def _parse_args(args: List[Any]) -> argparse.Namespace:
+def _parse_args(args: list[Any]) -> argparse.Namespace:
     """
     Parses command-line arguments.
 
@@ -294,13 +294,13 @@ def main(
 
     # Create a map between day and profiles chunked
     weather_data = parsed_data[0]
-    daily_weather_profiles: Dict[int, pd.DataFrame] = {
+    daily_weather_profiles: dict[int, pd.DataFrame] = {
         day: weather_data[day * 24 : (day + 1) * 24]
         for day in range(int(len(weather_data) / 24))
     }
 
     # Create a map between day and cumulative irradiance for the day
-    cumulative_irradiance_to_day: Dict[int, float] = {
+    cumulative_irradiance_to_day: dict[int, float] = {
         np.sum(irradiance_profile[IRRADIANCE_COLUMN_NAME]): day
         for day, irradiance_profile in daily_weather_profiles.items()
     }

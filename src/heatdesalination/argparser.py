@@ -19,11 +19,16 @@ import argparse
 import os
 
 from logging import Logger
-from typing import Any, List, Tuple
+from typing import Any, Tuple
 
 import json
 
-from src.heatdesalination.__utils__ import CLI_TO_PROFILE_TYPE, HPCSimulation, WALLTIME
+from src.heatdesalination.__utils__ import (
+    CLI_TO_PROFILE_TYPE,
+    DEFAULT_SIMULATION_OUTPUT_FILE,
+    HPCSimulation,
+    WALLTIME,
+)
 
 __all__ = (
     "parse_args",
@@ -52,7 +57,7 @@ class MissingParametersError(Exception):
         )
 
 
-def parse_args(args: List[Any]) -> argparse.Namespace:
+def parse_args(args: list[Any]) -> argparse.Namespace:
     """
     Parses command-line arguments into a :class:`argparse.NameSpace`.
 
@@ -145,7 +150,7 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
     simulation_arguments.add_argument(
         "--output",
         "-o",
-        default="simulation_output",
+        default=DEFAULT_SIMULATION_OUTPUT_FILE,
         help="The name of the output file.",
         type=str,
     )
@@ -202,7 +207,7 @@ def parse_args(args: List[Any]) -> argparse.Namespace:
     return parser.parse_args(args)
 
 
-def _parse_hpc_args(args: List[Any]) -> argparse.Namespace:
+def _parse_hpc_args(args: list[Any]) -> argparse.Namespace:
     """
     Parses command-line arguments into a :class:`argparse.NameSpace`.
 
@@ -247,8 +252,8 @@ def _parse_hpc_args(args: List[Any]) -> argparse.Namespace:
 
 
 def parse_hpc_args_and_runs(
-    args: List[Any], logger: Logger
-) -> Tuple[str, List[HPCSimulation], int | None]:
+    args: list[Any], logger: Logger
+) -> Tuple[str, list[HPCSimulation], int | None]:
     """
     Parse the arguments and runs.
 

@@ -17,7 +17,7 @@ fileparser.py - The file parser module for the HEATDeslination program.
 import os
 
 from logging import Logger
-from typing import Dict, List, Tuple
+from typing import Tuple
 
 import json
 
@@ -194,20 +194,20 @@ TYPE: str = "type"
 
 
 def parse_input_files(
-    location: str, logger: Logger, scenario_name: str, start_hour: int
+    location: str, logger: Logger, scenario_name: str, start_hour: int | None
 ) -> Tuple[
-    Dict[ProfileType, Dict[int, float]],
+    dict[ProfileType, dict[int, float]],
     Battery,
     HotWaterTank,
-    HeatPump,
     DesalinationPlant,
+    HeatPump,
     HybridPVTPanel | None,
-    List[OptimisationParameters],
+    list[OptimisationParameters],
     PVPanel | None,
     Scenario,
-    Dict[ProfileType, Dict[int, float]],
+    dict[ProfileType, dict[int, float]],
     SolarThermalPanel | None,
-    Dict[ProfileType, Dict[int, float]],
+    dict[ProfileType, dict[int, float]],
 ]:
     """
     Parses the various input files.
@@ -221,7 +221,8 @@ def parse_input_files(
         - scenario_name:
             The name of the scenario to use.
         - start_hour:
-            The start hour for the plant's operation.
+            The start hour for the plant's operation or `None` if running an
+            optimisation and the start-hour is optimisable.
 
     Outputs:
         - ambient_temperatures:
@@ -323,7 +324,7 @@ def parse_input_files(
         os.path.join(INPUTS_DIRECTORY, OPTIMISATION_INPUTS), logger
     )
     try:
-        optimisations: List[OptimisationParameters] = [
+        optimisations: list[OptimisationParameters] = [
             OptimisationParameters.from_dict(logger, entry)
             for entry in optimisation_inputs[OPTIMISATIONS]
         ]
@@ -428,9 +429,9 @@ def parse_input_files(
     ) as weather_data_file:
         weather_data = json.load(weather_data_file)
 
-    ambient_temperatures: Dict[ProfileType, Dict[int, float]] = {}
-    solar_irradiances: Dict[ProfileType, Dict[int, float]] = {}
-    wind_speeds: Dict[ProfileType, Dict[int, float]] = {}
+    ambient_temperatures: dict[ProfileType, dict[int, float]] = {}
+    solar_irradiances: dict[ProfileType, dict[int, float]] = {}
+    wind_speeds: dict[ProfileType, dict[int, float]] = {}
 
     # Extend profiles to 25 hours.
     for profile_type in ProfileType:

@@ -21,7 +21,7 @@ the system.
 import dataclasses
 
 from logging import Logger
-from typing import Any, Dict
+from typing import Any
 
 from .__utils__ import NAME, ZERO_CELCIUS_OFFSET
 
@@ -165,8 +165,8 @@ class DesalinationPlant:
         self,
         name: str,
         operating_hours: int,
-        plant_outputs: Dict[bool, PlantOutputs],
-        plant_requirements: Dict[bool, PlantRequirements],
+        plant_outputs: dict[bool, PlantOutputs],
+        plant_requirements: dict[bool, PlantRequirements],
         start_hour: int,
     ) -> None:
         """
@@ -191,10 +191,10 @@ class DesalinationPlant:
         )
         self.name: str = name
         self.operating_hours = operating_hours
-        self.plant_outputs: Dict[bool, PlantOutputs] = plant_outputs
-        self.plant_requirements: Dict[bool, PlantRequirements] = plant_requirements
+        self.plant_outputs: dict[bool, PlantOutputs] = plant_outputs
+        self.plant_requirements: dict[bool, PlantRequirements] = plant_requirements
         self.start_hour: int = start_hour
-        self._operating: Dict[int, bool] | None = None
+        self._operating: dict[int, bool] | None = None
 
     def __repr__(self) -> str:
         """
@@ -209,7 +209,7 @@ class DesalinationPlant:
 
     @classmethod
     def from_dict(
-        cls, input_data: Dict[str, Any], logger: Logger, start_hour: int
+        cls, input_data: dict[str, Any], logger: Logger, start_hour: int
     ) -> Any:
         """
         Create a :class:`DesalinationPlant` instance based on the inputs.

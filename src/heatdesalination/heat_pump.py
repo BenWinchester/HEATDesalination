@@ -18,7 +18,7 @@ The heat-pump module contains functionality for modelling a heat pump's performa
 
 import dataclasses
 
-from typing import List, Tuple
+from typing import list, Tuple
 
 from scipy import interpolate
 
@@ -50,7 +50,7 @@ class HeatPump:
     #   Used for storing the scipy interpolator created.
     #
 
-    cop_data: List[float]
+    cop_data: list[float]
     efficiency: float
     name: str
     specific_costs_data: str

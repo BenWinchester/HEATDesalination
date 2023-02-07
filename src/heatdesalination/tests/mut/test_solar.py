@@ -6,7 +6,7 @@
 # Author: Ben Winchester, Phil Sandwell                                                #
 # Copyright: Ben Winchester, 2022                                                      #
 # Date created: 21/10/2022                                                             #
-# License: Open source                                                                 #
+# License: MIT                                                                         #
 ########################################################################################
 """
 test_solar.py - Tests for the solar module.
@@ -15,7 +15,7 @@ test_solar.py - Tests for the solar module.
 
 import unittest
 
-from typing import Any, Dict
+from typing import Any
 from unittest import mock
 
 from ...__utils__ import (
@@ -157,7 +157,7 @@ class TestHybridPVTPanelPerformance(unittest.TestCase):
 
         super().setUp()
 
-    def _calculate_performance(self, input_data: Dict[str, Any]) -> None:
+    def _calculate_performance(self, input_data: dict[str, Any]) -> None:
         """Wrapper for the calculate-performance method."""
 
         pv_t_panel: HybridPVTPanel = HybridPVTPanel.from_dict(self.logger, input_data)

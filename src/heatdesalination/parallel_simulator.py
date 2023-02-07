@@ -26,7 +26,7 @@ import sys
 
 from logging import Logger
 from multiprocessing import pool
-from typing import Any, Dict, List
+from typing import Any
 
 from tqdm import tqdm
 
@@ -90,7 +90,7 @@ class Simulation:
     buffer_tank_capacity: float
     mass_flow_rate: float
     output: str
-    profile_types: List[str]
+    profile_types: list[str]
     pv_system_size: float
     pv_t_system_size: float
     scenario: str
@@ -99,7 +99,7 @@ class Simulation:
     system_lifetime: int
 
     @property
-    def profile_type_instances(self) -> List[ProfileType]:
+    def profile_type_instances(self) -> list[ProfileType]:
         """
         Return :class:`ProfileType` instances.
 
@@ -111,7 +111,7 @@ class Simulation:
         return [CLI_TO_PROFILE_TYPE[entry] for entry in self.profile_types]
 
 
-def _parse_args(args: List[Any]) -> argparse.Namespace:
+def _parse_args(args: list[Any]) -> argparse.Namespace:
     """
     Parses command-line arguments into a :class:`argparse.NameSpace`.
 
@@ -181,7 +181,7 @@ def _parse_args(args: List[Any]) -> argparse.Namespace:
 
 def heatdesalination_wrapper(
     simulation: Simulation, hpc: bool, location: str
-) -> Dict[ProfileType, Solution] | None:
+) -> dict[ProfileType, Solution] | None:
     """
     Run a steady-state simulation
 
@@ -231,7 +231,7 @@ def main(
     simulations_file: str,
     full_results: bool = True,
     hpc: bool = False,
-) -> List[Any]:
+) -> list[Any]:
     """
     Main method for carrying out multiple simulations.
 
