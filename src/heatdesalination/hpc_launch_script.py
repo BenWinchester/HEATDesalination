@@ -196,8 +196,10 @@ def main(args) -> None:
     print(f"Processing HPC job submission script{'.'*44} ", end="")
     logger.info("Parsing base HPC job submission script.")
     try:
-        with open(HPC_SUBMISSION_SCRIPT_FILEPATH, "r", encoding="UTF-8") as f:
-            hpc_submission_script_file_contents = f.read()
+        with open(
+            HPC_SUBMISSION_SCRIPT_FILEPATH, "r", encoding="UTF-8"
+        ) as hpc_submission_pointer:
+            hpc_submission_script_file_contents = hpc_submission_pointer.read()
     except FileNotFoundError:
         print(FAILED)
         logger.error(

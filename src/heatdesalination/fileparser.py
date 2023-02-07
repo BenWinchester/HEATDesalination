@@ -194,7 +194,7 @@ STORAGE_INPUTS: str = "storage.yaml"
 TYPE: str = "type"
 
 
-def parse_input_files(
+def parse_input_files(  # pylint: disable=too-many-statements
     location: str, logger: Logger, scenario_name: str, start_hour: int | None
 ) -> Tuple[
     dict[ProfileType, dict[int, float]],
@@ -212,6 +212,9 @@ def parse_input_files(
 ]:
     """
     Parses the various input files.
+
+    NOTE: The pylint `too-many-statements` error code is supressed due to the fileparser
+    being permitted to be a longer-than-usual function.
 
     Inputs:
         - location:
@@ -256,7 +259,7 @@ def parse_input_files(
     scenario_inputs = read_yaml(os.path.join(INPUTS_DIRECTORY, SCENARIO_INPUTS), logger)
     if not isinstance(scenario_inputs, dict):
         logger.error(
-            "Unreadable scenario inputs file: must be of type `dict` not " "`list`."
+            "Unreadable scenario inputs file: must be of type `dict` not `list`."
         )
         raise InputFileError(
             "scenario inputs",
@@ -307,8 +310,8 @@ def parse_input_files(
         )
         raise InputFileError(
             "desalination inputs",
-            f"Desalination-plant inputs must be a `dict` containing entries for "
-            "`{DESALINATION_PLANTS}`.",
+            "Desalination-plant inputs must be a `dict` containing entries for "
+            f"`{DESALINATION_PLANTS}`.",
         )
 
     desalination_plants = [

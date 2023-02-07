@@ -25,7 +25,6 @@ from typing import Any, DefaultDict, NamedTuple, Tuple
 
 import yaml
 
-import numpy as np
 import pandas as pd
 
 __all__ = (
@@ -44,7 +43,6 @@ __all__ = (
     "LOGGER_DIRECTORY",
     "LONGITUDE",
     "NAME",
-    "parse_hpc_args_and_runs",
     "ProfileDegradationType",
     "ProfileType",
     "ProgrammerJudgementFault",
@@ -173,6 +171,8 @@ ZERO_CELCIUS_OFFSET: float = 273.15
 class CostableComponent:
     """
     Represents a costable component.
+
+    NOTE: As this is a base class, public methods are not defined here.
 
     .. attribute:: cost
         The cost of the component, per unit component.
@@ -1322,22 +1322,26 @@ class Solution(NamedTuple):
                     pv
                     and self.pv_system_electrical_output_power is not None
                     and (
-                        pv_output := self.pv_system_electrical_output_power[  # type: ignore [index]
+                        self.pv_system_electrical_output_power[  # type: ignore [index]
                             profile.value
-                        ][
-                            hour
-                        ]
+                        ][hour]
                     )
                     is not None
                 ):
-                    output_power_map[profile.value][hour] += pv_output
+                    output_power_map[profile.value][
+                        hour
+                    ] += self.pv_system_electrical_output_power[  # type: ignore [index]
+                        profile.value
+                    ][
+                        hour
+                    ]
 
                 # Output the PV-T output power.
                 if (
                     pvt
                     and self.pv_t_system_electrical_output_power is not None
                     and (
-                        pvt_output := self.pv_t_system_electrical_output_power[  # type: ignore [index]
+                        self.pv_t_system_electrical_output_power[  # type: ignore [index]
                             profile.value
                         ][
                             hour
@@ -1345,7 +1349,13 @@ class Solution(NamedTuple):
                     )
                     is not None
                 ):
-                    output_power_map[profile.value][hour] += pvt_output
+                    output_power_map[profile.value][
+                        hour
+                    ] += self.pv_t_system_electrical_output_power[  # type: ignore [index]
+                        profile.value
+                    ][
+                        hour
+                    ]
 
         self._replace(output_power_map=output_power_map)
 
@@ -1380,7 +1390,9 @@ class Solution(NamedTuple):
             },
             "Dumped electricity / kWh": self.dumped_solar,
             "Electricity demand / kWh": self.electricity_demands,
-            "Electrical auxiliary heating demand / kWh(el)": self.auxiliary_heating_electricity_demands,
+            "Electrical auxiliary heating demand / kWh(el)": (
+                self.auxiliary_heating_electricity_demands
+            ),
             "Base electricity dewmand / kWh": self.base_electricity_demands,
             "Electricity demand met through the grid / kWh": self.grid_electricity_supply_profile,
             "Electricity demand met through solar collectors / kWh": self.solar_power_supplied,
@@ -1395,12 +1407,16 @@ class Solution(NamedTuple):
                 key: value - ZERO_CELCIUS_OFFSET
                 for key, value in self.tank_temperatures.items()
             },
-            "Total degraded collector electrical output power / kW": self.total_collector_electrical_output_power[
-                ProfileDegradationType.DEGRADED.value
-            ],
-            "Total undegraded collector electrical output power / kW": self.total_collector_electrical_output_power[
-                ProfileDegradationType.UNDEGRADED.value
-            ],
+            "Total degraded collector electrical output power / kW": (
+                self.total_collector_electrical_output_power[
+                    ProfileDegradationType.DEGRADED.value
+                ]
+            ),
+            "Total undegraded collector electrical output power / kW": (
+                self.total_collector_electrical_output_power[
+                    ProfileDegradationType.UNDEGRADED.value
+                ]
+            ),
         }
 
         # Update with PV information if applicable.
@@ -1413,18 +1429,26 @@ class Solution(NamedTuple):
                     "Degraded PV electric efficiencies": self.pv_electrical_efficiencies[
                         ProfileDegradationType.DEGRADED.value
                     ],
-                    "Undegraded PV electric output power / kW": self.pv_electrical_output_power[  # type: ignore [index]
-                        ProfileDegradationType.UNDEGRADED.value
-                    ],
-                    "Degraded PV electric output power / kW": self.pv_electrical_output_power[  # type: ignore [index]
-                        ProfileDegradationType.DEGRADED.value
-                    ],
-                    "Undegraded Total PV electric power produced / kW": self.pv_system_electrical_output_power[  # type: ignore [index]
-                        ProfileDegradationType.UNDEGRADED.value
-                    ],
-                    "Degraded Total PV electric power produced / kW": self.pv_system_electrical_output_power[  # type: ignore [index]
-                        ProfileDegradationType.DEGRADED.value
-                    ],
+                    "Undegraded PV electric output power / kW": (
+                        self.pv_electrical_output_power[  # type: ignore [index]
+                            ProfileDegradationType.UNDEGRADED.value
+                        ]
+                    ),
+                    "Degraded PV electric output power / kW": (
+                        self.pv_electrical_output_power[  # type: ignore [index]
+                            ProfileDegradationType.DEGRADED.value
+                        ]
+                    ),
+                    "Undegraded Total PV electric power produced / kW": (
+                        self.pv_system_electrical_output_power[  # type: ignore [index]
+                            ProfileDegradationType.UNDEGRADED.value
+                        ]
+                    ),
+                    "Degraded Total PV electric power produced / kW": (
+                        self.pv_system_electrical_output_power[  # type: ignore [index]
+                            ProfileDegradationType.DEGRADED.value
+                        ]
+                    ),
                 }
             )
 
@@ -1445,18 +1469,26 @@ class Solution(NamedTuple):
                     "Degraded PV-T electric efficiencies": self.pv_t_electrical_efficiencies[
                         ProfileDegradationType.DEGRADED.value
                     ],
-                    "Undegraded PV-T electric output power / kW": self.pv_t_electrical_output_power[  # type: ignore [index]
-                        ProfileDegradationType.UNDEGRADED.value
-                    ],
-                    "Degraded PV-T electric output power / kW": self.pv_t_electrical_output_power[  # type: ignore [index]
-                        ProfileDegradationType.DEGRADED.value
-                    ],
-                    "Undegraded Total PV-T electric power produced / kW": self.pv_t_system_electrical_output_power[  # type: ignore [index]
-                        ProfileDegradationType.UNDEGRADED.value
-                    ],
-                    "Degraded Total PV-T electric power produced / kW": self.pv_t_system_electrical_output_power[  # type: ignore [index]
-                        ProfileDegradationType.DEGRADED.value
-                    ],
+                    "Undegraded PV-T electric output power / kW": (
+                        self.pv_t_electrical_output_power[  # type: ignore [index]
+                            ProfileDegradationType.UNDEGRADED.value
+                        ]
+                    ),
+                    "Degraded PV-T electric output power / kW": (
+                        self.pv_t_electrical_output_power[  # type: ignore [index]
+                            ProfileDegradationType.DEGRADED.value
+                        ]
+                    ),
+                    "Undegraded Total PV-T electric power produced / kW": (
+                        self.pv_t_system_electrical_output_power[  # type: ignore [index]
+                            ProfileDegradationType.UNDEGRADED.value
+                        ]
+                    ),
+                    "Degraded Total PV-T electric power produced / kW": (
+                        self.pv_t_system_electrical_output_power[  # type: ignore [index]
+                            ProfileDegradationType.DEGRADED.value
+                        ]
+                    ),
                     "PV-T reduced temperature / degC/W/m^2": self.pv_t_reduced_temperatures,
                     "PV-T thermal efficiency": self.pv_t_thermal_efficiencies,
                 }
@@ -1472,8 +1504,12 @@ class Solution(NamedTuple):
                         )
                         for key, value in self.solar_thermal_htf_output_temperatures.items()
                     },
-                    "Solar-thermal reduced temperature / degC/W/m^2": self.solar_thermal_reduced_temperatures,
-                    "Solar-thermal thermal efficiency": self.solar_thermal_thermal_efficiencies,
+                    "Solar-thermal reduced temperature / degC/W/m^2": (
+                        self.solar_thermal_reduced_temperatures
+                    ),
+                    "Solar-thermal thermal efficiency": (
+                        self.solar_thermal_thermal_efficiencies
+                    ),
                 }
             )
 

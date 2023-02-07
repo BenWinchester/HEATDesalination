@@ -233,7 +233,7 @@ def _total_grid_cost(
         )
 
     daily_grid_consumption: float = sum(
-        [entry for entry in grid_supply_profile.values() if entry is not None]
+        entry for entry in grid_supply_profile.values() if entry is not None
     )
     peak_grid_power: float = max(
         {entry for entry in grid_supply_profile.values() if entry is not None}
@@ -435,7 +435,7 @@ def _total_electricity_supplied(solution: Solution, system_lifetime: int) -> flo
         total_battery_output_power: float = 0
     else:
         total_battery_output_power = sum(
-            [entry for entry in battery_output_power.values() if entry is not None]
+            entry for entry in battery_output_power.values() if entry is not None
         )  # [kWh/day]
 
     # Sum the collector power supplied to the system.
@@ -447,7 +447,7 @@ def _total_electricity_supplied(solution: Solution, system_lifetime: int) -> flo
         total_collector_output_power: float = 0
     else:
         total_collector_output_power = sum(
-            [entry for entry in collector_output_power.values() if entry is not None]
+            entry for entry in collector_output_power.values() if entry is not None
         )  # [kWh/day]
 
     # Sum the grid power supplied to the system.
@@ -455,7 +455,7 @@ def _total_electricity_supplied(solution: Solution, system_lifetime: int) -> flo
         total_grid_power: float = 0
     else:
         total_grid_power = sum(
-            [entry for entry in grid_power.values() if entry is not None]
+            entry for entry in grid_power.values() if entry is not None
         )  # [kWh/day]
 
     return (
@@ -598,7 +598,7 @@ class GridElectricityFraction(Criterion, criterion_name="grid_electricity_fracti
             return 0
 
         grid_power_supplied = sum(
-            [entry for entry in grid_profile.values() if entry is not None]
+            entry for entry in grid_profile.values() if entry is not None
         )
         total_electricity_demand = sum(solution.electricity_demands.values())
         return grid_power_supplied / total_electricity_demand
@@ -770,9 +770,9 @@ class AuxiliaryHeatingFraction(Criterion, criterion_name="auxiliary_heating_frac
 
         """
 
-        return 1 - super().calculate_value_map[RenewableHeatingFraction.name](  # type: ignore [no-any-return]
-            component_sizes, logger, scenario, solution, system_lifetime
-        )
+        return 1 - super().calculate_value_map[  # type: ignore [no-any-return]
+            RenewableHeatingFraction.name
+        ](component_sizes, logger, scenario, solution, system_lifetime)
 
 
 class SolarElectricityFraction(Criterion, criterion_name="solar_electricity_fraction"):
@@ -859,7 +859,7 @@ class StorageElectricityFraction(
 
         try:
             storage_power_supplied: float = sum(
-                [entry for entry in battery_profile.values() if entry is not None]
+                entry for entry in battery_profile.values() if entry is not None
             )
         except AttributeError:
             print("No battery profile for scenario %s", str(scenario))
@@ -1116,7 +1116,10 @@ def _simulate_and_calculate_criterion(
 
     # Assemble the component sizes mapping.
     component_sizes: dict[CostableComponent, int | float] = {
-        battery: _battery_capacity * (1 + steady_state_solution.battery_replacements),  # type: ignore [dict-item,operator]
+        battery: _battery_capacity
+        * (  # type: ignore [dict-item,operator]
+            1 + steady_state_solution.battery_replacements
+        ),
         buffer_tank: _buffer_tank_capacity,  # type: ignore [dict-item]
         hybrid_pv_t_panel: _pv_t_system_size,  # type: ignore [dict-item]
         pv_panel: _pv_panel_system_size,  # type: ignore [dict-item]
@@ -1132,7 +1135,9 @@ def _simulate_and_calculate_criterion(
     ) ** 3
 
 
-def _callback_function(current_vector: numpy.ndarray, *args) -> None:
+def _callback_function(
+    current_vector: numpy.ndarray, *args  # pylint: disable=unused-argument
+) -> None:
     """
     Callback function to execute after each itteration.
 
@@ -1142,7 +1147,11 @@ def _callback_function(current_vector: numpy.ndarray, *args) -> None:
 
     """
 
-    print("Current vector: ({})".format([f"{entry:.1f}" for entry in current_vector]))
+    print(
+        "Current vector: ({})".format(  # pylint: disable=consider-using-f-string
+            [f"{entry:.1f}" for entry in current_vector]
+        )
+    )
 
 
 def _constraint_function(
@@ -1352,6 +1361,14 @@ def run_optimisation(
     )
 
     class Bounds:
+        """
+        Represents an instance of the bounds.
+
+        .. attribute:: bounds
+            The bounds, unwrapped.
+
+        """
+
         def __init__(self, bounds: list[Tuple[float | None, float | None]]) -> None:
             self.bounds = bounds
 
@@ -1366,7 +1383,8 @@ def run_optimisation(
                     return False
             return True
 
-    bounds_instance = Bounds(bounds)
+    # Bounds are calculated if needed for the algorithm selected below.
+    bounds_instance = Bounds(bounds)  # pylint: disable=unused-variable
 
     # Optimise the system.
     # return optimize.basinhopping(

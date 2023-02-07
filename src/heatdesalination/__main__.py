@@ -138,7 +138,7 @@ def save_optimisation(
 
 def main(
     location: str,
-    profile_types: list[ProfileType],
+    profile_types_to_run: list[ProfileType],
     scenario_name: str,
     system_lifetime: int,
     battery_capacity: float | None = None,
@@ -167,7 +167,7 @@ def main(
     Inputs:
         - location:
             The name of the location to be modelled.
-        - profile_types:
+        - profile_types_to_run:
             The `list` of valid :class:`ProfileType` instances to consider.
         - scenario_name:
             The name of the scenario to use.
@@ -294,7 +294,7 @@ def main(
                 wind_speeds[profile_type],
                 disable_tqdm=disable_tqdm,
             )
-            for profile_type in profile_types
+            for profile_type in profile_types_to_run
         }
 
         # Output information to the command-line interface.
@@ -350,7 +350,7 @@ def main(
             for key, entry in simulation_outputs.items()
         }
 
-    elif optimisation:
+    if optimisation:
         # Setup a variable for storing the optimisation results.
         optimisation_results: list[
             Tuple[dict[str, Any], dict[Any, Tuple[dict[str, float], list[float]]]]
@@ -384,7 +384,7 @@ def main(
                             wind_speeds[profile_type],
                         )
                         for profile_type in tqdm(
-                            profile_types,
+                            profile_types_to_run,
                             desc="profile type",
                             disable=disable_tqdm,
                             leave=False,
@@ -398,12 +398,12 @@ def main(
             save_optimisation(optimisation_results, output)
 
         return optimisation_results
-    else:
-        logger.error("Neither simulation or optimisation was specified. Quitting.")
-        raise Exception(
-            "Simultion or optimisation must be specified. Run with `--help` for more "
-            "information."
-        )
+
+    logger.error("Neither simulation or optimisation was specified. Quitting.")
+    raise Exception(
+        "Simultion or optimisation must be specified. Run with `--help` for more "
+        "information."
+    )
 
 
 if __name__ == "__main__":
@@ -415,7 +415,7 @@ if __name__ == "__main__":
 
     # Determine the profile types that shuld be considered.
     try:
-        profile_types = [
+        profile_types: list[ProfileType] = [
             CLI_TO_PROFILE_TYPE[entry] for entry in parsed_args.profile_types
         ]
     except KeyError as err:

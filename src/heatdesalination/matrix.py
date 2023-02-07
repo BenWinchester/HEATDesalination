@@ -19,9 +19,9 @@ configuration.
 
 """
 
-from logging import Logger
 from typing import Tuple
 
+from logging import Logger
 
 from .__utils__ import (
     InputFileError,
@@ -29,7 +29,7 @@ from .__utils__ import (
     Scenario,
     TEMPERATURE_PRECISION,
 )
-from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel
+from .solar import HybridPVTPanel, SolarThermalPanel
 from .storage.storage_utils import HotWaterTank
 
 __all__ = ("solve_matrix",)

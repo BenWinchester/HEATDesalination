@@ -22,7 +22,7 @@ from typing import Tuple
 
 from scipy import interpolate
 
-__all__ = ("calculate_heat_pump_electricity_consumption",)
+__all__ = ("calculate_heat_pump_electricity_consumption_and_cost",)
 
 
 @dataclasses.dataclass

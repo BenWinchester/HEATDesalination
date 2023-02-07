@@ -23,7 +23,7 @@ from typing import Any, Tuple
 
 import json
 
-from src.heatdesalination.__utils__ import (
+from .__utils__ import (
     CLI_TO_PROFILE_TYPE,
     DEFAULT_SIMULATION_OUTPUT_FILE,
     HPCSimulation,
@@ -32,6 +32,7 @@ from src.heatdesalination.__utils__ import (
 
 __all__ = (
     "parse_args",
+    "parse_hpc_args_and_runs",
     "validate_args",
 )
 

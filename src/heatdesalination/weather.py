@@ -223,7 +223,7 @@ def _parse_args(args: list[Any]) -> argparse.Namespace:
     return parser.parse_args(args)
 
 
-def main(
+def main(  # pylint: disable=too-many-statements
     latitude: float, longitude: float, timezone: int, output: str | None = None
 ) -> None:
     """
@@ -293,12 +293,6 @@ def main(
     daily_weather_profiles: dict[int, pd.DataFrame] = {
         day: weather_data[day * 24 : (day + 1) * 24]
         for day in range(int(len(weather_data) / 24))
-    }
-
-    # Create a map between day and cumulative irradiance for the day
-    cumulative_irradiance_to_day: dict[int, float] = {
-        np.sum(irradiance_profile[IRRADIANCE_COLUMN_NAME]): day
-        for day, irradiance_profile in daily_weather_profiles.items()
     }
 
     # Reverse the cumulative irradiance map to determine the max and min irradiance days

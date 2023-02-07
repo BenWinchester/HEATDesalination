@@ -910,13 +910,6 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
             * (ambient_temperature - self.reference_temperature)
         )
 
-        # Determine the reduced temperature of the panel.
-        reduced_panel_temperature = reduced_temperature(
-            ambient_temperature,
-            average_temperature + ZERO_CELCIUS_OFFSET,
-            solar_irradiance,
-        )
-
         return electrical_efficiency, None, average_temperature, None
 
 
@@ -1225,7 +1218,6 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                 + f"{self.min_mass_flow_rate:.2g} to {self.max_mass_flow_rate:.2g} "
                 "kilograms/second.",
             )
-            pass
 
         if input_temperature is None:
             logger.error(

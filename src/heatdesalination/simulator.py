@@ -457,7 +457,11 @@ def _recursive_degraded_storage_solver(
         battery.maximum_charge,
         battery.minimum_charge,
     )
-    power_to_storage_map, storage_power_supplied_map, storage_profile = _storage_solver(
+    (
+        power_to_storage_map,
+        storage_power_supplied_map,
+        storage_profile,
+    ) = _storage_solver(
         battery,
         battery_system_size,
         maximum_degradation_factor,
@@ -642,7 +646,7 @@ def _tank_replacement_temperature(
     return ZERO_CELCIUS_OFFSET + hot_water_return_temperature
 
 
-def run_simulation(
+def run_simulation(  # pylint: disable=too-many-statements
     ambient_temperatures: dict[int, float],
     buffer_tank: HotWaterTank,
     desalination_plant: DesalinationPlant,
@@ -1218,12 +1222,16 @@ def determine_steady_state_simulation(
         battery_electricity_suppy_profile=battery_power_supplied_profile  # type: ignore [arg-type]
     )
     solution = solution._replace(dumped_solar=dumped_solar)
-    solution = solution._replace(battery_storage_profile=battery_storage_profile)  # type: ignore [arg-type]
+    solution = solution._replace(
+        battery_storage_profile=battery_storage_profile  # type: ignore [arg-type]
+    )
     if battery_power_input_profile is not None:
         solution = solution._replace(
             battery_power_input_profile=battery_power_input_profile
         )
-    solution = solution._replace(grid_electricity_supply_profile=grid_profile)  # type: ignore [arg-type]
+    solution = solution._replace(
+        grid_electricity_supply_profile=grid_profile  # type: ignore [arg-type]
+    )
     solution = solution._replace(solar_power_supplied=solar_power_supplied)
 
     return solution

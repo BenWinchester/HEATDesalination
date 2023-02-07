@@ -30,8 +30,8 @@ from typing import Any
 
 from tqdm import tqdm
 
-from src.heatdesalination.__main__ import main as heatdesalination_main
-from src.heatdesalination.__utils__ import (
+from .__main__ import main as heatdesalination_main
+from .__utils__ import (
     CLI_TO_PROFILE_TYPE,
     DONE,
     FlowRateError,
@@ -39,7 +39,7 @@ from src.heatdesalination.__utils__ import (
     ProfileType,
     Solution,
 )
-from src.heatdesalination.fileparser import INPUTS_DIRECTORY
+from .fileparser import INPUTS_DIRECTORY
 
 # SIMULATIONS_FILEPATH:
 #   The file path to the simulations file.
@@ -324,12 +324,9 @@ if __name__ == "__main__":
     # Parse the command-line arguments.
     parsed_args = _parse_args(sys.argv[1:])
 
-    # Setup the logger.
-    logger = get_logger(f"{parsed_args.location}_parallel_simulator")
-
     main(
         parsed_args.location,
-        logger,
+        get_logger(f"{parsed_args.location}_parallel_simulator"),
         parsed_args.output,
         parsed_args.simulations_file,
         not parsed_args.partial_results,
