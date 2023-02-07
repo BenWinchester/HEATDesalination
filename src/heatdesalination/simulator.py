@@ -106,8 +106,8 @@ def _calculate_collector_degradation(
         if solution.pv_electrical_efficiencies is not None:
             solution.pv_electrical_efficiencies[
                 ProfileDegradationType.DEGRADED.value
-            ] = _degrade(
-                solution.pv_electrical_efficiencies[
+            ] = _degrade(  # type: ignore [assignment]
+                solution.pv_electrical_efficiencies[  # type: ignore [arg-type]
                     ProfileDegradationType.UNDEGRADED.value
                 ],
                 average_degradation_rate,
@@ -116,8 +116,8 @@ def _calculate_collector_degradation(
         if solution.pv_electrical_output_power is not None:
             solution.pv_electrical_output_power[
                 ProfileDegradationType.DEGRADED.value
-            ] = _degrade(
-                solution.pv_electrical_output_power[
+            ] = _degrade(  # type: ignore [assignment]
+                solution.pv_electrical_output_power[  # type: ignore [arg-type]
                     ProfileDegradationType.UNDEGRADED.value
                 ],
                 average_degradation_rate,
@@ -126,8 +126,8 @@ def _calculate_collector_degradation(
         if solution.pv_system_electrical_output_power is not None:
             solution.pv_system_electrical_output_power[
                 ProfileDegradationType.DEGRADED.value
-            ] = _degrade(
-                solution.pv_system_electrical_output_power[
+            ] = _degrade(  # type: ignore [assignment]
+                solution.pv_system_electrical_output_power[  # type: ignore [arg-type]
                     ProfileDegradationType.UNDEGRADED.value
                 ],
                 average_degradation_rate,
@@ -137,7 +137,7 @@ def _calculate_collector_degradation(
         if solution.pv_t_electrical_efficiencies is not None:
             solution.pv_t_electrical_efficiencies[
                 ProfileDegradationType.DEGRADED.value
-            ] = _degrade(
+            ] = _degrade(  # type: ignore [assignment]
                 solution.pv_t_electrical_efficiencies[
                     ProfileDegradationType.UNDEGRADED.value
                 ],
@@ -147,18 +147,20 @@ def _calculate_collector_degradation(
         if solution.pv_t_electrical_output_power is not None:
             solution.pv_t_electrical_output_power[
                 ProfileDegradationType.DEGRADED.value
-            ] = _degrade(
+            ] = _degrade(  # type: ignore [assignment]
                 solution.pv_t_electrical_output_power[
                     ProfileDegradationType.UNDEGRADED.value
                 ],
                 average_degradation_rate,
             )
 
-        if solution.pv_t_system_electrical_output_power is not None:
-            solution.pv_t_system_electrical_output_power[
+        if (
+            pv_t_output_power := solution.pv_t_system_electrical_output_power
+        ) is not None:
+            solution.pv_t_system_electrical_output_power[  # type: ignore [index]
                 ProfileDegradationType.DEGRADED.value
-            ] = _degrade(
-                solution.pv_t_system_electrical_output_power[
+            ] = _degrade(  # type: ignore [assignment]
+                pv_t_output_power[  # type: ignore [arg-type]
                     ProfileDegradationType.UNDEGRADED.value
                 ],
                 average_degradation_rate,
@@ -167,7 +169,7 @@ def _calculate_collector_degradation(
 
 def _storage_profile_iteration_step(
     battery: Battery,
-    battery_system_size: int,
+    battery_system_size: float | int,
     maximum_charge_degradation: float,
     solution: Solution,
     total_collector_generation_profile: dict[int, float],
@@ -318,7 +320,7 @@ def _maximum_charge_degradation_factor(
 
 def _storage_solver(
     battery: Battery,
-    battery_system_size: int,
+    battery_system_size: float | int,
     maximum_charge_degradation: float,
     solution: Solution,
     total_collector_generation_profile: dict[int, float],
@@ -399,7 +401,7 @@ def _storage_solver(
 
 def _recursive_degraded_storage_solver(
     battery: Battery,
-    battery_system_size: int,
+    battery_system_size: float | int,
     solution: Solution,
     system_lifetime: int,
     total_collector_generation_profile: dict[int, float],
@@ -508,7 +510,11 @@ def _calculate_storage_profile(
     solution: Solution,
     system_lifetime: int,
 ) -> Tuple[
-    float, dict[int, float], dict[int, float], dict[int, float], dict[int, float]
+    float,
+    dict[int, float] | None,
+    dict[int, float] | None,
+    dict[int, float] | None,
+    dict[int, float],
 ]:
     """
     Calculate the storage profile for the batteries.
@@ -557,7 +563,7 @@ def _calculate_storage_profile(
     }
 
     # If there is no storage, return purely the solar power map.
-    if battery_system_size == 0 or battery is None:
+    if battery_system_size == 0 or battery is None or battery_system_size is None:
         return 0, None, None, None, solar_power_supplied_map
 
     return _recursive_degraded_storage_solver(
@@ -570,7 +576,9 @@ def _calculate_storage_profile(
     ) + (solar_power_supplied_map,)
 
 
-def _collector_mass_flow_rate(htf_mass_flow_rate: float, system_size: int) -> float:
+def _collector_mass_flow_rate(
+    htf_mass_flow_rate: float, system_size: float | int
+) -> float:
     """
     Calculate the mass flow rate through the collector.
 
@@ -1192,7 +1200,7 @@ def determine_steady_state_simulation(
         ][hour]
         - solar_power_supplied[hour]
         - (
-            battery_power_input_profile[hour]
+            battery_power_input_profile[hour]  # type: ignore  [index]
             if battery_power_supplied_profile is not None
             else 0
         )
@@ -1211,9 +1219,10 @@ def determine_steady_state_simulation(
     )
     solution = solution._replace(dumped_solar=dumped_solar)
     solution = solution._replace(battery_storage_profile=battery_storage_profile)  # type: ignore [arg-type]
-    solution = solution._replace(
-        battery_power_input_profile=battery_power_input_profile
-    )
+    if battery_power_input_profile is not None:
+        solution = solution._replace(
+            battery_power_input_profile=battery_power_input_profile
+        )
     solution = solution._replace(grid_electricity_supply_profile=grid_profile)  # type: ignore [arg-type]
     solution = solution._replace(solar_power_supplied=solar_power_supplied)
 

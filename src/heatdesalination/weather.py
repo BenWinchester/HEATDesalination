@@ -153,17 +153,13 @@ def _get_location_name(
         accurate_name = address[STATE]
     else:
         logger.info("Could not determine precise name of location.")
-        accurate_name = None
+        accurate_name = "NaN"
 
     # Generate user-readable strings and output names
-    location_name = ", ".join(
-        [accurate_name if accurate_name is not None else "NaN", address[COUNTRY]]
-    )
+    location_name = f"{accurate_name}, {address[COUNTRY]}"
     output_name = "_".join(
         [
-            accurate_name.lower().replace(", ", "_").replace(" ", "_")
-            if accurate_name is not None
-            else "NaN",
+            accurate_name.lower().replace(", ", "_").replace(" ", "_"),
             address[COUNTRY].lower().replace(" ", "_"),
         ]
     )

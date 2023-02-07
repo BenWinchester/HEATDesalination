@@ -260,8 +260,10 @@ def main(
         simulations_filepath = SIMULATIONS_FILEPATH
 
     # Parse the simulations file.
-    with open(simulations_filepath, "r") as simulations_file:
-        simulations = [Simulation(**entry) for entry in json.load(simulations_file)]
+    with open(simulations_filepath, "r") as open_simulations_file:
+        simulations = [
+            Simulation(**entry) for entry in json.load(open_simulations_file)
+        ]
 
     print(f"Carrying out parallel simulation{'.'*37} ", end="")
     logger.info("Carrying out %s parallel simulation(s)", len(simulations))

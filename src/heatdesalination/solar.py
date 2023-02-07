@@ -34,6 +34,7 @@ from .__utils__ import (
     COST,
     CostableComponent,
     FlowRateError,
+    HEAT_CAPACITY_OF_WATER,
     InputFileError,
     NAME,
     ProgrammerJudgementFault,
@@ -309,7 +310,7 @@ class PVModuleCharacteristics:
 def _thermal_performance(
     ambient_temperature: float,
     area: float,
-    htf_heat_capacity: float,
+    htf_heat_capacity: float | None,
     input_temperature: float,
     mass_flow_rate: float,
     performance_curve: PerformanceCurve,
@@ -393,6 +394,11 @@ def _thermal_performance(
 
     """
 
+    # Sanitise the HTF heat capacity
+    htf_heat_capacity = float(
+        htf_heat_capacity if htf_heat_capacity is not None else HEAT_CAPACITY_OF_WATER
+    )
+
     # If noly a linear calculation is required, solve linearly.
     if performance_curve.c_2 == 0:
         return (
@@ -411,7 +417,7 @@ def _thermal_performance(
     a: float = performance_curve.c_2 * area  # pylint: disable=invalid-name
 
     b: float = (  # pylint: disable=invalid-name
-        +2 * performance_curve.c_1 * area
+        2 * performance_curve.c_1 * area
         + 2
         * performance_curve.c_2
         * area
@@ -885,6 +891,13 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
 
         # Determine the average temperature of the panel using an in-house heat-balance
         # calculation.
+        if wind_speed is None:
+            logger.error("Wind speed needed for PV temperature calculation.")
+            raise ProgrammerJudgementFault(
+                "PVPanel:calculate_perofrmance",
+                "No wind speed provided for PV module average temperature calculation.",
+            )
+
         average_temperature = self._average_module_temperature(
             ambient_temperature, logger, solar_irradiance, wind_speed
         )
@@ -959,7 +972,9 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         self.electric_performance_curve: PerformanceCurve = electric_performance_curve
         self._max_mass_flow_rate: float = solar_inputs[MAX_MASS_FLOW_RATE]
         self._min_mass_flow_rate: float = solar_inputs[MIN_MASS_FLOW_RATE]
-        self.pv_module_characteristics: PVModuleCharacteristics = pv_module_characteristics
+        self.pv_module_characteristics: PVModuleCharacteristics = (
+            pv_module_characteristics
+        )
         self.thermal_performance_curve: PerformanceCurve = thermal_performance_curve
 
     @property
@@ -1073,7 +1088,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         if ELECTRIC_PERFORMANCE_CURVE in solar_inputs:
             electric_performance_inputs = solar_inputs[ELECTRIC_PERFORMANCE_CURVE]
             try:
-                electric_performance_curve: PerformanceCurve | None = PerformanceCurve(
+                electric_performance_curve: PerformanceCurve = PerformanceCurve(
                     electric_performance_inputs[ZEROTH_ORDER],
                     electric_performance_inputs[FIRST_ORDER],
                     electric_performance_inputs[SECOND_ORDER],
@@ -1085,16 +1100,19 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                 )
                 raise
         else:
-            electric_performance_curve = None
-            logger.debug(
-                "No performance curve defined for solar-thermal panel '%s'.",
-                solar_inputs["name"],
+            logger.error(
+                "No electric performance curve defined for PV-T panel '%s'.",
+                (name := solar_inputs["name"]),
+            )
+            raise InputFileError(
+                "solar inputs",
+                f"No PV electric performance curve defined for panel {name}.",
             )
 
         if PV_MODULE_CHARACTERISTICS in solar_inputs:
             pv_module_characteristics_inputs = solar_inputs[PV_MODULE_CHARACTERISTICS]
             try:
-                pv_module_characteristics: PVModuleCharacteristics | None = (
+                pv_module_characteristics: PVModuleCharacteristics = (
                     PVModuleCharacteristics(
                         pv_module_characteristics_inputs[NOMINAL_POWER],
                         pv_module_characteristics_inputs[REFERENCE_EFFICIENCY],
@@ -1109,11 +1127,14 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                 )
                 raise
         else:
-            logger.debug(
-                "No performance curve defined for solar-thermal panel '%s'.",
-                solar_inputs["name"],
+            logger.error(
+                "No module characteristics defined for PV-T panel '%s'.",
+                (name := solar_inputs["name"]),
             )
-            pv_module_characteristics = None
+            raise InputFileError(
+                "solar inputs",
+                f"No PV module characteristics defined for panel {name}.",
+            )
 
         return cls(
             electric_performance_curve,
@@ -1330,7 +1351,9 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
         self.area: float = solar_inputs[AREA]
         self._max_mass_flow_rate: float = solar_inputs[MAX_MASS_FLOW_RATE]
         self._min_mass_flow_rate: float = solar_inputs[MIN_MASS_FLOW_RATE]
-        self._nominal_mass_flow_rate: float | None = solar_inputs.get(NOMINAL_MASS_FLOW_RATE, None)
+        self._nominal_mass_flow_rate: float | None = solar_inputs.get(
+            NOMINAL_MASS_FLOW_RATE, None
+        )
         self._stagnation_temperature: float = solar_inputs[STAGNATION_TEMPERATURE]
         self.thermal_performance_curve: PerformanceCurve = performance_curve
 
@@ -1367,9 +1390,9 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
         )
 
     @property
-    def nominal_mass_flow_rate(self) -> float:
+    def nominal_mass_flow_rate(self) -> float | None:
         """
-        Return the nominal mass flow rate in kg/s.
+        Return the nominal mass flow rate in kg/s or `None` if no value to convert.
 
         Outputs:
             The nominal mass flow rate of HTF through the collectors in kg/s.
@@ -1634,7 +1657,7 @@ COLLECTOR_FROM_TYPE: dict[SolarPanelType, Type[SolarPanel]] = {
 
 
 def electric_output(
-    electrical_efficiency: float,
+    electrical_efficiency: float | int | None,
     nominal_power: float,
     reference_efficiency: float,
     solar_irradiance: float,
@@ -1656,6 +1679,12 @@ def electric_output(
         The electric output power from the collector, measured in kiloWatts.
 
     """
+
+    if electrical_efficiency is None:
+        raise ProgrammerJudgementFault(
+            "solar:electric_output",
+            "Electric efficiency must be defined for electrical output calculation.",
+        )
 
     return (
         (electrical_efficiency / reference_efficiency)

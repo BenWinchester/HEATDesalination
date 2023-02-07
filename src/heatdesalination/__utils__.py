@@ -558,7 +558,7 @@ class OptimisationParameters:
 
     def get_initial_guess_vector_and_bounds(
         self,
-    ) -> Tuple[np.ndarray, list[Tuple[float | None, float | None]]]:
+    ) -> Tuple[list[float | None], list[Tuple[float | None, float | None]]]:
         """
         Fetch the initial guess vector and bounds for the various parameters.
 
@@ -1237,9 +1237,9 @@ class Solution(NamedTuple):
     heat_pump_cost: float
     hot_water_demand_temperature: dict[int, float | None]
     hot_water_demand_volume: dict[int, float | None]
-    pv_average_temperatures: dict[int, float | None]
-    pv_electrical_efficiencies: dict[str, dict[int, float] | None] | None
-    pv_electrical_output_power: dict[str, dict[int, float] | None] | None
+    pv_average_temperatures: dict[int, float | None] | None
+    pv_electrical_efficiencies: dict[str, dict[int, float | None] | None] | None
+    pv_electrical_output_power: dict[str, dict[int, float | None] | None] | None
     pv_system_electrical_output_power: dict[str, dict[int, float] | None] | None
     pv_t_electrical_efficiencies: dict[str, dict[int, float | None]] | None
     pv_t_electrical_output_power: dict[str, dict[int, float | None]] | None
@@ -1253,7 +1253,7 @@ class Solution(NamedTuple):
     tank_temperatures: dict[int, float]
     battery_electricity_suppy_profile: dict[int, float | None] | None = None
     battery_lifetime_degradation: int | None = None
-    battery_power_input_profile: dict[int, float] = None
+    battery_power_input_profile: dict[int, float] | None = None
     battery_replacements: int = 0
     battery_storage_profile: dict[int, float | None] | None = None
     dumped_solar: dict[int, float] | None = None
@@ -1425,14 +1425,15 @@ class Solution(NamedTuple):
                     "Degraded Total PV electric power produced / kW": self.pv_system_electrical_output_power[  # type: ignore [index]
                         ProfileDegradationType.DEGRADED.value
                     ],
-                    "Average PV temperature / degC": {
-                        key: (
-                            value - ZERO_CELCIUS_OFFSET if value is not None else None
-                        )
-                        for key, value in self.pv_average_temperatures.items()
-                    },
                 }
             )
+
+        # Update with PV information if applicable.
+        if self.pv_average_temperatures is not None:
+            output_information_dict["Average PV temperature / degC"] = {
+                key: (value - ZERO_CELCIUS_OFFSET if value is not None else None)
+                for key, value in self.pv_average_temperatures.items()
+            }
 
         # Update with PV-T information if applicable.
         if self.pv_t_electrical_efficiencies is not None:

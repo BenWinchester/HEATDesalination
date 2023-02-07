@@ -208,9 +208,9 @@ def main(
         optimisations_filepath = PARALLEL_OPTIMISATIONS_FILEPATH
 
     # Parse the optimisations file.
-    with open(optimisations_filepath, "r") as optimisations_file:
+    with open(optimisations_filepath, "r") as open_optimisations_file:
         optimisations = [
-            Optimisation(**entry) for entry in json.load(optimisations_file)
+            Optimisation(**entry) for entry in json.load(open_optimisations_file)
         ]
 
     print(f"Carrying out parallel optimisation{'.'*35} ", end="")

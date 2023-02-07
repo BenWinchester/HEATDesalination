@@ -156,7 +156,11 @@ def main(
     hpc: bool = False,
     save_outputs: bool = True,
     verbose: bool = False,
-) -> dict[ProfileType, Solution] | None:
+) -> (
+    dict[str, Tuple[Any, dict[str, Any]]]
+    | list[Tuple[dict[str, Any], dict[Any, Tuple[dict[str, float], list[float]]]]]
+    | None
+):
     """
     Main module responsible for the flow of the HEATDesalination program.
 
