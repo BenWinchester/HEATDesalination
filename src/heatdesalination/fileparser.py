@@ -254,6 +254,15 @@ def parse_input_files(
 
     # Parse the scenario.
     scenario_inputs = read_yaml(os.path.join(INPUTS_DIRECTORY, SCENARIO_INPUTS), logger)
+    if not isinstance(scenario_inputs, dict):
+        logger.error(
+            "Unreadable scenario inputs file: must be of type `dict` not " "`list`."
+        )
+        raise InputFileError(
+            "scenario inputs",
+            f"Scenario inputs must be a `dict` containing entries for `{SCENARIOS}`.",
+        )
+
     scenarios = [
         Scenario(
             entry[BATTERY],
@@ -291,10 +300,22 @@ def parse_input_files(
     desalination_inputs = read_yaml(
         os.path.join(INPUTS_DIRECTORY, DESALINATION_PLANT_INPUTS), logger
     )
+    if not isinstance(desalination_inputs, dict):
+        logger.error(
+            "Unreadable desalination-plant inputs file: must be of type `dict` not "
+            "`list`."
+        )
+        raise InputFileError(
+            "desalination inputs",
+            f"Desalination-plant inputs must be a `dict` containing entries for "
+            "`{DESALINATION_PLANTS}`.",
+        )
+
     desalination_plants = [
         DesalinationPlant.from_dict(entry, logger, start_hour)
         for entry in desalination_inputs[DESALINATION_PLANTS]
     ]
+
     try:
         desalination_plant = [
             entry for entry in desalination_plants if entry.name == scenario.plant
@@ -307,7 +328,16 @@ def parse_input_files(
     heat_pump_inputs = read_yaml(
         os.path.join(INPUTS_DIRECTORY, HEAT_PUMP_INPUTS), logger
     )
+    if not isinstance(heat_pump_inputs, dict):
+        logger.error(
+            "Unreadable heat-pump inputs file: must be of type `dict` not `list`."
+        )
+        raise InputFileError(
+            "heat-pump inputs",
+            f"Heat-pump inputs must be a `dict` containing entries for `{HEAT_PUMPS}`.",
+        )
     heat_pumps = [HeatPump(**entry) for entry in heat_pump_inputs[HEAT_PUMPS]]
+
     try:
         heat_pump = [entry for entry in heat_pumps if entry.name == scenario.heat_pump][
             0
@@ -324,6 +354,16 @@ def parse_input_files(
     optimisation_inputs = read_yaml(
         os.path.join(INPUTS_DIRECTORY, OPTIMISATION_INPUTS), logger
     )
+    if not isinstance(optimisation_inputs, dict):
+        logger.error(
+            "Unreadable optimisation inputs file: must be of type `dict` not `list`."
+        )
+        raise InputFileError(
+            "optimisation inputs",
+            "Optimisation inputs must be a `dict` containing entries for "
+            f"`{OPTIMISATION_INPUTS}`.",
+        )
+
     try:
         optimisations: list[OptimisationParameters] = [
             OptimisationParameters.from_dict(logger, entry)
@@ -335,6 +375,14 @@ def parse_input_files(
 
     # Parse the solar panels.
     solar_inputs = read_yaml(os.path.join(INPUTS_DIRECTORY, SOLAR_INPUTS), logger)
+    if not isinstance(solar_inputs, dict):
+        logger.error("Unreadable solar inputs file: must be of type `dict` not `list`.")
+        raise InputFileError(
+            "solar inputs",
+            "Solar inputs must be a `dict` containing entries for "
+            f"`{SOLAR_COLLECTORS}`.",
+        )
+
     try:
         solar_collectors = [
             COLLECTOR_FROM_TYPE[SolarPanelType(entry[TYPE])].from_dict(logger, entry)
