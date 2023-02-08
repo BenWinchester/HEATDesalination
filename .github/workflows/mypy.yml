@@ -20,6 +20,7 @@ jobs:
           pip install "mypy==0.982"
           pip install "mypy-extensions==0.4.3"
           pip install types-PyYAML
+          pip install types-requests
       - name: Analysing the code with mypy
         run: |
           python -m mypy src/heatdesalination
