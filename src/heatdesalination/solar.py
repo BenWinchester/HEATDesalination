@@ -935,7 +935,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
 
     def __init__(
         self,
-        electric_performance_curve: PerformanceCurve,
+        electric_performance_curve: PerformanceCurve | None,
         pv_module_characteristics: PVModuleCharacteristics,
         solar_inputs: dict[str, Any],
         thermal_performance_curve: PerformanceCurve,
@@ -1083,7 +1083,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         if ELECTRIC_PERFORMANCE_CURVE in solar_inputs:
             electric_performance_inputs = solar_inputs[ELECTRIC_PERFORMANCE_CURVE]
             try:
-                electric_performance_curve: PerformanceCurve = PerformanceCurve(
+                electric_performance_curve: PerformanceCurve | None = PerformanceCurve(
                     electric_performance_inputs[ZEROTH_ORDER],
                     electric_performance_inputs[FIRST_ORDER],
                     electric_performance_inputs[SECOND_ORDER],
