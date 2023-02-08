@@ -246,10 +246,8 @@ def _total_grid_cost(
     # ) * (1 + fractional_cost_change)
 
     if (grid_supply_profile := solution.grid_electricity_supply_profile) is None:
-        logger.error("No grid-supply profile provided despite grid cost required.")
-        raise ProgrammerJudgementFault(
-            "optimiser:_total_grid_cost", "No grid-supply profile defined."
-        )
+        logger.info("No grid-supply profile provided despite grid cost required.")
+        return 0
 
     daily_grid_consumption: float = sum(
         entry for entry in grid_supply_profile.values() if entry is not None
@@ -870,11 +868,8 @@ class StorageElectricityFraction(
         """
 
         if (battery_profile := solution.battery_electricity_suppy_profile) is None:
-            logger.error("No battery profile provided despite sum requested.")
-            raise ProgrammerJudgementFault(
-                "optimiser:StorageElectricityFraction:calculate_value",
-                "No battery profile provided despite summation requested.",
-            )
+            logger.info("No battery profile provided despite sum requested.")
+            return 0
 
         try:
             storage_power_supplied: float = sum(
