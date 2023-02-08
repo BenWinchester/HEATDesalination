@@ -976,8 +976,35 @@ class Scenario:
     .. attribute:: solar_thermal_panel_name
         The name of the solar-thermal panel being considered.
 
+    .. attribute:: water_pump
+        The name of the water pump to use.
+
+    .. attribute:: fractional_battery_cost_change
+        The fractional change in the cost of the battery.
+
     .. attribute:: fractional_grid_cost_change
         The fractional change in the price of grid electricity.
+
+    .. attribute:: fractional_heat_pump_cost_change
+        The fractional change in the cost of the heat-pump installed.
+
+    .. attribute:: fractional_hw_tank_cost_change
+        The fractional change in the cost of the hot-water tanks installed.
+
+    .. attribute:: fractional_inverter_cost_change
+        The fractional change in the cost of the inverter.
+
+    .. attribute:: fractional_pv_cost_change
+        The fractional change in the cost of the PV panels.
+
+    .. attribute:: fractional_pvt_cost_change
+        The fractional change in the cost of the PV-T collectors.
+
+    .. attribute:: fractional_st_cost_change
+        The fractional change in the cost of the solar-thermal collectors.
+
+    .. attribute:: fractional_water_pump_cost_change
+        The fractional change in the cost of the battery.
 
     """
 
@@ -992,6 +1019,7 @@ class Scenario:
     name: str
     plant: str
     pv_degradation_rate: float
+    water_pump: str
     _pv: bool | str
     _pv_t: bool | str
     _solar_thermal: bool | str
@@ -1003,6 +1031,7 @@ class Scenario:
     fractional_pv_cost_change: float = 0
     fractional_pvt_cost_change: float = 0
     fractional_st_cost_change: float = 0
+    fractional_water_pump_cost_change: float = 0
 
     @property
     def pv(self) -> bool:  # pylint: disable=invalid-name

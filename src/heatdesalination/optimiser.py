@@ -329,7 +329,7 @@ def _total_grid_cost(
                 "Grid cost scheme undefined: %s", scenario.grid_cost_scheme.value
             )
             raise InputFileError(
-                os.path.join("inputs", "scenarios.yaml"),
+                os.path.join("inputs", "scenarios.json"),
                 f"Grid cost scheme f{scenario.grid_cost_scheme.value} not well defined.",
             )
 
@@ -355,7 +355,7 @@ def _total_grid_cost(
 
     logger.error("Grid cost scheme undefined: %s", scenario.grid_cost_scheme.value)
     raise InputFileError(
-        os.path.join("inputs", "scenarios.yaml"),
+        os.path.join("inputs", "scenarios.json"),
         f"Grid cost scheme f{scenario.grid_cost_scheme.value} not well defined.",
     )
 

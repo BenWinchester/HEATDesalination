@@ -85,16 +85,20 @@ FRACTIONAL_HW_TANK_COST_CHANGE: str = "fractional_hw_tank_cost_change"
 FRACTIONAL_INVERTER_COST_CHANGE: str = "fractional_inverter_cost_change"
 
 # FRACTIONAL_PV_COST_CHANGE:
-#   Keyword for the fractional change in the price of grid electricity.
+#   Keyword for the fractional change in the price of PV collectors.
 FRACTIONAL_PV_COST_CHANGE: str = "fractional_pv_cost_change"
 
 # FRACTIONAL_PV_T_COST_CHANGE:
-#   Keyword for the fractional change in the price of grid electricity.
+#   Keyword for the fractional change in the price of PV-T collectors.
 FRACTIONAL_PV_T_COST_CHANGE: str = "fractional_pvt_cost_change"
 
 # FRACTIONAL_ST_COST_CHANGE:
-#   Keyword for the fractional change in the price of grid electricity.
+#   Keyword for the fractional change in the price of solar-thermal collectors.
 FRACTIONAL_ST_COST_CHANGE: str = "fractional_st_cost_change"
+
+# FRACTIONAL_WATER_PUMP_COST_CHANGE:
+#   Keyword for the fractional change in the price of water pumps installed.
+FRACTIONAL_WATER_PUMP_COST_CHANGE: str = "fractional_water_pump_cost_change"
 
 # GRID_COST_SCHEME:
 #   Keyword for the name of the pricing scheme for the cost of grid (alternative/unmet)
@@ -167,7 +171,7 @@ PV_T: str = "pv_t"
 
 # SCENARIO_INPUTS:
 #   Keyword for scenario inputs file.
-SCENARIO_INPUTS: str = "scenarios.yaml"
+SCENARIO_INPUTS: str = "scenarios.json"
 
 # SCENARIOS:
 #   Keyword for scenario information.
@@ -193,6 +197,9 @@ STORAGE_INPUTS: str = "storage.yaml"
 #   Keyword for the type of solar collector.
 TYPE: str = "type"
 
+# WATER_PUMP:
+#   Keyword for the name of the water pump installed.
+WATER_PUMP: str = "water_pump"
 
 def parse_input_files(  # pylint: disable=too-many-statements
     location: str, logger: Logger, scenario_name: str, start_hour: int | None
@@ -256,7 +263,9 @@ def parse_input_files(  # pylint: disable=too-many-statements
     """
 
     # Parse the scenario.
-    scenario_inputs = read_yaml(os.path.join(INPUTS_DIRECTORY, SCENARIO_INPUTS), logger)
+    with open(os.path.join(INPUTS_DIRECTORY, SCENARIO_INPUTS), "r", encoding="UTF-8") as scenario_inputs_file:
+        scenario_inputs = json.load(scenario_inputs_file)
+
     if not isinstance(scenario_inputs, dict):
         logger.error(
             "Unreadable scenario inputs file: must be of type `dict` not `list`."
@@ -279,6 +288,7 @@ def parse_input_files(  # pylint: disable=too-many-statements
             entry[NAME],
             entry[PLANT],
             entry[PV_DEGRADATION_RATE],
+            entry[WATER_PUMP],
             entry[PV],
             entry[PV_T],
             entry[SOLAR_THERMAL],
@@ -290,6 +300,7 @@ def parse_input_files(  # pylint: disable=too-many-statements
             entry.get(FRACTIONAL_PV_COST_CHANGE, 0),
             entry.get(FRACTIONAL_PV_T_COST_CHANGE, 0),
             entry.get(FRACTIONAL_ST_COST_CHANGE, 0),
+            entry.get(FRACTIONAL_WATER_PUMP_COST_CHANGE, 0),
         )
         for entry in scenario_inputs[SCENARIOS]
     ]
