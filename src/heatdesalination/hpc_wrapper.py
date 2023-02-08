@@ -25,7 +25,8 @@ import sys
 
 from typing import Any
 
-from .__utils__ import get_logger
+from .__main__ import main as heat_desalination_main
+from .__utils__ import get_logger, HPCOptimisation, HPCSimulation
 from .argparser import parse_hpc_args_and_runs
 from .parallel_simulator import main as parallel_simulator_main
 
@@ -44,7 +45,7 @@ LOGGER_NAME: str = "hpc_run_{}"
 
 def main(args: list[Any]) -> None:
     """
-    Wrapper around HEATDesalination when run on the HPC.
+    Wrapper around HEATDesalination when run on the HPC as an array job.
 
     """
 
@@ -81,14 +82,31 @@ def main(args: list[Any]) -> None:
     logger.info("Run successfully determined: %s", str(hpc_run))
 
     logger.info("Carrying out run.")
-    parallel_simulator_main(
-        hpc_run.location,
-        logger,
-        hpc_run.output,
-        hpc_run.simulation,
-        full_results=False,
-        hpc=True,
-    )
+
+    if isinstance(hpc_run, HPCSimulation):
+        logger.info("Carrying out parallel simulation.")
+        parallel_simulator_main(
+            hpc_run.location,
+            logger,
+            hpc_run.output,
+            hpc_run.simulation,
+            full_results=False,
+            hpc=True,
+        )
+
+    if isinstance(hpc_run, HPCOptimisation):
+        logger.info("Carrying out single-node optimisation.")
+        heat_desalination_main(
+            hpc_run.location,
+            hpc_run.profile_types,
+            hpc_run.scenario,
+            hpc_run.system_lifetime,
+            optimisation=True,
+            output=f"hpc_opt_out_{hpc_run.output}",
+            disable_tqdm=True,
+            hpc=True,
+        )
+
     logger.info("Run successfully exectued, exiting.")
 
 

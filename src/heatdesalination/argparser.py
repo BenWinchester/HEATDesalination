@@ -26,6 +26,8 @@ import json
 from .__utils__ import (
     CLI_TO_PROFILE_TYPE,
     DEFAULT_SIMULATION_OUTPUT_FILE,
+    HPCRun,
+    HPCOptimisation,
     HPCSimulation,
     WALLTIME,
 )
@@ -35,6 +37,10 @@ __all__ = (
     "parse_hpc_args_and_runs",
     "validate_args",
 )
+
+# RUN_TYPE:
+#   Used for HPC run type.
+RUN_TYPE: str = "run_type"
 
 
 class MissingParametersError(Exception):
@@ -254,7 +260,7 @@ def _parse_hpc_args(args: list[Any]) -> argparse.Namespace:
 
 def parse_hpc_args_and_runs(
     args: list[Any], logger: Logger
-) -> Tuple[str, list[HPCSimulation], int | None]:
+) -> Tuple[str, list[HPCOptimisation | HPCSimulation], int | None]:
     """
     Parse the arguments and runs.
 
@@ -295,7 +301,7 @@ def parse_hpc_args_and_runs(
         for entry in runs_file_data:
             entry[WALLTIME] = parsed_args.walltime
 
-    runs = [HPCSimulation(**entry) for entry in runs_file_data]
+    runs = [HPCRun.runs_map[entry[RUN_TYPE]](**entry) for entry in runs_file_data]
     logger.info("Runs file parsed: %s runs to carry out.", len(runs))
 
     return runs_filename, runs, parsed_args.walltime

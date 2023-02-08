@@ -38,6 +38,7 @@ from .__utils__ import (
     DONE,
     FAILED,
     get_logger,
+    HPCOptimisation,
     HPCSimulation,
 )
 from .argparser import parse_hpc_args_and_runs
@@ -98,7 +99,7 @@ HPC_SUBMISSION_SCRIPT_FILEPATH: str = os.path.join(
 LOGGER_NAME: str = "hpc_heatdesalination_launch_script"
 
 
-def _check_run(logger: Logger, hpc_run: HPCSimulation) -> bool:
+def _check_run(logger: Logger, hpc_run: HPCOptimisation | HPCSimulation) -> bool:
     """
     Checks that the HPC run is valid.
 
@@ -120,15 +121,6 @@ def _check_run(logger: Logger, hpc_run: HPCSimulation) -> bool:
         logger.error(
             "Location '%s' does not exist.",
             hpc_run.location,
-        )
-        return False
-
-    # Check that the simulations file exists.
-    if not os.path.isfile(os.path.join(INPUTS_DIRECTORY, f"{hpc_run.simulation}.json")):
-        logger.error(
-            "Simulations file '%s' not found in inputs folder %s.",
-            hpc_run.simulation,
-            INPUTS_DIRECTORY,
         )
         return False
 

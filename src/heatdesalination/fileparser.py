@@ -32,6 +32,7 @@ from .__utils__ import (
     read_yaml,
     Scenario,
     SOLAR_IRRADIANCE,
+    TYPE,
     WIND_SPEED,
     ZERO_CELCIUS_OFFSET,
 )
@@ -193,10 +194,6 @@ SOLAR_THERMAL: str = "solar_thermal"
 # STORAGE_INPUTS:
 #   Keyword for storage inputs file.
 STORAGE_INPUTS: str = "storage.yaml"
-
-# TYPE:
-#   Keyword for the type of solar collector.
-TYPE: str = "type"
 
 # WATER_PUMP:
 #   Keyword for the name of the water pump installed.
