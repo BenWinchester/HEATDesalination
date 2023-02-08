@@ -40,6 +40,7 @@ from .matrix import solve_matrix
 from .plant import DesalinationPlant
 from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel, electric_output
 from .storage.storage_utils import Battery, HotWaterTank
+from .water_pump import WaterPump
 
 
 __all__ = ("run_simulation",)
@@ -661,6 +662,7 @@ def run_simulation(  # pylint: disable=too-many-statements
     solar_irradiances: dict[int, float],
     solar_thermal_collector: SolarThermalPanel | None,
     solar_thermal_system_size: float | int | None,
+    water_pump: WaterPump,
     wind_speeds: dict[int, float],
     *,
     disable_tqdm: bool = False,
@@ -679,7 +681,7 @@ def run_simulation(  # pylint: disable=too-many-statements
         - heat_pump:
             The :class:`HeatPump` to use for the run.
         - htf_mass_flow_rate:
-            The mass flow rate of the HTF through the collectors.
+            The mass flow rate of the HTF through the collectors, measured in kg/s.
         - hybrid_pv_t_panel:
             The :class:`HybridPVTPanel` associated with the run.
         - logger:
@@ -698,6 +700,8 @@ def run_simulation(  # pylint: disable=too-many-statements
             The :class:`SolarThermalCollector` associated with the run.
         - solar_thermal_system_size:
             The size of the solar-thermal system.
+        - water_pump:
+            The water pump for the system.
         - wind_speeds:
             The wind speeds at each time step, measured in meters per second.
         - disable_tqdm:
@@ -746,6 +750,7 @@ def run_simulation(  # pylint: disable=too-many-statements
     hot_water_demand_temperatures: dict[int, float | None] = {}
     hot_water_demand_volumes: dict[int, float | None] = {}
     max_heat_pump_cost: float = 0
+    pump_electricity_demands: dict[int, float | None] = {}
     pv_t_electrical_efficiencies: dict[int, float | None] = {}
     pv_t_electrical_output_power: dict[int, float | None] = {}
     pv_t_htf_output_temperatures: dict[int, float | None] = {}
@@ -864,6 +869,16 @@ def run_simulation(  # pylint: disable=too-many-statements
             hot_water_temperature = None
             hot_water_volume = None
 
+        # Append the water-pump electricity demands if the collectors are operating.
+        if collector_system_output_temperature > collector_input_temperature:
+            electricity_demand += (
+                pump_electricity_demand := water_pump.electricity_demand(
+                    htf_mass_flow_rate
+                )
+            )
+        else:
+            pump_electricity_demand = None
+
         # Save these outputs in mappings.
         auxiliary_heating_demands[hour] = auxiliary_heating_demand
         auxiliary_heating_electricity_demands[
@@ -877,6 +892,7 @@ def run_simulation(  # pylint: disable=too-many-statements
         electricity_demands[hour] = electricity_demand
         hot_water_demand_temperatures[hour] = hot_water_temperature
         hot_water_demand_volumes[hour] = hot_water_demand_volume
+        pump_electricity_demands[hour] = pump_electricity_demand
         pv_t_electrical_efficiencies[hour] = pv_t_electrical_efficiency
         if hybrid_pv_t_panel is not None:
             pv_t_electrical_output_power[hour] = (
@@ -983,6 +999,7 @@ def run_simulation(  # pylint: disable=too-many-statements
         max_heat_pump_cost,
         hot_water_demand_temperatures,
         hot_water_demand_volumes,
+        pump_electricity_demands,
         pv_average_temperatures if scenario.pv else None,
         {ProfileDegradationType.UNDEGRADED.value: pv_electrical_efficiencies}
         if scenario.pv
@@ -1034,6 +1051,7 @@ def determine_steady_state_simulation(
     solar_thermal_collector: SolarThermalPanel | None,
     solar_thermal_system_size: float | int | None,
     system_lifetime: int,
+    water_pump: WaterPump,
     wind_speeds: dict[int, float],
     *,
     disable_tqdm: bool = False,
@@ -1082,6 +1100,8 @@ def determine_steady_state_simulation(
             The size of the solar-thermal system.
         - system_lifetime:
             The lifetime of the system in years.
+        - water_pump:
+            The water pump for the system.
         - wind_speeds:
             The wind speeds at each time step, measured in meters per second.
         - default_tank_temperature:
@@ -1114,6 +1134,7 @@ def determine_steady_state_simulation(
         solar_irradiances,
         solar_thermal_collector,
         solar_thermal_system_size,
+        water_pump,
         wind_speeds,
         tank_start_temperature=tank_start_temperature,
         disable_tqdm=disable_tqdm,
@@ -1153,6 +1174,7 @@ def determine_steady_state_simulation(
                 solar_irradiances,
                 solar_thermal_collector,
                 solar_thermal_system_size,
+                water_pump,
                 wind_speeds,
                 disable_tqdm=disable_tqdm,
                 tank_start_temperature=tank_start_temperature,

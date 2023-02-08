@@ -490,9 +490,8 @@ class SolarPanel(abc.ABC, CostableComponent):  # pylint: disable=too-few-public-
 
         self.area: float = area
         self.land_use: float = land_use
-        self.name: str = name
 
-        super().__init__(cost)
+        super().__init__(cost, name)
 
     def __init_subclass__(cls, panel_type: SolarPanelType) -> None:
         """
@@ -1025,12 +1024,8 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                 else ""
             )
             + (
-                (
-                    f", min_mass_flow_rate={self.min_mass_flow_rate:.2g} kg/s"
-                    + f" ({self._min_mass_flow_rate:.2g} l/h)"
-                )
-                if self.min_mass_flow_rate is not None
-                else ""
+                f", min_mass_flow_rate={self.min_mass_flow_rate:.2g} kg/s"
+                + f" ({self._min_mass_flow_rate:.2g} l/h)"
             )
             + ")"
         )
@@ -1095,14 +1090,11 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                 )
                 electric_performance_curve = None
         else:
-            logger.error(
-                "No electric performance curve defined for PV-T panel '%s'.",
-                (name := solar_inputs["name"]),
+            logger.info(
+                "Missing electric performance curve input(s) for panel %s.",
+                solar_inputs[NAME],
             )
-            raise InputFileError(
-                "solar inputs",
-                f"No PV electric performance curve defined for panel {name}.",
-            )
+            electric_performance_curve = None
 
         if PV_MODULE_CHARACTERISTICS in solar_inputs:
             pv_module_characteristics_inputs = solar_inputs[PV_MODULE_CHARACTERISTICS]
@@ -1344,7 +1336,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
 
         self.area: float = solar_inputs[AREA]
         self._max_mass_flow_rate: float = solar_inputs[MAX_MASS_FLOW_RATE]
-        self._min_mass_flow_rate: float = solar_inputs[MIN_MASS_FLOW_RATE]
+        self._min_mass_flow_rate: float = solar_inputs.get(MIN_MASS_FLOW_RATE, 0)
         self._nominal_mass_flow_rate: float | None = solar_inputs.get(
             NOMINAL_MASS_FLOW_RATE, None
         )

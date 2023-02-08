@@ -25,6 +25,7 @@ import os
 from typing import Callable, Tuple
 
 import json
+import math
 import numpy
 
 from scipy import optimize
@@ -48,6 +49,7 @@ from .plant import DesalinationPlant
 from .simulator import determine_steady_state_simulation
 from .solar import HybridPVTPanel, PVPanel, SolarPanel, SolarThermalPanel
 from .storage.storage_utils import Battery, HotWaterTank
+from .water_pump import WaterPump
 
 # UPPER_LIMIT:
 #   Value used to throw the optimizer off of solutions that have a flow-rate error.
@@ -115,6 +117,21 @@ def _inverter_cost(
     return inverter_cost
 
 
+def _num_water_pumps(htf_mass_flow_rate: float, water_pump: WaterPump) -> int:
+    """
+    Return the capacity of water pump(s) installed, i.e., the number of installed pumps.
+
+    Inputs:
+        - htf_mass_flow_rate:
+            The mass flow rate of HTF through the collectors, measured in kg/s.
+        - water_pump:
+            The water pump being considered.
+
+    """
+
+    return math.ceil(htf_mass_flow_rate / water_pump.nominal_flow_rate)
+
+
 def _total_component_costs(
     component_sizes: dict[CostableComponent | None, float],
     logger: Logger,
@@ -140,7 +157,7 @@ def _total_component_costs(
     """
 
     component_costs = {
-        component: component.cost * abs(size)
+        component: component.cost * math.ceil(size)
         for component, size in component_sizes.items()
         if component is not None
     }
@@ -158,6 +175,8 @@ def _total_component_costs(
             component_costs[component] *= 1 + scenario.fractional_pvt_cost_change
         if isinstance(component, SolarThermalPanel):
             component_costs[component] *= 1 + scenario.fractional_st_cost_change
+        if isinstance(component, WaterPump):
+            component_costs[component] *= 1 + scenario.fractional_water_pump_cost_change
 
     logger.debug(
         "Component costs: %s",
@@ -964,6 +983,7 @@ def _simulate_and_calculate_criterion(
     solar_thermal_collector: SolarThermalPanel | None,
     solar_thermal_system_size: int | None,
     system_lifetime: int,
+    water_pump: WaterPump,
     wind_speeds: dict[int, float],
     disable_tqdm: bool = False,
 ) -> float:
@@ -1031,6 +1051,8 @@ def _simulate_and_calculate_criterion(
             `None` if it should be optimised.
         - system_lifetime:
             The lifetime of the system measured in years.
+        - water_pump:
+            The pump for transporting HTF around the system.
         - wind_speeds:
             The wind speeds at each time step, measured in meters per second.
         - disable_tqdm:
@@ -1105,6 +1127,7 @@ def _simulate_and_calculate_criterion(
             solar_thermal_collector,
             _solar_thermal_system_size,
             system_lifetime,
+            water_pump,
             wind_speeds,
             disable_tqdm=disable_tqdm,
         )
@@ -1124,6 +1147,7 @@ def _simulate_and_calculate_criterion(
         hybrid_pv_t_panel: _pv_t_system_size,  # type: ignore [dict-item]
         pv_panel: _pv_panel_system_size,  # type: ignore [dict-item]
         solar_thermal_collector: _solar_thermal_system_size,  # type: ignore [dict-item]
+        water_pump: _num_water_pumps(_htf_mass_flow_rate, water_pump),  # type: ignore [dict-item]
     }
 
     # Return the value of the criterion.
@@ -1250,6 +1274,7 @@ def run_optimisation(
     solar_irradiances: dict[int, float],
     solar_thermal_collector: SolarThermalPanel | None,
     system_lifetime: int,
+    water_pump: WaterPump,
     wind_speeds: dict[int, float],
     *,
     disable_tqdm: bool = True,
@@ -1284,6 +1309,8 @@ def run_optimisation(
             The :class:`SolarThermalCollector` associated with the run.
         - system_lifetime:
             The lifetime of the system, measured in years.
+        - water_pump:
+            The pump for transporting HTF around the system.
         - wind_speeds:
             The wind speeds at each time step, measured in meters per second.
         - disable_tqdm:
@@ -1356,6 +1383,7 @@ def run_optimisation(
         solar_thermal_collector,
         optimisation_parameters.fixed_st_value,
         system_lifetime,
+        water_pump,
         wind_speeds,
         disable_tqdm,
     )
@@ -1474,6 +1502,7 @@ def run_optimisation(
         solar_thermal_collector,
         solar_thermal_system_size,
         system_lifetime,
+        water_pump,
         wind_speeds,
         disable_tqdm=disable_tqdm,
     )
@@ -1485,6 +1514,7 @@ def run_optimisation(
         hybrid_pv_t_panel: pv_t_system_size,
         pv_panel: pv_system_size,
         solar_thermal_collector: solar_thermal_system_size,
+        water_pump: _num_water_pumps(htf_mass_flow_rate, water_pump),
     }
 
     # Compute various criteria values.

@@ -229,6 +229,7 @@ def main(
         scenario,
         solar_irradiances,
         solar_thermal_collector,
+        water_pump,
         wind_speeds,
     ) = parse_input_files(location, logger, scenario_name, start_hour)
     logger.info("Input files successfully parsed.")
@@ -291,6 +292,7 @@ def main(
                 solar_thermal_collector,
                 solar_thermal_system_size,
                 system_lifetime,
+                water_pump,
                 wind_speeds[profile_type],
                 disable_tqdm=disable_tqdm,
             )
@@ -381,6 +383,7 @@ def main(
                             solar_irradiances[profile_type],
                             solar_thermal_collector,
                             system_lifetime,
+                            water_pump,
                             wind_speeds[profile_type],
                         )
                         for profile_type in tqdm(

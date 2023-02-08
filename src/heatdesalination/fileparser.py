@@ -45,6 +45,7 @@ from .solar import (
     SolarThermalPanel,
 )
 from .storage.storage_utils import Battery, HotWaterTank
+from .water_pump import WaterPump
 
 __all__ = ("parse_input_files",)
 
@@ -201,6 +202,14 @@ TYPE: str = "type"
 #   Keyword for the name of the water pump installed.
 WATER_PUMP: str = "water_pump"
 
+# WATER_PUMPS:
+#   Keyword for parsing water-pump input information.
+WATER_PUMPS: str = "pumps"
+
+# WATER_PUMP_INPUTS:
+#   The name of the water-pump input file.
+WATER_PUMP_INPUTS: str = "pumps.yaml"
+
 
 def parse_input_files(  # pylint: disable=too-many-statements
     location: str, logger: Logger, scenario_name: str, start_hour: int | None
@@ -216,6 +225,7 @@ def parse_input_files(  # pylint: disable=too-many-statements
     Scenario,
     dict[ProfileType, dict[int, float]],
     SolarThermalPanel | None,
+    WaterPump,
     dict[ProfileType, dict[int, float]],
 ]:
     """
@@ -457,7 +467,7 @@ def parse_input_files(  # pylint: disable=too-many-statements
         except IndexError:
             logger.error(
                 "Could not find solar-thermal collector '%s' in input file.",
-                scenario.solar_thermal,
+                scenario.solar_thermal_panel_name,
             )
             raise
     else:
@@ -471,7 +481,7 @@ def parse_input_files(  # pylint: disable=too-many-statements
         )
         raise InputFileError(
             "storage inputs",
-            f"Storagae inputs must be a `dict` containing entries for `{BATTERIES}` "
+            f"Storage inputs must be a `dict` containing entries for `{BATTERIES}` "
             "and `{HOT_WATER_TANKS}`.",
         )
 
@@ -483,7 +493,7 @@ def parse_input_files(  # pylint: disable=too-many-statements
     except IndexError:
         logger.error(
             "Could not find battery '%s' in input file.",
-            scenario.solar_thermal,
+            scenario.battery,
         )
         raise
     tanks = [HotWaterTank.from_dict(entry) for entry in storage_inputs[HOT_WATER_TANKS]]
@@ -494,9 +504,36 @@ def parse_input_files(  # pylint: disable=too-many-statements
     except IndexError:
         logger.error(
             "Could not find hot-water tank '%s' in input file.",
-            scenario.solar_thermal,
+            scenario.hot_water_tank,
         )
         raise
+
+    # Parse the water pump inputs.
+    water_pump_inputs = read_yaml(
+        os.path.join(INPUTS_DIRECTORY, WATER_PUMP_INPUTS), logger
+    )
+    if not isinstance(water_pump_inputs, dict):
+        logger.error(
+            "Unreadable water-pump inputs file: must be of type `dict` not `list`."
+        )
+        raise InputFileError(
+            "water-pump inputs",
+            "Water-pump inputs must be a `dict` containing entries for "
+            f"`{WATER_PUMPS}`.",
+        )
+
+    water_pumps = [WaterPump(**entry) for entry in water_pump_inputs[WATER_PUMPS]]
+    try:
+        water_pump: WaterPump = [
+            entry for entry in water_pumps if entry.name == scenario.water_pump
+        ][0]
+    except IndexError:
+        logger.error(
+            "Could not find water pump '%s' in input file.",
+            scenario.water_pump,
+        )
+        raise
+
     # Parse the weather data.
     with open(
         os.path.join(AUTO_GENERATED_FILES_DIRECTORY, f"{location}.json"),
@@ -539,5 +576,6 @@ def parse_input_files(  # pylint: disable=too-many-statements
         scenario,
         solar_irradiances,
         solar_thermal_collector,
+        water_pump,
         wind_speeds,
     )

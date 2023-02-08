@@ -42,6 +42,7 @@ class WaterPump(CostableComponent):
         self,
         cost: float,
         efficiency: float,
+        name: str,
         nominal_flow_rate: float,
         nominal_power: float,
     ) -> None:
@@ -60,8 +61,26 @@ class WaterPump(CostableComponent):
 
         """
 
-        super().__init__(cost)
+        super().__init__(cost, name)
 
         self.efficiency = efficiency
         self.nominal_flow_rate = nominal_flow_rate
         self.nominal_power = nominal_power
+
+    def electricity_demand(self, flow_rate: float) -> float:
+        """
+        Calculate the electricity demand of the pump based on the flow rate.
+
+        The assumption in this calculation is that the power consumption of the pump
+        scales linearly with the flow rate of HTF through the pump.
+
+        Inputs:
+            - flow_rate:
+                The flow rate of HTF through the system, measured in kg/s.
+
+        Outputs:
+            The electricity demand of the pump, measured in kW.
+
+        """
+
+        return self.nominal_power * (flow_rate / self.nominal_flow_rate)

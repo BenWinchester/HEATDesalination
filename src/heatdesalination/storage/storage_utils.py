@@ -161,9 +161,8 @@ class _BaseStorage(CostableComponent):
         self.leakage: float = leakage
         self.maximum_charge: float = maximum_charge
         self.minimum_charge: float = minimum_charge
-        self.name: str = name
 
-        super().__init__(cost)
+        super().__init__(cost, name)
 
     def __hash__(self) -> int:
         """

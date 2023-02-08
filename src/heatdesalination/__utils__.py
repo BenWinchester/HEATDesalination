@@ -177,9 +177,12 @@ class CostableComponent:
     .. attribute:: cost
         The cost of the component, per unit component.
 
+    .. attribute:: name
+        The name of the component.
+
     """
 
-    def __init__(self, cost: float) -> None:
+    def __init__(self, cost: float, name: str) -> None:
         """
         Instantiate the costable component.
 
@@ -190,6 +193,7 @@ class CostableComponent:
         """
 
         self.cost = cost
+        self.name = name
 
 
 class CostType(enum.Enum):
@@ -1176,6 +1180,9 @@ class Solution(NamedTuple):
     .. attribute:: hot_water_demand_volume
         The volume of the hot-water demand at each time step.
 
+    .. attribute:: pump_electricity_demands
+        The electricity demands placed on the system by the HTF pump for each time step.
+
     .. attribute:: pv_electrical_efficiencies
         The electrical efficiencies of the PV collectors at each time step for each year
         of the simulation.
@@ -1266,6 +1273,7 @@ class Solution(NamedTuple):
     heat_pump_cost: float
     hot_water_demand_temperature: dict[int, float | None]
     hot_water_demand_volume: dict[int, float | None]
+    pump_electricity_demands: dict[int, float | None]
     pv_average_temperatures: dict[int, float | None] | None
     pv_electrical_efficiencies: dict[str, dict[int, float | None] | None] | None
     pv_electrical_output_power: dict[str, dict[int, float | None] | None] | None
@@ -1422,6 +1430,7 @@ class Solution(NamedTuple):
             "Electrical auxiliary heating demand / kWh(el)": (
                 self.auxiliary_heating_electricity_demands
             ),
+            "Pump electricity demand / kW(el)": self.pump_electricity_demands,
             "Base electricity dewmand / kWh": self.base_electricity_demands,
             "Electricity demand met through the grid / kWh": self.grid_electricity_supply_profile,
             "Electricity demand met through solar collectors / kWh": self.solar_power_supplied,
