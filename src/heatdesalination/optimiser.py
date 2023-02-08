@@ -870,11 +870,8 @@ class StorageElectricityFraction(
         """
 
         if (battery_profile := solution.battery_electricity_suppy_profile) is None:
-            logger.error("No battery profile provided despite sum requested.")
-            raise ProgrammerJudgementFault(
-                "optimiser:StorageElectricityFraction:calculate_value",
-                "No battery profile provided despite summation requested.",
-            )
+            logger.info("No battery profile provided despite sum requested.")
+            return 0
 
         try:
             storage_power_supplied: float = sum(
