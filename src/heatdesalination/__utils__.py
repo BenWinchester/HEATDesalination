@@ -53,6 +53,7 @@ __all__ = (
     "Solution",
     "TEMPERATURE_PRECISION",
     "TIMEZONE",
+    "TYPE",
 )
 
 # AMBIENT_TEMPERATURE:
@@ -154,6 +155,10 @@ TEMPERATURE_PRECISION: float = 0.1
 # TIMEZONE:
 #   Keyword for parsing timezone.
 TIMEZONE: str = "timezone"
+
+# TYPE:
+#   Keyword for the type of solar collector.
+TYPE: str = "type"
 
 # WALLTIME:
 #   The keyword for walltime information.
@@ -327,30 +332,162 @@ class GridCostScheme(enum.Enum):
     TIJUANA_MEXICO: str = "tijuana_mexico"
 
 
-@dataclasses.dataclass
-class HPCSimulation:
+class ProfileType(enum.Enum):
+    """
+    Denotes which profile type is being considered.
+
+    - AVERAGE:
+        Denotes that the average profiles are being considered.
+
+    - MAXIMUM:
+        Denotes that the maximum profils are being considered.
+
+    - MINIMUM:
+        Denotes that the minimum profiles are being considered.
+
+    """
+
+    AVERAGE: str = "average_weather_conditions"
+    LOWER_ERROR_BAR: str = "lower_error_bar_weather_conditions"
+    LOWER_STANDARD_DEVIATION: str = "lower_standard_deviation_weather_conditions"
+    MAXIMUM: str = "maximum_irradiance_weather_conditions"
+    MINIMUM: str = "minimum_irradiance_weather_conditions"
+    UPPER_ERROR_BAR: str = "upper_error_bar_weather_conditions"
+    UPPER_STANDARD_DEVIATION: str = "upper_standard_deviation_weather_conditions"
+
+
+CLI_TO_PROFILE_TYPE: dict[str, ProfileType] = {
+    "avr": ProfileType.AVERAGE,
+    "ler": ProfileType.LOWER_ERROR_BAR,
+    "lsd": ProfileType.LOWER_STANDARD_DEVIATION,
+    "max": ProfileType.MAXIMUM,
+    "min": ProfileType.MINIMUM,
+    "uer": ProfileType.UPPER_ERROR_BAR,
+    "usd": ProfileType.UPPER_STANDARD_DEVIATION,
+}
+
+
+class HPCRunType(enum.Enum):
+    """
+    Denotes which type of array-job run is being carried out on the HPC.
+
+    - OPTIMISATION:
+        Denotes an optimisation.
+
+    - SIMULATION:
+        Denotes a simulation.
+
+    """
+
+    OPTIMISATION: str = "optimisation"
+    SIMULATION: str = "simulation"
+
+
+class HPCRun:
     """
     Contains information about a run to carry out on the HPC.
 
-    - location:
+    .. attribute:: location
         The name of the location to consider.
 
-    - output:
+    .. attribute:: output
         The name of the output file to use.
 
-    - simulations:
-        The name of the input simulations file to use.
-
-    - walltime:
-        The walltime to use if specified.
+    .. attribute:: scenario
+        The name of the scenario to use.
 
     """
 
-    location: str
-    output: str
-    simulation: str
-    walltime: int = 1
+    runs_map: dict[str, Any] = {}
 
+    def __init__(
+        self,
+        *,
+        location: str,
+        output: str,
+        profile_types: list[str],
+        run_type: str,
+        scenario: str,
+        system_lifetime: int,
+        walltime: int = 1,
+    ) -> None:
+        """
+        Instantiate a base HPC run.
+
+        Inputs:
+            - location:
+                The location for which to carry out the run.
+            - output:
+                The name to use for the output file.
+            - profile_types:
+                A `list` of the `str` values for the profile types to run.
+            - scenario:
+                The name of the scenario to use.
+            - system_lifetime:
+                The lifetime of the system in years.
+            - walltime:
+                The walltime for the run, if required.
+
+        """
+
+        self.location: str = location
+        self.output: str = output
+        self._profile_types: list[str] = profile_types
+        self.run_type = HPCRunType(run_type)
+        self.scenario: str = scenario
+        self.system_lifetime: int = system_lifetime
+        self.walltime = walltime
+
+    def __init_subclass__(cls, run_type: str):
+        """
+        Hook for storing the runs for ease of instantiation.
+
+        Inputs:
+            - name:
+                The name of the criterion.
+
+        """
+
+        cls.runs_map[run_type] = cls
+
+    @property
+    def profile_types(self) -> list[ProfileType]:
+        """
+        Return :class:`ProfileType` instances.
+
+        Outputs:
+            - :class:`ProfileType` instances.
+
+        """
+
+        return [CLI_TO_PROFILE_TYPE[entry] for entry in self._profile_types]
+
+
+@dataclasses.dataclass
+class HPCOptimisation(HPCRun, run_type="optimisation"):
+    """Contains information about an optimisation run to carry out on the HPC."""
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
+
+
+@dataclasses.dataclass
+class HPCSimulation(HPCRun, run_type="simulation"):
+    """Contains information about a simulation run to carry out on the HPC."""
+
+
+    def __init__(self, *, simulation: str, **kwargs) -> None:
+        """
+        Instantiate a :class:`HPCSimulation` instance.
+
+        Inputs:
+            - simulation:
+                The name of the simulation inputs file for the parallel simulations.
+
+        """
+
+        self.simulation = simulation
+        super().__init__(**kwargs)
 
 class InputFileError(Exception):
     """Raised when there is an error in an input file."""
@@ -749,41 +886,6 @@ class ProfileDegradationType(enum.Enum):
 
     DEGRADED: str = "degraded"
     UNDEGRADED: str = "undegraded"
-
-
-class ProfileType(enum.Enum):
-    """
-    Denotes which profile type is being considered.
-
-    - AVERAGE:
-        Denotes that the average profiles are being considered.
-
-    - MAXIMUM:
-        Denotes that the maximum profils are being considered.
-
-    - MINIMUM:
-        Denotes that the minimum profiles are being considered.
-
-    """
-
-    AVERAGE: str = "average_weather_conditions"
-    LOWER_ERROR_BAR: str = "lower_error_bar_weather_conditions"
-    LOWER_STANDARD_DEVIATION: str = "lower_standard_deviation_weather_conditions"
-    MAXIMUM: str = "maximum_irradiance_weather_conditions"
-    MINIMUM: str = "minimum_irradiance_weather_conditions"
-    UPPER_ERROR_BAR: str = "upper_error_bar_weather_conditions"
-    UPPER_STANDARD_DEVIATION: str = "upper_standard_deviation_weather_conditions"
-
-
-CLI_TO_PROFILE_TYPE: dict[str, ProfileType] = {
-    "avr": ProfileType.AVERAGE,
-    "ler": ProfileType.LOWER_ERROR_BAR,
-    "lsd": ProfileType.LOWER_STANDARD_DEVIATION,
-    "max": ProfileType.MAXIMUM,
-    "min": ProfileType.MINIMUM,
-    "uer": ProfileType.UPPER_ERROR_BAR,
-    "usd": ProfileType.UPPER_STANDARD_DEVIATION,
-}
 
 
 class ProgrammerJudgementFault(Exception):
