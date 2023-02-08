@@ -201,6 +201,7 @@ TYPE: str = "type"
 #   Keyword for the name of the water pump installed.
 WATER_PUMP: str = "water_pump"
 
+
 def parse_input_files(  # pylint: disable=too-many-statements
     location: str, logger: Logger, scenario_name: str, start_hour: int | None
 ) -> Tuple[
@@ -263,7 +264,9 @@ def parse_input_files(  # pylint: disable=too-many-statements
     """
 
     # Parse the scenario.
-    with open(os.path.join(INPUTS_DIRECTORY, SCENARIO_INPUTS), "r", encoding="UTF-8") as scenario_inputs_file:
+    with open(
+        os.path.join(INPUTS_DIRECTORY, SCENARIO_INPUTS), "r", encoding="UTF-8"
+    ) as scenario_inputs_file:
         scenario_inputs = json.load(scenario_inputs_file)
 
     if not isinstance(scenario_inputs, dict):

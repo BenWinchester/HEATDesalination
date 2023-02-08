@@ -962,7 +962,9 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
             solar_inputs[NAME],
         )
 
-        self.electric_performance_curve: PerformanceCurve | None = electric_performance_curve
+        self.electric_performance_curve: PerformanceCurve | None = (
+            electric_performance_curve
+        )
         self._max_mass_flow_rate: float = solar_inputs[MAX_MASS_FLOW_RATE]
         self._min_mass_flow_rate: float = solar_inputs[MIN_MASS_FLOW_RATE]
         self.pv_module_characteristics: PVModuleCharacteristics = (

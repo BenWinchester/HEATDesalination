@@ -19,7 +19,7 @@ and solar-thermal collectors. In doing so, they consume some amount of power.
 
 from .__utils__ import CostableComponent
 
-__all__ = "WaterPump",
+__all__ = ("WaterPump",)
 
 
 class WaterPump(CostableComponent):
@@ -38,7 +38,13 @@ class WaterPump(CostableComponent):
 
     """
 
-    def __init__(self, cost: float, efficiency: float, nominal_flow_rate: float, nominal_power: float) -> None:
+    def __init__(
+        self,
+        cost: float,
+        efficiency: float,
+        nominal_flow_rate: float,
+        nominal_power: float,
+    ) -> None:
         """
         Instantiate a water pump.
 
