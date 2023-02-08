@@ -8,8 +8,8 @@
     "description": "HEATDesalination: Simulation and optimisation of hybrid electric and thermal powered desalination systems",
     "license": {"id": "MIT"},
     "notes": "If you use this software, please cite it as below.",
-    "publication_date": "2023-02-01",
+    "publication_date": "2023-02-08",
     "title": "HEATDesalination",
     "upload_type": "software",
-    "version": "v1.0.0a1"
+    "version": "v1.0.0a2"
 }
