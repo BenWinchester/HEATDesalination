@@ -225,7 +225,9 @@ from src.heatdesalination.__utils__ import ProfileType
 sns.set_palette("colorblind")
 
 with open(
-    os.path.join("auto_generated", "fujairah_emirate_united_arab_emirates.json"), "r"
+    os.path.join("auto_generated", "fujairah_emirate_united_arab_emirates.json"),
+    "r",
+    encoding="UTF-8",
 ) as f:
     data = json.load(f)
 
@@ -303,7 +305,6 @@ for index, keyword in enumerate(keywords_to_plot):
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from typing import List
 import matplotlib.pyplot as plt
 import matplotlib
 
@@ -314,25 +315,31 @@ sns.set_palette("colorblind")
 sns.set_context("notebook")
 
 with open(
-    "simulation_outputs\simulation_output_average_weather_conditions.csv", "r"
+    "simulation_outputs\simulation_output_average_weather_conditions.csv",
+    "r",
+    encoding="UTF-8",
 ) as f:
     average_data = pd.read_csv(f, index_col=0)
 
 
 with open(
-    "simulation_outputs\simulation_output_lower_error_bar_weather_conditions.csv", "r"
+    "simulation_outputs\simulation_output_lower_error_bar_weather_conditions.csv",
+    "r",
+    encoding="UTF-8",
 ) as f:
     lower_error_data = pd.read_csv(f, index_col=0)
 
 
 with open(
-    "simulation_outputs\simulation_output_upper_error_bar_weather_conditions.csv", "r"
+    "simulation_outputs\simulation_output_upper_error_bar_weather_conditions.csv",
+    "r",
+    encoding="UTF-8",
 ) as f:
     upper_error_data = pd.read_csv(f, index_col=0)
 
 # Temperature plot
-x: List[int] = list(range(len(average_data)))
-keys: List[str] = [
+x: list[int] = list(range(len(average_data)))
+keys: list[str] = [
     "Collector system input temperature / degC",
     "PV-T collector output temperature / degC",
     "Collector system output temperature / degC",
@@ -351,7 +358,7 @@ plt.ylabel("Temperature / degC")
 plt.show()
 
 # Heating energy plot
-x: List[int] = list(range(len(average_data)))
+x: list[int] = list(range(len(average_data)))
 
 # Compute the hot-water demand in heat
 fig, ax = plt.subplots()
@@ -578,7 +585,7 @@ import seaborn as sns
 from src.heatdesalination.__utils__ import ProfileType
 from src.heatdesalination.optimiser import TotalCost
 
-with open("25_by_25_pv_t_st_square.json", "r") as f:
+with open("25_by_25_pv_t_st_square.json", "r", encoding="UTF-8") as f:
     data = json.load(f)
 
 costs = [
@@ -598,7 +605,9 @@ frame = pd.DataFrame(
         "Cost / MUSD": costs,
     }
 ).pivot(
-    index="Number of PV panels", columns="Storage capacity / kWh", values="Cost / MUSD"
+    index="Number of PV panels",
+    columns="Storage capacity / kWh",
+    values="Cost / MUSD",
 )
 # sns.heatmap(frame, cmap=palette, annot=True)
 sns.heatmap(frame, cmap=palette, annot=False)
@@ -673,7 +682,9 @@ frame = pd.DataFrame(
         "Cost / MUSD": costs,
     }
 ).pivot(
-    index="Number of PV panels", columns="Storage capacity / kWh", values="Cost / MUSD"
+    index="Number of PV panels",
+    columns="Storage capacity / kWh",
+    values="Cost / MUSD",
 )
 sns.heatmap(frame, cmap=palette, annot=True)
 # sns.heatmap(frame, cmap=palette, annot=False)
@@ -694,7 +705,7 @@ from src.heatdesalination.__utils__ import ProfileType
 from src.heatdesalination.optimiser import TotalCost
 
 
-with open("200_x_200_pv_batt_square.json", "r") as f:
+with open("200_x_200_pv_batt_square.json", "r", encoding="UTF-8") as f:
     data = json.load(f)
 
 palette = sns.color_palette("rocket", as_cmap=True)
@@ -791,10 +802,10 @@ sns.set_palette("PuBu")
 sns.set_context("paper")
 sns.set_style("whitegrid")
 
-with open("pv_t_1262_st_318_tank_49_output.json", "r") as f:
+with open("pv_t_1262_st_318_tank_49_output.json", "r", encoding="UTF-8") as f:
     data = json.load(f)
 
-with open("pv_pv_t_square_25_x_25.json", "r") as f:
+with open("pv_pv_t_square_25_x_25.json", "r", encoding="UTF-8") as f:
     data = json.load(f)
 
 try:
@@ -1087,7 +1098,7 @@ plt.scatter(
 )
 
 # Nelder-Mead
-with open("pv_t_1262_st_318_tank_49_nelder_mead_vecs.json", "r") as f:
+with open("pv_t_1262_st_318_tank_49_nelder_mead_vecs.json", "r", encoding="UTF-8") as f:
     nm_vecs = json.load(f)
 
 plt.scatter(
@@ -1108,7 +1119,7 @@ plt.plot(
 )
 
 # Powell
-with open("pv_t_1262_st_318_tank_49_powell.json", "r") as f:
+with open("pv_t_1262_st_318_tank_49_powell.json", "r", encoding="UTF-8") as f:
     powell_vecs = json.load(f)
 
 plt.scatter(
@@ -1129,7 +1140,7 @@ plt.plot(
 )
 
 # CG
-with open("pv_t_1262_st_318_tank_49_cg.json", "r") as f:
+with open("pv_t_1262_st_318_tank_49_cg.json", "r", encoding="UTF-8") as f:
     cg_vecs = json.load(f)
 
 plt.scatter(
@@ -1150,7 +1161,7 @@ plt.plot(
 )
 
 # BFGS
-with open("pv_t_1262_st_318_tank_49_bfgs.json", "r") as f:
+with open("pv_t_1262_st_318_tank_49_bfgs.json", "r", encoding="UTF-8") as f:
     bfgs_vecs = json.load(f)
 
 plt.scatter(
@@ -1171,7 +1182,7 @@ plt.plot(
 )
 
 # L-BFGS-B
-with open("pv_t_1262_st_318_tank_49_l_bfgs_g.json", "r") as f:
+with open("pv_t_1262_st_318_tank_49_l_bfgs_g.json", "r", encoding="UTF-8") as f:
     l_bfgs_g_vecs = json.load(f)
 
 plt.scatter(
@@ -1192,7 +1203,7 @@ plt.plot(
 )
 
 # TNC
-with open("pv_t_1262_st_318_tank_49_tnc.json", "r") as f:
+with open("pv_t_1262_st_318_tank_49_tnc.json", "r", encoding="UTF-8") as f:
     tnc_vecs = json.load(f)
 
 plt.scatter(
@@ -1246,7 +1257,7 @@ import seaborn as sns
 from src.heatdesalination.__utils__ import ProfileType
 from src.heatdesalination.optimiser import TotalCost
 
-with open("25_by_25_pv_t_st_square.json", "r") as f:
+with open("25_by_25_pv_t_st_square.json", "r", encoding="UTF-8") as f:
     min_cost_list = json.load(f)
 
 costs = [
@@ -1309,7 +1320,9 @@ frame = pd.DataFrame(
     }
 )
 pivotted_frame = frame.pivot(
-    index="Number of PV panels", columns="Storage capacity / kWh", values="Cost / MUSD"
+    index="Number of PV panels",
+    columns="Storage capacity / kWh",
+    values="Cost / MUSD",
 )
 
 # Generate the frame
@@ -1438,7 +1451,9 @@ for batt in battery_capacities:
         entry[pv_key] = pv
         runs.append(entry)
 
-with open(os.path.join("inputs", "pv_batt_square_200_x_200.json"), "w") as f:
+with open(
+    os.path.join("inputs", "pv_batt_square_200_x_200.json"), "w", encoding="UTF-8"
+) as f:
     json.dump(runs, f)
 
 runs = []
@@ -1449,7 +1464,9 @@ for batt in battery_capacities:
         entry[pv_t_key] = pv_t
         runs.append(entry)
 
-with open(os.path.join("inputs", "pv_t_batt_square_simulations.json"), "w") as f:
+with open(
+    os.path.join("inputs", "pv_t_batt_square_simulations.json"), "w", encoding="UTF-8"
+) as f:
     json.dump(runs, f)
 
 runs = []
@@ -1461,7 +1478,9 @@ for batt in battery_capacities:
         runs.append(entry)
 
 
-with open(os.path.join("inputs", "st_batt_square_simulations.json"), "w") as f:
+with open(
+    os.path.join("inputs", "st_batt_square_simulations.json"), "w", encoding="UTF-8"
+) as f:
     json.dump(runs, f)
 
 runs = []
@@ -1472,7 +1491,9 @@ for pv in pv_sizes:
         entry[pv_t_key] = pv_t
         runs.append(entry)
 
-with open(os.path.join("inputs", "pv_pv_t_square_simulations.json"), "w") as f:
+with open(
+    os.path.join("inputs", "pv_pv_t_square_simulations.json"), "w", encoding="UTF-8"
+) as f:
     json.dump(runs, f)
 
 runs = []
@@ -1483,7 +1504,9 @@ for pv in pv_sizes:
         entry[st_key] = st
         runs.append(entry)
 
-with open(os.path.join("inputs", "pv_st_square_simulations.json"), "w") as f:
+with open(
+    os.path.join("inputs", "pv_st_square_simulations.json"), "w", encoding="UTF-8"
+) as f:
     json.dump(runs, f)
 
 runs = []
@@ -1496,7 +1519,9 @@ for pv_t in pv_t_sizes:
 
 runs.pop(0)
 
-with open(os.path.join("inputs", "pv_t_st_square_simulations.json"), "w") as f:
+with open(
+    os.path.join("inputs", "pv_t_st_square_simulations.json"), "w", encoding="UTF-8"
+) as f:
     json.dump(runs, f)
 
 runs = []
@@ -1513,7 +1538,9 @@ for batt in tqdm(battery_capacities, desc="batt"):
                     entry[st_key] = st
                     runs.append(entry)
 
-with open(os.path.join("inputs", "fifty_by_fifth_simulations.json"), "w") as f:
+with open(
+    os.path.join("inputs", "fifty_by_fifth_simulations.json"), "w", encoding="UTF-8"
+) as f:
     json.dump(runs, f)
 
 import shutil
@@ -1541,7 +1568,9 @@ for pv_t in tqdm(pv_t_sizes, desc="pv_t_sizes"):
                     runs.append(entry)
             # Save these runs to the file.
             with open(
-                os.path.join(basename.format(pv_t=pv_t, st=st, tank=tank)), "w"
+                os.path.join(basename.format(pv_t=pv_t, st=st, tank=tank)),
+                "w",
+                encoding="UTF-8",
             ) as f:
                 json.dump(runs, f)
 
@@ -1576,13 +1605,9 @@ for entry in entries:
 import os
 import re
 
-from typing import Dict
-
 import json
 
 from tqdm import tqdm
-
-from typing import List, Dict
 
 from src.heatdesalination.__utils__ import ProfileType
 from src.heatdesalination.optimiser import TotalCost
@@ -1599,11 +1624,11 @@ output_filenames = [
 
 min_cost: float = 10**10
 min_cost_filename: str | None = None
-min_cost_overflow: Dict[str, float] = {}
-output_to_display: List[str] = []
+min_cost_overflow: dict[str, float] = {}
+output_to_display: list[str] = []
 
 for filename in tqdm(output_filenames, desc="files", unit="file"):
-    with open(filename, "r") as f:
+    with open(filename, "r", encoding="UTF-8") as f:
         data = json.load(f)
     # Calculate the costs
     costs = [
@@ -1626,7 +1651,7 @@ for filename in tqdm(output_filenames, desc="files", unit="file"):
 print("Min cost file {}".format(min_cost_filename))
 output_to_display.append(f"Min cost of {min_cost} in {min_cost_filename}")
 
-with open("../min_cost_analysis.txt", "w") as f:
+with open("../min_cost_analysis.txt", "w", encoding="UTF-8") as f:
     f.writelines(output_to_display)
 
 ##########################################
@@ -1654,7 +1679,7 @@ simulation_key: str = "simulation"
 
 # Cycle through the filenames
 for filename in tqdm(output_filenames, desc="files", unit="file"):
-    with open(filename, "r") as f:
+    with open(filename, "r", encoding="UTF-8") as f:
         data = json.load(f)
     # Find the point with the matching PV and batt
     min_cost_list.extend(
@@ -1677,7 +1702,7 @@ import json
 algorithm = "cobyla"
 vecs = [list(entry) for entry in result.allvecs]
 
-with open(f"pv_t_1262_st_318_tank_49_{algorithm}.json", "w") as f:
+with open(f"pv_t_1262_st_318_tank_49_{algorithm}.json", "w", encoding="UTF-8") as f:
     json.dump(vecs, f)
 
 ##########################
@@ -1704,7 +1729,7 @@ for discount_rate in range(-20, 21, 1):
     optimisation[scenario_key] = scenario
     optimisations.append(optimisation)
 
-with open(os.path.join("inputs", "optimisations.json"), "w") as f:
+with open(os.path.join("inputs", "optimisations.json"), "w", encoding="UTF-8") as f:
     json.dump(optimisations, f)
 
 ##########################################
@@ -1730,7 +1755,7 @@ sns.set_context((context := "notebook"))
 sns.set_palette("colorblind")
 
 # !! Update both name and fig identifier
-with open("hpc_nm_low_tol_grid_optimisations_probe.json", "r") as f:
+with open("hpc_nm_low_tol_grid_optimisations_probe.json", "r", encoding="UTF-8") as f:
     data = json.load(f)
 
 fig_identifier: str = f"nm_low_tol_grid_optimisations_{context}"
@@ -2059,7 +2084,9 @@ for plot_index, title in enumerate(optimisation_titles[:1]):
         )
         plt.close()
         plt.figure()  # figsize=FIGURE_DIMENSIONS)
-        with open(f"grid_high_res_weather_error_{key}.json", "w") as f:
+        with open(
+            f"grid_high_res_weather_error_{key}.json", "w", encoding="UTF-8"
+        ) as f:
             json.dump(
                 {
                     "x": x,
@@ -2258,7 +2285,7 @@ import seaborn as sns
 
 sns.set_palette("colorblind")
 
-with open("hpc_pv_degradation_optimisations_probe.json", "r") as f:
+with open("hpc_pv_degradation_optimisations_probe.json", "r", encoding="UTF-8") as f:
     data = json.load(f)
 
 keys = [
@@ -2338,7 +2365,7 @@ for plot_index, title in enumerate(optimisation_titles):
         plt.xlabel("PV degradation rate / %/year")
         plt.title(f"{key.replace('_', ' ').capitalize()} for {title.capitalize()}")
         plt.show()
-        with open(f"pv_degradation_rate_{key}.json", "w") as f:
+        with open(f"pv_degradation_rate_{key}.json", "w", encoding="UTF-8") as f:
             json.dump(
                 {
                     "x": sorted_x,
@@ -2435,13 +2462,15 @@ import numpy as np
 import os
 import yaml
 
-from typing import Dict, List
-
 from tqdm import tqdm
 
 from src.heatdesalination.__utils__ import GridCostScheme
 
-with open((scenarios_filepath := os.path.join("inputs", "scenarios.yaml")), "r") as f:
+with open(
+    (scenarios_filepath := os.path.join("inputs", "scenarios.yaml")),
+    "r",
+    encoding="UTF-8",
+) as f:
     scenarios = yaml.safe_load(f)[(scenarios_key := "scenarios")]
 
 DEFAULT_SCENARIO = scenarios[0]
@@ -2471,24 +2500,24 @@ LOCATIONS = {
 }
 
 # The list of plants
-PLANTS: List[str] = ["joo_med_24_hour", "el_nashar_24_hour", "rahimi_24_hour"]
+PLANTS: list[str] = ["joo_med_24_hour", "el_nashar_24_hour", "rahimi_24_hour"]
 
-# Lists of various collectors
-PV_PANELS: List[str] = ["lg_solar_330_wpcello", "sharp_nd_af"]
-PV_T_PANELS: List[str] = [
+# lists of various collectors
+PV_PANELS: list[str] = ["lg_solar_330_wpcello", "sharp_nd_af"]
+PV_T_PANELS: list[str] = [
     "dualsun_spring_300m_insulated",
     "dualsun_spring_400_insulated",
     "solimpeks_powervolt",
 ]
-ST_COLLECTORS: List[str] = [
+ST_COLLECTORS: list[str] = [
     "sti_fkf_240_cucu",
     "eurotherm_solar_pro_20r",
     "augusta_solar_as_100_df_6",
 ]
 
 # Set up a list of new scenarios for each location
-new_scenarios: List[Dict[str, str]] = []
-new_optimisations: List[Dict[str, str]] = []
+new_scenarios: list[dict[str, str]] = []
+new_optimisations: list[dict[str, str]] = []
 
 # Keyword arguments for changing parameters in the scenarios.
 fractional_battery_cost_change = "fractional_battery_cost_change"
@@ -2617,24 +2646,38 @@ for heat_pump_efficiency in np.linspace(0.01, 1, 100):
     heat_pump_efficiency_optimisations.append(optimisation)
 
 
-with open(scenarios_filepath, "w") as f:
+with open(scenarios_filepath, "w", encoding="UTF-8") as f:
     yaml.dump({"scenarios": new_scenarios}, f)
 
-with open(os.path.join("inputs", "optimisations_pv_degradation.json"), "w") as f:
+with open(
+    os.path.join("inputs", "optimisations_pv_degradation.json"), "w", encoding="UTF-8"
+) as f:
     json.dump(pv_degradation_optimisations, f)
 
 with open(
-    os.path.join("inputs", "optimisations_heat_exchanger_efficiency.json"), "w"
+    os.path.join("inputs", "optimisations_heat_exchanger_efficiency.json"),
+    "w",
+    encoding="UTF-8",
 ) as f:
     json.dump(heat_exchanger_efficiency_optimisations, f)
 
-with open(os.path.join("inputs", "optimisations_heat_pump_efficiency.json"), "w") as f:
+with open(
+    os.path.join("inputs", "optimisations_heat_pump_efficiency.json"),
+    "w",
+    encoding="UTF-8",
+) as f:
     json.dump(heat_pump_efficiency_optimisations, f)
 
-with open(os.path.join("inputs", "grid_optimisations.json"), "w") as f:
+with open(
+    os.path.join("inputs", "grid_optimisations.json"), "w", encoding="UTF-8"
+) as f:
     json.dump(grid_optimisations, f)
 
-with open(os.path.join("inputs", "cheap_pv_t_grid_optimisations.json"), "w") as f:
+with open(
+    os.path.join("inputs", "cheap_pv_t_grid_optimisations.json"),
+    "w",
+    encoding="UTF-8",
+) as f:
     json.dump(cheap_pv_t_grid_optimisations, f)
 
 ##############################################
