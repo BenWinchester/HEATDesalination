@@ -25,7 +25,7 @@ import sys
 
 from typing import Any
 
-from .__main__  import main as heat_desalination_main
+from .__main__ import main as heat_desalination_main
 from .__utils__ import get_logger, HPCOptimisation, HPCSimulation
 from .argparser import parse_hpc_args_and_runs
 from .parallel_simulator import main as parallel_simulator_main
@@ -106,7 +106,6 @@ def main(args: list[Any]) -> None:
             disable_tqdm=True,
             hpc=True,
         )
-
 
     logger.info("Run successfully exectued, exiting.")
 

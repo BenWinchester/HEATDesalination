@@ -475,7 +475,6 @@ class HPCOptimisation(HPCRun, run_type="optimisation"):
 class HPCSimulation(HPCRun, run_type="simulation"):
     """Contains information about a simulation run to carry out on the HPC."""
 
-
     def __init__(self, *, simulation: str, **kwargs) -> None:
         """
         Instantiate a :class:`HPCSimulation` instance.
@@ -488,6 +487,7 @@ class HPCSimulation(HPCRun, run_type="simulation"):
 
         self.simulation = simulation
         super().__init__(**kwargs)
+
 
 class InputFileError(Exception):
     """Raised when there is an error in an input file."""
