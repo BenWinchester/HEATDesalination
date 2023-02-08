@@ -24,7 +24,7 @@ import os
 import sys
 
 from logging import Logger
-from typing import Any, Dict, List, Tuple
+from typing import Any, Tuple
 
 import json
 import numpy as np
@@ -153,17 +153,13 @@ def _get_location_name(
         accurate_name = address[STATE]
     else:
         logger.info("Could not determine precise name of location.")
-        accurate_name = None
+        accurate_name = "NaN"
 
     # Generate user-readable strings and output names
-    location_name = ", ".join(
-        [accurate_name if accurate_name is not None else "NaN", address[COUNTRY]]
-    )
+    location_name = f"{accurate_name}, {address[COUNTRY]}"
     output_name = "_".join(
         [
-            accurate_name.lower().replace(", ", "_").replace(" ", "_")
-            if accurate_name is not None
-            else "NaN",
+            accurate_name.lower().replace(", ", "_").replace(" ", "_"),
             address[COUNTRY].lower().replace(" ", "_"),
         ]
     )
@@ -171,7 +167,7 @@ def _get_location_name(
     return location_name, output_name
 
 
-def _parse_args(args: List[Any]) -> argparse.Namespace:
+def _parse_args(args: list[Any]) -> argparse.Namespace:
     """
     Parses command-line arguments.
 
@@ -227,7 +223,7 @@ def _parse_args(args: List[Any]) -> argparse.Namespace:
     return parser.parse_args(args)
 
 
-def main(
+def main(  # pylint: disable=too-many-statements
     latitude: float, longitude: float, timezone: int, output: str | None = None
 ) -> None:
     """
@@ -294,15 +290,9 @@ def main(
 
     # Create a map between day and profiles chunked
     weather_data = parsed_data[0]
-    daily_weather_profiles: Dict[int, pd.DataFrame] = {
+    daily_weather_profiles: dict[int, pd.DataFrame] = {
         day: weather_data[day * 24 : (day + 1) * 24]
         for day in range(int(len(weather_data) / 24))
-    }
-
-    # Create a map between day and cumulative irradiance for the day
-    cumulative_irradiance_to_day: Dict[int, float] = {
-        np.sum(irradiance_profile[IRRADIANCE_COLUMN_NAME]): day
-        for day, irradiance_profile in daily_weather_profiles.items()
     }
 
     # Reverse the cumulative irradiance map to determine the max and min irradiance days

@@ -5,7 +5,7 @@
 # Authors: Phil Sandwell, Ben Winchester                                               #
 # Copyright: Phil Sandwell, 2022                                                       #
 # Date created: 29/03/2022                                                             #
-# License: Open source                                                                 #
+# License: MIT                                                                         #
 #                                                                                      #
 # For more information, please email:                                                  #
 #   benedict.winchester@gmail.com                                                      #
@@ -23,7 +23,7 @@ run on the HPC.
 import os
 import sys
 
-from typing import Any, List
+from typing import Any
 
 from .__utils__ import get_logger
 from .argparser import parse_hpc_args_and_runs
@@ -42,7 +42,7 @@ HPC_JOB_NUMBER: str = "PBS_ARRAY_INDEX"
 LOGGER_NAME: str = "hpc_run_{}"
 
 
-def main(args: List[Any]) -> None:
+def main(args: list[Any]) -> None:
     """
     Wrapper around HEATDesalination when run on the HPC.
 

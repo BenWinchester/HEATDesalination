@@ -18,11 +18,11 @@ The heat-pump module contains functionality for modelling a heat pump's performa
 
 import dataclasses
 
-from typing import List, Tuple
+from typing import Tuple
 
 from scipy import interpolate
 
-__all__ = ("calculate_heat_pump_electricity_consumption",)
+__all__ = ("calculate_heat_pump_electricity_consumption_and_cost",)
 
 
 @dataclasses.dataclass
@@ -50,7 +50,7 @@ class HeatPump:
     #   Used for storing the scipy interpolator created.
     #
 
-    cop_data: List[float]
+    cop_data: list[float]
     efficiency: float
     name: str
     specific_costs_data: str
@@ -79,7 +79,7 @@ class HeatPump:
             )
 
         # Determine the cost
-        return self._interpolator(cop) * thermal_power
+        return float(self._interpolator(cop)) * thermal_power
 
 
 def _coefficient_of_performance(

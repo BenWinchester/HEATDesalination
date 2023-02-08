@@ -6,14 +6,13 @@
 # Author: Ben Winchester                                                               #
 # Copyright: Ben Winchester, 2022                                                      #
 # Date created: 24/10/2022                                                             #
-# License: Open source                                                                 #
+# License: MIT                                                                         #
 ########################################################################################
 """
 test_simulator.py - Tests for the simulation module.
 
 """
 
-from typing import Dict
 import unittest
 
 from unittest import mock
@@ -97,7 +96,7 @@ class TestRunSimulation(unittest.TestCase):
     def setUp(self) -> None:
         """Set up mocks in common across test cases."""
 
-        self.ambient_temperatures: Dict[int, float] = {hour: 300 for hour in range(24)}
+        self.ambient_temperatures: dict[int, float] = {hour: 300 for hour in range(24)}
         self.battery = mock.MagicMock()
         self.battery_capacity = mock.MagicMock()
         self.buffer_tank = mock.MagicMock()
@@ -107,7 +106,7 @@ class TestRunSimulation(unittest.TestCase):
         self.logger = mock.MagicMock()
         self.pv_system_size = mock.MagicMock()
         self.pv_t_system_size = 10
-        self.solar_irradiances: Dict[int, float] = {hour: 15 for hour in range(24)}
+        self.solar_irradiances: dict[int, float] = {hour: 15 for hour in range(24)}
         self.solar_thermal_collector = mock.MagicMock()
         self.solar_thermal_system_size = 10
         self.system_lifetime = 25
@@ -167,14 +166,16 @@ class TestRunSimulation(unittest.TestCase):
 
         # Mock the various functions and methods.
         with mock.patch(
-            "heatdesalination.simulator.solve_matrix", side_effect=solve_matrix_outputs
+            "heatdesalination.simulator.solve_matrix",
+            side_effect=solve_matrix_outputs,
         ) as mock_solve_matrix, mock.patch(
             "heatdesalination.simulator._collector_mass_flow_rate",
             side_effect=[5, 10] * 10,
         ) as mock_collector_mass_flow_rate, mock.patch(
             "heatdesalination.simulator._tank_ambient_temperature", return_value=15
         ) as mock_tank_ambient_temperature, mock.patch(
-            "heatdesalination.simulator._tank_replacement_temperature", return_value=10
+            "heatdesalination.simulator._tank_replacement_temperature",
+            return_value=10,
         ) as mock_tank_replacement_temperature, mock.patch(
             "heatdesalination.simulator.electric_output",
             side_effect=[0.3] * 24 + [0.2] * 24,

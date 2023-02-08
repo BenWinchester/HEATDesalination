@@ -20,7 +20,7 @@ profiles.
 
 from collections import defaultdict
 from logging import Logger
-from typing import DefaultDict, Dict, Tuple
+from typing import DefaultDict, Tuple
 
 import math
 
@@ -28,7 +28,9 @@ from tqdm import tqdm
 
 from .__utils__ import (
     DAYS_PER_YEAR,
+    InputFileError,
     ProfileDegradationType,
+    ProgrammerJudgementFault,
     Scenario,
     Solution,
     ZERO_CELCIUS_OFFSET,
@@ -38,6 +40,7 @@ from .matrix import solve_matrix
 from .plant import DesalinationPlant
 from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel, electric_output
 from .storage.storage_utils import Battery, HotWaterTank
+from .water_pump import WaterPump
 
 
 __all__ = ("run_simulation",)
@@ -87,8 +90,8 @@ def _calculate_collector_degradation(
 
     # Helper function for carrying out repeated degradation flow.
     def _degrade(
-        profile: Dict[int, float | None], rate: float
-    ) -> Dict[int, float | None]:
+        profile: dict[int, float | None], rate: float
+    ) -> dict[int, float | None]:
         return {
             key: (value * rate) if value is not None else None
             for key, value in profile.items()
@@ -101,67 +104,79 @@ def _calculate_collector_degradation(
 
     # Degrade the PV and PV-T electrical profiles.
     if scenario.pv:
-        solution.pv_electrical_efficiencies[
-            ProfileDegradationType.DEGRADED.value
-        ] = _degrade(
+        if solution.pv_electrical_efficiencies is not None:
             solution.pv_electrical_efficiencies[
-                ProfileDegradationType.UNDEGRADED.value
-            ],
-            average_degradation_rate,
-        )
-        solution.pv_electrical_output_power[
-            ProfileDegradationType.DEGRADED.value
-        ] = _degrade(
+                ProfileDegradationType.DEGRADED.value
+            ] = _degrade(  # type: ignore [assignment]
+                solution.pv_electrical_efficiencies[  # type: ignore [arg-type]
+                    ProfileDegradationType.UNDEGRADED.value
+                ],
+                average_degradation_rate,
+            )
+
+        if solution.pv_electrical_output_power is not None:
             solution.pv_electrical_output_power[
-                ProfileDegradationType.UNDEGRADED.value
-            ],
-            average_degradation_rate,
-        )
-        solution.pv_system_electrical_output_power[
-            ProfileDegradationType.DEGRADED.value
-        ] = _degrade(
+                ProfileDegradationType.DEGRADED.value
+            ] = _degrade(  # type: ignore [assignment]
+                solution.pv_electrical_output_power[  # type: ignore [arg-type]
+                    ProfileDegradationType.UNDEGRADED.value
+                ],
+                average_degradation_rate,
+            )
+
+        if solution.pv_system_electrical_output_power is not None:
             solution.pv_system_electrical_output_power[
-                ProfileDegradationType.UNDEGRADED.value
-            ],
-            average_degradation_rate,
-        )
+                ProfileDegradationType.DEGRADED.value
+            ] = _degrade(  # type: ignore [assignment]
+                solution.pv_system_electrical_output_power[  # type: ignore [arg-type]
+                    ProfileDegradationType.UNDEGRADED.value
+                ],
+                average_degradation_rate,
+            )
 
     if scenario.pv_t:
-        solution.pv_t_electrical_efficiencies[
-            ProfileDegradationType.DEGRADED.value
-        ] = _degrade(
+        if solution.pv_t_electrical_efficiencies is not None:
             solution.pv_t_electrical_efficiencies[
-                ProfileDegradationType.UNDEGRADED.value
-            ],
-            average_degradation_rate,
-        )
-        solution.pv_t_electrical_output_power[
-            ProfileDegradationType.DEGRADED.value
-        ] = _degrade(
+                ProfileDegradationType.DEGRADED.value
+            ] = _degrade(  # type: ignore [assignment]
+                solution.pv_t_electrical_efficiencies[
+                    ProfileDegradationType.UNDEGRADED.value
+                ],
+                average_degradation_rate,
+            )
+
+        if solution.pv_t_electrical_output_power is not None:
             solution.pv_t_electrical_output_power[
-                ProfileDegradationType.UNDEGRADED.value
-            ],
-            average_degradation_rate,
-        )
-        solution.pv_t_system_electrical_output_power[
-            ProfileDegradationType.DEGRADED.value
-        ] = _degrade(
-            solution.pv_t_system_electrical_output_power[
-                ProfileDegradationType.UNDEGRADED.value
-            ],
-            average_degradation_rate,
-        )
+                ProfileDegradationType.DEGRADED.value
+            ] = _degrade(  # type: ignore [assignment]
+                solution.pv_t_electrical_output_power[
+                    ProfileDegradationType.UNDEGRADED.value
+                ],
+                average_degradation_rate,
+            )
+
+        if (
+            pv_t_output_power := solution.pv_t_system_electrical_output_power
+        ) is not None:
+            solution.pv_t_system_electrical_output_power[  # type: ignore [index]
+                ProfileDegradationType.DEGRADED.value
+            ] = _degrade(  # type: ignore [assignment]
+                pv_t_output_power[  # type: ignore [arg-type]
+                    ProfileDegradationType.UNDEGRADED.value
+                ],
+                average_degradation_rate,
+            )
 
 
 def _storage_profile_iteration_step(
     battery: Battery,
-    battery_system_size: int | None,
+    battery_system_size: float | int,
     maximum_charge_degradation: float,
     solution: Solution,
-    total_collector_generation_profile: Dict[int, float],
+    total_collector_generation_profile: dict[int, float],
     *,
     initial_storage_profile_value: float,
-) -> Tuple[Dict[int, float], Dict[int, float], Dict[int, float]]:
+) -> Tuple[dict[int, float], dict[int, float], dict[int, float]]:
     """
     Carry out an iteration step for determining the storage profiles.
 
@@ -191,8 +206,8 @@ def _storage_profile_iteration_step(
     """
 
     # Setup a map to keep track of the profiles.
-    power_to_storage_map: Dict[int, float] = {}
-    storage_power_supplied_map: Dict[int, float] = {}
+    power_to_storage_map: dict[int, float] = {}
+    storage_power_supplied_map: dict[int, float] = {}
     storage_profile: DefaultDict[int, float] = defaultdict(
         lambda: initial_storage_profile_value
     )
@@ -306,13 +321,13 @@ def _maximum_charge_degradation_factor(
 
 def _storage_solver(
     battery: Battery,
-    battery_system_size: int | None,
+    battery_system_size: float | int,
     maximum_charge_degradation: float,
     solution: Solution,
-    total_collector_generation_profile: Dict[int, float],
+    total_collector_generation_profile: dict[int, float],
     *,
     initial_storage_profile_value: float,
-) -> Tuple[Dict[int, float], Dict[int, float], Dict[int, float]]:
+) -> Tuple[dict[int, float], dict[int, float], dict[int, float]]:
     """
     Solve the storage profile until a consistent start value is found.
 
@@ -387,13 +402,13 @@ def _storage_solver(
 
 def _recursive_degraded_storage_solver(
     battery: Battery,
-    battery_system_size: int | None,
+    battery_system_size: float | int,
     solution: Solution,
     system_lifetime: int,
-    total_collector_generation_profile: Dict[int, float],
+    total_collector_generation_profile: dict[int, float],
     *,
     input_lifetime_degradation: float,
-) -> Tuple[float, Dict[int, float], Dict[int, float], Dict[int, float]]:
+) -> Tuple[float, dict[int, float], dict[int, float], dict[int, float]]:
     """
     Recursively solve the degradation level of the storage profile until consistent.
 
@@ -443,7 +458,11 @@ def _recursive_degraded_storage_solver(
         battery.maximum_charge,
         battery.minimum_charge,
     )
-    power_to_storage_map, storage_power_supplied_map, storage_profile = _storage_solver(
+    (
+        power_to_storage_map,
+        storage_power_supplied_map,
+        storage_profile,
+    ) = _storage_solver(
         battery,
         battery_system_size,
         maximum_degradation_factor,
@@ -491,12 +510,16 @@ def _recursive_degraded_storage_solver(
 
 
 def _calculate_storage_profile(
-    battery: Battery,
-    battery_system_size: int | None,
+    battery: Battery | None,
+    battery_system_size: float | int | None,
     solution: Solution,
     system_lifetime: int,
 ) -> Tuple[
-    float, Dict[int, float], Dict[int, float], Dict[int, float], Dict[int, float]
+    float,
+    dict[int, float] | None,
+    dict[int, float] | None,
+    dict[int, float] | None,
+    dict[int, float],
 ]:
     """
     Calculate the storage profile for the batteries.
@@ -534,7 +557,7 @@ def _calculate_storage_profile(
     )
 
     # Compute the solar profile.
-    solar_power_supplied_map: Dict[int, float] = {
+    solar_power_supplied_map: dict[int, float] = {
         hour: min(
             solution.electricity_demands[hour],
             total_collector_generation_profile[hour]
@@ -545,7 +568,7 @@ def _calculate_storage_profile(
     }
 
     # If there is no storage, return purely the solar power map.
-    if battery_system_size == 0:
+    if battery_system_size == 0 or battery is None or battery_system_size is None:
         return 0, None, None, None, solar_power_supplied_map
 
     return _recursive_degraded_storage_solver(
@@ -558,7 +581,9 @@ def _calculate_storage_profile(
     ) + (solar_power_supplied_map,)
 
 
-def _collector_mass_flow_rate(htf_mass_flow_rate: float, system_size: int) -> float:
+def _collector_mass_flow_rate(
+    htf_mass_flow_rate: float, system_size: float | int
+) -> float:
     """
     Calculate the mass flow rate through the collector.
 
@@ -622,8 +647,8 @@ def _tank_replacement_temperature(
     return ZERO_CELCIUS_OFFSET + hot_water_return_temperature
 
 
-def run_simulation(
-    ambient_temperatures: Dict[int, float],
+def run_simulation(  # pylint: disable=too-many-statements
+    ambient_temperatures: dict[int, float],
     buffer_tank: HotWaterTank,
     desalination_plant: DesalinationPlant,
     heat_pump: HeatPump,
@@ -631,13 +656,14 @@ def run_simulation(
     hybrid_pv_t_panel: HybridPVTPanel | None,
     logger: Logger,
     pv_panel: PVPanel | None,
-    pv_system_size: int | None,
-    pv_t_system_size: int | None,
+    pv_system_size: float | int | None,
+    pv_t_system_size: float | int | None,
     scenario: Scenario,
-    solar_irradiances: Dict[int, float],
+    solar_irradiances: dict[int, float],
     solar_thermal_collector: SolarThermalPanel | None,
-    solar_thermal_system_size: int | None,
-    wind_speeds: Dict[int, float],
+    solar_thermal_system_size: float | int | None,
+    water_pump: WaterPump,
+    wind_speeds: dict[int, float],
     *,
     disable_tqdm: bool = False,
     tank_start_temperature: float,
@@ -655,7 +681,7 @@ def run_simulation(
         - heat_pump:
             The :class:`HeatPump` to use for the run.
         - htf_mass_flow_rate:
-            The mass flow rate of the HTF through the collectors.
+            The mass flow rate of the HTF through the collectors, measured in kg/s.
         - hybrid_pv_t_panel:
             The :class:`HybridPVTPanel` associated with the run.
         - logger:
@@ -674,6 +700,8 @@ def run_simulation(
             The :class:`SolarThermalCollector` associated with the run.
         - solar_thermal_system_size:
             The size of the solar-thermal system.
+        - water_pump:
+            The water pump for the system.
         - wind_speeds:
             The wind speeds at each time step, measured in meters per second.
         - disable_tqdm:
@@ -687,7 +715,7 @@ def run_simulation(
     """
 
     # Determine the mass flow rate through each type of collector.
-    if scenario.pv_t and pv_t_system_size > 0:
+    if scenario.pv_t and pv_t_system_size is not None and pv_t_system_size > 0:
         pv_t_mass_flow_rate: float | None = _collector_mass_flow_rate(
             htf_mass_flow_rate, pv_t_system_size
         )
@@ -696,8 +724,12 @@ def run_simulation(
         pv_t_mass_flow_rate = None
         logger.debug("No PV-T mass flow rate because disabled or zero size.")
 
-    if scenario.solar_thermal and solar_thermal_system_size > 0:
-        solar_thermal_mass_flow_rate: float = _collector_mass_flow_rate(
+    if (
+        scenario.solar_thermal
+        and solar_thermal_system_size is not None
+        and solar_thermal_system_size > 0
+    ):
+        solar_thermal_mass_flow_rate: float | None = _collector_mass_flow_rate(
             htf_mass_flow_rate, solar_thermal_system_size
         )
         logger.debug(
@@ -709,23 +741,24 @@ def run_simulation(
         logger.debug("No solar-thermal mass flow rate because disabled or zero size.")
 
     # Set up maps for storing variables.
-    auxiliary_heating_demands: Dict[int, float] = {}
-    auxiliary_heating_electricity_demands: Dict[int, float] = {}
-    base_electricity_demands: Dict[int, float] = {}
-    collector_input_temperatures: Dict[int, float] = {}
-    collector_system_output_temperatures: Dict[int, float] = {}
+    auxiliary_heating_demands: dict[int, float] = {}
+    auxiliary_heating_electricity_demands: dict[int, float] = {}
+    base_electricity_demands: dict[int, float] = {}
+    collector_input_temperatures: dict[int, float] = {}
+    collector_system_output_temperatures: dict[int, float] = {}
     electricity_demands: DefaultDict[int, float] = defaultdict(float)
-    hot_water_demand_temperatures: Dict[int, float | None] = {}
-    hot_water_demand_volumes: Dict[int, float | None] = {}
+    hot_water_demand_temperatures: dict[int, float | None] = {}
+    hot_water_demand_volumes: dict[int, float | None] = {}
     max_heat_pump_cost: float = 0
-    pv_t_electrical_efficiencies: Dict[int, float | None] = {}
-    pv_t_electrical_output_power: Dict[int, float | None] = {}
-    pv_t_htf_output_temperatures: Dict[int, float | None] = {}
-    pv_t_reduced_temperatures: Dict[int, float | None] = {}
-    pv_t_thermal_efficiencies: Dict[int, float | None] = {}
-    solar_thermal_htf_output_temperatures: Dict[int, float | None] = {}
-    solar_thermal_reduced_temperatures: Dict[int, float | None] = {}
-    solar_thermal_thermal_efficiencies: Dict[int, float | None] = {}
+    pump_electricity_demands: dict[int, float | None] = {}
+    pv_t_electrical_efficiencies: dict[int, float | None] = {}
+    pv_t_electrical_output_power: dict[int, float | None] = {}
+    pv_t_htf_output_temperatures: dict[int, float | None] = {}
+    pv_t_reduced_temperatures: dict[int, float | None] = {}
+    pv_t_thermal_efficiencies: dict[int, float | None] = {}
+    solar_thermal_htf_output_temperatures: dict[int, float | None] = {}
+    solar_thermal_reduced_temperatures: dict[int, float | None] = {}
+    solar_thermal_thermal_efficiencies: dict[int, float | None] = {}
     tank_temperatures: DefaultDict[int, float] = defaultdict(
         lambda: tank_start_temperature
     )
@@ -777,25 +810,42 @@ def run_simulation(
         # Determine the electricity demands of the plant including any auxiliary
         # heating.
         if desalination_plant.operating(hour):
+            if (
+                hot_water_volume := desalination_plant.requirements(
+                    hour
+                ).hot_water_volume
+            ) is None or (
+                hot_water_temperature := desalination_plant.requirements(
+                    hour
+                ).hot_water_temperature
+            ) is None:
+                logger.error(
+                    "Desalination plant requirements not defined for hour %s.", hour
+                )
+                raise ProgrammerJudgementFault(
+                    "simulator::run_simulation",
+                    "Desalination plant requirements not defined for plant "
+                    f"{desalination_plant.name} for hour {hour} despite plant "
+                    "operating.",
+                )
+
             auxiliary_heating_demand = max(
                 (
-                    desalination_plant.requirements(hour).hot_water_volume  # [kg/s]
+                    hot_water_volume  # [kg/s]
                     * buffer_tank.heat_capacity  # [J/kg*K]
-                    * (
-                        desalination_plant.requirements(hour).hot_water_temperature
-                        - tank_temperature  # [K]
-                    )
+                    * (hot_water_temperature - tank_temperature)  # [K]
                     / 1000  # [W/kW]
                 ),
                 0,
             )  # [kW]
 
             # Calculate the power consumption.
+
             (
                 heat_pump_cost,
                 heat_pump_power_consumpion,
             ) = calculate_heat_pump_electricity_consumption_and_cost(
-                desalination_plant.requirements(hour).hot_water_temperature,
+                hot_water_temperature,
                 ambient_temperatures[hour],
                 auxiliary_heating_demand,
                 heat_pump,
@@ -816,6 +866,18 @@ def run_simulation(
             auxiliary_heating_demand = 0
             auxiliary_heating_electricity_demand = 0
             electricity_demand = desalination_plant.requirements(hour).electricity
+            hot_water_temperature = None
+            hot_water_volume = None
+
+        # Append the water-pump electricity demands if the collectors are operating.
+        if collector_system_output_temperature > collector_input_temperature:
+            electricity_demand += (
+                pump_electricity_demand := water_pump.electricity_demand(
+                    htf_mass_flow_rate
+                )
+            )
+        else:
+            pump_electricity_demand = None
 
         # Save these outputs in mappings.
         auxiliary_heating_demands[hour] = auxiliary_heating_demand
@@ -828,27 +890,29 @@ def run_simulation(
         collector_input_temperatures[hour] = collector_input_temperature
         collector_system_output_temperatures[hour] = collector_system_output_temperature
         electricity_demands[hour] = electricity_demand
-        hot_water_demand_temperatures[hour] = desalination_plant.requirements(
-            hour
-        ).hot_water_temperature
+        hot_water_demand_temperatures[hour] = hot_water_temperature
         hot_water_demand_volumes[hour] = hot_water_demand_volume
+        pump_electricity_demands[hour] = pump_electricity_demand
         pv_t_electrical_efficiencies[hour] = pv_t_electrical_efficiency
-        pv_t_electrical_output_power[hour] = (
-            (
-                electric_output(
-                    pv_t_electrical_efficiency
-                    if pv_t_electrical_efficiency is not None
-                    else 0,
-                    hybrid_pv_t_panel.pv_module_characteristics.nominal_power,
-                    hybrid_pv_t_panel.pv_module_characteristics.reference_efficiency,
-                    solar_irradiances[hour],
+        if hybrid_pv_t_panel is not None:
+            pv_t_electrical_output_power[hour] = (
+                (
+                    electric_output(
+                        pv_t_electrical_efficiency
+                        if pv_t_electrical_efficiency is not None
+                        else 0,
+                        hybrid_pv_t_panel.pv_module_characteristics.nominal_power,
+                        hybrid_pv_t_panel.pv_module_characteristics.reference_efficiency,
+                        solar_irradiances[hour],
+                    )
+                    if solar_irradiances[hour] > 0
+                    else 0
                 )
-                if solar_irradiances[hour] > 0
-                else 0
+                if scenario.pv_t
+                else None
             )
-            if scenario.pv_t
-            else None
-        )
+        else:
+            pv_t_electrical_output_power[hour] = None
         pv_t_htf_output_temperatures[hour] = pv_t_htf_output_temperature
         pv_t_reduced_temperatures[hour] = pv_t_reduced_temperature
         pv_t_thermal_efficiencies[hour] = pv_t_thermal_efficiency
@@ -861,9 +925,15 @@ def run_simulation(
 
     # Compute the PV performance characteristics.
     if scenario.pv:
+        if pv_panel is None:
+            logger.error("No PV panel provided despite PV specified in scenario.")
+            raise InputFileError(
+                "scenario inputs",
+                "Scenario specified PV panel, but no PV panel provided.",
+            )
         logger.info("Computing PV performance characteristics.")
-        pv_performance_characteristics: Dict[
-            int, Tuple[float, float | None, float, float | None]
+        pv_performance_characteristics: dict[
+            int, Tuple[float | None, float | None, float | None, float | None]
         ] = {
             hour: pv_panel.calculate_performance(
                 ambient_temperatures[hour],
@@ -873,16 +943,16 @@ def run_simulation(
             )
             for hour in range(len(ambient_temperatures))
         }
-        pv_electrical_efficiencies: Dict[int, float] | None = {
+        pv_electrical_efficiencies: dict[int, float | None] | None = {
             hour: entry[0] for hour, entry in pv_performance_characteristics.items()
         }
-        pv_average_temperatures: Dict[int, float] | None = {
+        pv_average_temperatures: dict[int, float | None] | None = {
             hour: entry[2] for hour, entry in pv_performance_characteristics.items()
         }
-        pv_electrical_output_power: Dict[int, float] | None = {
+        pv_electrical_output_power: dict[int, float | None] | None = {
             hour: (
                 electric_output(
-                    pv_electrical_efficiencies[hour],
+                    pv_electrical_efficiencies[hour],  # type: ignore [index]
                     pv_panel.pv_unit,
                     pv_panel.reference_efficiency,
                     solar_irradiance,
@@ -892,9 +962,13 @@ def run_simulation(
             )
             for hour, solar_irradiance in solar_irradiances.items()
         }
-        pv_system_electrical_output_power: Dict[int, float] | None = {
-            hour: (value * pv_system_size if value is not None else 0)
-            for hour, value in pv_electrical_output_power.items()
+        pv_system_electrical_output_power: dict[int, float] | None = {
+            hour: (
+                value * pv_system_size
+                if value is not None and pv_system_size is not None
+                else 0
+            )
+            for hour, value in pv_electrical_output_power.items()  # type: ignore [union-attr]
         }
     else:
         pv_electrical_efficiencies = None
@@ -904,8 +978,12 @@ def run_simulation(
 
     # Compute the output power from the various collectors.
     logger.info("Hourly simulation complete, compute the output power.")
-    pv_t_system_electrical_output_power: Dict[int, float] = {
-        hour: (value * pv_t_system_size if value is not None else 0)
+    pv_t_system_electrical_output_power: dict[int, float] = {
+        hour: (
+            value * pv_t_system_size
+            if value is not None and pv_t_system_size is not None
+            else 0
+        )
         for hour, value in pv_t_electrical_output_power.items()
     }
 
@@ -921,6 +999,7 @@ def run_simulation(
         max_heat_pump_cost,
         hot_water_demand_temperatures,
         hot_water_demand_volumes,
+        pump_electricity_demands,
         pv_average_temperatures if scenario.pv else None,
         {ProfileDegradationType.UNDEGRADED.value: pv_electrical_efficiencies}
         if scenario.pv
@@ -955,9 +1034,9 @@ def run_simulation(
 
 
 def determine_steady_state_simulation(
-    ambient_temperatures: Dict[int, float],
+    ambient_temperatures: dict[int, float],
     battery: Battery | None,
-    battery_capacity: int | None,
+    battery_capacity: float | int | None,
     buffer_tank: HotWaterTank,
     desalination_plant: DesalinationPlant,
     heat_pump: HeatPump,
@@ -965,14 +1044,15 @@ def determine_steady_state_simulation(
     hybrid_pv_t_panel: HybridPVTPanel | None,
     logger: Logger,
     pv_panel: PVPanel | None,
-    pv_system_size: int | None,
-    pv_t_system_size: int | None,
+    pv_system_size: float | int | None,
+    pv_t_system_size: float | int | None,
     scenario: Scenario,
-    solar_irradiances: Dict[int, float],
+    solar_irradiances: dict[int, float],
     solar_thermal_collector: SolarThermalPanel | None,
-    solar_thermal_system_size: int | None,
+    solar_thermal_system_size: float | int | None,
     system_lifetime: int,
-    wind_speeds: Dict[int, float],
+    water_pump: WaterPump,
+    wind_speeds: dict[int, float],
     *,
     disable_tqdm: bool = False,
 ) -> Solution:
@@ -1020,6 +1100,8 @@ def determine_steady_state_simulation(
             The size of the solar-thermal system.
         - system_lifetime:
             The lifetime of the system in years.
+        - water_pump:
+            The water pump for the system.
         - wind_speeds:
             The wind speeds at each time step, measured in meters per second.
         - default_tank_temperature:
@@ -1052,6 +1134,7 @@ def determine_steady_state_simulation(
         solar_irradiances,
         solar_thermal_collector,
         solar_thermal_system_size,
+        water_pump,
         wind_speeds,
         tank_start_temperature=tank_start_temperature,
         disable_tqdm=disable_tqdm,
@@ -1091,6 +1174,7 @@ def determine_steady_state_simulation(
                 solar_irradiances,
                 solar_thermal_collector,
                 solar_thermal_system_size,
+                water_pump,
                 wind_speeds,
                 disable_tqdm=disable_tqdm,
                 tank_start_temperature=tank_start_temperature,
@@ -1142,7 +1226,7 @@ def determine_steady_state_simulation(
         ][hour]
         - solar_power_supplied[hour]
         - (
-            battery_power_input_profile[hour]
+            battery_power_input_profile[hour]  # type: ignore  [index]
             if battery_power_supplied_profile is not None
             else 0
         )
@@ -1151,20 +1235,25 @@ def determine_steady_state_simulation(
 
     # Save these to the output tuple.
     solution = solution._replace(
-        battery_lifetime_degradation=battery_lifetime_degradation
+        battery_lifetime_degradation=battery_lifetime_degradation  # type: ignore [arg-type]
     )
     solution = solution._replace(
         battery_replacements=int(battery_lifetime_degradation // 1)
     )
     solution = solution._replace(
-        battery_electricity_suppy_profile=battery_power_supplied_profile
+        battery_electricity_suppy_profile=battery_power_supplied_profile  # type: ignore [arg-type]
     )
     solution = solution._replace(dumped_solar=dumped_solar)
-    solution = solution._replace(battery_storage_profile=battery_storage_profile)
     solution = solution._replace(
-        battery_power_input_profile=battery_power_input_profile
+        battery_storage_profile=battery_storage_profile  # type: ignore [arg-type]
     )
-    solution = solution._replace(grid_electricity_supply_profile=grid_profile)
+    if battery_power_input_profile is not None:
+        solution = solution._replace(
+            battery_power_input_profile=battery_power_input_profile
+        )
+    solution = solution._replace(
+        grid_electricity_supply_profile=grid_profile  # type: ignore [arg-type]
+    )
     solution = solution._replace(solar_power_supplied=solar_power_supplied)
 
     return solution

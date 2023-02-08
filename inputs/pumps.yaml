@@ -1,0 +1,27 @@
+---
+################################################################################
+# pumps.yaml - The water pump(s) input information.                            #
+#                                                                              #
+# Author: Ben Winchester                                                       #
+# Copyright: Ben Winchester, 2022                                              #
+# Date created: 01/02/2023                                                     #
+# License: MIT                                                                 #
+################################################################################
+
+# Information about the water pumps used to pump HTF (nominally water) around
+# the PV-T and solar-thermal collectors in the system. The information here is
+# used to determine the contributions to the overall energy consumption of these
+# systems as well as the cost.
+#
+
+pumps:
+  # Grundfos.
+  # CRNF 15-1 A-CA-A-E-HQQE
+  # https://product-selection.grundfos.com/uk/products/crflex/crnf-15-1-98415336?tab=variant-specifications&pumpsystemid=2024447336
+  # (accessed February 1, 2023).
+  #
+  - name: crnf_15_1_a_ca_a_e_hqqe
+    cost: 3961  # [USD/pump]
+    efficiency: 0.85
+    nominal_flow_rate: 5.69  # [kg/s]
+    nominal_power: 1.73  # [kW/pump]

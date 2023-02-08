@@ -26,12 +26,12 @@ import sys
 
 from logging import Logger
 from multiprocessing import pool
-from typing import Any, Dict, List
+from typing import Any
 
 from tqdm import tqdm
 
-from src.heatdesalination.__main__ import main as heatdesalination_main
-from src.heatdesalination.__utils__ import (
+from .__main__ import main as heatdesalination_main
+from .__utils__ import (
     CLI_TO_PROFILE_TYPE,
     DONE,
     FlowRateError,
@@ -39,7 +39,7 @@ from src.heatdesalination.__utils__ import (
     ProfileType,
     Solution,
 )
-from src.heatdesalination.fileparser import INPUTS_DIRECTORY
+from .fileparser import INPUTS_DIRECTORY
 
 # SIMULATIONS_FILEPATH:
 #   The file path to the simulations file.
@@ -90,7 +90,7 @@ class Simulation:
     buffer_tank_capacity: float
     mass_flow_rate: float
     output: str
-    profile_types: List[str]
+    profile_types: list[str]
     pv_system_size: float
     pv_t_system_size: float
     scenario: str
@@ -99,7 +99,7 @@ class Simulation:
     system_lifetime: int
 
     @property
-    def profile_type_instances(self) -> List[ProfileType]:
+    def profile_type_instances(self) -> list[ProfileType]:
         """
         Return :class:`ProfileType` instances.
 
@@ -111,7 +111,7 @@ class Simulation:
         return [CLI_TO_PROFILE_TYPE[entry] for entry in self.profile_types]
 
 
-def _parse_args(args: List[Any]) -> argparse.Namespace:
+def _parse_args(args: list[Any]) -> argparse.Namespace:
     """
     Parses command-line arguments into a :class:`argparse.NameSpace`.
 
@@ -181,7 +181,7 @@ def _parse_args(args: List[Any]) -> argparse.Namespace:
 
 def heatdesalination_wrapper(
     simulation: Simulation, hpc: bool, location: str
-) -> Dict[ProfileType, Solution] | None:
+) -> dict[ProfileType, Solution] | None:
     """
     Run a steady-state simulation
 
@@ -200,7 +200,7 @@ def heatdesalination_wrapper(
     """
 
     try:
-        return heatdesalination_main(
+        return heatdesalination_main(  # type: ignore [return-value]
             location,
             simulation.profile_type_instances,
             simulation.scenario,
@@ -231,7 +231,7 @@ def main(
     simulations_file: str,
     full_results: bool = True,
     hpc: bool = False,
-) -> List[Any]:
+) -> list[Any]:
     """
     Main method for carrying out multiple simulations.
 
@@ -260,8 +260,10 @@ def main(
         simulations_filepath = SIMULATIONS_FILEPATH
 
     # Parse the simulations file.
-    with open(simulations_filepath, "r") as simulations_file:
-        simulations = [Simulation(**entry) for entry in json.load(simulations_file)]
+    with open(simulations_filepath, "r", encoding="UTF-8") as open_simulations_file:
+        simulations = [
+            Simulation(**entry) for entry in json.load(open_simulations_file)
+        ]
 
     print(f"Carrying out parallel simulation{'.'*37} ", end="")
     logger.info("Carrying out %s parallel simulation(s)", len(simulations))
@@ -310,7 +312,7 @@ def main(
 
     print(f"Saving output file{'.'*51} ", end="")
     if output is not None:
-        with open(f"{output}.json", "w") as f:
+        with open(f"{output}.json", "w", encoding="UTF-8") as f:
             json.dump(results_map, f)
     print(DONE)
 
@@ -322,12 +324,9 @@ if __name__ == "__main__":
     # Parse the command-line arguments.
     parsed_args = _parse_args(sys.argv[1:])
 
-    # Setup the logger.
-    logger = get_logger(f"{parsed_args.location}_parallel_simulator")
-
     main(
         parsed_args.location,
-        logger,
+        get_logger(f"{parsed_args.location}_parallel_simulator"),
         parsed_args.output,
         parsed_args.simulations_file,
         not parsed_args.partial_results,

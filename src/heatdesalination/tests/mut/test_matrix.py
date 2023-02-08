@@ -6,7 +6,7 @@
 # Author: Ben Winchester                                                               #
 # Copyright: Ben Winchester, 2022                                                      #
 # Date created: 24/10/2022                                                             #
-# License: Open source                                                                 #
+# License: MIT                                                                         #
 ########################################################################################
 """
 test_matrix.py - Tests for the matrix module.
@@ -477,7 +477,8 @@ class TestSolveMatrix(unittest.TestCase):
             entry + ZERO_CELCIUS_OFFSET for entry in [80, 75, 70]
         ]:
             self.assertEqual(
-                colector_ouptut_temp, mock_tank_temperature.call_args_list.pop(0)[0][1]
+                colector_ouptut_temp,
+                mock_tank_temperature.call_args_list.pop(0)[0][1],
             )
 
         for collector_input_temp, tank_temp in zip(

@@ -6,7 +6,7 @@
 # Author: Ben Winchester                                                               #
 # Copyright: Ben Winchester, 2022                                                      #
 # Date created: 24/10/2022                                                             #
-# License: Open source                                                                 #
+# License: MIT                                                                         #
 ########################################################################################
 """
 test_optimiser.py - Tests for the optimisation module.
@@ -17,7 +17,6 @@ import dataclasses
 import random
 import unittest
 
-from typing import Dict
 from unittest import mock
 
 from src.heatdesalination.__utils__ import Scenario
@@ -52,7 +51,7 @@ class MockSolution:
 
     """
 
-    grid_electricity_supply_profile: Dict[int, float]
+    grid_electricity_supply_profile: dict[int, float]
 
 
 class TestCollectorMassFlowRate(unittest.TestCase):

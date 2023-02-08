@@ -5,7 +5,7 @@
 # Author: Ben Winchester                                                               #
 # Copyright: Ben Winchester, 2022                                                      #
 # Date created: 18/01/2022                                                             #
-# License: Open source                                                                 #
+# License: MIT                                                                         #
 # Most recent update: 19/10/2022                                                       #
 ########################################################################################
 """
@@ -21,7 +21,7 @@ permission from the authors under the open-source MIT license.
 
 import dataclasses
 
-from typing import Any, Dict
+from typing import Any
 
 from ..__utils__ import (
     AREA,
@@ -161,9 +161,8 @@ class _BaseStorage(CostableComponent):
         self.leakage: float = leakage
         self.maximum_charge: float = maximum_charge
         self.minimum_charge: float = minimum_charge
-        self.name: str = name
 
-        super().__init__(cost)
+        super().__init__(cost, name)
 
     def __hash__(self) -> int:
         """
@@ -213,7 +212,7 @@ class _BaseStorage(CostableComponent):
         )
 
     @classmethod
-    def from_dict(cls, storage_data: Dict[str, Any]) -> Any:
+    def from_dict(cls, storage_data: dict[str, Any]) -> Any:
         """
         Create a :class:`CleanWaterTank` instance based on the file data passed in.
 
@@ -377,7 +376,7 @@ class Battery(_BaseStorage, label="battery", resource_type=ResourceType.ELECTRIC
         )
 
     @classmethod
-    def from_dict(cls, storage_data: Dict[str, Any]) -> Any:
+    def from_dict(cls, storage_data: dict[str, Any]) -> Any:
         """
         Create a :class:`Battery` instance based on the file data passed in.
 
@@ -599,7 +598,7 @@ class HotWaterTank(
         )
 
     @classmethod
-    def from_dict(cls, storage_data: Dict[str, Any]) -> Any:
+    def from_dict(cls, storage_data: dict[str, Any]) -> Any:
         """
         Create a :class:`HotWaterTank` instance based on the file data passed in.
 

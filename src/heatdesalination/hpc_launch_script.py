@@ -5,7 +5,7 @@
 # Authors: Ben Winchester                                                              #
 # Copyright: Ben Winchester, 2022                                                      #
 # Date created: 29/11/2022                                                             #
-# License: Open source                                                                 #
+# License: MIT                                                                         #
 #                                                                                      #
 # For more information, please email:                                                  #
 #   benedict.winchester@gmail.com                                                      #
@@ -196,8 +196,10 @@ def main(args) -> None:
     print(f"Processing HPC job submission script{'.'*44} ", end="")
     logger.info("Parsing base HPC job submission script.")
     try:
-        with open(HPC_SUBMISSION_SCRIPT_FILEPATH, "r") as f:
-            hpc_submission_script_file_contents = f.read()
+        with open(
+            HPC_SUBMISSION_SCRIPT_FILEPATH, "r", encoding="UTF-8"
+        ) as hpc_submission_pointer:
+            hpc_submission_script_file_contents = hpc_submission_pointer.read()
     except FileNotFoundError:
         print(FAILED)
         logger.error(
@@ -230,8 +232,12 @@ def main(args) -> None:
 
         # Write the submission script file.
         logger.info("Writing temporary HPC submission script.")
-        with open(hpc_submission_script_filepath, "w") as f:
-            f.write(hpc_submission_script_file_contents)
+        with open(
+            hpc_submission_script_filepath, "w", encoding="UTF-8"
+        ) as hpc_submission_script_file_pointer:
+            hpc_submission_script_file_pointer.write(
+                hpc_submission_script_file_contents
+            )
 
         logger.info("HPC job submission script successfully submitted.")
 

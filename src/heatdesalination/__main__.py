@@ -20,13 +20,19 @@ and optimise the desalination systems.
 import os
 import sys
 
-from typing import Any, Dict, List
+from typing import Any, Tuple
 
 import json
 
 from tqdm import tqdm
 
-from .__utils__ import CLI_TO_PROFILE_TYPE, ProfileType, Solution, get_logger
+from .__utils__ import (
+    CLI_TO_PROFILE_TYPE,
+    DEFAULT_SIMULATION_OUTPUT_FILE,
+    ProfileType,
+    Solution,
+    get_logger,
+)
 from .argparser import MissingParametersError, parse_args, validate_args
 from .fileparser import parse_input_files
 from .optimiser import (
@@ -45,7 +51,7 @@ __all__ = ("main",)
 
 # __version__:
 #   The version of the software being used.
-__version__: str = "v1.0.0a1"
+__version__: str = "v1.0.0a2"
 
 # ANALYSIS_REQUESTS:
 #   Names of criteria to evaluate.
@@ -76,7 +82,7 @@ def save_simulation(
     output: str,
     profile_type: str,
     simulation_outputs: Solution,
-    solar_irradiance: Dict[int, float],
+    solar_irradiance: dict[int, float],
 ) -> None:
     """
     Save the outputs from the simulation run.
@@ -104,7 +110,7 @@ def save_simulation(
 
 
 def save_optimisation(
-    optimisation_outputs: List[Any],
+    optimisation_outputs: list[Any],
     output: str,
 ) -> None:
     """
@@ -132,32 +138,36 @@ def save_optimisation(
 
 def main(
     location: str,
-    profile_types: List[ProfileType],
+    profile_types_to_run: list[ProfileType],
     scenario_name: str,
     system_lifetime: int,
     battery_capacity: float | None = None,
     buffer_tank_capacity: float | None = None,
     mass_flow_rate: float | None = None,
     optimisation: bool = False,
-    output: str | None = None,
-    pv_t_system_size: float | None = None,
-    pv_system_size: float | None = None,
+    output: str = DEFAULT_SIMULATION_OUTPUT_FILE,
+    pv_t_system_size: float | int | None = None,
+    pv_system_size: float | int | None = None,
     simulation: bool = False,
-    solar_thermal_system_size: float | None = None,
+    solar_thermal_system_size: float | int | None = None,
     start_hour: int | None = None,
     *,
     disable_tqdm: bool = False,
     hpc: bool = False,
     save_outputs: bool = True,
     verbose: bool = False,
-) -> Any:
+) -> (
+    dict[str, Tuple[Any, dict[str, Any]]]
+    | list[Tuple[dict[str, Any], dict[Any, Tuple[dict[str, float], list[float]]]]]
+    | None
+):
     """
     Main module responsible for the flow of the HEATDesalination program.
 
     Inputs:
         - location:
             The name of the location to be modelled.
-        - profile_types:
+        - profile_types_to_run:
             The `list` of valid :class:`ProfileType` instances to consider.
         - scenario_name:
             The name of the scenario to use.
@@ -219,13 +229,14 @@ def main(
         scenario,
         solar_irradiances,
         solar_thermal_collector,
+        water_pump,
         wind_speeds,
     ) = parse_input_files(location, logger, scenario_name, start_hour)
     logger.info("Input files successfully parsed.")
 
     if simulation:
         # Raise exceptions if the arguments are invalid.
-        missing_parameters: List[str] = []
+        missing_parameters: list[str] = []
         if scenario.battery and battery_capacity is None:
             logger.error(
                 "Must specify battery capacity if batteries included in scenario."
@@ -242,7 +253,7 @@ def main(
                 "included in scenario."
             )
             missing_parameters.append("Solar-thermal system size")
-        if not mass_flow_rate:
+        if mass_flow_rate is None:
             logger.error("Must specify HTF mass flow rate if running a simulation.")
             missing_parameters.append("HTF mass flow rate")
 
@@ -266,11 +277,11 @@ def main(
             profile_type.value: determine_steady_state_simulation(
                 ambient_temperatures[profile_type],
                 battery,
-                battery_capacity,
+                battery_capacity,  # type: ignore [arg-type]
                 buffer_tank,
                 desalination_plant,
                 heat_pump,
-                mass_flow_rate,
+                mass_flow_rate,  # type: ignore [arg-type]
                 hybrid_pv_t_panel,
                 logger,
                 pv_panel,
@@ -281,10 +292,11 @@ def main(
                 solar_thermal_collector,
                 solar_thermal_system_size,
                 system_lifetime,
+                water_pump,
                 wind_speeds[profile_type],
                 disable_tqdm=disable_tqdm,
             )
-            for profile_type in profile_types
+            for profile_type in profile_types_to_run
         }
 
         # Output information to the command-line interface.
@@ -340,9 +352,11 @@ def main(
             for key, entry in simulation_outputs.items()
         }
 
-    elif optimisation:
+    if optimisation:
         # Setup a variable for storing the optimisation results.
-        optimisation_results: List[Dict[str, Dict[str, Any], List[float]]] = []
+        optimisation_results: list[
+            Tuple[dict[str, Any], dict[Any, Tuple[dict[str, float], list[float]]]]
+        ] = []
 
         for optimisation_parameters in tqdm(
             optimisations,
@@ -369,10 +383,11 @@ def main(
                             solar_irradiances[profile_type],
                             solar_thermal_collector,
                             system_lifetime,
+                            water_pump,
                             wind_speeds[profile_type],
                         )
                         for profile_type in tqdm(
-                            profile_types,
+                            profile_types_to_run,
                             desc="profile type",
                             disable=disable_tqdm,
                             leave=False,
@@ -386,12 +401,12 @@ def main(
             save_optimisation(optimisation_results, output)
 
         return optimisation_results
-    else:
-        logger.error("Neither simulation or optimisation was specified. Quitting.")
-        raise Exception(
-            "Simultion or optimisation must be specified. Run with `--help` for more "
-            "information."
-        )
+
+    logger.error("Neither simulation or optimisation was specified. Quitting.")
+    raise Exception(
+        "Simultion or optimisation must be specified. Run with `--help` for more "
+        "information."
+    )
 
 
 if __name__ == "__main__":
@@ -403,7 +418,7 @@ if __name__ == "__main__":
 
     # Determine the profile types that shuld be considered.
     try:
-        profile_types = [
+        profile_types: list[ProfileType] = [
             CLI_TO_PROFILE_TYPE[entry] for entry in parsed_args.profile_types
         ]
     except KeyError as err:

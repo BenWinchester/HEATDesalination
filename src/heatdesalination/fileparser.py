@@ -17,7 +17,7 @@ fileparser.py - The file parser module for the HEATDeslination program.
 import os
 
 from logging import Logger
-from typing import Dict, List, Tuple
+from typing import Tuple
 
 import json
 
@@ -25,6 +25,7 @@ from .__utils__ import (
     AMBIENT_TEMPERATURE,
     AUTO_GENERATED_FILES_DIRECTORY,
     GridCostScheme,
+    InputFileError,
     NAME,
     OptimisationParameters,
     ProfileType,
@@ -44,6 +45,7 @@ from .solar import (
     SolarThermalPanel,
 )
 from .storage.storage_utils import Battery, HotWaterTank
+from .water_pump import WaterPump
 
 __all__ = ("parse_input_files",)
 
@@ -84,16 +86,20 @@ FRACTIONAL_HW_TANK_COST_CHANGE: str = "fractional_hw_tank_cost_change"
 FRACTIONAL_INVERTER_COST_CHANGE: str = "fractional_inverter_cost_change"
 
 # FRACTIONAL_PV_COST_CHANGE:
-#   Keyword for the fractional change in the price of grid electricity.
+#   Keyword for the fractional change in the price of PV collectors.
 FRACTIONAL_PV_COST_CHANGE: str = "fractional_pv_cost_change"
 
 # FRACTIONAL_PV_T_COST_CHANGE:
-#   Keyword for the fractional change in the price of grid electricity.
+#   Keyword for the fractional change in the price of PV-T collectors.
 FRACTIONAL_PV_T_COST_CHANGE: str = "fractional_pvt_cost_change"
 
 # FRACTIONAL_ST_COST_CHANGE:
-#   Keyword for the fractional change in the price of grid electricity.
+#   Keyword for the fractional change in the price of solar-thermal collectors.
 FRACTIONAL_ST_COST_CHANGE: str = "fractional_st_cost_change"
+
+# FRACTIONAL_WATER_PUMP_COST_CHANGE:
+#   Keyword for the fractional change in the price of water pumps installed.
+FRACTIONAL_WATER_PUMP_COST_CHANGE: str = "fractional_water_pump_cost_change"
 
 # GRID_COST_SCHEME:
 #   Keyword for the name of the pricing scheme for the cost of grid (alternative/unmet)
@@ -166,7 +172,7 @@ PV_T: str = "pv_t"
 
 # SCENARIO_INPUTS:
 #   Keyword for scenario inputs file.
-SCENARIO_INPUTS: str = "scenarios.yaml"
+SCENARIO_INPUTS: str = "scenarios.json"
 
 # SCENARIOS:
 #   Keyword for scenario information.
@@ -192,25 +198,41 @@ STORAGE_INPUTS: str = "storage.yaml"
 #   Keyword for the type of solar collector.
 TYPE: str = "type"
 
+# WATER_PUMP:
+#   Keyword for the name of the water pump installed.
+WATER_PUMP: str = "water_pump"
 
-def parse_input_files(
-    location: str, logger: Logger, scenario_name: str, start_hour: int
+# WATER_PUMPS:
+#   Keyword for parsing water-pump input information.
+WATER_PUMPS: str = "pumps"
+
+# WATER_PUMP_INPUTS:
+#   The name of the water-pump input file.
+WATER_PUMP_INPUTS: str = "pumps.yaml"
+
+
+def parse_input_files(  # pylint: disable=too-many-statements
+    location: str, logger: Logger, scenario_name: str, start_hour: int | None
 ) -> Tuple[
-    Dict[ProfileType, Dict[int, float]],
+    dict[ProfileType, dict[int, float]],
     Battery,
     HotWaterTank,
-    HeatPump,
     DesalinationPlant,
+    HeatPump,
     HybridPVTPanel | None,
-    List[OptimisationParameters],
+    list[OptimisationParameters],
     PVPanel | None,
     Scenario,
-    Dict[ProfileType, Dict[int, float]],
+    dict[ProfileType, dict[int, float]],
     SolarThermalPanel | None,
-    Dict[ProfileType, Dict[int, float]],
+    WaterPump,
+    dict[ProfileType, dict[int, float]],
 ]:
     """
     Parses the various input files.
+
+    NOTE: The pylint `too-many-statements` error code is supressed due to the fileparser
+    being permitted to be a longer-than-usual function.
 
     Inputs:
         - location:
@@ -221,7 +243,8 @@ def parse_input_files(
         - scenario_name:
             The name of the scenario to use.
         - start_hour:
-            The start hour for the plant's operation.
+            The start hour for the plant's operation or `None` if running an
+            optimisation and the start-hour is optimisable.
 
     Outputs:
         - ambient_temperatures:
@@ -251,7 +274,20 @@ def parse_input_files(
     """
 
     # Parse the scenario.
-    scenario_inputs = read_yaml(os.path.join(INPUTS_DIRECTORY, SCENARIO_INPUTS), logger)
+    with open(
+        os.path.join(INPUTS_DIRECTORY, SCENARIO_INPUTS), "r", encoding="UTF-8"
+    ) as scenario_inputs_file:
+        scenario_inputs = json.load(scenario_inputs_file)
+
+    if not isinstance(scenario_inputs, dict):
+        logger.error(
+            "Unreadable scenario inputs file: must be of type `dict` not `list`."
+        )
+        raise InputFileError(
+            "scenario inputs",
+            f"Scenario inputs must be a `dict` containing entries for `{SCENARIOS}`.",
+        )
+
     scenarios = [
         Scenario(
             entry[BATTERY],
@@ -265,6 +301,7 @@ def parse_input_files(
             entry[NAME],
             entry[PLANT],
             entry[PV_DEGRADATION_RATE],
+            entry[WATER_PUMP],
             entry[PV],
             entry[PV_T],
             entry[SOLAR_THERMAL],
@@ -276,6 +313,7 @@ def parse_input_files(
             entry.get(FRACTIONAL_PV_COST_CHANGE, 0),
             entry.get(FRACTIONAL_PV_T_COST_CHANGE, 0),
             entry.get(FRACTIONAL_ST_COST_CHANGE, 0),
+            entry.get(FRACTIONAL_WATER_PUMP_COST_CHANGE, 0),
         )
         for entry in scenario_inputs[SCENARIOS]
     ]
@@ -289,10 +327,22 @@ def parse_input_files(
     desalination_inputs = read_yaml(
         os.path.join(INPUTS_DIRECTORY, DESALINATION_PLANT_INPUTS), logger
     )
+    if not isinstance(desalination_inputs, dict):
+        logger.error(
+            "Unreadable desalination-plant inputs file: must be of type `dict` not "
+            "`list`."
+        )
+        raise InputFileError(
+            "desalination inputs",
+            "Desalination-plant inputs must be a `dict` containing entries for "
+            f"`{DESALINATION_PLANTS}`.",
+        )
+
     desalination_plants = [
         DesalinationPlant.from_dict(entry, logger, start_hour)
         for entry in desalination_inputs[DESALINATION_PLANTS]
     ]
+
     try:
         desalination_plant = [
             entry for entry in desalination_plants if entry.name == scenario.plant
@@ -305,7 +355,16 @@ def parse_input_files(
     heat_pump_inputs = read_yaml(
         os.path.join(INPUTS_DIRECTORY, HEAT_PUMP_INPUTS), logger
     )
+    if not isinstance(heat_pump_inputs, dict):
+        logger.error(
+            "Unreadable heat-pump inputs file: must be of type `dict` not `list`."
+        )
+        raise InputFileError(
+            "heat-pump inputs",
+            f"Heat-pump inputs must be a `dict` containing entries for `{HEAT_PUMPS}`.",
+        )
     heat_pumps = [HeatPump(**entry) for entry in heat_pump_inputs[HEAT_PUMPS]]
+
     try:
         heat_pump = [entry for entry in heat_pumps if entry.name == scenario.heat_pump][
             0
@@ -322,8 +381,18 @@ def parse_input_files(
     optimisation_inputs = read_yaml(
         os.path.join(INPUTS_DIRECTORY, OPTIMISATION_INPUTS), logger
     )
+    if not isinstance(optimisation_inputs, dict):
+        logger.error(
+            "Unreadable optimisation inputs file: must be of type `dict` not `list`."
+        )
+        raise InputFileError(
+            "optimisation inputs",
+            "Optimisation inputs must be a `dict` containing entries for "
+            f"`{OPTIMISATION_INPUTS}`.",
+        )
+
     try:
-        optimisations: List[OptimisationParameters] = [
+        optimisations: list[OptimisationParameters] = [
             OptimisationParameters.from_dict(logger, entry)
             for entry in optimisation_inputs[OPTIMISATIONS]
         ]
@@ -333,6 +402,14 @@ def parse_input_files(
 
     # Parse the solar panels.
     solar_inputs = read_yaml(os.path.join(INPUTS_DIRECTORY, SOLAR_INPUTS), logger)
+    if not isinstance(solar_inputs, dict):
+        logger.error("Unreadable solar inputs file: must be of type `dict` not `list`.")
+        raise InputFileError(
+            "solar inputs",
+            "Solar inputs must be a `dict` containing entries for "
+            f"`{SOLAR_COLLECTORS}`.",
+        )
+
     try:
         solar_collectors = [
             COLLECTOR_FROM_TYPE[SolarPanelType(entry[TYPE])].from_dict(logger, entry)
@@ -390,7 +467,7 @@ def parse_input_files(
         except IndexError:
             logger.error(
                 "Could not find solar-thermal collector '%s' in input file.",
-                scenario.solar_thermal,
+                scenario.solar_thermal_panel_name,
             )
             raise
     else:
@@ -398,6 +475,16 @@ def parse_input_files(
 
     # Parse the batteries and buffer tank.
     storage_inputs = read_yaml(os.path.join(INPUTS_DIRECTORY, STORAGE_INPUTS), logger)
+    if not isinstance(storage_inputs, dict):
+        logger.error(
+            "Unreadable storage inputs file: must be of type `dict` not `list`."
+        )
+        raise InputFileError(
+            "storage inputs",
+            f"Storage inputs must be a `dict` containing entries for `{BATTERIES}` "
+            "and `{HOT_WATER_TANKS}`.",
+        )
+
     batteries = [Battery.from_dict(entry) for entry in storage_inputs[BATTERIES]]
     try:
         battery: Battery = [
@@ -406,7 +493,7 @@ def parse_input_files(
     except IndexError:
         logger.error(
             "Could not find battery '%s' in input file.",
-            scenario.solar_thermal,
+            scenario.battery,
         )
         raise
     tanks = [HotWaterTank.from_dict(entry) for entry in storage_inputs[HOT_WATER_TANKS]]
@@ -417,9 +504,36 @@ def parse_input_files(
     except IndexError:
         logger.error(
             "Could not find hot-water tank '%s' in input file.",
-            scenario.solar_thermal,
+            scenario.hot_water_tank,
         )
         raise
+
+    # Parse the water pump inputs.
+    water_pump_inputs = read_yaml(
+        os.path.join(INPUTS_DIRECTORY, WATER_PUMP_INPUTS), logger
+    )
+    if not isinstance(water_pump_inputs, dict):
+        logger.error(
+            "Unreadable water-pump inputs file: must be of type `dict` not `list`."
+        )
+        raise InputFileError(
+            "water-pump inputs",
+            "Water-pump inputs must be a `dict` containing entries for "
+            f"`{WATER_PUMPS}`.",
+        )
+
+    water_pumps = [WaterPump(**entry) for entry in water_pump_inputs[WATER_PUMPS]]
+    try:
+        water_pump: WaterPump = [
+            entry for entry in water_pumps if entry.name == scenario.water_pump
+        ][0]
+    except IndexError:
+        logger.error(
+            "Could not find water pump '%s' in input file.",
+            scenario.water_pump,
+        )
+        raise
+
     # Parse the weather data.
     with open(
         os.path.join(AUTO_GENERATED_FILES_DIRECTORY, f"{location}.json"),
@@ -428,9 +542,9 @@ def parse_input_files(
     ) as weather_data_file:
         weather_data = json.load(weather_data_file)
 
-    ambient_temperatures: Dict[ProfileType, Dict[int, float]] = {}
-    solar_irradiances: Dict[ProfileType, Dict[int, float]] = {}
-    wind_speeds: Dict[ProfileType, Dict[int, float]] = {}
+    ambient_temperatures: dict[ProfileType, dict[int, float]] = {}
+    solar_irradiances: dict[ProfileType, dict[int, float]] = {}
+    wind_speeds: dict[ProfileType, dict[int, float]] = {}
 
     # Extend profiles to 25 hours.
     for profile_type in ProfileType:
@@ -462,5 +576,6 @@ def parse_input_files(
         scenario,
         solar_irradiances,
         solar_thermal_collector,
+        water_pump,
         wind_speeds,
     )

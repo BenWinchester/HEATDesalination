@@ -91,7 +91,7 @@ solar_collectors:
     cost: !!float 631  # [USD/collector]
     land_use: !!float 3.1
     max_mass_flow_rate: null
-    min_mass_flow_rate: null
+    min_mass_flow_rate: 0
     name: !!str eurotherm_solar_pro_20r
     nominal_mass_flow_rate: !!float 120
     stagnation_temperature: 208  # [degC]
@@ -106,7 +106,7 @@ solar_collectors:
     cost: !!float 925  # [USD/collector]
     land_use: !!float 1.51
     max_mass_flow_rate: null
-    min_mass_flow_rate: null
+    min_mass_flow_rate: 0
     name: !!str augusta_solar_as_100_df_6
     nominal_mass_flow_rate: !!float 75
     stagnation_temperature: 271  # [degC]
@@ -126,7 +126,7 @@ solar_collectors:
     cost: !!float 556
     land_use: !!float 1.64
     max_mass_flow_rate: null
-    min_mass_flow_rate: null
+    min_mass_flow_rate: 0
     name: dualsun_spring_300m_insulated
     nominal_flow_rate: !!float 60
     pv_module_characteristics:
@@ -166,7 +166,7 @@ solar_collectors:
     cost: !!float 545
     land_use: !!float 1.37
     max_mass_flow_rate: null
-    min_mass_flow_rate: null
+    min_mass_flow_rate: 0
     name: solimpeks_powervolt
     nominal_flow_rate: !!float 60
     pv_module_characteristics:
