@@ -962,7 +962,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
             solar_inputs[NAME],
         )
 
-        self.electric_performance_curve: PerformanceCurve = electric_performance_curve
+        self.electric_performance_curve: PerformanceCurve | None = electric_performance_curve
         self._max_mass_flow_rate: float = solar_inputs[MAX_MASS_FLOW_RATE]
         self._min_mass_flow_rate: float = solar_inputs[MIN_MASS_FLOW_RATE]
         self.pv_module_characteristics: PVModuleCharacteristics = (
@@ -1087,11 +1087,11 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                     electric_performance_inputs[SECOND_ORDER],
                 )
             except KeyError as exception:
-                logger.error(
+                logger.info(
                     "Missing electric performance curve input(s): %s",
                     str(exception),
                 )
-                raise
+                electric_performance_curve = None
         else:
             logger.error(
                 "No electric performance curve defined for PV-T panel '%s'.",
@@ -1115,7 +1115,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
                 )
             except KeyError as exception:
                 logger.error(
-                    "Missing electric performance curve input(s): %s",
+                    "Missing module characteristics: %s",
                     str(exception),
                 )
                 raise
