@@ -102,7 +102,7 @@ def main(args: list[Any]) -> None:
             hpc_run.scenario,
             hpc_run.system_lifetime,
             optimisation=True,
-            output=f"hpc_opt_out_{hpc_run.output}",
+            output=f"hpc_{hpc_run.output}",
             disable_tqdm=True,
             hpc=True,
         )
