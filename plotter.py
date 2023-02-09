@@ -2537,7 +2537,7 @@ htf_heat_capacity = "htf_heat_capacity"
 inverter_cost = "inverter_cost"
 inverter_lifetime = "inverter_lifetime"
 name = "name"
-plant = "plant"
+plant_kwarg = "plant"
 pv = "pv"
 pv_degradation_rate = "pv_degradation_rate"
 pv_t = "pv_t"
@@ -2554,8 +2554,8 @@ for location_name, location_filename in tqdm(LOCATIONS.items(), desc="locations"
                     scenario = DEFAULT_SCENARIO.copy()
                     # Change the grid-cost scheme to match the scenario.
                     scenario[grid_cost_scheme] = GRID_COST_SCHEMES[location_name]
-                    scenario[st_panel] = st_panel
-                    scenario[plant] = plant
+                    scenario[solar_thermal] = st_panel
+                    scenario[plant_kwarg] = plant
                     scenario[pv] = pv_panel
                     scenario[pv_t] = pv_t_panel
                     scenario_name = (
@@ -2573,7 +2573,7 @@ for location_name, location_filename in tqdm(LOCATIONS.items(), desc="locations"
                     optimisation["output"] = scenario_name
                     new_optimisations.append(optimisation)
 
-with open(os.path.join("inputs", "optimisations.json"), "w", encoding="UTF-8") as f:
+with open(os.path.join("inputs", "ecos_optimisations.json"), "w", encoding="UTF-8") as f:
     json.dump(new_optimisations, f)
 
 with open(os.path.join("inputs", "scenarios.json"), "w", encoding="UTF-8") as f:
