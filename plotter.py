@@ -2467,7 +2467,7 @@ from tqdm import tqdm
 from src.heatdesalination.__utils__ import GridCostScheme
 
 with open(
-    (scenarios_filepath := os.path.join("inputs", "scenarios.yaml")),
+    (scenarios_filepath := os.path.join("inputs", "scenarios.json")),
     "r",
     encoding="UTF-8",
 ) as f:
@@ -2479,6 +2479,7 @@ DEFAULT_OPTIMISATION = {
     (location := "location"): "fujairah_united_arab_emirates",
     (output := "output"): "parallel_optimisation_output",
     "profile_types": ["avr", "ler", "uer"],
+    "run_type": "optimisation",
     (scenario := "scenario"): "default",
     "system_lifetime": 30,
 }
@@ -2543,20 +2544,20 @@ pv_t = "pv_t"
 solar_thermal = "solar_thermal"
 
 for location_name, location_filename in tqdm(LOCATIONS.items(), desc="locations"):
-    # Change the grid-cost scheme to match the scenario.
-    scenario[grid_cost_scheme] = GRID_COST_SCHEMES[location_name]
     # Cycle through the plants
     for plant in tqdm(PLANTS, desc="plants", leave=False):
-        scenario[plant] = plant
         # Cycle through the PV options available
         for pv_panel in tqdm(PV_PANELS, desc="pv panels", leave=False):
-            scenario[pv] = pv_panel
             # Cycle through the PV-T options available
             for pv_t_panel in PV_T_PANELS:
-                scenario[pv_t] = pv_t_panel
                 for st_panel in ST_COLLECTORS:
                     scenario = DEFAULT_SCENARIO.copy()
+                    # Change the grid-cost scheme to match the scenario.
+                    scenario[grid_cost_scheme] = GRID_COST_SCHEMES[location_name]
                     scenario[st_panel] = st_panel
+                    scenario[plant] = plant
+                    scenario[pv] = pv_panel
+                    scenario[pv_t] = pv_t_panel
                     scenario_name = (
                         f"{location_name}_"
                         f"{plant.split('_')[0]}_"
@@ -2568,7 +2569,15 @@ for location_name, location_filename in tqdm(LOCATIONS.items(), desc="locations"
                     new_scenarios.append(scenario)
                     optimisation = DEFAULT_OPTIMISATION.copy()
                     optimisation["scenario"] = scenario_name
+                    optimisation["location"] = LOCATIONS[location_name]
+                    optimisation["output"] = scenario_name
                     new_optimisations.append(optimisation)
+
+with open(os.path.join("inputs", "optimisations.json"), "w", encoding="UTF-8") as f:
+    json.dump(new_optimisations, f)
+
+with open(os.path.join("inputs", "scenarios.json"), "w", encoding="UTF-8") as f:
+    json.dump({"scenarios": new_scenarios}, f)
 
 
 grid_optimisations = []

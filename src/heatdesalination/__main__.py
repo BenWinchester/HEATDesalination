@@ -20,6 +20,7 @@ and optimise the desalination systems.
 import os
 import sys
 
+from logging import Logger
 from typing import Any, Tuple
 
 import json
@@ -110,6 +111,7 @@ def save_simulation(
 
 
 def save_optimisation(
+    logger: Logger,
     optimisation_outputs: list[Any],
     output: str,
 ) -> None:
@@ -117,6 +119,8 @@ def save_optimisation(
     Save the outputs from the optimisation run.
 
     Inputs:
+        - logger:
+            The logger to use for the run.
         - optimisation_results:
             The results from the optimisation.
         - output:
@@ -125,15 +129,23 @@ def save_optimisation(
     """
 
     # Create the outputs directory if it doesn't exist already.
+    logger.info("Making optimisation directory.")
     os.makedirs(OPTIMISATION_OUTPUTS_DIRECTORY, exist_ok=True)
 
     # Write to the output file.
-    with open(
-        f"{os.path.join(OPTIMISATION_OUTPUTS_DIRECTORY, output)}.json",
-        "w",
-        encoding="UTF-8",
-    ) as output_file:
-        json.dump(optimisation_outputs, output_file)
+    logger.info("Saving optimisation output file.")
+    try:
+        with open(
+            (
+                filename := f"{os.path.join(OPTIMISATION_OUTPUTS_DIRECTORY, output)}.json"
+            ),
+            "w",
+            encoding="UTF-8",
+        ) as output_file:
+            json.dump(optimisation_outputs, output_file)
+    except Exception:
+        logger.error("Failed to save optimisation outputs file, %s", filename)
+        raise
 
 
 def main(
@@ -398,7 +410,7 @@ def main(
             )
 
         if save_outputs:
-            save_optimisation(optimisation_results, output)
+            save_optimisation(logger, optimisation_results, output)
 
         return optimisation_results
 
