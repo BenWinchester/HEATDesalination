@@ -2745,3 +2745,82 @@ plt.savefig(
     transparent=True,
     bbox_inches="tight",
 )
+
+#####################
+# ECOS HPC Analysis #
+#####################
+
+import json
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.set_context("paper")
+sns.color_palette("colorblind")
+
+# Read input data
+with open("feb_9_23_hpc.json", "r") as f:
+    data = json.load(f)
+
+def battery_capacities(data_to_process):
+    return [entry[0][1]["average_weather_conditions"][1][0] for entry in data_to_process.values()]
+
+def tank_capacities(data_to_process):
+    return [entry[0][1]["average_weather_conditions"][1][0] for entry in data_to_process.values()]
+
+def mass_flow_rates(data_to_process):
+    return [entry[0][1]["average_weather_conditions"][1][2] for entry in data_to_process.values()]
+
+def pv_sizes(data_to_process):
+    return [entry[0][1]["average_weather_conditions"][1][3] for entry in data_to_process.values()]
+
+def pv_t_sizes(data_to_process):
+    return [entry[0][1]["average_weather_conditions"][1][4] for entry in data_to_process.values()]
+
+def st_sizes(data_to_process):
+    return [entry[0][1]["average_weather_conditions"][1][5] for entry in data_to_process.values()]
+
+def hist_plot(data_to_plot):
+    plt.hist([pv_sizes(data_to_plot), pv_t_sizes(data_to_plot), st_sizes(data_to_plot), battery_capacities(data_to_plot), tank_capacities(data_to_plot)], 10, histtype="bar", label=["PV", "PV-T", "Solar-thermal", "Batteries", "Tank capacity"])
+    plt.ylabel("Frequency / optimisation scenarios")
+    plt.xlabel("Number of components installed")
+    plt.legend()
+    plt.show()
+
+
+abu_dhabi_data = {key: value for key, value in data.items() if "abu_dhabi" in key}
+gran_canaria_data = {key: value for key, value in data.items() if "gran_canaria" in key}
+la_paz_data = {key: value for key, value in data.items() if "la_paz" in key}
+tijuana_data = {key: value for key, value in data.items() if "tijuana" in key}
+
+# Abu Dhabi HIST
+hist_plot(abu_dhabi_data)
+
+# Gran Canaria HIST
+hist_plot(gran_canaria_data)
+
+# La Paz HIST
+hist_plot(la_paz_data)
+
+# Tijuana HIST
+hist_plot(tijuana_data)
+
+abu_dhabi_joo = {key: value for key, value in abu_dhabi_data.items() if "_joo_" in key}
+hist_plot(abu_dhabi_joo)
+
+abu_dhabi_rahimi = {key: value for key, value in abu_dhabi_data.items() if "_rahimi_" in key}
+hist_plot(abu_dhabi_rahimi)
+
+abu_dhabi_el = {key: value for key, value in abu_dhabi_data.items() if "_el_" in key}
+hist_plot(abu_dhabi_el)
+
+
+tijuana_joo = {key: value for key, value in tijuana_data.items() if "_joo_" in key}
+hist_plot(tijuana_joo)
+
+tijuana_rahimi = {key: value for key, value in tijuana_data.items() if "_rahimi_" in key}
+hist_plot(tijuana_rahimi)
+
+tijuana_el = {key: value for key, value in tijuana_data.items() if "_el_" in key}
+hist_plot(tijuana_el)
+
+
