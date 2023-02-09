@@ -2762,22 +2762,22 @@ with open("feb_9_23_hpc.json", "r") as f:
     data = json.load(f)
 
 def battery_capacities(data_to_process):
-    return [entry[0][1]["average_weather_conditions"][1][0] for entry in data_to_process.values()]
+    return [entry[1]["average_weather_conditions"][1][0] for entry in data_to_process.values()]
 
 def tank_capacities(data_to_process):
-    return [entry[0][1]["average_weather_conditions"][1][0] for entry in data_to_process.values()]
+    return [entry[1]["average_weather_conditions"][1][1] for entry in data_to_process.values()]
 
 def mass_flow_rates(data_to_process):
-    return [entry[0][1]["average_weather_conditions"][1][2] for entry in data_to_process.values()]
+    return [entry[1]["average_weather_conditions"][1][2] for entry in data_to_process.values()]
 
 def pv_sizes(data_to_process):
-    return [entry[0][1]["average_weather_conditions"][1][3] for entry in data_to_process.values()]
+    return [entry[1]["average_weather_conditions"][1][3] for entry in data_to_process.values()]
 
 def pv_t_sizes(data_to_process):
-    return [entry[0][1]["average_weather_conditions"][1][4] for entry in data_to_process.values()]
+    return [entry[1]["average_weather_conditions"][1][4] for entry in data_to_process.values()]
 
 def st_sizes(data_to_process):
-    return [entry[0][1]["average_weather_conditions"][1][5] for entry in data_to_process.values()]
+    return [entry[1]["average_weather_conditions"][1][5] for entry in data_to_process.values()]
 
 def hist_plot(data_to_plot):
     plt.hist([pv_sizes(data_to_plot), pv_t_sizes(data_to_plot), st_sizes(data_to_plot), battery_capacities(data_to_plot), tank_capacities(data_to_plot)], 10, histtype="bar", label=["PV", "PV-T", "Solar-thermal", "Batteries", "Tank capacity"])
@@ -2823,4 +2823,17 @@ hist_plot(tijuana_rahimi)
 tijuana_el = {key: value for key, value in tijuana_data.items() if "_el_" in key}
 hist_plot(tijuana_el)
 
+# Bubble plot
+import pandas as pd
 
+def frame(data_to_frame):
+    return pd.DataFrame(
+        {
+            "battery": battery_capacities(data_to_frame),
+            "tank": tank_capacities(data_to_frame),
+            "mass_flow_rate": mass_flow_rates(data_to_frame),
+            "pv": pv_sizes(data_to_frame),
+            "pv_t": pv_t_sizes(data_to_frame),
+            "st": st_sizes(data_to_frame),
+        },
+    )
