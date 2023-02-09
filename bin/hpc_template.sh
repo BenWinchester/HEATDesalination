@@ -10,7 +10,7 @@
 ########################################################################################
 #PBS -J 1-{NUM_RUNS}
 #PBS -lwalltime={WALLTIME}:00:00
-#PBS -lselect=1:ncpus=8:mem=11800Mb
+#PBS -lselect=1:ncpus=1:mem=11800Mb
 
 echo -e "HPC array script executed"
 
