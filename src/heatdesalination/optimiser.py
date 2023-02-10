@@ -285,9 +285,9 @@ def _total_grid_cost(
         # Abu Dhabi, UAE-specific code - a tiered tariff applied based on monthly usage.
         # The industrial fixed-rate tariff for <1MW installations is used.
         return (
-            grid_lifetime_electricity_consumption
-            * 0.078
-            * fixed_grid_infrastructure_cost
+            grid_lifetime_electricity_consumption  # [kWh]
+            * 0.078  # [USD/kWh]
+            + fixed_grid_infrastructure_cost  # [USD]
         )  # [USD/kWh]
 
     if scenario.grid_cost_scheme == GridCostScheme.GRAN_CANARIA_SPAIN:
@@ -299,10 +299,10 @@ def _total_grid_cost(
         # Energy Policy 2022;162:112791.
         # doi: 10.1016/j.enpol.2022.112791.
         return (
-            grid_lifetime_electricity_consumption
-            * 0.1537
-            * fixed_grid_infrastructure_cost
-        )  # [USD/kWh]
+            grid_lifetime_electricity_consumption  # [kWh]
+            * 0.1537  # [USD/kWh]
+            + fixed_grid_infrastructure_cost  # [USD]
+        )  # [USD]
 
     if scenario.grid_cost_scheme in {
         GridCostScheme.TIJUANA_MEXICO,
