@@ -152,7 +152,7 @@ def _total_component_costs(
         if isinstance(component, Battery):
             component_costs[component] *= 1 + scenario.fractional_grid_cost_change
         if isinstance(component, HotWaterTank):
-            component_costs[component] *= 1 + scenario.fractional_hw_tank_cost_change
+            component_costs[component] *= 1000 * (1 + scenario.fractional_hw_tank_cost_change)
         if isinstance(component, PVPanel):
             component_costs[component] *= 1 + scenario.fractional_pv_cost_change
         if isinstance(component, HybridPVTPanel):
