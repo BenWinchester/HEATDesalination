@@ -73,8 +73,10 @@ solar_collectors:
   - area: !!float 2.22
     cost: !!float 494  # [USD/collector]
     land_use: !!float 2.52
-    max_mass_flow_rate: !!float 100.8
-    min_mass_flow_rate: !!float 37.8
+    # max_mass_flow_rate: !!float 100.8
+    max_mass_flow_rate: null
+    # min_mass_flow_rate: !!float 37.8
+    min_mass_flow_rate: !!float 0
     name: !!str sti_fkf_240_cucu
     nominal_mass_flow_rate: null
     stagnation_temperature: !!float 183.4  # [degC]
@@ -148,7 +150,8 @@ solar_collectors:
     cost: !!float 1022  # [USD/panel]
     land_use: !!float 1.876  # [m^2]
     max_mass_flow_rate: null  # [NaN]
-    min_mass_flow_rate: !!float 20  # [l/h]
+    # min_mass_flow_rate: !!float 20  # [l/h]
+    min_mass_flow_rate: !!float 0  # [l/h]
     nominal_mass_flow_rate: !!float 60  # [l/h]
     pv_module_characteristics:
       nominal_power: !!float 0.400  # [W]

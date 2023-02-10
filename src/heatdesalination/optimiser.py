@@ -40,7 +40,6 @@ from .__utils__ import (
     OptimisableComponent,
     OptimisationParameters,
     ProfileDegradationType,
-    ProgrammerJudgementFault,
     Scenario,
     Solution,
 )
@@ -49,7 +48,7 @@ from .plant import DesalinationPlant
 from .simulator import determine_steady_state_simulation
 from .solar import HybridPVTPanel, PVPanel, SolarPanel, SolarThermalPanel
 from .storage.storage_utils import Battery, HotWaterTank
-from .water_pump import WaterPump
+from .water_pump import num_water_pumps, WaterPump
 
 # UPPER_LIMIT:
 #   Value used to throw the optimizer off of solutions that have a flow-rate error.
@@ -115,21 +114,6 @@ def _inverter_cost(
     ) * (1 + scenario.fractional_inverter_cost_change)
 
     return inverter_cost
-
-
-def _num_water_pumps(htf_mass_flow_rate: float, water_pump: WaterPump) -> int:
-    """
-    Return the capacity of water pump(s) installed, i.e., the number of installed pumps.
-
-    Inputs:
-        - htf_mass_flow_rate:
-            The mass flow rate of HTF through the collectors, measured in kg/s.
-        - water_pump:
-            The water pump being considered.
-
-    """
-
-    return math.ceil(htf_mass_flow_rate / water_pump.nominal_flow_rate)
 
 
 def _total_component_costs(
@@ -1142,7 +1126,7 @@ def _simulate_and_calculate_criterion(
         hybrid_pv_t_panel: _pv_t_system_size,  # type: ignore [dict-item]
         pv_panel: _pv_panel_system_size,  # type: ignore [dict-item]
         solar_thermal_collector: _solar_thermal_system_size,  # type: ignore [dict-item]
-        water_pump: _num_water_pumps(_htf_mass_flow_rate, water_pump),  # type: ignore [dict-item]
+        water_pump: num_water_pumps(_htf_mass_flow_rate, water_pump),  # type: ignore [dict-item]
     }
 
     # Return the value of the criterion.
@@ -1509,7 +1493,7 @@ def run_optimisation(
         hybrid_pv_t_panel: pv_t_system_size,
         pv_panel: pv_system_size,
         solar_thermal_collector: solar_thermal_system_size,
-        water_pump: _num_water_pumps(htf_mass_flow_rate, water_pump),
+        water_pump: num_water_pumps(htf_mass_flow_rate, water_pump),
     }
 
     # Compute various criteria values.

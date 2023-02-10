@@ -30,9 +30,9 @@ from tqdm import tqdm
 from .__utils__ import (
     CLI_TO_PROFILE_TYPE,
     DEFAULT_SIMULATION_OUTPUT_FILE,
+    get_logger,
     ProfileType,
     Solution,
-    get_logger,
 )
 from .argparser import MissingParametersError, parse_args, validate_args
 from .fileparser import parse_input_files
@@ -47,6 +47,7 @@ from .optimiser import (
     TotalCost,
 )
 from .simulator import determine_steady_state_simulation
+from .water_pump import num_water_pumps
 
 __all__ = ("main",)
 
@@ -347,6 +348,7 @@ def main(
                         pv_panel: pv_system_size,
                         hybrid_pv_t_panel: pv_t_system_size,
                         solar_thermal_collector: solar_thermal_system_size,
+                        water_pump: num_water_pumps(mass_flow_rate, water_pump)
                     },
                     logger,
                     scenario,
