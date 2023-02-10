@@ -1,5 +1,5 @@
 scenarios:
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -22,7 +22,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -46,7 +46,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -68,7 +68,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -91,7 +91,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -115,7 +115,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -137,7 +137,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -160,7 +160,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -184,7 +184,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -206,7 +206,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -229,7 +229,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -253,7 +253,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -275,7 +275,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -298,7 +298,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -322,7 +322,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -344,7 +344,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -367,7 +367,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -391,7 +391,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   el_nashar_24_hour: el_nashar_24_hour
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -414,7 +414,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -437,7 +437,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -461,7 +461,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -483,7 +483,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -506,7 +506,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -530,7 +530,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -552,7 +552,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -575,7 +575,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -599,7 +599,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -621,7 +621,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -644,7 +644,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -668,7 +668,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -690,7 +690,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -713,7 +713,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -737,7 +737,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -759,7 +759,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -782,7 +782,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -806,7 +806,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -829,7 +829,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   rahimi_24_hour: rahimi_24_hour
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -852,7 +852,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -876,7 +876,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -898,7 +898,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -921,7 +921,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -945,7 +945,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -967,7 +967,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -990,7 +990,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -1014,7 +1014,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1036,7 +1036,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1059,7 +1059,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -1083,7 +1083,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1105,7 +1105,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1128,7 +1128,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -1152,7 +1152,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1174,7 +1174,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1197,7 +1197,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -1221,7 +1221,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1244,7 +1244,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1267,7 +1267,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -1291,7 +1291,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1313,7 +1313,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1336,7 +1336,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -1360,7 +1360,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1382,7 +1382,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1405,7 +1405,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -1429,7 +1429,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1451,7 +1451,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1474,7 +1474,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -1498,7 +1498,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1520,7 +1520,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1543,7 +1543,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -1567,7 +1567,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1589,7 +1589,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1612,7 +1612,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -1636,7 +1636,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   el_nashar_24_hour: el_nashar_24_hour
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -1659,7 +1659,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1682,7 +1682,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -1706,7 +1706,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1728,7 +1728,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1751,7 +1751,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -1775,7 +1775,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1797,7 +1797,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1820,7 +1820,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -1844,7 +1844,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1866,7 +1866,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1889,7 +1889,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -1913,7 +1913,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1935,7 +1935,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -1958,7 +1958,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -1982,7 +1982,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2004,7 +2004,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2027,7 +2027,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -2051,7 +2051,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2074,7 +2074,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   rahimi_24_hour: rahimi_24_hour
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2097,7 +2097,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -2121,7 +2121,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2143,7 +2143,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2166,7 +2166,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -2190,7 +2190,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2212,7 +2212,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2235,7 +2235,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -2259,7 +2259,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2281,7 +2281,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2304,7 +2304,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -2328,7 +2328,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2350,7 +2350,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2373,7 +2373,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -2397,7 +2397,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2419,7 +2419,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2442,7 +2442,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -2466,7 +2466,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2489,7 +2489,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2512,7 +2512,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -2536,7 +2536,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2558,7 +2558,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2581,7 +2581,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -2605,7 +2605,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2627,7 +2627,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2650,7 +2650,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -2674,7 +2674,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2696,7 +2696,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2719,7 +2719,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -2743,7 +2743,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2765,7 +2765,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2788,7 +2788,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -2812,7 +2812,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2834,7 +2834,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2857,7 +2857,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -2881,7 +2881,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   el_nashar_24_hour: el_nashar_24_hour
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -2904,7 +2904,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2927,7 +2927,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -2951,7 +2951,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2973,7 +2973,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -2996,7 +2996,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -3020,7 +3020,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3042,7 +3042,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3065,7 +3065,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -3089,7 +3089,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3111,7 +3111,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3134,7 +3134,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -3158,7 +3158,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3180,7 +3180,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3203,7 +3203,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -3227,7 +3227,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3249,7 +3249,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3272,7 +3272,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -3296,7 +3296,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3319,7 +3319,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   rahimi_24_hour: rahimi_24_hour
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3342,7 +3342,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -3366,7 +3366,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3388,7 +3388,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3411,7 +3411,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -3435,7 +3435,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3457,7 +3457,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3480,7 +3480,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -3504,7 +3504,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3526,7 +3526,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3549,7 +3549,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -3573,7 +3573,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3595,7 +3595,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3618,7 +3618,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -3642,7 +3642,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3664,7 +3664,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3687,7 +3687,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -3711,7 +3711,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3734,7 +3734,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3757,7 +3757,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -3781,7 +3781,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3803,7 +3803,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3826,7 +3826,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -3850,7 +3850,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3872,7 +3872,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3895,7 +3895,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -3919,7 +3919,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3941,7 +3941,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -3964,7 +3964,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -3988,7 +3988,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4010,7 +4010,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4033,7 +4033,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -4057,7 +4057,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4079,7 +4079,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4102,7 +4102,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -4126,7 +4126,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   el_nashar_24_hour: el_nashar_24_hour
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -4149,7 +4149,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4172,7 +4172,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -4196,7 +4196,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4218,7 +4218,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4241,7 +4241,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -4265,7 +4265,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4287,7 +4287,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4310,7 +4310,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -4334,7 +4334,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4356,7 +4356,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4379,7 +4379,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -4403,7 +4403,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4425,7 +4425,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4448,7 +4448,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -4472,7 +4472,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4494,7 +4494,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4517,7 +4517,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -4541,7 +4541,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4564,7 +4564,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   rahimi_24_hour: rahimi_24_hour
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4587,7 +4587,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -4611,7 +4611,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4633,7 +4633,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4656,7 +4656,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -4680,7 +4680,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4702,7 +4702,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4725,7 +4725,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -4749,7 +4749,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4771,7 +4771,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4794,7 +4794,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -4818,7 +4818,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4840,7 +4840,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: dualsun_spring_400_insulated
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4863,7 +4863,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -4887,7 +4887,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4909,7 +4909,7 @@ scenarios:
   pv_degradation_rate: 0.011
   pv_t: solimpeks_powervolt
   solar_thermal: eurotherm_solar_pro_20r
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0
@@ -4932,7 +4932,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
   sti_fkf_240_cucu: sti_fkf_240_cucu
-- battery: lifos_lb_0012
+- battery: renogy_12v_100ah
   eurotherm_solar_pro_20r: eurotherm_solar_pro_20r
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
@@ -4956,7 +4956,7 @@ scenarios:
   pv_t: dualsun_spring_300m_insulated
   solar_thermal: eurotherm_solar_pro_20r
 - augusta_solar_as_100_df_6: augusta_solar_as_100_df_6
-  battery: lifos_lb_0012
+  battery: renogy_12v_100ah
   fractional_battery_cost_change: 0.0
   fractional_grid_cost_change: 0.0
   fractional_heat_pump_cost_change: 0.0

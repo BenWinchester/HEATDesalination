@@ -9,22 +9,23 @@
 ################################################################################
 
 batteries:
-  - name: !!str lifos_lb_0012
-    capacity: !!float 153.6  # [kWh]
-    c_rate_charging: !!float 0.33  # Charge rate
-    c_rate_discharging: !!float 0.33  # Discharge rate
+  # 12V 100Ah Lithium Iron Phosphate Battery w/ Bluetooth. Renogy United Kingdom n.d.
+  # https://uk.renogy.com/12v-100ah-lithium-iron-phosphate-battery-w-bluetooth/?gclid=CjwKCAiA85efBhBbEiwAD7oLQOyzKacstrf6R5tHfi5zGtBWxOKTydER-UDARqykkjAsu6LakT1LExoCxtQQAvD_BwE
+  # (accessed February 10, 2023).
+  - name: !!str renogy_12v_100ah
+    capacity: !!float 1.28  # [kWh]
+    c_rate_charging: !!float 0.578125  # Charge rate
+    c_rate_discharging: !!float 1  # Discharge rate
     conversion_in: !!float 0.95  # Conversion efficiency (0.0 - 1.0)
     conversion_out: !!float 0.95  # Conversion efficiency (0.0 - 1.0)
-    # Cost information from:
-    # https://uk.rs-online.com/web/p/speciality-size-rechargeable-batteries/1890274
-    cost: !!float 128.26  # [USD/kWh]
-    cycle_lifetime: !!float 1500  # Expected number of cycles over lifetime
+    cost: !!float 494.90  # [USD/battery]
+    cycle_lifetime: !!float 2000  # Expected number of cycles over lifetime
     maximum_charge: !!float 0.9  # State of charge (0.0 - 1.0)
-    minimum_charge: !!float 0.4  # State of charge (0.0 - 1.0)
-    # Leakage information sourced from:
-    # https://docs.rs-online.com/62cf/0900766b81724545.pdf
-    leakage: !!float 0.000042  # Fractional leakage per hour
-    lifetime_loss: !!float 0.2   # Fractional loss over lifetime (0.0 - 1.0)
+    minimum_charge: !!float 0.1  # State of charge (0.0 - 1.0)
+    leakage: !!float 0.000041666  # Fractional leakage per hour
+    # Lifetime loss information from
+    # https://doi.org/10.1016%2FS0378-7753%2802%2900490-1
+    lifetime_loss: !!float 0.241   # Fractional loss over lifetime (0.0 - 1.0)
 hot_water_tanks:
   - name: !!str grant_hpmono_ind150
     area: !!float 0.248  # [m^2]
