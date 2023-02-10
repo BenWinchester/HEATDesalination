@@ -17,9 +17,11 @@ and solar-thermal collectors. In doing so, they consume some amount of power.
 
 """
 
+import math
+
 from .__utils__ import CostableComponent
 
-__all__ = ("WaterPump",)
+__all__ = ("num_water_pumps", "WaterPump",)
 
 
 class WaterPump(CostableComponent):
@@ -51,7 +53,7 @@ class WaterPump(CostableComponent):
 
         Inputs:
             - cost:
-                The cost of the :class:`HotWaterTank` instance.
+                The cost of the :class:`WaterPump` instance.
             - efficiency:
                 The efficiency of the water pump.
             - nominal_flow_rate:
@@ -66,6 +68,18 @@ class WaterPump(CostableComponent):
         self.efficiency = efficiency
         self.nominal_flow_rate = nominal_flow_rate
         self.nominal_power = nominal_power
+
+    def __str__(self) -> str:
+        """Return a nice-looking `str` representing the water pump."""
+
+        return (
+            "WaterPump("
+            + f"name={self.name}, "
+            + f"cost={self.cost} USD/pump, "
+            + f"nominal_flow_rate={self.nominal_flow_rate} kg/s, "
+            + f"nominal_power={self.nominal_power} kW"
+            ")"
+        )
 
     def electricity_demand(self, flow_rate: float) -> float:
         """
@@ -84,3 +98,20 @@ class WaterPump(CostableComponent):
         """
 
         return self.nominal_power * (flow_rate / self.nominal_flow_rate)
+
+
+
+def num_water_pumps(htf_mass_flow_rate: float, water_pump: WaterPump) -> int:
+    """
+    Return the capacity of water pump(s) installed, i.e., the number of installed pumps.
+
+    Inputs:
+        - htf_mass_flow_rate:
+            The mass flow rate of HTF through the collectors, measured in kg/s.
+        - water_pump:
+            The water pump being considered.
+
+    """
+
+    return math.ceil(htf_mass_flow_rate / water_pump.nominal_flow_rate)
+
