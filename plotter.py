@@ -2837,3 +2837,21 @@ def frame(data_to_frame):
             "st": st_sizes(data_to_frame),
         },
     )
+
+
+##########################
+# HPC Combination script #
+##########################
+
+import os
+import json
+
+from typing import Any
+
+data: dict[str, Any] = {}
+
+for filename in os.listdir("."):
+    if "feb" in filename:
+        continue
+    with open(filename, "r", encoding="UTF-8") as f:
+        data[filename] = json.load(f)[0]
