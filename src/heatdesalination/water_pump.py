@@ -81,6 +81,11 @@ class WaterPump(CostableComponent):
             ")"
         )
 
+    def __repr__(self) -> str:
+        """Return a nice-looking representation of the water pump."""
+
+        return self.__str__()
+
     def electricity_demand(self, flow_rate: float) -> float:
         """
         Calculate the electricity demand of the pump based on the flow rate.
