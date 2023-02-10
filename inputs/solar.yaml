@@ -61,7 +61,7 @@ solar_collectors:
     pv_unit: !!float 0.33
     reference_efficiency: !!float 0.17
     reference_temperature: !!float 25
-    thermal_coefficient: 0.38
+    thermal_coefficient: 0.0038
 
   ############################
   # Solar-thermal collectors #
