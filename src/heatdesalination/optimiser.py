@@ -152,7 +152,9 @@ def _total_component_costs(
         if isinstance(component, Battery):
             component_costs[component] *= 1 + scenario.fractional_grid_cost_change
         if isinstance(component, HotWaterTank):
-            component_costs[component] *= 1000 * (1 + scenario.fractional_hw_tank_cost_change)
+            component_costs[component] *= 1000 * (
+                1 + scenario.fractional_hw_tank_cost_change
+            )
         if isinstance(component, PVPanel):
             component_costs[component] *= 1 + scenario.fractional_pv_cost_change
         if isinstance(component, HybridPVTPanel):
@@ -269,8 +271,7 @@ def _total_grid_cost(
         # Abu Dhabi, UAE-specific code - a tiered tariff applied based on monthly usage.
         # The industrial fixed-rate tariff for <1MW installations is used.
         return (
-            grid_lifetime_electricity_consumption  # [kWh]
-            * 0.078  # [USD/kWh]
+            grid_lifetime_electricity_consumption * 0.078  # [kWh]  # [USD/kWh]
             + fixed_grid_infrastructure_cost  # [USD]
         )  # [USD/kWh]
 
@@ -283,8 +284,7 @@ def _total_grid_cost(
         # Energy Policy 2022;162:112791.
         # doi: 10.1016/j.enpol.2022.112791.
         return (
-            grid_lifetime_electricity_consumption  # [kWh]
-            * 0.1537  # [USD/kWh]
+            grid_lifetime_electricity_consumption * 0.1537  # [kWh]  # [USD/kWh]
             + fixed_grid_infrastructure_cost  # [USD]
         )  # [USD]
 

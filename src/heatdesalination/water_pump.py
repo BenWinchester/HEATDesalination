@@ -21,7 +21,10 @@ import math
 
 from .__utils__ import CostableComponent
 
-__all__ = ("num_water_pumps", "WaterPump",)
+__all__ = (
+    "num_water_pumps",
+    "WaterPump",
+)
 
 
 class WaterPump(CostableComponent):
@@ -105,7 +108,6 @@ class WaterPump(CostableComponent):
         return self.nominal_power * (flow_rate / self.nominal_flow_rate)
 
 
-
 def num_water_pumps(htf_mass_flow_rate: float, water_pump: WaterPump) -> int:
     """
     Return the capacity of water pump(s) installed, i.e., the number of installed pumps.
@@ -119,4 +121,3 @@ def num_water_pumps(htf_mass_flow_rate: float, water_pump: WaterPump) -> int:
     """
 
     return math.ceil(htf_mass_flow_rate / water_pump.nominal_flow_rate)
-

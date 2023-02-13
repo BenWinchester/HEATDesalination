@@ -348,7 +348,7 @@ def main(
                         pv_panel: pv_system_size,
                         hybrid_pv_t_panel: pv_t_system_size,
                         solar_thermal_collector: solar_thermal_system_size,
-                        water_pump: num_water_pumps(mass_flow_rate, water_pump)
+                        water_pump: num_water_pumps(mass_flow_rate, water_pump),
                     },
                     logger,
                     scenario,
