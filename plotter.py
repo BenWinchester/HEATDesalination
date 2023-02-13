@@ -2573,7 +2573,9 @@ for location_name, location_filename in tqdm(LOCATIONS.items(), desc="locations"
                     optimisation["output"] = scenario_name
                     new_optimisations.append(optimisation)
 
-with open(os.path.join("inputs", "ecos_optimisations.json"), "w", encoding="UTF-8") as f:
+with open(
+    os.path.join("inputs", "ecos_optimisations.json"), "w", encoding="UTF-8"
+) as f:
     json.dump(new_optimisations, f)
 
 with open(os.path.join("inputs", "scenarios.json"), "w", encoding="UTF-8") as f:
@@ -2754,43 +2756,124 @@ import json
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from typing import Any
+
 sns.set_context("paper")
 sns.color_palette("colorblind")
 
 # Read input data
-with open("feb_9_23_hpc.json", "r") as f:
+with open("13_feb_23_hpc.json", "r") as f:
     data = json.load(f)
 
+
 def battery_capacities(data_to_process):
-    return [entry[1]["average_weather_conditions"][1][0] for entry in data_to_process.values()]
+    return [
+        entry[1]["average_weather_conditions"][1][0]
+        for entry in data_to_process.values()
+    ]
+
 
 def tank_capacities(data_to_process):
-    return [entry[1]["average_weather_conditions"][1][1] for entry in data_to_process.values()]
+    return [
+        entry[1]["average_weather_conditions"][1][1]
+        for entry in data_to_process.values()
+    ]
+
 
 def mass_flow_rates(data_to_process):
-    return [entry[1]["average_weather_conditions"][1][2] for entry in data_to_process.values()]
+    return [
+        entry[1]["average_weather_conditions"][1][2]
+        for entry in data_to_process.values()
+    ]
+
 
 def pv_sizes(data_to_process):
-    return [entry[1]["average_weather_conditions"][1][3] for entry in data_to_process.values()]
+    return [
+        entry[1]["average_weather_conditions"][1][3]
+        for entry in data_to_process.values()
+    ]
+
 
 def pv_t_sizes(data_to_process):
-    return [entry[1]["average_weather_conditions"][1][4] for entry in data_to_process.values()]
+    return [
+        entry[1]["average_weather_conditions"][1][4]
+        for entry in data_to_process.values()
+    ]
+
 
 def st_sizes(data_to_process):
-    return [entry[1]["average_weather_conditions"][1][5] for entry in data_to_process.values()]
+    return [
+        entry[1]["average_weather_conditions"][1][5]
+        for entry in data_to_process.values()
+    ]
 
-def hist_plot(data_to_plot):
-    plt.hist([pv_sizes(data_to_plot), pv_t_sizes(data_to_plot), st_sizes(data_to_plot), battery_capacities(data_to_plot), tank_capacities(data_to_plot)], 10, histtype="bar", label=["PV", "PV-T", "Solar-thermal", "Batteries", "Tank capacity"])
-    plt.ylabel("Frequency / optimisation scenarios")
+
+def hist_plot(data_to_plot: Any, label: str, legend_label: str | None = None):
+    sns.histplot(
+        data_to_plot,
+        x=label,
+        label=(legend_label if legend_label is not None else label).capitalize(),
+    )
     plt.xlabel("Number of components installed")
-    plt.legend()
-    plt.show()
+    plt.ylabel("Optimisation scenarios")
+
+
+# Bubble plot
+import pandas as pd
+
+
+def frame(data_to_frame):
+    return pd.DataFrame(
+        {
+            "battery": battery_capacities(data_to_frame),
+            "tank": tank_capacities(data_to_frame),
+            "mass_flow_rate": mass_flow_rates(data_to_frame),
+            "pv": pv_sizes(data_to_frame),
+            "pv_t": pv_t_sizes(data_to_frame),
+            "st": st_sizes(data_to_frame),
+        },
+    )
 
 
 abu_dhabi_data = {key: value for key, value in data.items() if "abu_dhabi" in key}
+abu_dhabi_joo = {key: value for key, value in abu_dhabi_data.items() if "_joo_" in key}
+abu_dhabi_rahimi = {
+    key: value for key, value in abu_dhabi_data.items() if "_rahimi_" in key
+}
+abu_dhabi_el = {key: value for key, value in abu_dhabi_data.items() if "_el_" in key}
+
 gran_canaria_data = {key: value for key, value in data.items() if "gran_canaria" in key}
+gran_canaria_joo = {
+    key: value for key, value in gran_canaria_data.items() if "_joo_" in key
+}
+gran_canaria_rahimi = {
+    key: value for key, value in gran_canaria_data.items() if "_rahimi_" in key
+}
+gran_canaria_el = {
+    key: value for key, value in gran_canaria_data.items() if "_el_" in key
+}
+
 la_paz_data = {key: value for key, value in data.items() if "la_paz" in key}
+la_paz_joo = {key: value for key, value in la_paz_data.items() if "_joo_" in key}
+la_paz_rahimi = {key: value for key, value in la_paz_data.items() if "_rahimi_" in key}
+la_paz_el = {key: value for key, value in la_paz_data.items() if "_el_" in key}
+
 tijuana_data = {key: value for key, value in data.items() if "tijuana" in key}
+tijuana_joo = {key: value for key, value in tijuana_data.items() if "_joo_" in key}
+tijuana_rahimi = {
+    key: value for key, value in tijuana_data.items() if "_rahimi_" in key
+}
+tijuana_el = {key: value for key, value in tijuana_data.items() if "_el_" in key}
+
+
+def solar_hist(data_to_plot):
+    _, ax = plt.subplots()
+    hist_plot(frame(data_to_plot), "pv", "PV")
+    hist_plot(frame(data_to_plot), "pv_t", "PV-T")
+    hist_plot(frame(data_to_plot), "st", "Solar-thermal")
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles[1::2], labels[1::2], bbox_to_anchor=(1.0, 1.0))
+
 
 # Abu Dhabi HIST
 hist_plot(abu_dhabi_data)
@@ -2804,39 +2887,18 @@ hist_plot(la_paz_data)
 # Tijuana HIST
 hist_plot(tijuana_data)
 
-abu_dhabi_joo = {key: value for key, value in abu_dhabi_data.items() if "_joo_" in key}
 hist_plot(abu_dhabi_joo)
 
-abu_dhabi_rahimi = {key: value for key, value in abu_dhabi_data.items() if "_rahimi_" in key}
 hist_plot(abu_dhabi_rahimi)
 
-abu_dhabi_el = {key: value for key, value in abu_dhabi_data.items() if "_el_" in key}
 hist_plot(abu_dhabi_el)
 
 
-tijuana_joo = {key: value for key, value in tijuana_data.items() if "_joo_" in key}
 hist_plot(tijuana_joo)
 
-tijuana_rahimi = {key: value for key, value in tijuana_data.items() if "_rahimi_" in key}
 hist_plot(tijuana_rahimi)
 
-tijuana_el = {key: value for key, value in tijuana_data.items() if "_el_" in key}
 hist_plot(tijuana_el)
-
-# Bubble plot
-import pandas as pd
-
-def frame(data_to_frame):
-    return pd.DataFrame(
-        {
-            "battery": battery_capacities(data_to_frame),
-            "tank": tank_capacities(data_to_frame),
-            "mass_flow_rate": mass_flow_rates(data_to_frame),
-            "pv": pv_sizes(data_to_frame),
-            "pv_t": pv_t_sizes(data_to_frame),
-            "st": st_sizes(data_to_frame),
-        },
-    )
 
 
 ##########################
@@ -2855,3 +2917,6 @@ for filename in os.listdir("."):
         continue
     with open(filename, "r", encoding="UTF-8") as f:
         data[filename] = json.load(f)[0]
+
+with open("13_feb_23_1.json", "w", encoding="UTF-8") as f:
+    json.dump(data, f)
