@@ -2767,9 +2767,9 @@ with open("14_feb_23.json", "r") as f:
     data = json.load(f)
 
 
-R = [224,240,231,82,0,237]
-G = [70,159,223,192,98,237]
-B = [6,82,190,173,100,237]
+R = [224, 240, 231, 82, 0, 237]
+G = [70, 159, 223, 192, 98, 237]
+B = [6, 82, 190, 173, 100, 237]
 
 colorblind_palette = sns.color_palette(
     [
@@ -2912,23 +2912,46 @@ def _scenario_match(key: str, tank_index: int) -> bool:
     if "joo" in key:
         return tank_index == 0
     if "rahimi" in key:
-        return tank_index ==2
+        return tank_index == 2
     return tank_index == 1
 
-def _helper_value(data_to_process, tank_index: int | None, type_number: int, variable: str, weather_type: str):
+
+def _helper_value(
+    data_to_process,
+    tank_index: int | None,
+    type_number: int,
+    variable: str,
+    weather_type: str,
+):
     if tank_index is not None:
-        return [entry[tank_index][1][weather_type][type_number][variable] for key, entry in data_to_process.items() if _scenario_match(key, tank_index)]
+        return [
+            entry[tank_index][1][weather_type][type_number][variable]
+            for key, entry in data_to_process.items()
+            if _scenario_match(key, tank_index)
+        ]
     data_to_return = []
     for index in range(3):
-        data_to_return.extend([entry[index][1][weather_type][type_number][variable] for sub_key, entry in data_to_process.items() if _scenario_match(sub_key, index)])
+        data_to_return.extend(
+            [
+                entry[index][1][weather_type][type_number][variable]
+                for sub_key, entry in data_to_process.items()
+                if _scenario_match(sub_key, index)
+            ]
+        )
     return data_to_return
 
 
-def _results_value(data_to_boxen, tank_index: int | None, variable: str, weather_type: str):
+def _results_value(
+    data_to_boxen, tank_index: int | None, variable: str, weather_type: str
+):
     return _helper_value(data_to_boxen, tank_index, 0, variable, weather_type)
 
-def _component_value(data_to_boxen, tank_index: int | None, variable: str, weather_type: str):
+
+def _component_value(
+    data_to_boxen, tank_index: int | None, variable: str, weather_type: str
+):
     return _helper_value(data_to_boxen, tank_index, 1, variable, weather_type)
+
 
 KEY_TITLES: dict[str, str] = {
     "storage_electricity_fraction": "Storage",
@@ -2943,11 +2966,20 @@ COMPONENT_TITLES: dict[int, str] = {
     2: "Mass flow rate",
     3: "PV",
     4: "PV-T",
-    5: "Solar-thermal"
+    5: "Solar-thermal",
 }
 
-def boxen_frame(data_to_boxen, tank_index: int | None = None, weather_type: str = "average_weather_conditions"):
-    scenarios_map = {(scenario_key := "scenario"): scenarios(data_to_boxen)[::3][::(3 if tank_index is not None else 1)]}
+
+def boxen_frame(
+    data_to_boxen,
+    tank_index: int | None = None,
+    weather_type: str = "average_weather_conditions",
+):
+    scenarios_map = {
+        (scenario_key := "scenario"): scenarios(data_to_boxen)[::3][
+            :: (3 if tank_index is not None else 1)
+        ]
+    }
     scenarios_map.update(
         {
             KEY_TITLES[key]: _results_value(
@@ -2964,16 +2996,22 @@ def boxen_frame(data_to_boxen, tank_index: int | None = None, weather_type: str 
     return pd.DataFrame(scenarios_map).set_index(scenario_key)
 
 
-def components_boxen_frame(data_to_boxen, tank_index: int | None = None, weather_type: str = "average_weather_conditions"):
-    scenarios_map = {(scenario_key := "scenario"): scenarios(data_to_boxen)[::3][::(3 if tank_index is not None else 1)]}
+def components_boxen_frame(
+    data_to_boxen,
+    tank_index: int | None = None,
+    weather_type: str = "average_weather_conditions",
+):
+    scenarios_map = {
+        (scenario_key := "scenario"): scenarios(data_to_boxen)[::3][
+            :: (3 if tank_index is not None else 1)
+        ]
+    }
     scenarios_map.update(
         {
             COMPONENT_TITLES[key]: _component_value(
                 data_to_boxen, tank_index, key, weather_type
             )
-            for key in [
-                0, 3, 4, 5
-            ]
+            for key in [0, 3, 4, 5]
         }
     )
     return pd.DataFrame(scenarios_map).set_index(scenario_key)
@@ -2989,29 +3027,57 @@ WEATHER_TYPE: str = "average_weather_conditions"
 
 TANK_INDEX: int | None = None
 
-sns.boxenplot(boxen_frame(abu_dhabi_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE), ax=(axis:=axes[0, 0]), k_depth=K_DEPTH)
+sns.boxenplot(
+    boxen_frame(abu_dhabi_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    ax=(axis := axes[0, 0]),
+    k_depth=K_DEPTH,
+)
 axis.set_title("Abu Dhabi, UAE")
-axis.set_ylim(max(min(min(boxen_frame(abu_dhabi_data)["Aux. heating"]), -0.05), -0.45), 1.05)
+axis.set_ylim(
+    max(min(min(boxen_frame(abu_dhabi_data)["Aux. heating"]), -0.05), -0.45), 1.05
+)
 axis.set_ylabel("Fraction")
 
-sns.boxenplot(boxen_frame(gran_canaria_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE), ax=(axis:=axes[0, 1]), k_depth=K_DEPTH)
+sns.boxenplot(
+    boxen_frame(gran_canaria_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    ax=(axis := axes[0, 1]),
+    k_depth=K_DEPTH,
+)
 axis.set_title("Gando, Gran Canaria")
-axis.set_ylim(max(min(min(boxen_frame(gran_canaria_data)["Aux. heating"]), -0.05), -0.45), 1.05)
+axis.set_ylim(
+    max(min(min(boxen_frame(gran_canaria_data)["Aux. heating"]), -0.05), -0.45), 1.05
+)
 axis.set_ylabel("Fraction")
 
-sns.boxenplot(boxen_frame(tijuana_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE), ax=(axis:=axes[1, 0]), k_depth=K_DEPTH)
+sns.boxenplot(
+    boxen_frame(tijuana_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    ax=(axis := axes[1, 0]),
+    k_depth=K_DEPTH,
+)
 axis.set_title("Tijuana, Mexico")
-axis.set_ylim(max(min(min(boxen_frame(tijuana_data)["Aux. heating"]), -0.05), -0.45), 1.05)
+axis.set_ylim(
+    max(min(min(boxen_frame(tijuana_data)["Aux. heating"]), -0.05), -0.45), 1.05
+)
 axis.set_ylabel("Fraction")
 
-sns.boxenplot(boxen_frame(la_paz_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE), ax=(axis:=axes[1, 1]), k_depth=K_DEPTH)
+sns.boxenplot(
+    boxen_frame(la_paz_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    ax=(axis := axes[1, 1]),
+    k_depth=K_DEPTH,
+)
 axis.set_title("La Paz, Mexico")
-axis.set_ylim(max(min(min(boxen_frame(la_paz_data)["Aux. heating"]), -0.05), -0.45), 1.05)
+axis.set_ylim(
+    max(min(min(boxen_frame(la_paz_data)["Aux. heating"]), -0.05), -0.45), 1.05
+)
 axis.set_ylabel("Fraction")
 
 
-
-plt.savefig("optimisation_results_boxenplot_3.png", transparent=True, dpi=300,bbox_inches='tight')
+plt.savefig(
+    "optimisation_results_boxenplot_3.png",
+    transparent=True,
+    dpi=300,
+    bbox_inches="tight",
+)
 
 
 # Components boxen plot by location
@@ -3024,27 +3090,56 @@ WEATHER_TYPE: str = "average_weather_conditions"
 
 TANK_INDEX: int | None = None
 
-sns.boxenplot(components_boxen_frame(abu_dhabi_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE), ax=(axis:=axes[0, 0]), k_depth=K_DEPTH)
+sns.boxenplot(
+    components_boxen_frame(
+        abu_dhabi_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+    ),
+    ax=(axis := axes[0, 0]),
+    k_depth=K_DEPTH,
+)
 axis.set_title("Abu Dhabi, UAE")
 # axis.set_ylim(max(min(min(boxen_frame(abu_dhabi_data)["Aux. heating"]), -0.05), -0.45), 1.05)
 axis.set_ylabel("Number of components")
 
-sns.boxenplot(components_boxen_frame(gran_canaria_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE), ax=(axis:=axes[0, 1]), k_depth=K_DEPTH)
+sns.boxenplot(
+    components_boxen_frame(
+        gran_canaria_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+    ),
+    ax=(axis := axes[0, 1]),
+    k_depth=K_DEPTH,
+)
 axis.set_title("Gando, Gran Canaria")
 # axis.set_ylim(max(min(min(boxen_frame(gran_canaria_data)["Aux. heating"]), -0.05), -0.45), 1.05)
 axis.set_ylabel("Number of components")
 
-sns.boxenplot(components_boxen_frame(tijuana_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE), ax=(axis:=axes[1, 0]), k_depth=K_DEPTH)
+sns.boxenplot(
+    components_boxen_frame(
+        tijuana_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+    ),
+    ax=(axis := axes[1, 0]),
+    k_depth=K_DEPTH,
+)
 axis.set_title("Tijuana, Mexico")
 # axis.set_ylim(max(min(min(boxen_frame(tijuana_data)["Aux. heating"]), -0.05), -0.45), 1.05)
 axis.set_ylabel("Number of components")
 
-sns.boxenplot(components_boxen_frame(la_paz_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE), ax=(axis:=axes[1, 1]), k_depth=K_DEPTH)
+sns.boxenplot(
+    components_boxen_frame(
+        la_paz_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+    ),
+    ax=(axis := axes[1, 1]),
+    k_depth=K_DEPTH,
+)
 axis.set_title("La Paz, Mexico")
 # axis.set_ylim(max(min(min(boxen_frame(la_paz_data)["Aux. heating"]), -0.05), -0.45), 1.05)
 axis.set_ylabel("Number of components")
 
-plt.savefig("optimisation_results_rahimi_component_sizes_2.png", transparent=True, dpi=300,bbox_inches='tight')
+plt.savefig(
+    "optimisation_results_rahimi_component_sizes_2.png",
+    transparent=True,
+    dpi=300,
+    bbox_inches="tight",
+)
 
 
 ["total_cost", "components", "grid", "heat_pump", "inverters"]
