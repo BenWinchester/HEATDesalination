@@ -2755,6 +2755,7 @@ plt.savefig(
 import json
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pandas as pd
 
 from typing import Any
 
@@ -2762,50 +2763,82 @@ sns.set_context("paper")
 sns.color_palette("colorblind")
 
 # Read input data
-with open("13_feb_23_hpc.json", "r") as f:
+with open("14_feb_23.json", "r") as f:
     data = json.load(f)
 
 
-def battery_capacities(data_to_process):
-    return [
-        entry[1]["average_weather_conditions"][1][0]
-        for entry in data_to_process.values()
+R = [224,240,231,82,0,237]
+G = [70,159,223,192,98,237]
+B = [6,82,190,173,100,237]
+
+colorblind_palette = sns.color_palette(
+    [
+        "#E04606",
+        "#F09F52",
+        # "#E7DFBE",
+        "#52C0AD",
+        "#006264",
+        "#EDEDED",
     ]
+)
+
+sns.set_palette(colorblind_palette)
 
 
-def tank_capacities(data_to_process):
-    return [
-        entry[1]["average_weather_conditions"][1][1]
-        for entry in data_to_process.values()
-    ]
+def _process_data(
+    data_to_process: pd.DataFrame,
+    key_number: int,
+    weather_type: str = "average_weather_conditions",
+) -> list[float]:
+    processed_data: list[float] = []
+    for entry in data_to_process.values():
+        processed_data.extend(
+            [sub_entry[1][weather_type][1][key_number] for sub_entry in entry]
+        )
+    return processed_data
 
 
-def mass_flow_rates(data_to_process):
-    return [
-        entry[1]["average_weather_conditions"][1][2]
-        for entry in data_to_process.values()
-    ]
+def battery_capacities(
+    data_to_process, weather_type: str = "average_weather_conditions"
+):
+    return _process_data(data_to_process, 0, weather_type)
 
 
-def pv_sizes(data_to_process):
-    return [
-        entry[1]["average_weather_conditions"][1][3]
-        for entry in data_to_process.values()
-    ]
+def tank_capacities(
+    data_to_process: dict[str, Any], weather_type: str = "average_weather_conditions"
+):
+    return _process_data(data_to_process, 1, weather_type)
 
 
-def pv_t_sizes(data_to_process):
-    return [
-        entry[1]["average_weather_conditions"][1][4]
-        for entry in data_to_process.values()
-    ]
+def mass_flow_rates(
+    data_to_process: dict[str, Any], weather_type: str = "average_weather_conditions"
+):
+    return _process_data(data_to_process, 2, weather_type)
 
 
-def st_sizes(data_to_process):
-    return [
-        entry[1]["average_weather_conditions"][1][5]
-        for entry in data_to_process.values()
-    ]
+def pv_sizes(
+    data_to_process: dict[str, Any], weather_type: str = "average_weather_conditions"
+):
+    return _process_data(data_to_process, 3, weather_type)
+
+
+def pv_t_sizes(
+    data_to_process: dict[str, Any], weather_type: str = "average_weather_conditions"
+):
+    return _process_data(data_to_process, 4, weather_type)
+
+
+def st_sizes(
+    data_to_process: dict[str, Any], weather_type: str = "average_weather_conditions"
+):
+    return _process_data(data_to_process, 5, weather_type)
+
+
+def scenarios(data_to_process: dict[str, Any]) -> list[str]:
+    scenarios = []
+    for entry in data_to_process.keys():
+        scenarios.extend(3 * [entry.split(".json")[0]])
+    return scenarios
 
 
 def hist_plot(data_to_plot: Any, label: str, legend_label: str | None = None):
@@ -2819,12 +2852,10 @@ def hist_plot(data_to_plot: Any, label: str, legend_label: str | None = None):
 
 
 # Bubble plot
-import pandas as pd
-
-
 def frame(data_to_frame):
     return pd.DataFrame(
         {
+            (scenario_key := "scenario"): scenarios(data_to_frame),
             "battery": battery_capacities(data_to_frame),
             "tank": tank_capacities(data_to_frame),
             "mass_flow_rate": mass_flow_rates(data_to_frame),
@@ -2832,7 +2863,7 @@ def frame(data_to_frame):
             "pv_t": pv_t_sizes(data_to_frame),
             "st": st_sizes(data_to_frame),
         },
-    )
+    ).set_index(scenario_key)
 
 
 abu_dhabi_data = {key: value for key, value in data.items() if "abu_dhabi" in key}
@@ -2875,6 +2906,151 @@ def solar_hist(data_to_plot):
     ax.legend(handles[1::2], labels[1::2], bbox_to_anchor=(1.0, 1.0))
 
 
+# Boxen plot
+def _scenario_match(key: str, tank_index: int) -> bool:
+    """Responsible for determining whether a result has the correct tank index."""
+    if "joo" in key:
+        return tank_index == 0
+    if "rahimi" in key:
+        return tank_index ==2
+    return tank_index == 1
+
+def _helper_value(data_to_process, tank_index: int | None, type_number: int, variable: str, weather_type: str):
+    if tank_index is not None:
+        return [entry[tank_index][1][weather_type][type_number][variable] for key, entry in data_to_process.items() if _scenario_match(key, tank_index)]
+    data_to_return = []
+    for index in range(3):
+        data_to_return.extend([entry[index][1][weather_type][type_number][variable] for sub_key, entry in data_to_process.items() if _scenario_match(sub_key, index)])
+    return data_to_return
+
+
+def _results_value(data_to_boxen, tank_index: int | None, variable: str, weather_type: str):
+    return _helper_value(data_to_boxen, tank_index, 0, variable, weather_type)
+
+def _component_value(data_to_boxen, tank_index: int | None, variable: str, weather_type: str):
+    return _helper_value(data_to_boxen, tank_index, 1, variable, weather_type)
+
+KEY_TITLES: dict[str, str] = {
+    "storage_electricity_fraction": "Storage",
+    "solar_electricity_fraction": "Solar",
+    "grid_electricity_fraction": "Grid",
+    "auxiliary_heating_fraction": "Aux. heating",
+}
+
+COMPONENT_TITLES: dict[int, str] = {
+    0: "Batteries",
+    1: "Buffer tank capacity",
+    2: "Mass flow rate",
+    3: "PV",
+    4: "PV-T",
+    5: "Solar-thermal"
+}
+
+def boxen_frame(data_to_boxen, tank_index: int | None = None, weather_type: str = "average_weather_conditions"):
+    scenarios_map = {(scenario_key := "scenario"): scenarios(data_to_boxen)[::3][::(3 if tank_index is not None else 1)]}
+    scenarios_map.update(
+        {
+            KEY_TITLES[key]: _results_value(
+                data_to_boxen, tank_index, key, weather_type
+            )
+            for key in [
+                "storage_electricity_fraction",
+                "solar_electricity_fraction",
+                "grid_electricity_fraction",
+                "auxiliary_heating_fraction",
+            ]
+        }
+    )
+    return pd.DataFrame(scenarios_map).set_index(scenario_key)
+
+
+def components_boxen_frame(data_to_boxen, tank_index: int | None = None, weather_type: str = "average_weather_conditions"):
+    scenarios_map = {(scenario_key := "scenario"): scenarios(data_to_boxen)[::3][::(3 if tank_index is not None else 1)]}
+    scenarios_map.update(
+        {
+            COMPONENT_TITLES[key]: _component_value(
+                data_to_boxen, tank_index, key, weather_type
+            )
+            for key in [
+                0, 3, 4, 5
+            ]
+        }
+    )
+    return pd.DataFrame(scenarios_map).set_index(scenario_key)
+
+
+# Outputs boxen plot by location
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+K_DEPTH: int = 4
+WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+# WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+
+sns.boxenplot(boxen_frame(abu_dhabi_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE), ax=(axis:=axes[0, 0]), k_depth=K_DEPTH)
+axis.set_title("Abu Dhabi, UAE")
+axis.set_ylim(max(min(min(boxen_frame(abu_dhabi_data)["Aux. heating"]), -0.05), -0.45), 1.05)
+axis.set_ylabel("Fraction")
+
+sns.boxenplot(boxen_frame(gran_canaria_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE), ax=(axis:=axes[0, 1]), k_depth=K_DEPTH)
+axis.set_title("Gando, Gran Canaria")
+axis.set_ylim(max(min(min(boxen_frame(gran_canaria_data)["Aux. heating"]), -0.05), -0.45), 1.05)
+axis.set_ylabel("Fraction")
+
+sns.boxenplot(boxen_frame(tijuana_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE), ax=(axis:=axes[1, 0]), k_depth=K_DEPTH)
+axis.set_title("Tijuana, Mexico")
+axis.set_ylim(max(min(min(boxen_frame(tijuana_data)["Aux. heating"]), -0.05), -0.45), 1.05)
+axis.set_ylabel("Fraction")
+
+sns.boxenplot(boxen_frame(la_paz_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE), ax=(axis:=axes[1, 1]), k_depth=K_DEPTH)
+axis.set_title("La Paz, Mexico")
+axis.set_ylim(max(min(min(boxen_frame(la_paz_data)["Aux. heating"]), -0.05), -0.45), 1.05)
+axis.set_ylabel("Fraction")
+
+
+
+plt.savefig("optimisation_results_boxenplot_3.png", transparent=True, dpi=300,bbox_inches='tight')
+
+
+# Components boxen plot by location
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+K_DEPTH: int = 4
+WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+# WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+
+sns.boxenplot(components_boxen_frame(abu_dhabi_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE), ax=(axis:=axes[0, 0]), k_depth=K_DEPTH)
+axis.set_title("Abu Dhabi, UAE")
+# axis.set_ylim(max(min(min(boxen_frame(abu_dhabi_data)["Aux. heating"]), -0.05), -0.45), 1.05)
+axis.set_ylabel("Number of components")
+
+sns.boxenplot(components_boxen_frame(gran_canaria_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE), ax=(axis:=axes[0, 1]), k_depth=K_DEPTH)
+axis.set_title("Gando, Gran Canaria")
+# axis.set_ylim(max(min(min(boxen_frame(gran_canaria_data)["Aux. heating"]), -0.05), -0.45), 1.05)
+axis.set_ylabel("Number of components")
+
+sns.boxenplot(components_boxen_frame(tijuana_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE), ax=(axis:=axes[1, 0]), k_depth=K_DEPTH)
+axis.set_title("Tijuana, Mexico")
+# axis.set_ylim(max(min(min(boxen_frame(tijuana_data)["Aux. heating"]), -0.05), -0.45), 1.05)
+axis.set_ylabel("Number of components")
+
+sns.boxenplot(components_boxen_frame(la_paz_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE), ax=(axis:=axes[1, 1]), k_depth=K_DEPTH)
+axis.set_title("La Paz, Mexico")
+# axis.set_ylim(max(min(min(boxen_frame(la_paz_data)["Aux. heating"]), -0.05), -0.45), 1.05)
+axis.set_ylabel("Number of components")
+
+plt.savefig("optimisation_results_rahimi_component_sizes_2.png", transparent=True, dpi=300,bbox_inches='tight')
+
+
+["total_cost", "components", "grid", "heat_pump", "inverters"]
+
+["dumped_electricity"]
+
 # Abu Dhabi HIST
 hist_plot(abu_dhabi_data)
 
@@ -2916,7 +3092,7 @@ for filename in os.listdir("."):
     if "feb" in filename:
         continue
     with open(filename, "r", encoding="UTF-8") as f:
-        data[filename] = json.load(f)[0]
+        data[filename] = json.load(f)
 
-with open("13_feb_23_1.json", "w", encoding="UTF-8") as f:
+with open("14_feb_23.json", "w", encoding="UTF-8") as f:
     json.dump(data, f)
