@@ -63,6 +63,18 @@ solar_collectors:
     reference_temperature: !!float 25
     thermal_coefficient: 0.0038
 
+  - name: !!str rec_325_n_peak_mono
+    type: !!str pv
+    absorptivity: 0.93
+    area: !!float 1.67
+    cost: !!float 154.64
+    emissivity: 0.9
+    land_use: !!float 1.67
+    pv_unit: !!float 0.325
+    reference_efficiency: !!float 0.195
+    reference_temperature: !!float 25
+    thermal_coefficient: 0.0035
+
   ############################
   # Solar-thermal collectors #
   ############################
