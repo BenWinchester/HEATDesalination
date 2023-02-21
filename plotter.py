@@ -2504,7 +2504,7 @@ LOCATIONS = {
 PLANTS: list[str] = ["joo_med_24_hour", "el_nashar_24_hour", "rahimi_24_hour"]
 
 # lists of various collectors
-PV_PANELS: list[str] = ["lg_solar_330_wpcello", "sharp_nd_af"]
+PV_PANELS: list[str] = ["rec_325_n_peak_mono", "sharp_nd_af"]
 PV_T_PANELS: list[str] = [
     "dualsun_spring_300m_insulated",
     "dualsun_spring_400_insulated",
@@ -2580,6 +2580,51 @@ with open(
 
 with open(os.path.join("inputs", "scenarios.json"), "w", encoding="UTF-8") as f:
     json.dump({"scenarios": new_scenarios}, f)
+
+
+# Code for generating ECOS sensitivity anslysis
+import numpy as np
+
+new_scenarios = []
+new_optimisations = []
+
+FRACTIONAL_CHANGES = [
+    "fractional_grid_cost_change",
+    "fractional_pv_cost_change",
+    "fractional_pvt_cost_change",
+    "fractional_st_cost_change",
+]
+
+RANGE: float = 0.2
+
+# Iterate through these variables and define values from -0.2 to 0.2.
+for fractional_change_name in tqdm(FRACTIONAL_CHANGES, desc="fractional_changes"):
+    for change_value in np.linspace(-RANGE, RANGE, 101):
+        for location_name, location_filename in tqdm(LOCATIONS.items(), desc="locations", leave=False):
+            # Cycle through the plants
+            for plant in tqdm(PLANTS, desc="plants", leave=False):
+                # Cycle through the PV options available
+                for pv_panel in tqdm(PV_PANELS, desc="pv panels", leave=False):
+                    # Cycle through the PV-T options available
+                        scenario = DEFAULT_SCENARIO.copy()
+                        # Change the grid-cost scheme to match the scenario.
+                        scenario[grid_cost_scheme] = GRID_COST_SCHEMES[location_name]
+                        scenario[plant_kwarg] = plant
+                        scenario[pv] = pv_panel
+                        scenario_name = (
+                            f"{location_name}_"
+                            f"{plant.split('_')[0]}_"
+                            f"{pv_panel.split('_')[0]}_400_augusta"
+                        )
+                        scenario[name] = scenario_name
+                        scenario[fractional_change_name] = change_value
+                        new_scenarios.append(scenario)
+                        optimisation = DEFAULT_OPTIMISATION.copy()
+                        optimisation["scenario"] = scenario_name
+                        optimisation["location"] = LOCATIONS[location_name]
+                        optimisation["output"] = scenario_name
+                        new_optimisations.append(optimisation)
+
 
 
 grid_optimisations = []
