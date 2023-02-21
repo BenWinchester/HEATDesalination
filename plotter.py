@@ -2788,7 +2788,7 @@ colorblind_palette = sns.color_palette(
 sns.set_palette(colorblind_palette)
 
 # Read input data
-with open("14_feb_23.json", "r") as f:
+with open("21_feb_23.json", "r") as f:
     data = json.load(f)
 
 # Define helper functions
@@ -2858,8 +2858,11 @@ def _etc_euro_data(data_to_process: dict[str, Any]):
 def _etc_aug_data(data_to_process: dict[str, Any]):
     return {key: (value if "augusta" in key else None) for key, value in data_to_process.items()}
 
+# def _m_si_data(data_to_process: dict[str, Any]):
+#     return {key: (value if "lg" in key else None) for key, value in data_to_process.items()}
+
 def _m_si_data(data_to_process: dict[str, Any]):
-    return {key: (value if "lg" in key else None) for key, value in data_to_process.items()}
+    return {key: (value if "rec" in key else None) for key, value in data_to_process.items()}
 
 def _p_si_data(data_to_process: dict[str, Any]):
     return {key: (value if "sharp" in key else None) for key, value in data_to_process.items()}
@@ -3094,7 +3097,7 @@ sns.boxenplot(
 )
 axis.set_title("Abu Dhabi, UAE")
 axis.set_ylim(
-    max(min(min(boxen_frame(abu_dhabi_data)["Aux. heating"]), -0.05), -0.45), 1.05
+    max(min(min(boxen_frame(abu_dhabi_data)["Aux. heating"]) -0.05, -0.05), -0.45), 1.05
 )
 axis.set_ylabel("Fraction")
 axis.text(-0.08, 1.1, "a.", transform=axis.transAxes,
@@ -3107,7 +3110,7 @@ sns.boxenplot(
 )
 axis.set_title("Gando, Gran Canaria")
 axis.set_ylim(
-    max(min(min(boxen_frame(gran_canaria_data)["Aux. heating"]), -0.05), -0.45), 1.05
+    max(min(min(boxen_frame(gran_canaria_data)["Aux. heating"]) -0.05, -0.05), -0.45), 1.05
 )
 axis.set_ylabel("Fraction")
 axis.text(-0.08, 1.1, "b.", transform=axis.transAxes,
@@ -3120,7 +3123,7 @@ sns.boxenplot(
 )
 axis.set_title("Tijuana, Mexico")
 axis.set_ylim(
-    max(min(min(boxen_frame(tijuana_data)["Aux. heating"]), -0.05), -0.45), 1.05
+    max(min(min(boxen_frame(tijuana_data)["Aux. heating"]) -0.05, -0.05), -0.45), 1.05
 )
 axis.set_ylabel("Fraction")
 axis.text(-0.08, 1.1, "c.", transform=axis.transAxes,
@@ -3133,7 +3136,7 @@ sns.boxenplot(
 )
 axis.set_title("La Paz, Mexico")
 axis.set_ylim(
-    max(min(min(boxen_frame(la_paz_data)["Aux. heating"]), -0.05), -0.45), 1.05
+    max(min(min(boxen_frame(la_paz_data)["Aux. heating"]) -0.05, -0.05), -0.45), 1.05
 )
 axis.set_ylabel("Fraction")
 axis.text(-0.08, 1.1, "d.", transform=axis.transAxes,
@@ -3159,7 +3162,7 @@ TANK_INDEX: int | None = None
 
 sns.boxenplot(
     components_boxen_frame(
-        abu_dhabi_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        abu_dhabi_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
     ),
     ax=(axis := axes[0, 0]),
     k_depth=K_DEPTH,
@@ -3172,7 +3175,7 @@ axis.text(-0.08, 1.1, "a.", transform=axis.transAxes,
 
 sns.boxenplot(
     components_boxen_frame(
-        gran_canaria_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        gran_canaria_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
     ),
     ax=(axis := axes[0, 1]),
     k_depth=K_DEPTH,
@@ -3185,7 +3188,7 @@ axis.text(-0.08, 1.1, "b.", transform=axis.transAxes,
 
 sns.boxenplot(
     components_boxen_frame(
-        tijuana_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        tijuana_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
     ),
     ax=(axis := axes[1, 0]),
     k_depth=K_DEPTH,
@@ -3198,7 +3201,7 @@ axis.text(-0.08, 1.1, "c.", transform=axis.transAxes,
 
 sns.boxenplot(
     components_boxen_frame(
-        la_paz_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        la_paz_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
     ),
     ax=(axis := axes[1, 1]),
     k_depth=K_DEPTH,
@@ -3210,7 +3213,7 @@ axis.text(-0.08, 1.1, "d.", transform=axis.transAxes,
       fontsize=16, fontweight='bold', va='top', ha='right')
 
 plt.savefig(
-    "rahimi_component_sizes_4.png",
+    "joo_nashar_component_sizes_5.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -3537,5 +3540,5 @@ for filename in os.listdir("."):
     with open(filename, "r", encoding="UTF-8") as f:
         data[filename] = json.load(f)
 
-with open("14_feb_23.json", "w", encoding="UTF-8") as f:
+with open("21_feb_23.json", "w", encoding="UTF-8") as f:
     json.dump(data, f)
