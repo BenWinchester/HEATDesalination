@@ -2600,31 +2600,34 @@ RANGE: float = 0.2
 # Iterate through these variables and define values from -0.2 to 0.2.
 for fractional_change_name in tqdm(FRACTIONAL_CHANGES, desc="fractional_changes"):
     for change_value in np.linspace(-RANGE, RANGE, 101):
-        for location_name, location_filename in tqdm(LOCATIONS.items(), desc="locations", leave=False):
+        for location_name, location_filename in tqdm(
+            LOCATIONS.items(), desc="locations", leave=False
+        ):
             # Cycle through the plants
             for plant in tqdm(PLANTS, desc="plants", leave=False):
                 # Cycle through the PV options available
                 for pv_panel in tqdm(PV_PANELS, desc="pv panels", leave=False):
                     # Cycle through the PV-T options available
-                        scenario = DEFAULT_SCENARIO.copy()
-                        # Change the grid-cost scheme to match the scenario.
-                        scenario[grid_cost_scheme] = GRID_COST_SCHEMES[location_name]
-                        scenario[plant_kwarg] = plant
-                        scenario[pv] = pv_panel
-                        scenario_name = (
-                            f"{location_name}_"
-                            f"{plant.split('_')[0]}_"
-                            f"{pv_panel.split('_')[0]}_400_augusta"
-                        )
-                        scenario[name] = scenario_name
-                        scenario[fractional_change_name] = change_value
-                        new_scenarios.append(scenario)
-                        optimisation = DEFAULT_OPTIMISATION.copy()
-                        optimisation["scenario"] = scenario_name
-                        optimisation["location"] = LOCATIONS[location_name]
-                        optimisation["output"] = scenario_name
-                        new_optimisations.append(optimisation)
-
+                    scenario = DEFAULT_SCENARIO.copy()
+                    # Change the grid-cost scheme to match the scenario.
+                    scenario[grid_cost_scheme] = GRID_COST_SCHEMES[location_name]
+                    scenario[plant_kwarg] = plant
+                    scenario[pv] = pv_panel
+                    scenario_name = (
+                        f"{location_name}_"
+                        f"{plant.split('_')[0]}_"
+                        f"{pv_panel.split('_')[0]}_400_augusta_"
+                        f"frac_{fractional_change_name.split('_')[1]}_"
+                        f"{round(change_value, 3)}"
+                    )
+                    scenario[name] = scenario_name
+                    scenario[fractional_change_name] = change_value
+                    new_scenarios.append(scenario)
+                    optimisation = DEFAULT_OPTIMISATION.copy()
+                    optimisation["scenario"] = scenario_name
+                    optimisation["location"] = LOCATIONS[location_name]
+                    optimisation["output"] = scenario_name
+                    new_optimisations.append(optimisation)
 
 
 grid_optimisations = []
@@ -2806,7 +2809,7 @@ from matplotlib import rc
 from typing import Any
 
 
-rc('font',**{'family':'sans-serif','sans-serif':['Arial']})
+rc("font", **{"family": "sans-serif", "sans-serif": ["Arial"]})
 sns.set_context("paper")
 # sns.color_palette("colorblind")
 sns.set_style("whitegrid")
@@ -2835,6 +2838,7 @@ sns.set_palette(colorblind_palette)
 # Read input data
 with open("21_feb_23.json", "r") as f:
     data = json.load(f)
+
 
 # Define helper functions
 def _process_data(
@@ -2885,32 +2889,61 @@ def st_sizes(
 ):
     return _process_data(data_to_process, 5, weather_type)
 
+
 def _dual_300_data(data_to_process: dict[str, Any]):
-    return {key: (value if "300" in key else None) for key, value in data_to_process.items()}
+    return {
+        key: (value if "300" in key else None) for key, value in data_to_process.items()
+    }
+
 
 def _dual_400_data(data_to_process: dict[str, Any]):
-    return {key: (value if "400" in key else None) for key, value in data_to_process.items()}
+    return {
+        key: (value if "400" in key else None) for key, value in data_to_process.items()
+    }
+
 
 def _soli_data(data_to_process: dict[str, Any]):
-    return {key: (value if "soli" in key else None) for key, value in data_to_process.items()}
+    return {
+        key: (value if "soli" in key else None)
+        for key, value in data_to_process.items()
+    }
+
 
 def _fpc_data(data_to_process: dict[str, Any]):
-    return {key: (value if "sti" in key else None) for key, value in data_to_process.items()}
+    return {
+        key: (value if "sti" in key else None) for key, value in data_to_process.items()
+    }
+
 
 def _etc_euro_data(data_to_process: dict[str, Any]):
-    return {key: (value if "eurotherm" in key else None) for key, value in data_to_process.items()}
+    return {
+        key: (value if "eurotherm" in key else None)
+        for key, value in data_to_process.items()
+    }
+
 
 def _etc_aug_data(data_to_process: dict[str, Any]):
-    return {key: (value if "augusta" in key else None) for key, value in data_to_process.items()}
+    return {
+        key: (value if "augusta" in key else None)
+        for key, value in data_to_process.items()
+    }
+
 
 # def _m_si_data(data_to_process: dict[str, Any]):
 #     return {key: (value if "lg" in key else None) for key, value in data_to_process.items()}
 
+
 def _m_si_data(data_to_process: dict[str, Any]):
-    return {key: (value if "rec" in key else None) for key, value in data_to_process.items()}
+    return {
+        key: (value if "rec" in key else None) for key, value in data_to_process.items()
+    }
+
 
 def _p_si_data(data_to_process: dict[str, Any]):
-    return {key: (value if "sharp" in key else None) for key, value in data_to_process.items()}
+    return {
+        key: (value if "sharp" in key else None)
+        for key, value in data_to_process.items()
+    }
 
 
 def scenarios(data_to_process: dict[str, Any]) -> list[str]:
@@ -3004,7 +3037,11 @@ def _helper_value(
 ):
     if tank_index is not None:
         return [
-            (entry[tank_index][1][weather_type][type_number][variable] if entry is not None else None)
+            (
+                entry[tank_index][1][weather_type][type_number][variable]
+                if entry is not None
+                else None
+            )
             for key, entry in data_to_process.items()
             if _scenario_match(key, tank_index)
         ]
@@ -3012,7 +3049,11 @@ def _helper_value(
     for index in range(3):
         data_to_return.extend(
             [
-                (entry[index][1][weather_type][type_number][variable] if entry is not None else None)
+                (
+                    entry[index][1][weather_type][type_number][variable]
+                    if entry is not None
+                    else None
+                )
                 for sub_key, entry in data_to_process.items()
                 if _scenario_match(sub_key, index)
             ]
@@ -3095,12 +3136,13 @@ def components_boxen_frame(
     )
     return pd.DataFrame(scenarios_map).set_index(scenario_key)
 
+
 COST_KEY_TITLES: dict[str, str] = {
     "total_cost": "Total",
     "components": "Components",
     "grid": "Grid",
     "heat_pump": "Heat-pump",
-    "inverters": "Inverter(s)"
+    "inverters": "Inverter(s)",
 }
 
 
@@ -3116,9 +3158,12 @@ def costs_boxen_frame(
     }
     scenarios_map.update(
         {
-            COST_KEY_TITLES[key]: [(entry  / 10 ** 6 if entry is not None else entry) for entry in _results_value(
-                data_to_boxen, tank_index, key, weather_type
-            )]
+            COST_KEY_TITLES[key]: [
+                (entry / 10**6 if entry is not None else entry)
+                for entry in _results_value(
+                    data_to_boxen, tank_index, key, weather_type
+                )
+            ]
             for key in ["total_cost", "components", "grid", "heat_pump", "inverters"]
         }
     )
@@ -3142,11 +3187,20 @@ sns.boxenplot(
 )
 axis.set_title("Abu Dhabi, UAE")
 axis.set_ylim(
-    max(min(min(boxen_frame(abu_dhabi_data)["Aux. heating"]) -0.05, -0.05), -0.45), 1.05
+    max(min(min(boxen_frame(abu_dhabi_data)["Aux. heating"]) - 0.05, -0.05), -0.45),
+    1.05,
 )
 axis.set_ylabel("Fraction")
-axis.text(-0.08, 1.1, "a.", transform=axis.transAxes,
-      fontsize=16, fontweight='bold', va='top', ha='right')
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
 
 sns.boxenplot(
     boxen_frame(gran_canaria_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
@@ -3155,11 +3209,20 @@ sns.boxenplot(
 )
 axis.set_title("Gando, Gran Canaria")
 axis.set_ylim(
-    max(min(min(boxen_frame(gran_canaria_data)["Aux. heating"]) -0.05, -0.05), -0.45), 1.05
+    max(min(min(boxen_frame(gran_canaria_data)["Aux. heating"]) - 0.05, -0.05), -0.45),
+    1.05,
 )
 axis.set_ylabel("Fraction")
-axis.text(-0.08, 1.1, "b.", transform=axis.transAxes,
-      fontsize=16, fontweight='bold', va='top', ha='right')
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
 
 sns.boxenplot(
     boxen_frame(tijuana_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
@@ -3168,11 +3231,19 @@ sns.boxenplot(
 )
 axis.set_title("Tijuana, Mexico")
 axis.set_ylim(
-    max(min(min(boxen_frame(tijuana_data)["Aux. heating"]) -0.05, -0.05), -0.45), 1.05
+    max(min(min(boxen_frame(tijuana_data)["Aux. heating"]) - 0.05, -0.05), -0.45), 1.05
 )
 axis.set_ylabel("Fraction")
-axis.text(-0.08, 1.1, "c.", transform=axis.transAxes,
-      fontsize=16, fontweight='bold', va='top', ha='right')
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
 
 sns.boxenplot(
     boxen_frame(la_paz_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
@@ -3181,11 +3252,19 @@ sns.boxenplot(
 )
 axis.set_title("La Paz, Mexico")
 axis.set_ylim(
-    max(min(min(boxen_frame(la_paz_data)["Aux. heating"]) -0.05, -0.05), -0.45), 1.05
+    max(min(min(boxen_frame(la_paz_data)["Aux. heating"]) - 0.05, -0.05), -0.45), 1.05
 )
 axis.set_ylabel("Fraction")
-axis.text(-0.08, 1.1, "d.", transform=axis.transAxes,
-      fontsize=16, fontweight='bold', va='top', ha='right')
+axis.text(
+    -0.08,
+    1.1,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
 
 
 plt.savefig(
@@ -3215,8 +3294,16 @@ sns.boxenplot(
 axis.set_title("Abu Dhabi, UAE")
 # axis.set_ylim(max(min(min(boxen_frame(abu_dhabi_data)["Aux. heating"]), -0.05), -0.45), 1.05)
 axis.set_ylabel("Number of components")
-axis.text(-0.08, 1.1, "a.", transform=axis.transAxes,
-      fontsize=16, fontweight='bold', va='top', ha='right')
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
 
 sns.boxenplot(
     components_boxen_frame(
@@ -3228,8 +3315,16 @@ sns.boxenplot(
 axis.set_title("Gando, Gran Canaria")
 # axis.set_ylim(max(min(min(boxen_frame(gran_canaria_data)["Aux. heating"]), -0.05), -0.45), 1.05)
 axis.set_ylabel("Number of components")
-axis.text(-0.08, 1.1, "b.", transform=axis.transAxes,
-      fontsize=16, fontweight='bold', va='top', ha='right')
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
 
 sns.boxenplot(
     components_boxen_frame(
@@ -3241,8 +3336,16 @@ sns.boxenplot(
 axis.set_title("Tijuana, Mexico")
 # axis.set_ylim(max(min(min(boxen_frame(tijuana_data)["Aux. heating"]), -0.05), -0.45), 1.05)
 axis.set_ylabel("Number of components")
-axis.text(-0.08, 1.1, "c.", transform=axis.transAxes,
-      fontsize=16, fontweight='bold', va='top', ha='right')
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
 
 sns.boxenplot(
     components_boxen_frame(
@@ -3254,8 +3357,16 @@ sns.boxenplot(
 axis.set_title("La Paz, Mexico")
 # axis.set_ylim(max(min(min(boxen_frame(la_paz_data)["Aux. heating"]), -0.05), -0.45), 1.05)
 axis.set_ylabel("Number of components")
-axis.text(-0.08, 1.1, "d.", transform=axis.transAxes,
-      fontsize=16, fontweight='bold', va='top', ha='right')
+axis.text(
+    -0.08,
+    1.1,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
 
 plt.savefig(
     "joo_nashar_component_sizes_5.png",
@@ -3264,13 +3375,20 @@ plt.savefig(
     bbox_inches="tight",
 )
 
+
 # Plots of the total cost based on the technology type
-def cost_by_tech_frame(data_to_cost_by_tech: dict[str, Any], *, cost_key: str = "Total"):
+def cost_by_tech_frame(
+    data_to_cost_by_tech: dict[str, Any], *, cost_key: str = "Total"
+):
     """Return a dataframe with columns containing the cost of each technology type"""
     return pd.DataFrame(
         {
-            "D.S. 300": costs_boxen_frame(_dual_300_data(data_to_cost_by_tech))[cost_key],
-            "D.S. 400": costs_boxen_frame(_dual_400_data(data_to_cost_by_tech))[cost_key],
+            "D.S. 300": costs_boxen_frame(_dual_300_data(data_to_cost_by_tech))[
+                cost_key
+            ],
+            "D.S. 400": costs_boxen_frame(_dual_400_data(data_to_cost_by_tech))[
+                cost_key
+            ],
             "Solimp.": costs_boxen_frame(_soli_data(data_to_cost_by_tech))[cost_key],
             "m-Si PV": costs_boxen_frame(_m_si_data(data_to_cost_by_tech))[cost_key],
             "p-Si PV": costs_boxen_frame(_p_si_data(data_to_cost_by_tech))[cost_key],
@@ -3279,6 +3397,7 @@ def cost_by_tech_frame(data_to_cost_by_tech: dict[str, Any], *, cost_key: str = 
             "Euro.": costs_boxen_frame(_etc_euro_data(data_to_cost_by_tech))[cost_key],
         }
     )
+
 
 # Plotting the variations
 from matplotlib import ticker
@@ -3296,7 +3415,7 @@ data_to_variation_plot = tijuana_data.copy()
 sns.boxenplot(
     cost_by_tech_frame(
         {key: value for key, value in data_to_variation_plot.items() if "joo" in key},
-        cost_key="Total"
+        cost_key="Total",
     ),
     ax=(axis := axes[0]),
     k_depth=K_DEPTH,
@@ -3305,15 +3424,23 @@ axis.set_title("Joo et al., 3 tonnes / day")
 axis.set_yscale(Y_SCALE)
 axis.set_ylabel("Total lifetime system cost / MUSD")
 axis.set_xlabel("Technology type specified")
-axis.text(-0.08, 1.1, "a.", transform=axis.transAxes,
-      fontsize=16, fontweight='bold', va='top', ha='right')
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
 ax.yaxis.set_minor_formatter(ticker.ScalarFormatter())
 ax.yaxis.set_major_formatter(ticker.ScalarFormatter())
 
 sns.boxenplot(
     cost_by_tech_frame(
         {key: value for key, value in data_to_variation_plot.items() if "el" in key},
-        cost_key="Total"
+        cost_key="Total",
     ),
     ax=(axis := axes[1]),
     k_depth=K_DEPTH,
@@ -3322,14 +3449,26 @@ axis.set_title("El-Nashar et al., 120 tonnes / day")
 axis.set_yscale(Y_SCALE)
 axis.set_ylabel("Total lifetime system cost / MUSD")
 axis.set_xlabel("Technology type specified")
-axis.text(-0.08, 1.1, "b.", transform=axis.transAxes,
-      fontsize=16, fontweight='bold', va='top', ha='right')
-axis.ticklabel_format(style='plain', axis='y',useOffset=False)
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 sns.boxenplot(
     cost_by_tech_frame(
-        {key: value for key, value in data_to_variation_plot.items() if "rahimi" in key},
-        cost_key="Total"
+        {
+            key: value
+            for key, value in data_to_variation_plot.items()
+            if "rahimi" in key
+        },
+        cost_key="Total",
     ),
     ax=(axis := axes[2]),
     k_depth=K_DEPTH,
@@ -3338,19 +3477,24 @@ axis.set_title("Rahimi et al., 1694 tonnes / day")
 axis.set_yscale(Y_SCALE)
 axis.set_ylabel("Total lifetime system cost / MUSD")
 axis.set_xlabel("Technology type specified")
-axis.text(-0.08, 1.1, "c.", transform=axis.transAxes,
-      fontsize=16, fontweight='bold', va='top', ha='right')
-axis.ticklabel_format(style='plain', axis='y',useOffset=False)
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 # axis.set_title("La Paz, Mexico")
 # axis.set_ylim(max(min(min(boxen_frame(la_paz_data)["Aux. heating"]), -0.05), -0.45), 1.05)
 
 
 plt.savefig(
-    "tijuana_technology_types.png",
-    transparent=True,
-    dpi=300,
-    bbox_inches="tight"
+    "tijuana_technology_types.png", transparent=True, dpi=300, bbox_inches="tight"
 )
 
 plt.show()
@@ -3370,10 +3514,7 @@ TANK_INDEX: int | None = None
 Y_SCALE = "linear"
 
 sns.boxenplot(
-    cost_by_tech_frame(
-        abu_dhabi_joo,
-        cost_key="Total"
-    ),
+    cost_by_tech_frame(abu_dhabi_joo, cost_key="Total"),
     ax=(axis := axes[0, 0]),
     k_depth=K_DEPTH,
 )
@@ -3381,16 +3522,21 @@ axis.set_title("Abu Dhabi, UAE")
 axis.set_yscale(Y_SCALE)
 axis.set_ylabel("Total lifetime system cost / MUSD")
 axis.set_xlabel("Technology type specified")
-axis.text(-0.08, 1.1, "a.", transform=axis.transAxes,
-      fontsize=16, fontweight='bold', va='top', ha='right')
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
 ax.yaxis.set_minor_formatter(ticker.ScalarFormatter())
 ax.yaxis.set_major_formatter(ticker.ScalarFormatter())
 
 sns.boxenplot(
-    cost_by_tech_frame(
-        gran_canaria_joo,
-        cost_key="Total"
-    ),
+    cost_by_tech_frame(gran_canaria_joo, cost_key="Total"),
     ax=(axis := axes[0, 1]),
     k_depth=K_DEPTH,
 )
@@ -3398,15 +3544,20 @@ axis.set_title("Gando, Gran Canaria")
 axis.set_yscale(Y_SCALE)
 axis.set_ylabel("Total lifetime system cost / MUSD")
 axis.set_xlabel("Technology type specified")
-axis.text(-0.08, 1.1, "b.", transform=axis.transAxes,
-      fontsize=16, fontweight='bold', va='top', ha='right')
-axis.ticklabel_format(style='plain', axis='y',useOffset=False)
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 sns.boxenplot(
-    cost_by_tech_frame(
-        tijuana_joo,
-        cost_key="Total"
-    ),
+    cost_by_tech_frame(tijuana_joo, cost_key="Total"),
     ax=(axis := axes[1, 0]),
     k_depth=K_DEPTH,
 )
@@ -3414,15 +3565,20 @@ axis.set_title("Tijuana, Mexico")
 axis.set_yscale(Y_SCALE)
 axis.set_ylabel("Total lifetime system cost / MUSD")
 axis.set_xlabel("Technology type specified")
-axis.text(-0.08, 1.1, "c.", transform=axis.transAxes,
-      fontsize=16, fontweight='bold', va='top', ha='right')
-axis.ticklabel_format(style='plain', axis='y',useOffset=False)
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 sns.boxenplot(
-    cost_by_tech_frame(
-        la_paz_joo,
-        cost_key="Total"
-    ),
+    cost_by_tech_frame(la_paz_joo, cost_key="Total"),
     ax=(axis := axes[1, 1]),
     k_depth=K_DEPTH,
 )
@@ -3430,56 +3586,69 @@ axis.set_title("La Paz, Mexico")
 axis.set_yscale(Y_SCALE)
 axis.set_ylabel("Total lifetime system cost / MUSD")
 axis.set_xlabel("Technology type specified")
-axis.text(-0.08, 1.1, "d.", transform=axis.transAxes,
-      fontsize=16, fontweight='bold', va='top', ha='right')
-axis.ticklabel_format(style='plain', axis='y',useOffset=False)
+axis.text(
+    -0.08,
+    1.1,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 # axis.set_title("La Paz, Mexico")
 # axis.set_ylim(max(min(min(boxen_frame(la_paz_data)["Aux. heating"]), -0.05), -0.45), 1.05)
 
 
-plt.savefig(
-    "joo_technology_types.png",
-    transparent=True,
-    dpi=300,
-    bbox_inches="tight"
-)
+plt.savefig("joo_technology_types.png", transparent=True, dpi=300, bbox_inches="tight")
 
 plt.show()
 
 # Investigating Gran Canaria costs...
 sns.boxenplot(
-    cost_by_tech_frame(
-        gran_canaria_joo,
-        cost_key="Total"
-    ),
+    cost_by_tech_frame(gran_canaria_joo, cost_key="Total"),
     k_depth=K_DEPTH,
 )
 plt.set_title("Gando, Gran Canaria")
 plt.set_yscale(Y_SCALE)
 plt.set_ylabel("Total lifetime system cost / MUSD")
 plt.set_xlabel("Technology type specified")
-plt.text(-0.08, 1.1, "b.", transform=axis.transAxes,
-      fontsize=16, fontweight='bold', va='top', ha='right')
-plt.ticklabel_format(style='plain', axis='y',useOffset=False)
+plt.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+plt.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 plt.show()
 
 # Investigating Tijuana data...
 sns.boxenplot(
-    cost_by_tech_frame(
-        tijuana_joo,
-        cost_key="Total"
-    ),
+    cost_by_tech_frame(tijuana_joo, cost_key="Total"),
     k_depth=K_DEPTH,
 )
 plt.title("Tijuana, Mexico")
 plt.yscale(Y_SCALE)
 plt.ylabel("Total lifetime system cost / MUSD")
 plt.xlabel("Technology type specified")
-plt.text(-0.08, 1.1, "c.", transform=axis.transAxes,
-      fontsize=16, fontweight='bold', va='top', ha='right')
-plt.ticklabel_format(style='plain', axis='y',useOffset=False)
+plt.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+plt.ticklabel_format(style="plain", axis="y", useOffset=False)
 plt.show()
 
 
@@ -3488,54 +3657,126 @@ plt.show()
 import numpy as np
 
 mean_component_numbers = {
-    "Abu Dhabi Joo Batt.": float(np.mean(components_boxen_frame(abu_dhabi_joo)["Batteries"])),
+    "Abu Dhabi Joo Batt.": float(
+        np.mean(components_boxen_frame(abu_dhabi_joo)["Batteries"])
+    ),
     "Abu Dhabi Joo PV": float(np.mean(components_boxen_frame(abu_dhabi_joo)["PV"])),
     "Abu Dhabi Joo PV-T": float(np.mean(components_boxen_frame(abu_dhabi_joo)["PV-T"])),
-    "Abu Dhabi Joo ST": float(np.mean(components_boxen_frame(abu_dhabi_joo)["Solar-thermal"])),
-    "Abu Dhabi El-Nashar Batt.": float(np.mean(components_boxen_frame(abu_dhabi_el)["Batteries"])),
-    "Abu Dhabi El-Nashar PV": float(np.mean(components_boxen_frame(abu_dhabi_el)["PV"])),
-    "Abu Dhabi El-Nashar PV-T": float(np.mean(components_boxen_frame(abu_dhabi_el)["PV-T"])),
-    "Abu Dhabi El-Nashar ST": float(np.mean(components_boxen_frame(abu_dhabi_el)["Solar-thermal"])),
-    "Abu Dhabi Raihimi Batt.": float(np.mean(components_boxen_frame(abu_dhabi_rahimi)["Batteries"])),
-    "Abu Dhabi Raihimi PV": float(np.mean(components_boxen_frame(abu_dhabi_rahimi)["PV"])),
-    "Abu Dhabi Raihimi PV-T": float(np.mean(components_boxen_frame(abu_dhabi_rahimi)["PV-T"])),
-    "Abu Dhabi Raihimi ST": float(np.mean(components_boxen_frame(abu_dhabi_rahimi)["Solar-thermal"])),
-    "Gran Canaria Joo Batt.": float(np.mean(components_boxen_frame(gran_canaria_joo)["Batteries"])),
-    "Gran Canaria Joo PV": float(np.mean(components_boxen_frame(gran_canaria_joo)["PV"])),
-    "Gran Canaria Joo PV-T": float(np.mean(components_boxen_frame(gran_canaria_joo)["PV-T"])),
-    "Gran Canaria Joo ST": float(np.mean(components_boxen_frame(gran_canaria_joo)["Solar-thermal"])),
-    "Gran Canaria El-Nashar Batt.": float(np.mean(components_boxen_frame(gran_canaria_el)["Batteries"])),
-    "Gran Canaria El-Nashar PV": float(np.mean(components_boxen_frame(gran_canaria_el)["PV"])),
-    "Gran Canaria El-Nashar PV-T": float(np.mean(components_boxen_frame(gran_canaria_el)["PV-T"])),
-    "Gran Canaria El-Nashar ST": float(np.mean(components_boxen_frame(gran_canaria_el)["Solar-thermal"])),
-    "Gran Canaria Raihimi Batt.": float(np.mean(components_boxen_frame(gran_canaria_rahimi)["Batteries"])),
-    "Gran Canaria Raihimi PV": float(np.mean(components_boxen_frame(gran_canaria_rahimi)["PV"])),
-    "Gran Canaria Raihimi PV-T": float(np.mean(components_boxen_frame(gran_canaria_rahimi)["PV-T"])),
-    "Gran Canaria Raihimi ST": float(np.mean(components_boxen_frame(gran_canaria_rahimi)["Solar-thermal"])),
-    "Tijuana Joo Batt.": float(np.mean(components_boxen_frame(tijuana_joo)["Batteries"])),
+    "Abu Dhabi Joo ST": float(
+        np.mean(components_boxen_frame(abu_dhabi_joo)["Solar-thermal"])
+    ),
+    "Abu Dhabi El-Nashar Batt.": float(
+        np.mean(components_boxen_frame(abu_dhabi_el)["Batteries"])
+    ),
+    "Abu Dhabi El-Nashar PV": float(
+        np.mean(components_boxen_frame(abu_dhabi_el)["PV"])
+    ),
+    "Abu Dhabi El-Nashar PV-T": float(
+        np.mean(components_boxen_frame(abu_dhabi_el)["PV-T"])
+    ),
+    "Abu Dhabi El-Nashar ST": float(
+        np.mean(components_boxen_frame(abu_dhabi_el)["Solar-thermal"])
+    ),
+    "Abu Dhabi Raihimi Batt.": float(
+        np.mean(components_boxen_frame(abu_dhabi_rahimi)["Batteries"])
+    ),
+    "Abu Dhabi Raihimi PV": float(
+        np.mean(components_boxen_frame(abu_dhabi_rahimi)["PV"])
+    ),
+    "Abu Dhabi Raihimi PV-T": float(
+        np.mean(components_boxen_frame(abu_dhabi_rahimi)["PV-T"])
+    ),
+    "Abu Dhabi Raihimi ST": float(
+        np.mean(components_boxen_frame(abu_dhabi_rahimi)["Solar-thermal"])
+    ),
+    "Gran Canaria Joo Batt.": float(
+        np.mean(components_boxen_frame(gran_canaria_joo)["Batteries"])
+    ),
+    "Gran Canaria Joo PV": float(
+        np.mean(components_boxen_frame(gran_canaria_joo)["PV"])
+    ),
+    "Gran Canaria Joo PV-T": float(
+        np.mean(components_boxen_frame(gran_canaria_joo)["PV-T"])
+    ),
+    "Gran Canaria Joo ST": float(
+        np.mean(components_boxen_frame(gran_canaria_joo)["Solar-thermal"])
+    ),
+    "Gran Canaria El-Nashar Batt.": float(
+        np.mean(components_boxen_frame(gran_canaria_el)["Batteries"])
+    ),
+    "Gran Canaria El-Nashar PV": float(
+        np.mean(components_boxen_frame(gran_canaria_el)["PV"])
+    ),
+    "Gran Canaria El-Nashar PV-T": float(
+        np.mean(components_boxen_frame(gran_canaria_el)["PV-T"])
+    ),
+    "Gran Canaria El-Nashar ST": float(
+        np.mean(components_boxen_frame(gran_canaria_el)["Solar-thermal"])
+    ),
+    "Gran Canaria Raihimi Batt.": float(
+        np.mean(components_boxen_frame(gran_canaria_rahimi)["Batteries"])
+    ),
+    "Gran Canaria Raihimi PV": float(
+        np.mean(components_boxen_frame(gran_canaria_rahimi)["PV"])
+    ),
+    "Gran Canaria Raihimi PV-T": float(
+        np.mean(components_boxen_frame(gran_canaria_rahimi)["PV-T"])
+    ),
+    "Gran Canaria Raihimi ST": float(
+        np.mean(components_boxen_frame(gran_canaria_rahimi)["Solar-thermal"])
+    ),
+    "Tijuana Joo Batt.": float(
+        np.mean(components_boxen_frame(tijuana_joo)["Batteries"])
+    ),
     "Tijuana Joo PV": float(np.mean(components_boxen_frame(tijuana_joo)["PV"])),
     "Tijuana Joo PV-T": float(np.mean(components_boxen_frame(tijuana_joo)["PV-T"])),
-    "Tijuana Joo ST": float(np.mean(components_boxen_frame(tijuana_joo)["Solar-thermal"])),
-    "Tijuana El-Nashar Batt.": float(np.mean(components_boxen_frame(tijuana_el)["Batteries"])),
+    "Tijuana Joo ST": float(
+        np.mean(components_boxen_frame(tijuana_joo)["Solar-thermal"])
+    ),
+    "Tijuana El-Nashar Batt.": float(
+        np.mean(components_boxen_frame(tijuana_el)["Batteries"])
+    ),
     "Tijuana El-Nashar PV": float(np.mean(components_boxen_frame(tijuana_el)["PV"])),
-    "Tijuana El-Nashar PV-T": float(np.mean(components_boxen_frame(tijuana_el)["PV-T"])),
-    "Tijuana El-Nashar ST": float(np.mean(components_boxen_frame(tijuana_el)["Solar-thermal"])),
-    "Tijuana Raihimi Batt.": float(np.mean(components_boxen_frame(tijuana_rahimi)["Batteries"])),
+    "Tijuana El-Nashar PV-T": float(
+        np.mean(components_boxen_frame(tijuana_el)["PV-T"])
+    ),
+    "Tijuana El-Nashar ST": float(
+        np.mean(components_boxen_frame(tijuana_el)["Solar-thermal"])
+    ),
+    "Tijuana Raihimi Batt.": float(
+        np.mean(components_boxen_frame(tijuana_rahimi)["Batteries"])
+    ),
     "Tijuana Raihimi PV": float(np.mean(components_boxen_frame(tijuana_rahimi)["PV"])),
-    "Tijuana Raihimi PV-T": float(np.mean(components_boxen_frame(tijuana_rahimi)["PV-T"])),
-    "Tijuana Raihimi ST": float(np.mean(components_boxen_frame(tijuana_rahimi)["Solar-thermal"])),
+    "Tijuana Raihimi PV-T": float(
+        np.mean(components_boxen_frame(tijuana_rahimi)["PV-T"])
+    ),
+    "Tijuana Raihimi ST": float(
+        np.mean(components_boxen_frame(tijuana_rahimi)["Solar-thermal"])
+    ),
     "La Paz Joo Batt.": float(np.mean(components_boxen_frame(la_paz_joo)["Batteries"])),
     "La Paz Joo PV": float(np.mean(components_boxen_frame(la_paz_joo)["PV"])),
     "La Paz Joo PV-T": float(np.mean(components_boxen_frame(la_paz_joo)["PV-T"])),
-    "La Paz Joo ST": float(np.mean(components_boxen_frame(la_paz_joo)["Solar-thermal"])),
-    "La Paz El-Nashar Batt.": float(np.mean(components_boxen_frame(la_paz_el)["Batteries"])),
+    "La Paz Joo ST": float(
+        np.mean(components_boxen_frame(la_paz_joo)["Solar-thermal"])
+    ),
+    "La Paz El-Nashar Batt.": float(
+        np.mean(components_boxen_frame(la_paz_el)["Batteries"])
+    ),
     "La Paz El-Nashar PV": float(np.mean(components_boxen_frame(la_paz_el)["PV"])),
     "La Paz El-Nashar PV-T": float(np.mean(components_boxen_frame(la_paz_el)["PV-T"])),
-    "La Paz El-Nashar ST": float(np.mean(components_boxen_frame(la_paz_el)["Solar-thermal"])),
-    "La Paz Raihimi Batt.": float(np.mean(components_boxen_frame(la_paz_rahimi)["Batteries"])),
+    "La Paz El-Nashar ST": float(
+        np.mean(components_boxen_frame(la_paz_el)["Solar-thermal"])
+    ),
+    "La Paz Raihimi Batt.": float(
+        np.mean(components_boxen_frame(la_paz_rahimi)["Batteries"])
+    ),
     "La Paz Raihimi PV": float(np.mean(components_boxen_frame(la_paz_rahimi)["PV"])),
-    "La Paz Raihimi PV-T": float(np.mean(components_boxen_frame(la_paz_rahimi)["PV-T"])),
-    "La Paz Raihimi ST": float(np.mean(components_boxen_frame(la_paz_rahimi)["Solar-thermal"])),
+    "La Paz Raihimi PV-T": float(
+        np.mean(components_boxen_frame(la_paz_rahimi)["PV-T"])
+    ),
+    "La Paz Raihimi ST": float(
+        np.mean(components_boxen_frame(la_paz_rahimi)["Solar-thermal"])
+    ),
 }
 
 print(json.dumps(mean_component_numbers, indent=4))
