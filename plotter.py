@@ -2800,12 +2800,15 @@ plt.savefig(
 # ECOS HPC Analysis #
 #####################
 
+import enum
 import json
+import math
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
 from matplotlib import rc
+from matplotlib import ticker
 from typing import Any
 
 
@@ -2836,9 +2839,12 @@ colorblind_palette = sns.color_palette(
 sns.set_palette(colorblind_palette)
 
 # Read input data
-with open("21_feb_23.json", "r") as f:
-    data = json.load(f)
+with open("23_feb_23.json", "r") as f:
+    full_data = json.load(f)
 
+
+# Sanitise the data
+data = {key: value for key, value in full_data.items() if "lg" not in key and "frac" not in key}
 
 # Define helper functions
 def _process_data(
@@ -3008,6 +3014,9 @@ tijuana_rahimi = {
 }
 tijuana_el = {key: value for key, value in tijuana_data.items() if "_el_" in key}
 
+joo_data = {key: value for key, value in data.items() if "_joo_" in key}
+el_data = {key: value for key, value in data.items() if "_el_" in key}
+rahimi_data = {key: value for key, value in data.items() if "_rahimi_" in key}
 
 def solar_hist(data_to_plot):
     _, ax = plt.subplots()
@@ -3148,9 +3157,23 @@ COST_KEY_TITLES: dict[str, str] = {
 
 def costs_boxen_frame(
     data_to_boxen,
+    specific_rescale: float = 1,
     tank_index: int | None = None,
+    unit: float = 10 ** 6,
     weather_type: str = "average_weather_conditions",
 ):
+    """
+    Used for calculating the costs.
+    Inputs:
+        - specific_rescale:
+            The specific cost factor used to rescale the costs.
+        - tank_index:
+            Which tank index to use.
+        - unit:
+            The cost unit, usually MUSD corresponding to 10^6.
+        - weather_type:
+            Which type of weather data to use.
+    """
     scenarios_map = {
         (scenario_key := "scenario"): scenarios(data_to_boxen)[::3][
             :: (3 if tank_index is not None else 1)
@@ -3159,7 +3182,7 @@ def costs_boxen_frame(
     scenarios_map.update(
         {
             COST_KEY_TITLES[key]: [
-                (entry / 10**6 if entry is not None else entry)
+                (entry / (specific_rescale * unit) if entry is not None else entry)
                 for entry in _results_value(
                     data_to_boxen, tank_index, key, weather_type
                 )
@@ -3170,10 +3193,93 @@ def costs_boxen_frame(
     return pd.DataFrame(scenarios_map).set_index(scenario_key)
 
 
+class Plant(enum.Enum):
+    """Specifies which plant is being considered."""
+    JOO: str = "joo"
+    EL_NASHAR: str = "el"
+    RAHIMI: str = "rahimi"
+
+def specific_costs_boxen_frame(
+    data_to_boxen,
+    tank_index: int | None = None,
+    unit: float = 1,
+    weather_type: str = "average_weather_conditions",
+    *,
+    plant: Plant,
+):
+    if plant == Plant.JOO:
+        return costs_boxen_frame(
+            data_to_boxen,
+            32872.5,
+            tank_index,
+            unit,
+            weather_type
+        )
+    if plant == Plant.EL_NASHAR:
+        return costs_boxen_frame(
+            data_to_boxen,
+            1314900,
+            tank_index,
+            unit,
+            weather_type
+        )
+    if plant == Plant.RAHIMI:
+        return costs_boxen_frame(
+            data_to_boxen,
+            18562005,
+            tank_index,
+            unit,
+            weather_type
+        )
+    raise Exception("Unsupported plant type, %s, specified.", plant)
+
+# Plots of the total cost based on the technology type
+def cost_by_tech_frame(
+    data_to_cost_by_tech: dict[str, Any], *, cost_key: str = "Total"
+):
+    """Return a dataframe with columns containing the cost of each technology type"""
+    return pd.DataFrame(
+        {
+            "D.S. 300": costs_boxen_frame(_dual_300_data(data_to_cost_by_tech))[
+                cost_key
+            ],
+            "D.S. 400": costs_boxen_frame(_dual_400_data(data_to_cost_by_tech))[
+                cost_key
+            ],
+            "Solimp.": costs_boxen_frame(_soli_data(data_to_cost_by_tech))[cost_key],
+            "m-Si PV": costs_boxen_frame(_m_si_data(data_to_cost_by_tech))[cost_key],
+            "p-Si PV": costs_boxen_frame(_p_si_data(data_to_cost_by_tech))[cost_key],
+            "FPC": costs_boxen_frame(_fpc_data(data_to_cost_by_tech))[cost_key],
+            "Aug.": costs_boxen_frame(_etc_aug_data(data_to_cost_by_tech))[cost_key],
+            "Euro.": costs_boxen_frame(_etc_euro_data(data_to_cost_by_tech))[cost_key],
+        }
+    )
+
+def specific_cost_by_tech_frame(
+    data_to_cost_by_tech: dict[str, Any], *, plant: Plant, cost_key: str = "Total"
+):
+    """Return a dataframe with columns containing the specific cost of each technology type"""
+    return pd.DataFrame(
+        {
+            "D.S. 300": specific_costs_boxen_frame(_dual_300_data(data_to_cost_by_tech), plant=plant)[
+                cost_key
+            ],
+            "D.S. 400": specific_costs_boxen_frame(_dual_400_data(data_to_cost_by_tech), plant=plant)[
+                cost_key
+            ],
+            "Solimp.": specific_costs_boxen_frame(_soli_data(data_to_cost_by_tech), plant=plant)[cost_key],
+            "m-Si PV": specific_costs_boxen_frame(_m_si_data(data_to_cost_by_tech), plant=plant)[cost_key],
+            "p-Si PV": specific_costs_boxen_frame(_p_si_data(data_to_cost_by_tech), plant=plant)[cost_key],
+            "FPC": specific_costs_boxen_frame(_fpc_data(data_to_cost_by_tech), plant=plant)[cost_key],
+            "Aug.": specific_costs_boxen_frame(_etc_aug_data(data_to_cost_by_tech), plant=plant)[cost_key],
+            "Euro.": specific_costs_boxen_frame(_etc_euro_data(data_to_cost_by_tech), plant=plant)[cost_key],
+        }
+    )
+
 # Outputs boxen plot by location
 
 fig, axes = plt.subplots(2, 2, figsize=(12, 8))
-K_DEPTH: int = 4
+K_DEPTH: int = 6
 WEATHER_TYPE: str = "average_weather_conditions"
 # WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
 # WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
@@ -3268,11 +3374,13 @@ axis.text(
 
 
 plt.savefig(
-    "fractions_5.png",
+    "fractions_6.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
 )
+
+plt.show()
 
 # Components boxen plot by location
 
@@ -3286,7 +3394,7 @@ TANK_INDEX: int | None = None
 
 sns.boxenplot(
     components_boxen_frame(
-        abu_dhabi_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        abu_dhabi_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
     ),
     ax=(axis := axes[0, 0]),
     k_depth=K_DEPTH,
@@ -3307,7 +3415,7 @@ axis.text(
 
 sns.boxenplot(
     components_boxen_frame(
-        gran_canaria_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        gran_canaria_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
     ),
     ax=(axis := axes[0, 1]),
     k_depth=K_DEPTH,
@@ -3328,7 +3436,7 @@ axis.text(
 
 sns.boxenplot(
     components_boxen_frame(
-        tijuana_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        tijuana_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
     ),
     ax=(axis := axes[1, 0]),
     k_depth=K_DEPTH,
@@ -3349,7 +3457,7 @@ axis.text(
 
 sns.boxenplot(
     components_boxen_frame(
-        la_paz_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        la_paz_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
     ),
     ax=(axis := axes[1, 1]),
     k_depth=K_DEPTH,
@@ -3369,38 +3477,16 @@ axis.text(
 )
 
 plt.savefig(
-    "joo_nashar_component_sizes_5.png",
+    "rahimi_component_sizes_6.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
 )
 
-
-# Plots of the total cost based on the technology type
-def cost_by_tech_frame(
-    data_to_cost_by_tech: dict[str, Any], *, cost_key: str = "Total"
-):
-    """Return a dataframe with columns containing the cost of each technology type"""
-    return pd.DataFrame(
-        {
-            "D.S. 300": costs_boxen_frame(_dual_300_data(data_to_cost_by_tech))[
-                cost_key
-            ],
-            "D.S. 400": costs_boxen_frame(_dual_400_data(data_to_cost_by_tech))[
-                cost_key
-            ],
-            "Solimp.": costs_boxen_frame(_soli_data(data_to_cost_by_tech))[cost_key],
-            "m-Si PV": costs_boxen_frame(_m_si_data(data_to_cost_by_tech))[cost_key],
-            "p-Si PV": costs_boxen_frame(_p_si_data(data_to_cost_by_tech))[cost_key],
-            "FPC": costs_boxen_frame(_fpc_data(data_to_cost_by_tech))[cost_key],
-            "Aug.": costs_boxen_frame(_etc_aug_data(data_to_cost_by_tech))[cost_key],
-            "Euro.": costs_boxen_frame(_etc_euro_data(data_to_cost_by_tech))[cost_key],
-        }
-    )
+plt.show()
 
 
 # Plotting the variations
-from matplotlib import ticker
 
 fig, axes = plt.subplots(3, 1, figsize=(8, 12))
 fig.subplots_adjust(hspace=0.25)
@@ -3534,6 +3620,7 @@ axis.text(
 )
 ax.yaxis.set_minor_formatter(ticker.ScalarFormatter())
 ax.yaxis.set_major_formatter(ticker.ScalarFormatter())
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
 
 sns.boxenplot(
     cost_by_tech_frame(gran_canaria_joo, cost_key="Total"),
@@ -3555,6 +3642,7 @@ axis.text(
     ha="right",
 )
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
 
 sns.boxenplot(
     cost_by_tech_frame(tijuana_joo, cost_key="Total"),
@@ -3576,6 +3664,7 @@ axis.text(
     ha="right",
 )
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
 
 sns.boxenplot(
     cost_by_tech_frame(la_paz_joo, cost_key="Total"),
@@ -3599,12 +3688,242 @@ axis.text(
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 # axis.set_title("La Paz, Mexico")
-# axis.set_ylim(max(min(min(boxen_frame(la_paz_data)["Aux. heating"]), -0.05), -0.45), 1.05)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
 
 
-plt.savefig("joo_technology_types.png", transparent=True, dpi=300, bbox_inches="tight")
+plt.savefig("joo_technology_types_6.png", transparent=True, dpi=300, bbox_inches="tight")
 
 plt.show()
+
+# Specific cost technology types
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+fig.subplots_adjust(hspace=0.25)
+
+K_DEPTH: int = 3
+PLANT: Plant = Plant.JOO
+# WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+Y_SCALE = "linear"
+
+sns.boxenplot(
+    specific_cost_by_tech_frame(abu_dhabi_joo, cost_key="Total", plant=PLANT),
+    ax=(axis := axes[0, 0]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("Abu Dhabi, UAE")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+ax.yaxis.set_minor_formatter(ticker.ScalarFormatter())
+ax.yaxis.set_major_formatter(ticker.ScalarFormatter())
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+sns.boxenplot(
+    specific_cost_by_tech_frame(gran_canaria_joo, cost_key="Total", plant=PLANT),
+    ax=(axis := axes[0, 1]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("Gando, Gran Canaria")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+sns.boxenplot(
+    specific_cost_by_tech_frame(tijuana_joo, cost_key="Total", plant=PLANT),
+    ax=(axis := axes[1, 0]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("Tijuana, Mexico")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+sns.boxenplot(
+    specific_cost_by_tech_frame(la_paz_joo, cost_key="Total", plant=PLANT),
+    ax=(axis := axes[1, 1]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("La Paz, Mexico")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+
+# axis.set_title("La Paz, Mexico")
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+
+plt.savefig("joo_specific_technology_types_6.png", transparent=True, dpi=300, bbox_inches="tight")
+
+plt.show()
+
+
+# All-plants specific technology type plot
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+fig.subplots_adjust(hspace=0.25)
+
+K_DEPTH: int = 3
+PLANT: Plant = Plant.JOO
+# WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+Y_SCALE = "linear"
+
+sns.boxenplot(pd.concat([
+            specific_cost_by_tech_frame(abu_dhabi_joo, cost_key="Total", plant=Plant.JOO),
+            specific_cost_by_tech_frame(abu_dhabi_el, cost_key="Total", plant=Plant.EL_NASHAR),
+            specific_cost_by_tech_frame(abu_dhabi_rahimi, cost_key="Total", plant=Plant.RAHIMI),]),
+    ax=(axis := axes[0, 0]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("Abu Dhabi, UAE")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+ax.yaxis.set_minor_formatter(ticker.ScalarFormatter())
+ax.yaxis.set_major_formatter(ticker.ScalarFormatter())
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+sns.boxenplot(pd.concat([
+    specific_cost_by_tech_frame(gran_canaria_joo, cost_key="Total", plant=Plant.JOO),
+    specific_cost_by_tech_frame(gran_canaria_el, cost_key="Total", plant=Plant.EL_NASHAR),
+    specific_cost_by_tech_frame(gran_canaria_rahimi, cost_key="Total", plant=Plant.RAHIMI),]),
+    ax=(axis := axes[0, 1]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("Gando, Gran Canaria")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+sns.boxenplot(pd.concat([
+    specific_cost_by_tech_frame(tijuana_joo, cost_key="Total", plant=Plant.JOO),
+    specific_cost_by_tech_frame(tijuana_el, cost_key="Total", plant=Plant.EL_NASHAR),
+    specific_cost_by_tech_frame(tijuana_rahimi, cost_key="Total", plant=Plant.RAHIMI),]),
+    ax=(axis := axes[1, 0]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("Tijuana, Mexico")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+sns.boxenplot(pd.concat([
+    specific_cost_by_tech_frame(la_paz_joo, cost_key="Total", plant=Plant.JOO),
+    specific_cost_by_tech_frame(la_paz_el, cost_key="Total", plant=Plant.EL_NASHAR),
+    specific_cost_by_tech_frame(la_paz_rahimi, cost_key="Total", plant=Plant.RAHIMI),]),
+    ax=(axis := axes[1, 1]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("La Paz, Mexico")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+
+# axis.set_title("La Paz, Mexico")
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+
+plt.savefig("all_plant_specific_technology_types_6.png", transparent=True, dpi=300, bbox_inches="tight")
+
+plt.show()
+
 
 # Investigating Gran Canaria costs...
 sns.boxenplot(
@@ -3658,128 +3977,248 @@ import numpy as np
 
 mean_component_numbers = {
     "Abu Dhabi Joo Batt.": float(
-        np.mean(components_boxen_frame(abu_dhabi_joo)["Batteries"])
+        round(np.mean(components_boxen_frame(abu_dhabi_joo)["Batteries"]), 0)
     ),
-    "Abu Dhabi Joo PV": float(np.mean(components_boxen_frame(abu_dhabi_joo)["PV"])),
-    "Abu Dhabi Joo PV-T": float(np.mean(components_boxen_frame(abu_dhabi_joo)["PV-T"])),
+    "Abu Dhabi Joo PV": round(float(np.mean(components_boxen_frame(abu_dhabi_joo)["PV"])), 0),
+    "Abu Dhabi Joo PV-T": round(float(np.mean(components_boxen_frame(abu_dhabi_joo)["PV-T"])), 0),
     "Abu Dhabi Joo ST": float(
-        np.mean(components_boxen_frame(abu_dhabi_joo)["Solar-thermal"])
+        round(np.mean(components_boxen_frame(abu_dhabi_joo)["Solar-thermal"]), 0)
     ),
     "Abu Dhabi El-Nashar Batt.": float(
-        np.mean(components_boxen_frame(abu_dhabi_el)["Batteries"])
+        round(np.mean(components_boxen_frame(abu_dhabi_el)["Batteries"]), 0)
     ),
     "Abu Dhabi El-Nashar PV": float(
-        np.mean(components_boxen_frame(abu_dhabi_el)["PV"])
+        round(np.mean(components_boxen_frame(abu_dhabi_el)["PV"]), 0)
     ),
     "Abu Dhabi El-Nashar PV-T": float(
-        np.mean(components_boxen_frame(abu_dhabi_el)["PV-T"])
+        round(np.mean(components_boxen_frame(abu_dhabi_el)["PV-T"]), 0)
     ),
     "Abu Dhabi El-Nashar ST": float(
-        np.mean(components_boxen_frame(abu_dhabi_el)["Solar-thermal"])
+        round(np.mean(components_boxen_frame(abu_dhabi_el)["Solar-thermal"]), 0)
     ),
     "Abu Dhabi Raihimi Batt.": float(
-        np.mean(components_boxen_frame(abu_dhabi_rahimi)["Batteries"])
+        round(np.mean(components_boxen_frame(abu_dhabi_rahimi)["Batteries"]), 0)
     ),
     "Abu Dhabi Raihimi PV": float(
-        np.mean(components_boxen_frame(abu_dhabi_rahimi)["PV"])
+        round(np.mean(components_boxen_frame(abu_dhabi_rahimi)["PV"]), 0)
     ),
     "Abu Dhabi Raihimi PV-T": float(
-        np.mean(components_boxen_frame(abu_dhabi_rahimi)["PV-T"])
+        round(np.mean(components_boxen_frame(abu_dhabi_rahimi)["PV-T"]), 0)
     ),
     "Abu Dhabi Raihimi ST": float(
-        np.mean(components_boxen_frame(abu_dhabi_rahimi)["Solar-thermal"])
+        round(np.mean(components_boxen_frame(abu_dhabi_rahimi)["Solar-thermal"]), 0)
     ),
     "Gran Canaria Joo Batt.": float(
-        np.mean(components_boxen_frame(gran_canaria_joo)["Batteries"])
+        round(np.mean(components_boxen_frame(gran_canaria_joo)["Batteries"]), 0)
     ),
     "Gran Canaria Joo PV": float(
-        np.mean(components_boxen_frame(gran_canaria_joo)["PV"])
+        round(np.mean(components_boxen_frame(gran_canaria_joo)["PV"]), 0)
     ),
     "Gran Canaria Joo PV-T": float(
-        np.mean(components_boxen_frame(gran_canaria_joo)["PV-T"])
+        round(np.mean(components_boxen_frame(gran_canaria_joo)["PV-T"]), 0)
     ),
     "Gran Canaria Joo ST": float(
-        np.mean(components_boxen_frame(gran_canaria_joo)["Solar-thermal"])
+        round(np.mean(components_boxen_frame(gran_canaria_joo)["Solar-thermal"]), 0)
     ),
     "Gran Canaria El-Nashar Batt.": float(
-        np.mean(components_boxen_frame(gran_canaria_el)["Batteries"])
+        round(np.mean(components_boxen_frame(gran_canaria_el)["Batteries"]), 0)
     ),
     "Gran Canaria El-Nashar PV": float(
-        np.mean(components_boxen_frame(gran_canaria_el)["PV"])
+        round(np.mean(components_boxen_frame(gran_canaria_el)["PV"]), 0)
     ),
     "Gran Canaria El-Nashar PV-T": float(
-        np.mean(components_boxen_frame(gran_canaria_el)["PV-T"])
+        round(np.mean(components_boxen_frame(gran_canaria_el)["PV-T"]), 0)
     ),
     "Gran Canaria El-Nashar ST": float(
-        np.mean(components_boxen_frame(gran_canaria_el)["Solar-thermal"])
+        round(np.mean(components_boxen_frame(gran_canaria_el)["Solar-thermal"]), 0)
     ),
     "Gran Canaria Raihimi Batt.": float(
-        np.mean(components_boxen_frame(gran_canaria_rahimi)["Batteries"])
+        round(np.mean(components_boxen_frame(gran_canaria_rahimi)["Batteries"]), 0)
     ),
     "Gran Canaria Raihimi PV": float(
-        np.mean(components_boxen_frame(gran_canaria_rahimi)["PV"])
+        round(np.mean(components_boxen_frame(gran_canaria_rahimi)["PV"]), 0)
     ),
     "Gran Canaria Raihimi PV-T": float(
-        np.mean(components_boxen_frame(gran_canaria_rahimi)["PV-T"])
+        round(np.mean(components_boxen_frame(gran_canaria_rahimi)["PV-T"]), 0)
     ),
     "Gran Canaria Raihimi ST": float(
-        np.mean(components_boxen_frame(gran_canaria_rahimi)["Solar-thermal"])
+        round(np.mean(components_boxen_frame(gran_canaria_rahimi)["Solar-thermal"]), 0)
     ),
     "Tijuana Joo Batt.": float(
-        np.mean(components_boxen_frame(tijuana_joo)["Batteries"])
+        round(np.mean(components_boxen_frame(tijuana_joo)["Batteries"]), 0)
     ),
-    "Tijuana Joo PV": float(np.mean(components_boxen_frame(tijuana_joo)["PV"])),
-    "Tijuana Joo PV-T": float(np.mean(components_boxen_frame(tijuana_joo)["PV-T"])),
+    "Tijuana Joo PV": round(float(np.mean(components_boxen_frame(tijuana_joo)["PV"])), 0),
+    "Tijuana Joo PV-T": round(float(np.mean(components_boxen_frame(tijuana_joo)["PV-T"])), 0),
     "Tijuana Joo ST": float(
-        np.mean(components_boxen_frame(tijuana_joo)["Solar-thermal"])
+        round(np.mean(components_boxen_frame(tijuana_joo)["Solar-thermal"]), 0)
     ),
     "Tijuana El-Nashar Batt.": float(
-        np.mean(components_boxen_frame(tijuana_el)["Batteries"])
+        round(np.mean(components_boxen_frame(tijuana_el)["Batteries"]), 0)
     ),
-    "Tijuana El-Nashar PV": float(np.mean(components_boxen_frame(tijuana_el)["PV"])),
+    "Tijuana El-Nashar PV": round(float(np.mean(components_boxen_frame(tijuana_el)["PV"])), 0),
     "Tijuana El-Nashar PV-T": float(
-        np.mean(components_boxen_frame(tijuana_el)["PV-T"])
+        round(np.mean(components_boxen_frame(tijuana_el)["PV-T"]), 0)
     ),
     "Tijuana El-Nashar ST": float(
-        np.mean(components_boxen_frame(tijuana_el)["Solar-thermal"])
+        round(np.mean(components_boxen_frame(tijuana_el)["Solar-thermal"]), 0)
     ),
     "Tijuana Raihimi Batt.": float(
-        np.mean(components_boxen_frame(tijuana_rahimi)["Batteries"])
+        round(np.mean(components_boxen_frame(tijuana_rahimi)["Batteries"]), 0)
     ),
-    "Tijuana Raihimi PV": float(np.mean(components_boxen_frame(tijuana_rahimi)["PV"])),
+    "Tijuana Raihimi PV": round(float(np.mean(components_boxen_frame(tijuana_rahimi)["PV"])), 0),
     "Tijuana Raihimi PV-T": float(
-        np.mean(components_boxen_frame(tijuana_rahimi)["PV-T"])
+        round(np.mean(components_boxen_frame(tijuana_rahimi)["PV-T"]), 0)
     ),
     "Tijuana Raihimi ST": float(
-        np.mean(components_boxen_frame(tijuana_rahimi)["Solar-thermal"])
+        round(np.mean(components_boxen_frame(tijuana_rahimi)["Solar-thermal"]), 0)
     ),
-    "La Paz Joo Batt.": float(np.mean(components_boxen_frame(la_paz_joo)["Batteries"])),
-    "La Paz Joo PV": float(np.mean(components_boxen_frame(la_paz_joo)["PV"])),
-    "La Paz Joo PV-T": float(np.mean(components_boxen_frame(la_paz_joo)["PV-T"])),
+    "La Paz Joo Batt.": round(float(np.mean(components_boxen_frame(la_paz_joo)["Batteries"])), 0),
+    "La Paz Joo PV": round(float(np.mean(components_boxen_frame(la_paz_joo)["PV"])), 0),
+    "La Paz Joo PV-T": round(float(np.mean(components_boxen_frame(la_paz_joo)["PV-T"])), 0),
     "La Paz Joo ST": float(
-        np.mean(components_boxen_frame(la_paz_joo)["Solar-thermal"])
+        round(np.mean(components_boxen_frame(la_paz_joo)["Solar-thermal"]), 0)
     ),
     "La Paz El-Nashar Batt.": float(
-        np.mean(components_boxen_frame(la_paz_el)["Batteries"])
+        round(np.mean(components_boxen_frame(la_paz_el)["Batteries"]), 0)
     ),
-    "La Paz El-Nashar PV": float(np.mean(components_boxen_frame(la_paz_el)["PV"])),
-    "La Paz El-Nashar PV-T": float(np.mean(components_boxen_frame(la_paz_el)["PV-T"])),
+    "La Paz El-Nashar PV": round(float(np.mean(components_boxen_frame(la_paz_el)["PV"])), 0),
+    "La Paz El-Nashar PV-T": round(float(np.mean(components_boxen_frame(la_paz_el)["PV-T"])), 0),
     "La Paz El-Nashar ST": float(
-        np.mean(components_boxen_frame(la_paz_el)["Solar-thermal"])
+        round(np.mean(components_boxen_frame(la_paz_el)["Solar-thermal"]), 0)
     ),
     "La Paz Raihimi Batt.": float(
-        np.mean(components_boxen_frame(la_paz_rahimi)["Batteries"])
+        round(np.mean(components_boxen_frame(la_paz_rahimi)["Batteries"]), 0)
     ),
-    "La Paz Raihimi PV": float(np.mean(components_boxen_frame(la_paz_rahimi)["PV"])),
+    "La Paz Raihimi PV": round(float(np.mean(components_boxen_frame(la_paz_rahimi)["PV"])), 0),
     "La Paz Raihimi PV-T": float(
-        np.mean(components_boxen_frame(la_paz_rahimi)["PV-T"])
+        round(np.mean(components_boxen_frame(la_paz_rahimi)["PV-T"]), 0)
     ),
     "La Paz Raihimi ST": float(
-        np.mean(components_boxen_frame(la_paz_rahimi)["Solar-thermal"])
+        round(np.mean(components_boxen_frame(la_paz_rahimi)["Solar-thermal"]), 0)
     ),
 }
 
 print(json.dumps(mean_component_numbers, indent=4))
+
+# Plot a bar plot of the component costs broken down for each plant.
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+fig.subplots_adjust(hspace=0.25)
+
+K_DEPTH: int = 3
+
+# WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+Y_SCALE = "linear"
+
+
+data_to_plot = pd.DataFrame(
+    {
+        "Small": (frame := specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)).loc[frame["Total"].idxmin()],
+        "Medium": (frame := specific_costs_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)).loc[frame["Total"].idxmin()],
+        "Large": (frame := specific_costs_boxen_frame(abu_dhabi_rahimi, plant=Plant.RAHIMI)).loc[frame["Total"].idxmin()]
+    }
+).drop("Total").transpose()
+data_to_plot.plot.bar(ax=(axis := axes[0, 0]), rot=0, stacked=True)
+axis.grid(axis="x")
+axis.set_xlabel("MED Plant")
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_title("Abu Dhabi, UAE")
+axis.yaxis.set_minor_formatter(ticker.ScalarFormatter())
+axis.yaxis.set_major_formatter(ticker.ScalarFormatter())
+axis.set_ylim(0, 7)
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+data_to_plot = pd.DataFrame(
+    {
+        "Small": (frame := specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO)).loc[frame["Total"].idxmin()],
+        "Medium": (frame := specific_costs_boxen_frame(gran_canaria_el, plant=Plant.EL_NASHAR)).loc[frame["Total"].idxmin()],
+        "Large": (frame := specific_costs_boxen_frame(gran_canaria_rahimi, plant=Plant.RAHIMI)).loc[frame["Total"].idxmin()]
+    }
+).drop("Total").transpose()
+data_to_plot.plot.bar(ax=(axis := axes[0, 1]), rot=0, stacked=True)
+axis.grid(axis="x")
+axis.set_xlabel("MED Plant")
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_title("Gando, Gran Canaria")
+axis.set_ylim(0, 7)
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+
+data_to_plot = pd.DataFrame(
+    {
+        "Small": (frame := specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO)).loc[frame["Total"].idxmin()],
+        "Medium": (frame := specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)).loc[frame["Total"].idxmin()],
+        "Large": (frame := specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)).loc[frame["Total"].idxmin()]
+    }
+).drop("Total").transpose()
+data_to_plot.plot.bar(ax=(axis := axes[1, 0]), rot=0, stacked=True)
+axis.grid(axis="x")
+axis.set_xlabel("MED Plant")
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_ylim(0, 7)
+axis.set_title("Tijuana, Mexico")
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+
+data_to_plot = pd.DataFrame(
+    {
+        "Small": (frame := specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO)).loc[frame["Total"].idxmin()],
+        "Medium": (frame := specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)).loc[frame["Total"].idxmin()],
+        "Large": (frame := specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)).loc[frame["Total"].idxmin()]
+    }
+).drop("Total").transpose()
+data_to_plot.plot.bar(ax=(axis := axes[1, 1]), rot=0, stacked=True)
+axis.grid(axis="x")
+axis.set_xlabel("MED Plant")
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_ylim(0, 7)
+axis.set_title("La Paz, Mexico")
+axis.text(
+    -0.08,
+    1.1,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+
+plt.savefig("specific_costs_comparison_6.png", transparent=True, dpi=300, bbox_inches="tight")
+
+plt.show()
 
 ["dumped_electricity"]
 
@@ -3818,13 +4257,15 @@ import json
 
 from typing import Any
 
+from tqdm import tqdm
+
 data: dict[str, Any] = {}
 
-for filename in os.listdir("."):
+for filename in tqdm(os.listdir("."), desc="files", unit="file"):
     if "feb" in filename:
         continue
     with open(filename, "r", encoding="UTF-8") as f:
         data[filename] = json.load(f)
 
-with open("21_feb_23.json", "w", encoding="UTF-8") as f:
+with open("23_feb_23.json", "w", encoding="UTF-8") as f:
     json.dump(data, f)
