@@ -2844,7 +2844,12 @@ with open("23_feb_23.json", "r") as f:
 
 
 # Sanitise the data
-data = {key: value for key, value in full_data.items() if "lg" not in key and "frac" not in key}
+data = {
+    key: value
+    for key, value in full_data.items()
+    if "lg" not in key and "frac" not in key
+}
+
 
 # Define helper functions
 def _process_data(
@@ -3018,6 +3023,7 @@ joo_data = {key: value for key, value in data.items() if "_joo_" in key}
 el_data = {key: value for key, value in data.items() if "_el_" in key}
 rahimi_data = {key: value for key, value in data.items() if "_rahimi_" in key}
 
+
 def solar_hist(data_to_plot):
     _, ax = plt.subplots()
     hist_plot(frame(data_to_plot), "pv", "PV")
@@ -3159,7 +3165,7 @@ def costs_boxen_frame(
     data_to_boxen,
     specific_rescale: float = 1,
     tank_index: int | None = None,
-    unit: float = 10 ** 6,
+    unit: float = 10**6,
     weather_type: str = "average_weather_conditions",
 ):
     """
@@ -3195,9 +3201,11 @@ def costs_boxen_frame(
 
 class Plant(enum.Enum):
     """Specifies which plant is being considered."""
+
     JOO: str = "joo"
     EL_NASHAR: str = "el"
     RAHIMI: str = "rahimi"
+
 
 def specific_costs_boxen_frame(
     data_to_boxen,
@@ -3208,30 +3216,15 @@ def specific_costs_boxen_frame(
     plant: Plant,
 ):
     if plant == Plant.JOO:
-        return costs_boxen_frame(
-            data_to_boxen,
-            32872.5,
-            tank_index,
-            unit,
-            weather_type
-        )
+        return costs_boxen_frame(data_to_boxen, 32872.5, tank_index, unit, weather_type)
     if plant == Plant.EL_NASHAR:
-        return costs_boxen_frame(
-            data_to_boxen,
-            1314900,
-            tank_index,
-            unit,
-            weather_type
-        )
+        return costs_boxen_frame(data_to_boxen, 1314900, tank_index, unit, weather_type)
     if plant == Plant.RAHIMI:
         return costs_boxen_frame(
-            data_to_boxen,
-            18562005,
-            tank_index,
-            unit,
-            weather_type
+            data_to_boxen, 18562005, tank_index, unit, weather_type
         )
     raise Exception("Unsupported plant type, %s, specified.", plant)
+
 
 # Plots of the total cost based on the technology type
 def cost_by_tech_frame(
@@ -3255,26 +3248,40 @@ def cost_by_tech_frame(
         }
     )
 
+
 def specific_cost_by_tech_frame(
     data_to_cost_by_tech: dict[str, Any], *, plant: Plant, cost_key: str = "Total"
 ):
     """Return a dataframe with columns containing the specific cost of each technology type"""
     return pd.DataFrame(
         {
-            "D.S. 300": specific_costs_boxen_frame(_dual_300_data(data_to_cost_by_tech), plant=plant)[
-                cost_key
-            ],
-            "D.S. 400": specific_costs_boxen_frame(_dual_400_data(data_to_cost_by_tech), plant=plant)[
-                cost_key
-            ],
-            "Solimp.": specific_costs_boxen_frame(_soli_data(data_to_cost_by_tech), plant=plant)[cost_key],
-            "m-Si PV": specific_costs_boxen_frame(_m_si_data(data_to_cost_by_tech), plant=plant)[cost_key],
-            "p-Si PV": specific_costs_boxen_frame(_p_si_data(data_to_cost_by_tech), plant=plant)[cost_key],
-            "FPC": specific_costs_boxen_frame(_fpc_data(data_to_cost_by_tech), plant=plant)[cost_key],
-            "Aug.": specific_costs_boxen_frame(_etc_aug_data(data_to_cost_by_tech), plant=plant)[cost_key],
-            "Euro.": specific_costs_boxen_frame(_etc_euro_data(data_to_cost_by_tech), plant=plant)[cost_key],
+            "D.S. 300": specific_costs_boxen_frame(
+                _dual_300_data(data_to_cost_by_tech), plant=plant
+            )[cost_key],
+            "D.S. 400": specific_costs_boxen_frame(
+                _dual_400_data(data_to_cost_by_tech), plant=plant
+            )[cost_key],
+            "Solimp.": specific_costs_boxen_frame(
+                _soli_data(data_to_cost_by_tech), plant=plant
+            )[cost_key],
+            "m-Si PV": specific_costs_boxen_frame(
+                _m_si_data(data_to_cost_by_tech), plant=plant
+            )[cost_key],
+            "p-Si PV": specific_costs_boxen_frame(
+                _p_si_data(data_to_cost_by_tech), plant=plant
+            )[cost_key],
+            "FPC": specific_costs_boxen_frame(
+                _fpc_data(data_to_cost_by_tech), plant=plant
+            )[cost_key],
+            "Aug.": specific_costs_boxen_frame(
+                _etc_aug_data(data_to_cost_by_tech), plant=plant
+            )[cost_key],
+            "Euro.": specific_costs_boxen_frame(
+                _etc_euro_data(data_to_cost_by_tech), plant=plant
+            )[cost_key],
         }
     )
+
 
 # Outputs boxen plot by location
 
@@ -3691,7 +3698,9 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 # axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
 
 
-plt.savefig("joo_technology_types_6.png", transparent=True, dpi=300, bbox_inches="tight")
+plt.savefig(
+    "joo_technology_types_6.png", transparent=True, dpi=300, bbox_inches="tight"
+)
 
 plt.show()
 
@@ -3801,7 +3810,12 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 # axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
 
 
-plt.savefig("joo_specific_technology_types_6.png", transparent=True, dpi=300, bbox_inches="tight")
+plt.savefig(
+    "joo_specific_technology_types_6.png",
+    transparent=True,
+    dpi=300,
+    bbox_inches="tight",
+)
 
 plt.show()
 
@@ -3820,10 +3834,20 @@ WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
 TANK_INDEX: int | None = None
 Y_SCALE = "linear"
 
-sns.boxenplot(pd.concat([
-            specific_cost_by_tech_frame(abu_dhabi_joo, cost_key="Total", plant=Plant.JOO),
-            specific_cost_by_tech_frame(abu_dhabi_el, cost_key="Total", plant=Plant.EL_NASHAR),
-            specific_cost_by_tech_frame(abu_dhabi_rahimi, cost_key="Total", plant=Plant.RAHIMI),]),
+sns.boxenplot(
+    pd.concat(
+        [
+            specific_cost_by_tech_frame(
+                abu_dhabi_joo, cost_key="Total", plant=Plant.JOO
+            ),
+            specific_cost_by_tech_frame(
+                abu_dhabi_el, cost_key="Total", plant=Plant.EL_NASHAR
+            ),
+            specific_cost_by_tech_frame(
+                abu_dhabi_rahimi, cost_key="Total", plant=Plant.RAHIMI
+            ),
+        ]
+    ),
     ax=(axis := axes[0, 0]),
     k_depth=K_DEPTH,
 )
@@ -3845,10 +3869,20 @@ ax.yaxis.set_minor_formatter(ticker.ScalarFormatter())
 ax.yaxis.set_major_formatter(ticker.ScalarFormatter())
 # axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
 
-sns.boxenplot(pd.concat([
-    specific_cost_by_tech_frame(gran_canaria_joo, cost_key="Total", plant=Plant.JOO),
-    specific_cost_by_tech_frame(gran_canaria_el, cost_key="Total", plant=Plant.EL_NASHAR),
-    specific_cost_by_tech_frame(gran_canaria_rahimi, cost_key="Total", plant=Plant.RAHIMI),]),
+sns.boxenplot(
+    pd.concat(
+        [
+            specific_cost_by_tech_frame(
+                gran_canaria_joo, cost_key="Total", plant=Plant.JOO
+            ),
+            specific_cost_by_tech_frame(
+                gran_canaria_el, cost_key="Total", plant=Plant.EL_NASHAR
+            ),
+            specific_cost_by_tech_frame(
+                gran_canaria_rahimi, cost_key="Total", plant=Plant.RAHIMI
+            ),
+        ]
+    ),
     ax=(axis := axes[0, 1]),
     k_depth=K_DEPTH,
 )
@@ -3869,10 +3903,18 @@ axis.text(
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 # axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
 
-sns.boxenplot(pd.concat([
-    specific_cost_by_tech_frame(tijuana_joo, cost_key="Total", plant=Plant.JOO),
-    specific_cost_by_tech_frame(tijuana_el, cost_key="Total", plant=Plant.EL_NASHAR),
-    specific_cost_by_tech_frame(tijuana_rahimi, cost_key="Total", plant=Plant.RAHIMI),]),
+sns.boxenplot(
+    pd.concat(
+        [
+            specific_cost_by_tech_frame(tijuana_joo, cost_key="Total", plant=Plant.JOO),
+            specific_cost_by_tech_frame(
+                tijuana_el, cost_key="Total", plant=Plant.EL_NASHAR
+            ),
+            specific_cost_by_tech_frame(
+                tijuana_rahimi, cost_key="Total", plant=Plant.RAHIMI
+            ),
+        ]
+    ),
     ax=(axis := axes[1, 0]),
     k_depth=K_DEPTH,
 )
@@ -3893,10 +3935,18 @@ axis.text(
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 # axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
 
-sns.boxenplot(pd.concat([
-    specific_cost_by_tech_frame(la_paz_joo, cost_key="Total", plant=Plant.JOO),
-    specific_cost_by_tech_frame(la_paz_el, cost_key="Total", plant=Plant.EL_NASHAR),
-    specific_cost_by_tech_frame(la_paz_rahimi, cost_key="Total", plant=Plant.RAHIMI),]),
+sns.boxenplot(
+    pd.concat(
+        [
+            specific_cost_by_tech_frame(la_paz_joo, cost_key="Total", plant=Plant.JOO),
+            specific_cost_by_tech_frame(
+                la_paz_el, cost_key="Total", plant=Plant.EL_NASHAR
+            ),
+            specific_cost_by_tech_frame(
+                la_paz_rahimi, cost_key="Total", plant=Plant.RAHIMI
+            ),
+        ]
+    ),
     ax=(axis := axes[1, 1]),
     k_depth=K_DEPTH,
 )
@@ -3920,7 +3970,12 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 # axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
 
 
-plt.savefig("all_plant_specific_technology_types_6.png", transparent=True, dpi=300, bbox_inches="tight")
+plt.savefig(
+    "all_plant_specific_technology_types_6.png",
+    transparent=True,
+    dpi=300,
+    bbox_inches="tight",
+)
 
 plt.show()
 
@@ -3979,8 +4034,12 @@ mean_component_numbers = {
     "Abu Dhabi Joo Batt.": float(
         round(np.mean(components_boxen_frame(abu_dhabi_joo)["Batteries"]), 0)
     ),
-    "Abu Dhabi Joo PV": round(float(np.mean(components_boxen_frame(abu_dhabi_joo)["PV"])), 0),
-    "Abu Dhabi Joo PV-T": round(float(np.mean(components_boxen_frame(abu_dhabi_joo)["PV-T"])), 0),
+    "Abu Dhabi Joo PV": round(
+        float(np.mean(components_boxen_frame(abu_dhabi_joo)["PV"])), 0
+    ),
+    "Abu Dhabi Joo PV-T": round(
+        float(np.mean(components_boxen_frame(abu_dhabi_joo)["PV-T"])), 0
+    ),
     "Abu Dhabi Joo ST": float(
         round(np.mean(components_boxen_frame(abu_dhabi_joo)["Solar-thermal"]), 0)
     ),
@@ -4047,15 +4106,21 @@ mean_component_numbers = {
     "Tijuana Joo Batt.": float(
         round(np.mean(components_boxen_frame(tijuana_joo)["Batteries"]), 0)
     ),
-    "Tijuana Joo PV": round(float(np.mean(components_boxen_frame(tijuana_joo)["PV"])), 0),
-    "Tijuana Joo PV-T": round(float(np.mean(components_boxen_frame(tijuana_joo)["PV-T"])), 0),
+    "Tijuana Joo PV": round(
+        float(np.mean(components_boxen_frame(tijuana_joo)["PV"])), 0
+    ),
+    "Tijuana Joo PV-T": round(
+        float(np.mean(components_boxen_frame(tijuana_joo)["PV-T"])), 0
+    ),
     "Tijuana Joo ST": float(
         round(np.mean(components_boxen_frame(tijuana_joo)["Solar-thermal"]), 0)
     ),
     "Tijuana El-Nashar Batt.": float(
         round(np.mean(components_boxen_frame(tijuana_el)["Batteries"]), 0)
     ),
-    "Tijuana El-Nashar PV": round(float(np.mean(components_boxen_frame(tijuana_el)["PV"])), 0),
+    "Tijuana El-Nashar PV": round(
+        float(np.mean(components_boxen_frame(tijuana_el)["PV"])), 0
+    ),
     "Tijuana El-Nashar PV-T": float(
         round(np.mean(components_boxen_frame(tijuana_el)["PV-T"]), 0)
     ),
@@ -4065,31 +4130,43 @@ mean_component_numbers = {
     "Tijuana Raihimi Batt.": float(
         round(np.mean(components_boxen_frame(tijuana_rahimi)["Batteries"]), 0)
     ),
-    "Tijuana Raihimi PV": round(float(np.mean(components_boxen_frame(tijuana_rahimi)["PV"])), 0),
+    "Tijuana Raihimi PV": round(
+        float(np.mean(components_boxen_frame(tijuana_rahimi)["PV"])), 0
+    ),
     "Tijuana Raihimi PV-T": float(
         round(np.mean(components_boxen_frame(tijuana_rahimi)["PV-T"]), 0)
     ),
     "Tijuana Raihimi ST": float(
         round(np.mean(components_boxen_frame(tijuana_rahimi)["Solar-thermal"]), 0)
     ),
-    "La Paz Joo Batt.": round(float(np.mean(components_boxen_frame(la_paz_joo)["Batteries"])), 0),
+    "La Paz Joo Batt.": round(
+        float(np.mean(components_boxen_frame(la_paz_joo)["Batteries"])), 0
+    ),
     "La Paz Joo PV": round(float(np.mean(components_boxen_frame(la_paz_joo)["PV"])), 0),
-    "La Paz Joo PV-T": round(float(np.mean(components_boxen_frame(la_paz_joo)["PV-T"])), 0),
+    "La Paz Joo PV-T": round(
+        float(np.mean(components_boxen_frame(la_paz_joo)["PV-T"])), 0
+    ),
     "La Paz Joo ST": float(
         round(np.mean(components_boxen_frame(la_paz_joo)["Solar-thermal"]), 0)
     ),
     "La Paz El-Nashar Batt.": float(
         round(np.mean(components_boxen_frame(la_paz_el)["Batteries"]), 0)
     ),
-    "La Paz El-Nashar PV": round(float(np.mean(components_boxen_frame(la_paz_el)["PV"])), 0),
-    "La Paz El-Nashar PV-T": round(float(np.mean(components_boxen_frame(la_paz_el)["PV-T"])), 0),
+    "La Paz El-Nashar PV": round(
+        float(np.mean(components_boxen_frame(la_paz_el)["PV"])), 0
+    ),
+    "La Paz El-Nashar PV-T": round(
+        float(np.mean(components_boxen_frame(la_paz_el)["PV-T"])), 0
+    ),
     "La Paz El-Nashar ST": float(
         round(np.mean(components_boxen_frame(la_paz_el)["Solar-thermal"]), 0)
     ),
     "La Paz Raihimi Batt.": float(
         round(np.mean(components_boxen_frame(la_paz_rahimi)["Batteries"]), 0)
     ),
-    "La Paz Raihimi PV": round(float(np.mean(components_boxen_frame(la_paz_rahimi)["PV"])), 0),
+    "La Paz Raihimi PV": round(
+        float(np.mean(components_boxen_frame(la_paz_rahimi)["PV"])), 0
+    ),
     "La Paz Raihimi PV-T": float(
         round(np.mean(components_boxen_frame(la_paz_rahimi)["PV-T"]), 0)
     ),
@@ -4115,13 +4192,25 @@ TANK_INDEX: int | None = None
 Y_SCALE = "linear"
 
 
-data_to_plot = pd.DataFrame(
-    {
-        "Small": (frame := specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)).loc[frame["Total"].idxmin()],
-        "Medium": (frame := specific_costs_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)).loc[frame["Total"].idxmin()],
-        "Large": (frame := specific_costs_boxen_frame(abu_dhabi_rahimi, plant=Plant.RAHIMI)).loc[frame["Total"].idxmin()]
-    }
-).drop("Total").transpose()
+data_to_plot = (
+    pd.DataFrame(
+        {
+            "Small": (
+                frame := specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)
+            ).loc[frame["Total"].idxmin()],
+            "Medium": (
+                frame := specific_costs_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)
+            ).loc[frame["Total"].idxmin()],
+            "Large": (
+                frame := specific_costs_boxen_frame(
+                    abu_dhabi_rahimi, plant=Plant.RAHIMI
+                )
+            ).loc[frame["Total"].idxmin()],
+        }
+    )
+    .drop("Total")
+    .transpose()
+)
 data_to_plot.plot.bar(ax=(axis := axes[0, 0]), rot=0, stacked=True)
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
@@ -4141,13 +4230,27 @@ axis.text(
     ha="right",
 )
 
-data_to_plot = pd.DataFrame(
-    {
-        "Small": (frame := specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO)).loc[frame["Total"].idxmin()],
-        "Medium": (frame := specific_costs_boxen_frame(gran_canaria_el, plant=Plant.EL_NASHAR)).loc[frame["Total"].idxmin()],
-        "Large": (frame := specific_costs_boxen_frame(gran_canaria_rahimi, plant=Plant.RAHIMI)).loc[frame["Total"].idxmin()]
-    }
-).drop("Total").transpose()
+data_to_plot = (
+    pd.DataFrame(
+        {
+            "Small": (
+                frame := specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO)
+            ).loc[frame["Total"].idxmin()],
+            "Medium": (
+                frame := specific_costs_boxen_frame(
+                    gran_canaria_el, plant=Plant.EL_NASHAR
+                )
+            ).loc[frame["Total"].idxmin()],
+            "Large": (
+                frame := specific_costs_boxen_frame(
+                    gran_canaria_rahimi, plant=Plant.RAHIMI
+                )
+            ).loc[frame["Total"].idxmin()],
+        }
+    )
+    .drop("Total")
+    .transpose()
+)
 data_to_plot.plot.bar(ax=(axis := axes[0, 1]), rot=0, stacked=True)
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
@@ -4166,13 +4269,23 @@ axis.text(
 )
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
-data_to_plot = pd.DataFrame(
-    {
-        "Small": (frame := specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO)).loc[frame["Total"].idxmin()],
-        "Medium": (frame := specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)).loc[frame["Total"].idxmin()],
-        "Large": (frame := specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)).loc[frame["Total"].idxmin()]
-    }
-).drop("Total").transpose()
+data_to_plot = (
+    pd.DataFrame(
+        {
+            "Small": (
+                frame := specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO)
+            ).loc[frame["Total"].idxmin()],
+            "Medium": (
+                frame := specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)
+            ).loc[frame["Total"].idxmin()],
+            "Large": (
+                frame := specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)
+            ).loc[frame["Total"].idxmin()],
+        }
+    )
+    .drop("Total")
+    .transpose()
+)
 data_to_plot.plot.bar(ax=(axis := axes[1, 0]), rot=0, stacked=True)
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
@@ -4191,13 +4304,23 @@ axis.text(
 )
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
-data_to_plot = pd.DataFrame(
-    {
-        "Small": (frame := specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO)).loc[frame["Total"].idxmin()],
-        "Medium": (frame := specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)).loc[frame["Total"].idxmin()],
-        "Large": (frame := specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)).loc[frame["Total"].idxmin()]
-    }
-).drop("Total").transpose()
+data_to_plot = (
+    pd.DataFrame(
+        {
+            "Small": (
+                frame := specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO)
+            ).loc[frame["Total"].idxmin()],
+            "Medium": (
+                frame := specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)
+            ).loc[frame["Total"].idxmin()],
+            "Large": (
+                frame := specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)
+            ).loc[frame["Total"].idxmin()],
+        }
+    )
+    .drop("Total")
+    .transpose()
+)
 data_to_plot.plot.bar(ax=(axis := axes[1, 1]), rot=0, stacked=True)
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
@@ -4216,7 +4339,9 @@ axis.text(
 )
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
-plt.savefig("specific_costs_comparison_6.png", transparent=True, dpi=300, bbox_inches="tight")
+plt.savefig(
+    "specific_costs_comparison_6.png", transparent=True, dpi=300, bbox_inches="tight"
+)
 
 plt.show()
 
