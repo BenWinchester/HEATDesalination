@@ -2802,10 +2802,11 @@ plt.savefig(
 
 import enum
 import json
-import math
 import matplotlib.pyplot as plt
-import seaborn as sns
+import numpy as np
 import pandas as pd
+import re
+import seaborn as sns
 
 from matplotlib import rc
 from matplotlib import ticker
@@ -4028,8 +4029,6 @@ plt.show()
 
 # Mean component numbers
 
-import numpy as np
-
 mean_component_numbers = {
     "Abu Dhabi Joo Batt.": float(
         round(np.mean(components_boxen_frame(abu_dhabi_joo)["Batteries"]), 0)
@@ -4344,6 +4343,540 @@ plt.savefig(
 )
 
 plt.show()
+
+# Lowest-cost technology specification in each scenario
+
+print("Abu Dhabi Joo")
+print(
+    (frame := specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)).loc[
+        frame["Total"].idxmin()
+    ]
+)
+print("Abu Dhabi El-Nashar")
+print(
+    (frame := specific_costs_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)).loc[
+        frame["Total"].idxmin()
+    ]
+)
+print("Abu Dhabi Rahimi")
+print(
+    (frame := specific_costs_boxen_frame(abu_dhabi_rahimi, plant=Plant.RAHIMI)).loc[
+        frame["Total"].idxmin()
+    ]
+)
+print("Gran Canaria Joo")
+print(
+    (frame := specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO)).loc[
+        frame["Total"].idxmin()
+    ]
+)
+print("Gran Canaria El-Nashar")
+print(
+    (frame := specific_costs_boxen_frame(gran_canaria_el, plant=Plant.EL_NASHAR)).loc[
+        frame["Total"].idxmin()
+    ]
+)
+print("Gran Canaria Rahimi")
+print(
+    (frame := specific_costs_boxen_frame(gran_canaria_rahimi, plant=Plant.RAHIMI)).loc[
+        frame["Total"].idxmin()
+    ]
+)
+print("Tijuana Joo")
+print(
+    (frame := specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO)).loc[
+        frame["Total"].idxmin()
+    ]
+)
+print("Tijuana El-Nashar")
+print(
+    (frame := specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)).loc[
+        frame["Total"].idxmin()
+    ]
+)
+print("Tijuana Rahimi")
+print(
+    (frame := specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)).loc[
+        frame["Total"].idxmin()
+    ]
+)
+print("La Paz Joo")
+print(
+    (frame := specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO)).loc[
+        frame["Total"].idxmin()
+    ]
+)
+print("La Paz El-Nashar")
+print(
+    (frame := specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)).loc[
+        frame["Total"].idxmin()
+    ]
+)
+print("La Paz Rahimi")
+print(
+    (frame := specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)).loc[
+        frame["Total"].idxmin()
+    ]
+)
+
+print(json.dumps(lowest_cost, indent=4))
+
+########################
+# Sensitivity analysis #
+########################
+
+# Compile a regex for going through the data.
+regex = re.compile(
+    r"hpc_(?P<location>abu_dhabi|gran_canaria|tijuana|la_paz)_(?P<plant>joo|el_nashar|rahimi)_(?P<pv>[^_]*)_(?P<pvt>[^_]*)_(?P<st>[^_]*)_frac_(?P<frac_var>[^_]*)_(?P<percent>.*)\.json"
+)
+
+# Lowest cost for JOO:
+#   Sharp       - "sharp"
+#   D.S. 400    - "400"
+#   STI         - "sti"
+
+joo_p_si_sensitivity_data = {
+    key: value
+    for key, value in full_data.items()
+    if regex.match(key) is not None
+    and regex.match(key).group("plant") == "joo"
+    and regex.match(key).group("pv") == "sharp"
+    and regex.match(key).group("pvt") == "400"
+    and regex.match(key).group("st") == "augusta"
+}
+
+joo_m_si_sensitivity_data = {
+    key: value
+    for key, value in full_data.items()
+    if regex.match(key) is not None
+    and regex.match(key).group("plant") == "joo"
+    and regex.match(key).group("pv") == "rec"
+    and regex.match(key).group("pvt") == "400"
+    and regex.match(key).group("st") == "augusta"
+}
+
+# Assemble grid-cost data
+joo_abu_dhabi_p_si_grid_sensitivity_data = {
+    key: value
+    for key, value in joo_p_si_sensitivity_data.items()
+    if regex.match(key).group("frac_var") == "grid"
+    and regex.match(key).group("location") == "abu_dhabi"
+}
+joo_gando_p_si_grid_sensitivity_data = {
+    key: value
+    for key, value in joo_p_si_sensitivity_data.items()
+    if regex.match(key).group("frac_var") == "grid"
+    and regex.match(key).group("location") == "gran_canaria"
+}
+joo_tijuana_p_si_grid_sensitivity_data = {
+    key: value
+    for key, value in joo_p_si_sensitivity_data.items()
+    if regex.match(key).group("frac_var") == "grid"
+    and regex.match(key).group("location") == "tijuana"
+}
+joo_la_paz_p_si_grid_sensitivity_data = {
+    key: value
+    for key, value in joo_p_si_sensitivity_data.items()
+    if regex.match(key).group("frac_var") == "grid"
+    and regex.match(key).group("location") == "la_paz"
+}
+joo_m_si_grid_sensitivity_data = {
+    key: value
+    for key, value in joo_m_si_sensitivity_data.items()
+    if regex.match(key).group("frac_var") == "grid"
+}
+
+
+def _sensitivity_fraction(
+    data_to_fraction: dict[str, Any],
+    variable: str,
+    weather_conditions: str = "average_weather_conditions",
+):
+    results: dict[float, float] = {}
+    for key, entry in data_to_fraction.items():
+        results.update(
+            {
+                float(regex.match(key).group("percent")): float(
+                    entry[tank_index][1][weather_conditions][0][variable]
+                )
+                for tank_index in range(3)
+                if _scenario_match(key, tank_index)
+            }
+        )
+    return results
+
+
+def plot_fraction_sensitivity(data_to_plot, fraction_variable_name: str = "grid"):
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+    fig.subplots_adjust(hspace=0.25)
+    WEATHER_TYPE: str = "average_weather_conditions"
+    # WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+    # WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+    # Plot the fractions of power from storage, pv, and the grid.
+    x, grid_fraction = zip(
+        *sorted(
+            zip(
+                (
+                    sensitivity_results := _sensitivity_fraction(
+                        (
+                            sensitivity_data := {
+                                key: value
+                                for key, value in data_to_plot.items()
+                                if regex.match(key).group("frac_var")
+                                == fraction_variable_name
+                                and regex.match(key).group("location") == "abu_dhabi"
+                            }
+                        ),
+                        "grid_electricity_fraction",
+                        WEATHER_TYPE,
+                    )
+                ).keys(),
+                sensitivity_results.values(),
+            )
+        )
+    )
+    _, solar_fraction = zip(
+        *sorted(
+            zip(
+                (
+                    sensitivity_results := _sensitivity_fraction(
+                        sensitivity_data, "solar_electricity_fraction", WEATHER_TYPE
+                    )
+                ).keys(),
+                sensitivity_results.values(),
+            )
+        )
+    )
+    _, storage_fraction = zip(
+        *sorted(
+            zip(
+                (
+                    sensitivity_results := _sensitivity_fraction(
+                        sensitivity_data, "storage_electricity_fraction", WEATHER_TYPE
+                    )
+                ).keys(),
+                sensitivity_results.values(),
+            )
+        )
+    )
+    (axis := axes[0, 0]).plot(
+        x,
+        (
+            grid_line := [
+                storage_fraction[index] + grid_fraction[index] + solar_fraction[index]
+                for index in range(len(storage_fraction))
+            ]
+        ),
+        color=f"C2",
+        label="grid fraction",
+    )
+    axis.plot(
+        x,
+        (
+            solar_line := [
+                storage_fraction[index] + solar_fraction[index]
+                for index in range(len(storage_fraction))
+            ]
+        ),
+        color=f"C1",
+        label="solar fraction",
+    )
+    axis.plot(x, storage_fraction, color=f"C0", label="storage fraction")
+    axis.fill_between(
+        x, [0] * len(storage_fraction), storage_fraction, color="C0", alpha=0.7
+    )
+    axis.fill_between(x, storage_fraction, solar_line, color="C1", alpha=0.7)
+    axis.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
+    axis.set_xlabel("Fractional cost decrease")
+    axis.set_ylabel("Fraction")
+    axis.set_title("Abu Dhabi, UAE")
+    axis.text(
+        -0.08,
+        1.1,
+        "a.",
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+    axis.legend()
+    axis.set_ylim(-0.05, 1.05)
+    axis.set_xlim(-0.2, 0.2)
+    # Gando data
+    x, grid_fraction = zip(
+        *sorted(
+            zip(
+                (
+                    sensitivity_results := _sensitivity_fraction(
+                        (
+                            sensitivity_data := {
+                                key: value
+                                for key, value in data_to_plot.items()
+                                if regex.match(key).group("frac_var")
+                                == fraction_variable_name
+                                and regex.match(key).group("location") == "gran_canaria"
+                            }
+                        ),
+                        "grid_electricity_fraction",
+                        WEATHER_TYPE,
+                    )
+                ).keys(),
+                sensitivity_results.values(),
+            )
+        )
+    )
+    _, solar_fraction = zip(
+        *sorted(
+            zip(
+                (
+                    sensitivity_results := _sensitivity_fraction(
+                        sensitivity_data, "solar_electricity_fraction", WEATHER_TYPE
+                    )
+                ).keys(),
+                sensitivity_results.values(),
+            )
+        )
+    )
+    _, storage_fraction = zip(
+        *sorted(
+            zip(
+                (
+                    sensitivity_results := _sensitivity_fraction(
+                        sensitivity_data, "storage_electricity_fraction", WEATHER_TYPE
+                    )
+                ).keys(),
+                sensitivity_results.values(),
+            )
+        )
+    )
+    (axis := axes[0, 1]).plot(
+        x,
+        (
+            grid_line := [
+                storage_fraction[index] + grid_fraction[index] + solar_fraction[index]
+                for index in range(len(storage_fraction))
+            ]
+        ),
+        color=f"C2",
+        label="grid fraction",
+    )
+    axis.plot(
+        x,
+        (
+            solar_line := [
+                storage_fraction[index] + solar_fraction[index]
+                for index in range(len(storage_fraction))
+            ]
+        ),
+        color=f"C1",
+        label="solar fraction",
+    )
+    axis.plot(x, storage_fraction, color=f"C0", label="storage fraction")
+    axis.fill_between(
+        x, [0] * len(storage_fraction), storage_fraction, color="C0", alpha=0.7
+    )
+    axis.fill_between(x, storage_fraction, solar_line, color="C1", alpha=0.7)
+    axis.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
+    axis.set_xlabel("Fractional cost decrease")
+    axis.set_ylabel("Fraction")
+    axis.set_title("Gando, Gran Canaria")
+    axis.text(
+        -0.08,
+        1.1,
+        "b.",
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+    axis.legend()
+    axis.set_ylim(-0.05, 1.05)
+    axis.set_xlim(-0.2, 0.2)
+    # Gando data
+    x, grid_fraction = zip(
+        *sorted(
+            zip(
+                (
+                    sensitivity_results := _sensitivity_fraction(
+                        (
+                            sensitivity_data := {
+                                key: value
+                                for key, value in data_to_plot.items()
+                                if regex.match(key).group("frac_var")
+                                == fraction_variable_name
+                                and regex.match(key).group("location") == "tijuana"
+                            }
+                        ),
+                        "grid_electricity_fraction",
+                        WEATHER_TYPE,
+                    )
+                ).keys(),
+                sensitivity_results.values(),
+            )
+        )
+    )
+    _, solar_fraction = zip(
+        *sorted(
+            zip(
+                (
+                    sensitivity_results := _sensitivity_fraction(
+                        sensitivity_data, "solar_electricity_fraction", WEATHER_TYPE
+                    )
+                ).keys(),
+                sensitivity_results.values(),
+            )
+        )
+    )
+    _, storage_fraction = zip(
+        *sorted(
+            zip(
+                (
+                    sensitivity_results := _sensitivity_fraction(
+                        sensitivity_data, "storage_electricity_fraction", WEATHER_TYPE
+                    )
+                ).keys(),
+                sensitivity_results.values(),
+            )
+        )
+    )
+    (axis := axes[1, 0]).plot(
+        x,
+        (
+            grid_line := [
+                storage_fraction[index] + grid_fraction[index] + solar_fraction[index]
+                for index in range(len(storage_fraction))
+            ]
+        ),
+        color=f"C2",
+        label="grid fraction",
+    )
+    axis.plot(
+        x,
+        (
+            solar_line := [
+                storage_fraction[index] + solar_fraction[index]
+                for index in range(len(storage_fraction))
+            ]
+        ),
+        color=f"C1",
+        label="solar fraction",
+    )
+    axis.plot(x, storage_fraction, color=f"C0", label="storage fraction")
+    axis.fill_between(
+        x, [0] * len(storage_fraction), storage_fraction, color="C0", alpha=0.7
+    )
+    axis.fill_between(x, storage_fraction, solar_line, color="C1", alpha=0.7)
+    axis.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
+    axis.set_xlabel("Fractional cost decrease")
+    axis.set_ylabel("Fraction")
+    axis.set_title("Tijuana, Mexico")
+    axis.text(
+        -0.08,
+        1.1,
+        "b.",
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+    axis.legend()
+    axis.set_ylim(-0.05, 1.05)
+    axis.set_xlim(-0.2, 0.2)
+    # La Paz data
+    x, grid_fraction = zip(
+        *sorted(
+            zip(
+                (
+                    sensitivity_results := _sensitivity_fraction(
+                        (
+                            sensitivity_data := {
+                                key: value
+                                for key, value in data_to_plot.items()
+                                if regex.match(key).group("frac_var")
+                                == fraction_variable_name
+                                and regex.match(key).group("location") == "la_paz"
+                            }
+                        ),
+                        "grid_electricity_fraction",
+                        WEATHER_TYPE,
+                    )
+                ).keys(),
+                sensitivity_results.values(),
+            )
+        )
+    )
+    _, solar_fraction = zip(
+        *sorted(
+            zip(
+                (
+                    sensitivity_results := _sensitivity_fraction(
+                        sensitivity_data, "solar_electricity_fraction", WEATHER_TYPE
+                    )
+                ).keys(),
+                sensitivity_results.values(),
+            )
+        )
+    )
+    _, storage_fraction = zip(
+        *sorted(
+            zip(
+                (
+                    sensitivity_results := _sensitivity_fraction(
+                        sensitivity_data, "storage_electricity_fraction", WEATHER_TYPE
+                    )
+                ).keys(),
+                sensitivity_results.values(),
+            )
+        )
+    )
+    (axis := axes[1, 1]).plot(
+        x,
+        (
+            grid_line := [
+                storage_fraction[index] + grid_fraction[index] + solar_fraction[index]
+                for index in range(len(storage_fraction))
+            ]
+        ),
+        color=f"C2",
+        label="grid fraction",
+    )
+    axis.plot(
+        x,
+        (
+            solar_line := [
+                storage_fraction[index] + solar_fraction[index]
+                for index in range(len(storage_fraction))
+            ]
+        ),
+        color=f"C1",
+        label="solar fraction",
+    )
+    axis.plot(x, storage_fraction, color=f"C0", label="storage fraction")
+    axis.fill_between(
+        x, [0] * len(storage_fraction), storage_fraction, color="C0", alpha=0.7
+    )
+    axis.fill_between(x, storage_fraction, solar_line, color="C1", alpha=0.7)
+    axis.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
+    axis.set_xlabel("Fractional cost decrease")
+    axis.set_ylabel("Fraction")
+    axis.set_title("La Paz, Mexico")
+    axis.text(
+        -0.08,
+        1.1,
+        "d.",
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+    axis.legend()
+    axis.set_ylim(-0.05, 1.05)
+    axis.set_xlim(-0.2, 0.2)
+
 
 ["dumped_electricity"]
 
