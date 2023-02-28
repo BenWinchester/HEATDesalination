@@ -26,6 +26,368 @@ batteries:
     # Lifetime loss information from
     # https://doi.org/10.1016%2FS0378-7753%2802%2900490-1
     lifetime_loss: !!float 0.241   # Fractional loss over lifetime (0.0 - 1.0)
+  # Batteries for sensitivity analysis on battery cycle lifetime
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 100
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_100_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 200
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_200_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 300
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_300_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 400
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_400_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 500
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_500_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 600
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_600_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 700
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_700_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 800
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_800_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 900
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_900_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 1000
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_1000_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 1100
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_1100_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 1200
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_1200_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 1300
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_1300_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 1400
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_1400_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 1500
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_1500_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 1600
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_1600_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 1700
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_1700_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 1800
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_1800_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 1900
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_1900_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 2000
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_2000_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 2100
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_2100_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 2200
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_2200_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 2300
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_2300_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 2400
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_2400_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 2500
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_2500_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 2600
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_2600_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 2700
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_2700_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 2800
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_2800_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 2900
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_2900_cycles
+  - c_rate_charging: 0.578125
+    c_rate_discharging: 1.0
+    capacity: 1.28
+    conversion_in: 0.95
+    conversion_out: 0.95
+    cost: 494.9
+    cycle_lifetime: 3000
+    leakage: 4.1666e-05
+    lifetime_loss: 0.241
+    maximum_charge: 0.9
+    minimum_charge: 0.1
+    name: renogy_12v_100ah_3000_cycles
+
 hot_water_tanks:
   - name: !!str grant_hpmono_ind150
     area: !!float 0.248  # [m^2]
