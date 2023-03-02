@@ -2840,7 +2840,7 @@ colorblind_palette = sns.color_palette(
 sns.set_palette(colorblind_palette)
 
 # Read input data
-with open("23_feb_23.json", "r") as f:
+with open("02_mar_23.json", "r") as f:
     full_data = json.load(f)
 
 
@@ -4455,36 +4455,36 @@ joo_m_si_sensitivity_data = {
     and regex.match(key).group("st") == "augusta"
 }
 
-# Assemble grid-cost data
-joo_abu_dhabi_p_si_grid_sensitivity_data = {
-    key: value
-    for key, value in joo_p_si_sensitivity_data.items()
-    if regex.match(key).group("frac_var") == "grid"
-    and regex.match(key).group("location") == "abu_dhabi"
-}
-joo_gando_p_si_grid_sensitivity_data = {
-    key: value
-    for key, value in joo_p_si_sensitivity_data.items()
-    if regex.match(key).group("frac_var") == "grid"
-    and regex.match(key).group("location") == "gran_canaria"
-}
-joo_tijuana_p_si_grid_sensitivity_data = {
-    key: value
-    for key, value in joo_p_si_sensitivity_data.items()
-    if regex.match(key).group("frac_var") == "grid"
-    and regex.match(key).group("location") == "tijuana"
-}
-joo_la_paz_p_si_grid_sensitivity_data = {
-    key: value
-    for key, value in joo_p_si_sensitivity_data.items()
-    if regex.match(key).group("frac_var") == "grid"
-    and regex.match(key).group("location") == "la_paz"
-}
-joo_m_si_grid_sensitivity_data = {
-    key: value
-    for key, value in joo_m_si_sensitivity_data.items()
-    if regex.match(key).group("frac_var") == "grid"
-}
+# # Assemble grid-cost data
+# joo_abu_dhabi_p_si_grid_sensitivity_data = {
+#     key: value
+#     for key, value in joo_p_si_sensitivity_data.items()
+#     if regex.match(key).group("frac_var") == "grid"
+#     and regex.match(key).group("location") == "abu_dhabi"
+# }
+# joo_gando_p_si_grid_sensitivity_data = {
+#     key: value
+#     for key, value in joo_p_si_sensitivity_data.items()
+#     if regex.match(key).group("frac_var") == "grid"
+#     and regex.match(key).group("location") == "gran_canaria"
+# }
+# joo_tijuana_p_si_grid_sensitivity_data = {
+#     key: value
+#     for key, value in joo_p_si_sensitivity_data.items()
+#     if regex.match(key).group("frac_var") == "grid"
+#     and regex.match(key).group("location") == "tijuana"
+# }
+# joo_la_paz_p_si_grid_sensitivity_data = {
+#     key: value
+#     for key, value in joo_p_si_sensitivity_data.items()
+#     if regex.match(key).group("frac_var") == "grid"
+#     and regex.match(key).group("location") == "la_paz"
+# }
+# joo_m_si_grid_sensitivity_data = {
+#     key: value
+#     for key, value in joo_m_si_sensitivity_data.items()
+#     if regex.match(key).group("frac_var") == "grid"
+# }
 
 
 def _sensitivity_fraction(
@@ -4878,6 +4878,274 @@ def plot_fraction_sensitivity(data_to_plot, fraction_variable_name: str = "grid"
     axis.set_xlim(-0.2, 0.2)
 
 
+def plot_auxiliary_heating_sensitivity(data_to_plot, fraction_variable_name: str = "grid"):
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+    fig.subplots_adjust(hspace=0.25)
+    WEATHER_TYPE: str = "average_weather_conditions"
+    # WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+    # WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+    # Plot the fractions of power from storage, pv, and the grid.
+    x, auxiliary_heating_fraction = zip(
+        *sorted(
+            zip(
+                (
+                    sensitivity_results := _sensitivity_fraction(
+                        (
+                            sensitivity_data := {
+                                key: value
+                                for key, value in data_to_plot.items()
+                                if regex.match(key).group("frac_var")
+                                == fraction_variable_name
+                                and regex.match(key).group("location") == "abu_dhabi"
+                            }
+                        ),
+                        "auxiliary_heating_fraction",
+                        WEATHER_TYPE,
+                    )
+                ).keys(),
+                sensitivity_results.values(),
+            )
+        )
+    )
+    (axis := axes[0, 0]).plot(
+        x,
+        (
+            solar_line := [
+                1 - auxiliary_heating_fraction[index]
+                for index in range(len(auxiliary_heating_fraction))
+            ]
+        ),
+        color=f"C1",
+        label="solar-thermal fraction",
+    )
+    axis.plot(
+        x,
+        (
+            auxiliary_line := [
+                auxiliary_heating_fraction[index] + solar_line[index]
+                for index in range(len(auxiliary_heating_fraction))
+            ]
+        ),
+        color=f"C3",
+        label="auxiliary-heating fraction",
+    )
+    axis.fill_between(
+        x, [0] * len(solar_line), solar_line, color="C1", alpha=0.7
+    )
+    axis.fill_between(x, solar_line, auxiliary_line, color="C3", alpha=0.7)
+    axis.set_xlabel("Fractional cost change")
+    axis.set_ylabel("Fraction")
+    axis.set_title("Abu Dhabi, UAE")
+    axis.text(
+        -0.08,
+        1.1,
+        "a.",
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+    axis.legend()
+    axis.set_ylim(-0.05, 1.05)
+    axis.set_xlim(-0.2, 0.2)
+    # Gando data
+    x, auxiliary_heating_fraction = zip(
+        *sorted(
+            zip(
+                (
+                    sensitivity_results := _sensitivity_fraction(
+                        (
+                            sensitivity_data := {
+                                key: value
+                                for key, value in data_to_plot.items()
+                                if regex.match(key).group("frac_var")
+                                == fraction_variable_name
+                                and regex.match(key).group("location") == "gran_canaria"
+                            }
+                        ),
+                        "auxiliary_heating_fraction",
+                        WEATHER_TYPE,
+                    )
+                ).keys(),
+                sensitivity_results.values(),
+            )
+        )
+    )
+    (axis := axes[0, 1]).plot(
+        x,
+        (
+            solar_line := [
+                1 - auxiliary_heating_fraction[index]
+                for index in range(len(auxiliary_heating_fraction))
+            ]
+        ),
+        color=f"C1",
+        label="solar-thermal fraction",
+    )
+    axis.plot(
+        x,
+        (
+            auxiliary_line := [
+                auxiliary_heating_fraction[index] + solar_line[index]
+                for index in range(len(auxiliary_heating_fraction))
+            ]
+        ),
+        color=f"C3",
+        label="auxiliary-heating fraction",
+    )
+    axis.fill_between(
+        x, [0] * len(solar_line), solar_line, color="C1", alpha=0.7
+    )
+    axis.fill_between(x, solar_line, auxiliary_line, color="C3", alpha=0.7)
+    axis.set_xlabel("Fractional cost change")
+    axis.set_ylabel("Fraction")
+    axis.set_title("Gando, Gran Canaria")
+    axis.text(
+        -0.08,
+        1.1,
+        "b.",
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+    axis.legend()
+    axis.set_ylim(-0.05, 1.05)
+    axis.set_xlim(-0.2, 0.2)
+    # Tijuana data
+    x, auxiliary_heating_fraction = zip(
+        *sorted(
+            zip(
+                (
+                    sensitivity_results := _sensitivity_fraction(
+                        (
+                            sensitivity_data := {
+                                key: value
+                                for key, value in data_to_plot.items()
+                                if regex.match(key).group("frac_var")
+                                == fraction_variable_name
+                                and regex.match(key).group("location") == "tijuana"
+                            }
+                        ),
+                        "auxiliary_heating_fraction",
+                        WEATHER_TYPE,
+                    )
+                ).keys(),
+                sensitivity_results.values(),
+            )
+        )
+    )
+    (axis := axes[1, 0]).plot(
+        x,
+        (
+            solar_line := [
+                1 - auxiliary_heating_fraction[index]
+                for index in range(len(auxiliary_heating_fraction))
+            ]
+        ),
+        color=f"C1",
+        label="solar-thermal fraction",
+    )
+    axis.plot(
+        x,
+        (
+            auxiliary_line := [
+                auxiliary_heating_fraction[index] + solar_line[index]
+                for index in range(len(auxiliary_heating_fraction))
+            ]
+        ),
+        color=f"C3",
+        label="auxiliary-heating fraction",
+    )
+    axis.fill_between(
+        x, [0] * len(solar_line), solar_line, color="C1", alpha=0.7
+    )
+    axis.fill_between(x, solar_line, auxiliary_line, color="C3", alpha=0.7)
+    axis.set_xlabel("Fractional cost change")
+    axis.set_ylabel("Fraction")
+    axis.set_title("Tijuana, Mexico")
+    axis.text(
+        -0.08,
+        1.1,
+        "b.",
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+    axis.legend()
+    axis.set_ylim(-0.05, 1.05)
+    axis.set_xlim(-0.2, 0.2)
+    # La Paz data
+    x, auxiliary_heating_fraction = zip(
+        *sorted(
+            zip(
+                (
+                    sensitivity_results := _sensitivity_fraction(
+                        (
+                            sensitivity_data := {
+                                key: value
+                                for key, value in data_to_plot.items()
+                                if regex.match(key).group("frac_var")
+                                == fraction_variable_name
+                                and regex.match(key).group("location") == "la_paz"
+                            }
+                        ),
+                        "auxiliary_heating_fraction",
+                        WEATHER_TYPE,
+                    )
+                ).keys(),
+                sensitivity_results.values(),
+            )
+        )
+    )
+    (axis := axes[1, 1]).plot(
+        x,
+        (
+            solar_line := [
+                1 - auxiliary_heating_fraction[index]
+                for index in range(len(auxiliary_heating_fraction))
+            ]
+        ),
+        color=f"C1",
+        label="solar-thermal fraction",
+    )
+    axis.plot(
+        x,
+        (
+            auxiliary_line := [
+                auxiliary_heating_fraction[index] + solar_line[index]
+                for index in range(len(auxiliary_heating_fraction))
+            ]
+        ),
+        color=f"C3",
+        label="auxiliary-heating fraction",
+    )
+    axis.fill_between(
+        x, [0] * len(solar_line), solar_line, color="C1", alpha=0.7
+    )
+    axis.fill_between(x, solar_line, auxiliary_line, color="C3", alpha=0.7)
+    axis.set_xlabel("Fractional cost change")
+    axis.set_ylabel("Fraction")
+    axis.set_title("La Paz, Mexico")
+    axis.text(
+        -0.08,
+        1.1,
+        "d.",
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+    axis.legend()
+    axis.set_ylim(-0.05, 1.05)
+    axis.set_xlim(-0.2, 0.2)
+
+
 ["dumped_electricity"]
 
 # Abu Dhabi HIST
@@ -4905,6 +5173,189 @@ hist_plot(tijuana_rahimi)
 
 hist_plot(tijuana_el)
 
+#########################################
+# Inverter-battery sensitivity analysis #
+#########################################
+
+# Generate the frame
+frame = pd.DataFrame(
+    {
+        "Storage capacity / kWh": battery_capacities,
+        # "Number of PV-T collectors": pv_t_sizes,
+        "Number of PV panels": pv_sizes,
+        "Cost / MUSD": costs,
+    }
+)
+pivotted_frame = frame.pivot(
+    index="Number of PV panels",
+    columns="Storage capacity / kWh",
+    values="Cost / MUSD"
+    # index="Number of PV panels", columns="Number of PV-T collectors", values="Cost / MUSD"
+)
+
+# PV-T and solar-thermal
+frame = pd.DataFrame(
+    {
+        "Solar-thermal capacity / collectors": solar_thermal_sizes,
+        "PV-T capacity / collectors": pv_t_sizes,
+        # "Cost / MUSD": costs,
+        "Auxiliary heating fraction": auxiliary_heating_fraction
+        # "Grid fraction": grid_fraction
+        # "Solar fraction": solar_fraction
+        # "Storage fraction": storage_fraction
+    }
+)
+pivotted_frame = frame.pivot(
+    index="PV-T capacity / collectors",
+    columns="Solar-thermal capacity / collectors",
+    # values="Cost / MUSD"
+    values="Auxiliary heating fraction"
+    # values="Grid fraction"
+    # values="Solar fraction"
+    # values="Storage fraction"
+)
+
+# Extract the arrays.
+Z = pivotted_frame.values
+
+# X_unique = np.sort(frame["Storage capacity / kWh"].unique())
+# Y_unique = np.sort(frame["Number of PV panels"].unique())
+
+X_unique = np.sort(frame["Solar-thermal capacity / collectors"].unique())
+Y_unique = np.sort(frame["PV-T capacity / collectors"].unique())
+
+# X_unique = np.sort(frame["Number of PV-T collectors"].unique())
+# Y_unique = np.sort(frame["Number of PV panels"].unique())
+
+X, Y = np.meshgrid(X_unique, Y_unique)
+
+# Define levels in z-axis where we want lines to appear
+levels = np.array(
+    [
+        0.0,
+        0.01,
+        0.02,
+        0.03,
+        0.04,
+        0.05,
+        0.06,
+        0.07,
+        0.08,
+        0.09,
+        0.1,
+        0.11,
+        0.12,
+        0.13,
+        0.14,
+        0.15,
+        0.16,
+        0.17,
+        0.18,
+        0.19,
+        0.2,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1.0,
+        1.1,
+        1.2,
+        1.3,
+        1.4,
+        1.45,
+        1.5,
+        1.55,
+        1.6,
+        1.65,
+        1.7,
+        1.75,
+        1.8,
+        1.85,
+        1.9,
+        2,
+        2.1,
+        2.2,
+        2.3,
+        2.4,
+        2.5,
+        2.6,
+        2.7,
+        2.8,
+        2.9,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+    ]
+)
+
+# Gene
+regex = re.compile(r"hpc_(?P<location>abu_dhabi|gran_canaria|tijuana|la_paz)_(?P<plant>joo|el_nashar|rahimi|el)_(?P<pv>[^_]*)_(?P<pvt>[^_]*)_(?P<st>[^_]*)_(?P<batt_cycles>\d*)_batt_cycles_(?P<inverter_lifetime>\d*)_inverter_years")
+
+# Filter out the battery-inverter data points
+battery_inverter_data = {key: value for key, value in data.items() if regex.match(key) is not None}
+rahimi_battery_inverter_data = {key: value for key, value in data.items() if regex.match(key).group("plant") == "rahimi"}
+el_battery_inverter_data = {key: value for key, value in data.items() if "el" in regex.match(key).group("plant")}
+joo_battery_inverter_data = {key: value for key, value in data.items() if regex.match(key).group("plant") == "joo"}
+
+# Generate a color-map palette in-keeping with the colorblind colour scheme
+colorblind_cmap = colorblind_palette = sns.color_palette(
+    [
+        "#E04606",  # Orange
+        "#F09F52",  # Pale orange
+        "#52C0AD",  # Pale green
+        "#006264",  # Green
+        "#D8247C",  # Pink
+        "#EDEDED",  # Pale pink
+        "#E7DFBE",  # Pale yellow
+        "#FBBB2C",  # Yellow
+    ],
+    as_cmap=True
+)
+
+def plot_battery_inverter_contour_map(data_to_plot, variable: str, weather_conditions: str = "average_weather_conditions"):
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+    fig.subplots_adjust(hspace=0.25)
+    # Parse out the battery and inverter lifetime information
+    battery_lifetimes = [regex.match(key).group("batt_cycles") for key in data_to_plot if regex.match(key).group("location") == (location:="abu_dhabi")]
+    inverter_lifetimes = [regex.match(key).group("inverter_lifetime") for key in data_to_plot if regex.match(key).group("location") == location]
+    plotting_variable = _results_value({key: value for key, value in data_to_plot.items() if regex.match(key).group("location") == "abu_dhabi"}, None, variable, weather_conditions)
+    # Generate unique arrays pre-mershing
+    batt_uniq, batt_index = np.unique(battery_lifetimes, return_inverse=True)
+    inverter_uniq, inverter_index = np.unique(inverter_lifetimes, return_inverse=True)
+    batt_mesh, inverter_mesh = np.meshgrid(batt_uniq, inverter_uniq)
+    triang = tri.Triangulation(battery_lifetimes, inverter_lifetimes)
+    interpolator = tri.LinearTriInterpolator(triang, plotting_variable)
+    interpolator(batt_mesh, inverter_mesh)
+    # Generate the figure
+    fig, ax = plt.subplots()
+    # Generate the countours
+    contours = ax.contourf(batt_mesh, inverter_mesh, plotting_mesh, 100, colorblind_cmap)
+    # Add a colourbar
+    fig.colorbar(contours, ax=ax)
+
+# Attempting to interpolate
+battery_lifetimes = [float(regex.match(key).group("batt_cycles")) for key in rahimi_battery_inverter_data if regex.match(key).group("location") == (location:="abu_dhabi")]
+inverter_lifetimes = [float(regex.match(key).group("inverter_lifetime")) for key in rahimi_battery_inverter_data if regex.match(key).group("location") == location]
+plotting_variable = _results_value({key: value for key, value in rahimi_battery_inverter_data.items() if regex.match(key).group("location") == "abu_dhabi"}, None, "grid_electricity_fraction", "average_weather_conditions")
+
+
+batt_uniq, batt_index = np.unique(battery_lifetimes, return_inverse=True)
+inverter_uniq, inverter_index = np.unique(inverter_lifetimes, return_inverse=True)
+
+batt_mesh, inverter_mesh = np.meshgrid(batt_uniq, inverter_uniq)
+plotting_interpolated = interpolator(batt_mesh, inverter_mesh)
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+contours = (ax:=axes[0,0]).contourf(batt_mesh, inverter_mesh, plotting_interpolated, levels=100, cmap="PuBu")
+fig.colorbar(contours, ax=ax)
 
 ##########################
 # HPC Combination script #
@@ -4922,8 +5373,11 @@ data: dict[str, Any] = {}
 for filename in tqdm(os.listdir("."), desc="files", unit="file"):
     if "feb" in filename:
         continue
+    if "mar" in filename:
+        continue
     with open(filename, "r", encoding="UTF-8") as f:
         data[filename] = json.load(f)
 
-with open("23_feb_23.json", "w", encoding="UTF-8") as f:
+with open("02_mar_23.json", "w", encoding="UTF-8") as f:
     json.dump(data, f)
+
