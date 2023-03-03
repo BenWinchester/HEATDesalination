@@ -2589,45 +2589,105 @@ new_scenarios = []
 new_optimisations = []
 
 FRACTIONAL_CHANGES = [
+    "fractional_battery_cost_change",
     "fractional_grid_cost_change",
+    "fractional_heat_pump_cost_change",
     "fractional_pv_cost_change",
     "fractional_pvt_cost_change",
     "fractional_st_cost_change",
 ]
 
-RANGE: float = 0.2
+RANGE: float = 0.4
+
+DEFAULT_SCENARIO = {
+    "battery": "renogy_12v_100ah",
+    "fractional_battery_cost_change": 0.0,
+    "fractional_grid_cost_change": 0.0,
+    "fractional_heat_pump_cost_change": 0.0,
+    "fractional_hw_tank_cost_change": 0.0,
+    "fractional_inverter_cost_change": 0.0,
+    "fractional_pv_cost_change": 0.0,
+    "fractional_pvt_cost_change": 0.0,
+    "fractional_st_cost_change": 0.0,
+    "grid_cost_scheme": "abu_dhabi_uae",
+    "heat_exchanger_efficiency": 0.4,
+    "heat_pump": "ammonia",
+    "hot_water_tank": "grant_hpmono_ind150",
+    "htf_heat_capacity": 4182.0,
+    "inverter_cost": 148.5,
+    "inverter_lifetime": 13,
+    "name": "abu_dhabi_joo_sharp_300_sti",
+    "plant": "joo_med_24_hour",
+    "pv": "sharp_nd_af",
+    "pv_degradation_rate": 0.011,
+    "pv_t": "dualsun_spring_400_insulated",
+    "solar_thermal": "sti_fkf_240_cucu",
+    "water_pump": "crnf_15_1_a_ca_a_e_hqqe",
+    "fractional_water_pump_cost_change": 0.0,
+}
 
 # Iterate through these variables and define values from -0.2 to 0.2.
 for fractional_change_name in tqdm(FRACTIONAL_CHANGES, desc="fractional_changes"):
-    for change_value in np.linspace(-RANGE, RANGE, 101):
+    for change_value in np.linspace(-RANGE, RANGE, 81):
         for location_name, location_filename in tqdm(
             LOCATIONS.items(), desc="locations", leave=False
         ):
             # Cycle through the plants
             for plant in tqdm(PLANTS, desc="plants", leave=False):
-                # Cycle through the PV options available
-                for pv_panel in tqdm(PV_PANELS, desc="pv panels", leave=False):
-                    # Cycle through the PV-T options available
-                    scenario = DEFAULT_SCENARIO.copy()
-                    # Change the grid-cost scheme to match the scenario.
-                    scenario[grid_cost_scheme] = GRID_COST_SCHEMES[location_name]
-                    scenario[plant_kwarg] = plant
-                    scenario[pv] = pv_panel
-                    scenario_name = (
-                        f"{location_name}_"
-                        f"{plant.split('_')[0]}_"
-                        f"{pv_panel.split('_')[0]}_400_augusta_"
-                        f"frac_{fractional_change_name.split('_')[1]}_"
-                        f"{round(change_value, 3)}"
-                    )
-                    scenario[name] = scenario_name
-                    scenario[fractional_change_name] = change_value
-                    new_scenarios.append(scenario)
-                    optimisation = DEFAULT_OPTIMISATION.copy()
-                    optimisation["scenario"] = scenario_name
-                    optimisation["location"] = LOCATIONS[location_name]
-                    optimisation["output"] = scenario_name
-                    new_optimisations.append(optimisation)
+                # Cycle through the PV-T options available
+                scenario = DEFAULT_SCENARIO.copy()
+                # Change the grid-cost scheme to match the scenario.
+                scenario[grid_cost_scheme] = GRID_COST_SCHEMES[location_name]
+                scenario[plant_kwarg] = plant
+                scenario_name = (
+                    f"{location_name}_"
+                    f"{plant.split('_')[0]}_"
+                    f"sharp_400_sti_"
+                    f"frac_{fractional_change_name.split('_')[1]}_"
+                    f"{round(change_value, 3)}"
+                )
+                scenario[name] = scenario_name
+                scenario[fractional_change_name] = change_value
+                new_scenarios.append(scenario)
+                optimisation = DEFAULT_OPTIMISATION.copy()
+                optimisation["scenario"] = scenario_name
+                optimisation["location"] = LOCATIONS[location_name]
+                optimisation["output"] = scenario_name
+                new_optimisations.append(optimisation)
+
+INVERTER_LIFETIMES = range(1, 31, 2)
+BATTERY_NAMES = {
+    f"renogy_12v_100ah_{cycles}_cycles" for cycles in range(100, 3100, 100)
+}
+
+for inverter_lifetime in tqdm(
+    INVERTER_LIFETIMES, desc="inverter lifetimes", leave=True
+):
+    for cycles, battery_name in tqdm(
+        enumerate(BATTERY_NAMES), desc="battery lifetimes", leave=False
+    ):
+        for location_name, location_filename in tqdm(
+            LOCATIONS.items(), desc="locations", leave=False
+        ):
+            # Cycle through the plants
+            for plant in tqdm(PLANTS, desc="plants", leave=False):
+                scenario = DEFAULT_SCENARIO.copy()
+                scenario["battery"] = battery_name
+                scenario["inverter_lifetime"] = inverter_lifetime
+                scenario_name = (
+                    f"{location_name}_"
+                    f"{plant.split('_')[0]}_"
+                    f"sharp_400_sti_"
+                    f"{cycles*100}_batt_cycles_"
+                    f"{inverter_lifetime}_inverter_years"
+                )
+                scenario[name] = scenario_name
+                new_scenarios.append(scenario)
+                optimisation = DEFAULT_OPTIMISATION.copy()
+                optimisation["scenario"] = scenario_name
+                optimisation["location"] = LOCATIONS[location_name]
+                optimisation["output"] = scenario_name
+                new_optimisations.append(optimisation)
 
 
 grid_optimisations = []
@@ -2705,8 +2765,8 @@ for heat_pump_efficiency in np.linspace(0.01, 1, 100):
     heat_pump_efficiency_optimisations.append(optimisation)
 
 
-with open(scenarios_filepath, "w", encoding="UTF-8") as f:
-    yaml.dump({"scenarios": new_scenarios}, f)
+with open(os.path.join("inputs", "scenarios.json"), "w", encoding="UTF-8") as f:
+    json.dump({"scenarios": new_scenarios}, f)
 
 with open(
     os.path.join("inputs", "optimisations_pv_degradation.json"), "w", encoding="UTF-8"
@@ -2840,11 +2900,9 @@ colorblind_palette = sns.color_palette(
 sns.set_palette(colorblind_palette)
 
 # Read input data
-with open("02_mar_23.json", "r") as f:
+with open("02_mar_23.json", "r", encoding="UTF-8") as f:
     full_data = json.load(f)
 
-
-# Sanitise the data
 data = {
     key: value
     for key, value in full_data.items()
@@ -4344,6 +4402,163 @@ plt.savefig(
 
 plt.show()
 
+# Plot a stacked-bar plot with a specific technology set.
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+fig.subplots_adjust(hspace=0.25)
+
+K_DEPTH: int = 3
+
+# WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+Y_SCALE = "linear"
+
+data_to_plot = (
+    pd.DataFrame(
+        {
+            "Small": specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO).loc[
+                "hpc_abu_dhabi_joo_sharp_300_eurotherm"
+            ],
+            "Medium": specific_costs_boxen_frame(
+                abu_dhabi_el, plant=Plant.EL_NASHAR
+            ).loc["hpc_abu_dhabi_el_sharp_300_eurotherm"],
+            "Large": specific_costs_boxen_frame(
+                abu_dhabi_rahimi, plant=Plant.RAHIMI
+            ).loc["hpc_abu_dhabi_rahimi_sharp_300_eurotherm"],
+        }
+    )
+    .drop("Total")
+    .transpose()
+)
+data_to_plot.plot.bar(ax=(axis := axes[0, 0]), rot=0, stacked=True)
+axis.grid(axis="x")
+axis.set_xlabel("MED Plant")
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_title("Abu Dhabi, UAE")
+axis.yaxis.set_minor_formatter(ticker.ScalarFormatter())
+axis.yaxis.set_major_formatter(ticker.ScalarFormatter())
+axis.set_ylim(0, 40)
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+data_to_plot = (
+    pd.DataFrame(
+        {
+            "Small": specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO).loc[
+                "hpc_gran_canaria_joo_sharp_300_eurotherm"
+            ],
+            "Medium": specific_costs_boxen_frame(
+                gran_canaria_el, plant=Plant.EL_NASHAR
+            ).loc["hpc_gran_canaria_el_sharp_300_eurotherm"],
+            "Large": specific_costs_boxen_frame(
+                gran_canaria_rahimi, plant=Plant.RAHIMI
+            ).loc["hpc_gran_canaria_rahimi_sharp_300_eurotherm"],
+        }
+    )
+    .drop("Total")
+    .transpose()
+)
+data_to_plot.plot.bar(ax=(axis := axes[0, 1]), rot=0, stacked=True)
+axis.grid(axis="x")
+axis.set_xlabel("MED Plant")
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_title("Gando, Gran Canaria")
+axis.set_ylim(0, 40)
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+
+data_to_plot = (
+    pd.DataFrame(
+        {
+            "Small": specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO).loc[
+                "hpc_tijuana_joo_sharp_300_eurotherm"
+            ],
+            "Medium": specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR).loc[
+                "hpc_tijuana_el_sharp_300_eurotherm"
+            ],
+            "Large": specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.JOO).loc[
+                "hpc_tijuana_rahimi_sharp_300_eurotherm"
+            ],
+        }
+    )
+    .drop("Total")
+    .transpose()
+)
+data_to_plot.plot.bar(ax=(axis := axes[1, 0]), rot=0, stacked=True)
+axis.grid(axis="x")
+axis.set_xlabel("MED Plant")
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_ylim(0, 40)
+axis.set_title("Tijuana, Mexico")
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+
+data_to_plot = (
+    pd.DataFrame(
+        {
+            "Small": specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO).loc[
+                "hpc_la_paz_joo_sharp_300_eurotherm"
+            ],
+            "Medium": specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR).loc[
+                "hpc_la_paz_el_sharp_300_eurotherm"
+            ],
+            "Large": specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI).loc[
+                "hpc_la_paz_rahimi_sharp_300_eurotherm"
+            ],
+        }
+    )
+    .drop("Total")
+    .transpose()
+)
+data_to_plot.plot.bar(ax=(axis := axes[1, 1]), rot=0, stacked=True)
+axis.grid(axis="x")
+axis.set_xlabel("MED Plant")
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_ylim(0, 40)
+axis.set_title("La Paz, Mexico")
+axis.text(
+    -0.08,
+    1.1,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+
+# Plot a bar plot of the component costs broken down for each plant.
+
 # Lowest-cost technology specification in each scenario
 
 print("Abu Dhabi Joo")
@@ -4427,7 +4642,7 @@ print(json.dumps(lowest_cost, indent=4))
 
 # Compile a regex for going through the data.
 regex = re.compile(
-    r"hpc_(?P<location>abu_dhabi|gran_canaria|tijuana|la_paz)_(?P<plant>joo|el_nashar|rahimi)_(?P<pv>[^_]*)_(?P<pvt>[^_]*)_(?P<st>[^_]*)_frac_(?P<frac_var>[^_]*)_(?P<percent>.*)\.json"
+    r"hpc_(?P<location>abu_dhabi|gran_canaria|tijuana|la_paz)_(?P<plant>joo|el|rahimi)_(?P<pv>[^_]*)_(?P<pvt>[^_]*)_(?P<st>[^_]*)_frac_(?P<frac_var>[^_]*)_(?P<percent>.*)\.json"
 )
 
 # Lowest cost for JOO:
@@ -4455,7 +4670,47 @@ joo_m_si_sensitivity_data = {
     and regex.match(key).group("st") == "augusta"
 }
 
-# # Assemble grid-cost data
+el_nashar_p_si_sensitivity_data = {
+    key: value
+    for key, value in full_data.items()
+    if regex.match(key) is not None
+    and regex.match(key).group("plant") == "el"
+    and regex.match(key).group("pv") == "sharp"
+    and regex.match(key).group("pvt") == "400"
+    and regex.match(key).group("st") == "augusta"
+}
+
+el_nashar_m_si_sensitivity_data = {
+    key: value
+    for key, value in full_data.items()
+    if regex.match(key) is not None
+    and regex.match(key).group("plant") == "el"
+    and regex.match(key).group("pv") == "rec"
+    and regex.match(key).group("pvt") == "400"
+    and regex.match(key).group("st") == "augusta"
+}
+
+rahimi_p_si_sensitivity_data = {
+    key: value
+    for key, value in full_data.items()
+    if regex.match(key) is not None
+    and regex.match(key).group("plant") == "rahimi"
+    and regex.match(key).group("pv") == "sharp"
+    and regex.match(key).group("pvt") == "400"
+    and regex.match(key).group("st") == "augusta"
+}
+
+rahimi_m_si_sensitivity_data = {
+    key: value
+    for key, value in full_data.items()
+    if regex.match(key) is not None
+    and regex.match(key).group("plant") == "rahimi"
+    and regex.match(key).group("pv") == "rec"
+    and regex.match(key).group("pvt") == "400"
+    and regex.match(key).group("st") == "augusta"
+}
+
+# Assemble grid-cost data
 # joo_abu_dhabi_p_si_grid_sensitivity_data = {
 #     key: value
 #     for key, value in joo_p_si_sensitivity_data.items()
@@ -4587,7 +4842,7 @@ def plot_fraction_sensitivity(data_to_plot, fraction_variable_name: str = "grid"
     )
     axis.fill_between(x, storage_fraction, solar_line, color="C1", alpha=0.7)
     axis.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
-    axis.set_xlabel("Fractional cost decrease")
+    axis.set_xlabel("Fractional cost change")
     axis.set_ylabel("Fraction")
     axis.set_title("Abu Dhabi, UAE")
     axis.text(
@@ -4678,7 +4933,7 @@ def plot_fraction_sensitivity(data_to_plot, fraction_variable_name: str = "grid"
     )
     axis.fill_between(x, storage_fraction, solar_line, color="C1", alpha=0.7)
     axis.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
-    axis.set_xlabel("Fractional cost decrease")
+    axis.set_xlabel("Fractional cost change")
     axis.set_ylabel("Fraction")
     axis.set_title("Gando, Gran Canaria")
     axis.text(
@@ -4769,7 +5024,7 @@ def plot_fraction_sensitivity(data_to_plot, fraction_variable_name: str = "grid"
     )
     axis.fill_between(x, storage_fraction, solar_line, color="C1", alpha=0.7)
     axis.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
-    axis.set_xlabel("Fractional cost decrease")
+    axis.set_xlabel("Fractional cost change")
     axis.set_ylabel("Fraction")
     axis.set_title("Tijuana, Mexico")
     axis.text(
@@ -4860,7 +5115,7 @@ def plot_fraction_sensitivity(data_to_plot, fraction_variable_name: str = "grid"
     )
     axis.fill_between(x, storage_fraction, solar_line, color="C1", alpha=0.7)
     axis.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
-    axis.set_xlabel("Fractional cost decrease")
+    axis.set_xlabel("Fractional cost change")
     axis.set_ylabel("Fraction")
     axis.set_title("La Paz, Mexico")
     axis.text(
