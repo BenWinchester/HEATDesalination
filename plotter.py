@@ -5133,7 +5133,9 @@ def plot_fraction_sensitivity(data_to_plot, fraction_variable_name: str = "grid"
     axis.set_xlim(-0.2, 0.2)
 
 
-def plot_auxiliary_heating_sensitivity(data_to_plot, fraction_variable_name: str = "grid"):
+def plot_auxiliary_heating_sensitivity(
+    data_to_plot, fraction_variable_name: str = "grid"
+):
     fig, axes = plt.subplots(2, 2, figsize=(12, 8))
     fig.subplots_adjust(hspace=0.25)
     WEATHER_TYPE: str = "average_weather_conditions"
@@ -5184,9 +5186,7 @@ def plot_auxiliary_heating_sensitivity(data_to_plot, fraction_variable_name: str
         color=f"C3",
         label="auxiliary-heating fraction",
     )
-    axis.fill_between(
-        x, [0] * len(solar_line), solar_line, color="C1", alpha=0.7
-    )
+    axis.fill_between(x, [0] * len(solar_line), solar_line, color="C1", alpha=0.7)
     axis.fill_between(x, solar_line, auxiliary_line, color="C3", alpha=0.7)
     axis.set_xlabel("Fractional cost change")
     axis.set_ylabel("Fraction")
@@ -5249,9 +5249,7 @@ def plot_auxiliary_heating_sensitivity(data_to_plot, fraction_variable_name: str
         color=f"C3",
         label="auxiliary-heating fraction",
     )
-    axis.fill_between(
-        x, [0] * len(solar_line), solar_line, color="C1", alpha=0.7
-    )
+    axis.fill_between(x, [0] * len(solar_line), solar_line, color="C1", alpha=0.7)
     axis.fill_between(x, solar_line, auxiliary_line, color="C3", alpha=0.7)
     axis.set_xlabel("Fractional cost change")
     axis.set_ylabel("Fraction")
@@ -5314,9 +5312,7 @@ def plot_auxiliary_heating_sensitivity(data_to_plot, fraction_variable_name: str
         color=f"C3",
         label="auxiliary-heating fraction",
     )
-    axis.fill_between(
-        x, [0] * len(solar_line), solar_line, color="C1", alpha=0.7
-    )
+    axis.fill_between(x, [0] * len(solar_line), solar_line, color="C1", alpha=0.7)
     axis.fill_between(x, solar_line, auxiliary_line, color="C3", alpha=0.7)
     axis.set_xlabel("Fractional cost change")
     axis.set_ylabel("Fraction")
@@ -5379,9 +5375,7 @@ def plot_auxiliary_heating_sensitivity(data_to_plot, fraction_variable_name: str
         color=f"C3",
         label="auxiliary-heating fraction",
     )
-    axis.fill_between(
-        x, [0] * len(solar_line), solar_line, color="C1", alpha=0.7
-    )
+    axis.fill_between(x, [0] * len(solar_line), solar_line, color="C1", alpha=0.7)
     axis.fill_between(x, solar_line, auxiliary_line, color="C3", alpha=0.7)
     axis.set_xlabel("Fractional cost change")
     axis.set_ylabel("Fraction")
@@ -5552,13 +5546,27 @@ levels = np.array(
 )
 
 # Gene
-regex = re.compile(r"hpc_(?P<location>abu_dhabi|gran_canaria|tijuana|la_paz)_(?P<plant>joo|el_nashar|rahimi|el)_(?P<pv>[^_]*)_(?P<pvt>[^_]*)_(?P<st>[^_]*)_(?P<batt_cycles>\d*)_batt_cycles_(?P<inverter_lifetime>\d*)_inverter_years")
+regex = re.compile(
+    r"hpc_(?P<location>abu_dhabi|gran_canaria|tijuana|la_paz)_(?P<plant>joo|el_nashar|rahimi|el)_(?P<pv>[^_]*)_(?P<pvt>[^_]*)_(?P<st>[^_]*)_(?P<batt_cycles>\d*)_batt_cycles_(?P<inverter_lifetime>\d*)_inverter_years"
+)
 
 # Filter out the battery-inverter data points
-battery_inverter_data = {key: value for key, value in data.items() if regex.match(key) is not None}
-rahimi_battery_inverter_data = {key: value for key, value in data.items() if regex.match(key).group("plant") == "rahimi"}
-el_battery_inverter_data = {key: value for key, value in data.items() if "el" in regex.match(key).group("plant")}
-joo_battery_inverter_data = {key: value for key, value in data.items() if regex.match(key).group("plant") == "joo"}
+battery_inverter_data = {
+    key: value for key, value in data.items() if regex.match(key) is not None
+}
+rahimi_battery_inverter_data = {
+    key: value
+    for key, value in data.items()
+    if regex.match(key).group("plant") == "rahimi"
+}
+el_battery_inverter_data = {
+    key: value for key, value in data.items() if "el" in regex.match(key).group("plant")
+}
+joo_battery_inverter_data = {
+    key: value
+    for key, value in data.items()
+    if regex.match(key).group("plant") == "joo"
+}
 
 # Generate a color-map palette in-keeping with the colorblind colour scheme
 colorblind_cmap = colorblind_palette = sns.color_palette(
@@ -5572,16 +5580,36 @@ colorblind_cmap = colorblind_palette = sns.color_palette(
         "#E7DFBE",  # Pale yellow
         "#FBBB2C",  # Yellow
     ],
-    as_cmap=True
+    as_cmap=True,
 )
 
-def plot_battery_inverter_contour_map(data_to_plot, variable: str, weather_conditions: str = "average_weather_conditions"):
+
+def plot_battery_inverter_contour_map(
+    data_to_plot, variable: str, weather_conditions: str = "average_weather_conditions"
+):
     fig, axes = plt.subplots(2, 2, figsize=(12, 8))
     fig.subplots_adjust(hspace=0.25)
     # Parse out the battery and inverter lifetime information
-    battery_lifetimes = [regex.match(key).group("batt_cycles") for key in data_to_plot if regex.match(key).group("location") == (location:="abu_dhabi")]
-    inverter_lifetimes = [regex.match(key).group("inverter_lifetime") for key in data_to_plot if regex.match(key).group("location") == location]
-    plotting_variable = _results_value({key: value for key, value in data_to_plot.items() if regex.match(key).group("location") == "abu_dhabi"}, None, variable, weather_conditions)
+    battery_lifetimes = [
+        regex.match(key).group("batt_cycles")
+        for key in data_to_plot
+        if regex.match(key).group("location") == (location := "abu_dhabi")
+    ]
+    inverter_lifetimes = [
+        regex.match(key).group("inverter_lifetime")
+        for key in data_to_plot
+        if regex.match(key).group("location") == location
+    ]
+    plotting_variable = _results_value(
+        {
+            key: value
+            for key, value in data_to_plot.items()
+            if regex.match(key).group("location") == "abu_dhabi"
+        },
+        None,
+        variable,
+        weather_conditions,
+    )
     # Generate unique arrays pre-mershing
     batt_uniq, batt_index = np.unique(battery_lifetimes, return_inverse=True)
     inverter_uniq, inverter_index = np.unique(inverter_lifetimes, return_inverse=True)
@@ -5592,14 +5620,34 @@ def plot_battery_inverter_contour_map(data_to_plot, variable: str, weather_condi
     # Generate the figure
     fig, ax = plt.subplots()
     # Generate the countours
-    contours = ax.contourf(batt_mesh, inverter_mesh, plotting_mesh, 100, colorblind_cmap)
+    contours = ax.contourf(
+        batt_mesh, inverter_mesh, plotting_mesh, 100, colorblind_cmap
+    )
     # Add a colourbar
     fig.colorbar(contours, ax=ax)
 
+
 # Attempting to interpolate
-battery_lifetimes = [float(regex.match(key).group("batt_cycles")) for key in rahimi_battery_inverter_data if regex.match(key).group("location") == (location:="abu_dhabi")]
-inverter_lifetimes = [float(regex.match(key).group("inverter_lifetime")) for key in rahimi_battery_inverter_data if regex.match(key).group("location") == location]
-plotting_variable = _results_value({key: value for key, value in rahimi_battery_inverter_data.items() if regex.match(key).group("location") == "abu_dhabi"}, None, "grid_electricity_fraction", "average_weather_conditions")
+battery_lifetimes = [
+    float(regex.match(key).group("batt_cycles"))
+    for key in rahimi_battery_inverter_data
+    if regex.match(key).group("location") == (location := "abu_dhabi")
+]
+inverter_lifetimes = [
+    float(regex.match(key).group("inverter_lifetime"))
+    for key in rahimi_battery_inverter_data
+    if regex.match(key).group("location") == location
+]
+plotting_variable = _results_value(
+    {
+        key: value
+        for key, value in rahimi_battery_inverter_data.items()
+        if regex.match(key).group("location") == "abu_dhabi"
+    },
+    None,
+    "grid_electricity_fraction",
+    "average_weather_conditions",
+)
 
 
 batt_uniq, batt_index = np.unique(battery_lifetimes, return_inverse=True)
@@ -5609,7 +5657,9 @@ batt_mesh, inverter_mesh = np.meshgrid(batt_uniq, inverter_uniq)
 plotting_interpolated = interpolator(batt_mesh, inverter_mesh)
 
 fig, axes = plt.subplots(2, 2, figsize=(12, 8))
-contours = (ax:=axes[0,0]).contourf(batt_mesh, inverter_mesh, plotting_interpolated, levels=100, cmap="PuBu")
+contours = (ax := axes[0, 0]).contourf(
+    batt_mesh, inverter_mesh, plotting_interpolated, levels=100, cmap="PuBu"
+)
 fig.colorbar(contours, ax=ax)
 
 ##########################
@@ -5635,4 +5685,3 @@ for filename in tqdm(os.listdir("."), desc="files", unit="file"):
 
 with open("02_mar_23.json", "w", encoding="UTF-8") as f:
     json.dump(data, f)
-
