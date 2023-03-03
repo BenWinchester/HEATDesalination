@@ -5426,81 +5426,11 @@ hist_plot(tijuana_el)
 # Inverter-battery sensitivity analysis #
 #########################################
 
-# Generate the frame
-frame = pd.DataFrame(
-    {
-        "Storage capacity / kWh": battery_capacities,
-        # "Number of PV-T collectors": pv_t_sizes,
-        "Number of PV panels": pv_sizes,
-        "Cost / MUSD": costs,
-    }
-)
-pivotted_frame = frame.pivot(
-    index="Number of PV panels",
-    columns="Storage capacity / kWh",
-    values="Cost / MUSD"
-    # index="Number of PV panels", columns="Number of PV-T collectors", values="Cost / MUSD"
-)
-
-# PV-T and solar-thermal
-frame = pd.DataFrame(
-    {
-        "Solar-thermal capacity / collectors": solar_thermal_sizes,
-        "PV-T capacity / collectors": pv_t_sizes,
-        # "Cost / MUSD": costs,
-        "Auxiliary heating fraction": auxiliary_heating_fraction
-        # "Grid fraction": grid_fraction
-        # "Solar fraction": solar_fraction
-        # "Storage fraction": storage_fraction
-    }
-)
-pivotted_frame = frame.pivot(
-    index="PV-T capacity / collectors",
-    columns="Solar-thermal capacity / collectors",
-    # values="Cost / MUSD"
-    values="Auxiliary heating fraction"
-    # values="Grid fraction"
-    # values="Solar fraction"
-    # values="Storage fraction"
-)
-
-# Extract the arrays.
-Z = pivotted_frame.values
-
-# X_unique = np.sort(frame["Storage capacity / kWh"].unique())
-# Y_unique = np.sort(frame["Number of PV panels"].unique())
-
-X_unique = np.sort(frame["Solar-thermal capacity / collectors"].unique())
-Y_unique = np.sort(frame["PV-T capacity / collectors"].unique())
-
-# X_unique = np.sort(frame["Number of PV-T collectors"].unique())
-# Y_unique = np.sort(frame["Number of PV panels"].unique())
-
-X, Y = np.meshgrid(X_unique, Y_unique)
-
 # Define levels in z-axis where we want lines to appear
 levels = np.array(
     [
         0.0,
-        0.01,
-        0.02,
-        0.03,
-        0.04,
-        0.05,
-        0.06,
-        0.07,
-        0.08,
-        0.09,
         0.1,
-        0.11,
-        0.12,
-        0.13,
-        0.14,
-        0.15,
-        0.16,
-        0.17,
-        0.18,
-        0.19,
         0.2,
         0.3,
         0.4,
@@ -5525,27 +5455,10 @@ levels = np.array(
         1.85,
         1.9,
         2,
-        2.1,
-        2.2,
-        2.3,
-        2.4,
-        2.5,
-        2.6,
-        2.7,
-        2.8,
-        2.9,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
     ]
 )
 
-# Gene
+# Generate the regex
 regex = re.compile(
     r"hpc_(?P<location>abu_dhabi|gran_canaria|tijuana|la_paz)_(?P<plant>joo|el_nashar|rahimi|el)_(?P<pv>[^_]*)_(?P<pvt>[^_]*)_(?P<st>[^_]*)_(?P<batt_cycles>\d*)_batt_cycles_(?P<inverter_lifetime>\d*)_inverter_years"
 )
@@ -5583,20 +5496,49 @@ colorblind_cmap = colorblind_palette = sns.color_palette(
     as_cmap=True,
 )
 
+colorblind_colours = [
+    "#E04606",  # Orange
+    "#F09F52",  # Pale orange
+    "#52C0AD",  # Pale green
+    "#006264",  # Green
+    "#D8247C",  # Pink
+    "#EDEDED",  # Pale pink
+    "#E7DFBE",  # Pale yellow
+    "#FBBB2C",  # Yellow
+]
 
-def plot_battery_inverter_contour_map(
-    data_to_plot, variable: str, weather_conditions: str = "average_weather_conditions"
+COLORBLIND_COLOURS: dict[str, str] = {
+    "storage_electricity_fraction": "#E04606",  # Orange
+    "solar_electricity_fraction": "#F09F52",  # Pale orange
+    "grid_electricity_fraction": "#52C0AD",  # Pale green
+    "auxiliary_heating_fraction": "#006264",  # Green
+    "total_cost": "#D8247C",  # Pink
+    "components": "#E04606",  # Orange
+    "grid": "#F09F52",  # Pale orange
+    "inverters": "#52C0AD",  # Pale green
+    "heat_pump": "#006264",  # Green
+    # "#EDEDED",  # Pale pink
+    # "#E7DFBE",  # Pale yellow
+    # "#FBBB2C",  # Yellow
+}
+
+
+def _subfigure_plot(
+    data_to_plot,
+    axis,
+    figure,
+    label: str,
+    location: str,
+    variable: str,
+    weather_conditions: str = "average_weather_conditions",
 ):
-    fig, axes = plt.subplots(2, 2, figsize=(12, 8))
-    fig.subplots_adjust(hspace=0.25)
-    # Parse out the battery and inverter lifetime information
     battery_lifetimes = [
-        regex.match(key).group("batt_cycles")
+        float(regex.match(key).group("batt_cycles"))
         for key in data_to_plot
-        if regex.match(key).group("location") == (location := "abu_dhabi")
+        if regex.match(key).group("location") == location
     ]
     inverter_lifetimes = [
-        regex.match(key).group("inverter_lifetime")
+        float(regex.match(key).group("inverter_lifetime"))
         for key in data_to_plot
         if regex.match(key).group("location") == location
     ]
@@ -5604,51 +5546,149 @@ def plot_battery_inverter_contour_map(
         {
             key: value
             for key, value in data_to_plot.items()
-            if regex.match(key).group("location") == "abu_dhabi"
+            if regex.match(key).group("location") == location
         },
         None,
+        (plotting_variable_name := variable),
+        weather_conditions,
+    )
+    plotting_variable = [
+        (entry / 10**6) if "cost" in label else entry for entry in plotting_variable
+    ]
+    # Generate the frame
+    frame = pd.DataFrame(
+        {
+            (x_key := "Storage lifetime / cycles"): battery_lifetimes,
+            # "Number of PV-T collectors": pv_t_sizes,
+            (y_key := "Inverter lifetime / years"): inverter_lifetimes,
+            (
+                z_key := plotting_variable_name.replace("_", " ").capitalize()
+            ): plotting_variable,
+        }
+    )
+    pivotted_frame = frame.pivot(
+        index=y_key,
+        columns=x_key,
+        values=z_key
+        # index="Number of PV panels", columns="Number of PV-T collectors", values="Cost / MUSD"
+    )
+    # Extract the arrays.
+    Z = pivotted_frame.values
+    X_unique = np.sort(frame[x_key].unique())
+    Y_unique = np.sort(frame[y_key].unique())
+    X, Y = np.meshgrid(X_unique, Y_unique)
+    # Interpolate the z-axis results if necessary
+    triang = tri.Triangulation(battery_lifetimes, inverter_lifetimes)
+    interpolator = tri.LinearTriInterpolator(triang, plotting_variable)
+    Z_int = interpolator(X, Y)
+    # Generate the plot
+    cmap = sns.light_palette(COLORBLIND_COLOURS[variable], len(levels), as_cmap=True)
+    cpf = axis.contourf(X, Y, Z_int, len(levels), cmap=cmap)
+    # Set all level lines to black
+    line_colors = ["black" for l in cpf.levels]
+    # Make plot and customize axes
+    contours = axis.contour(X, Y, Z_int, levels=levels, colors=line_colors)
+    axis.clabel(contours, fontsize=10, colors=line_colors)
+    axis.set_xlabel(x_key)
+    axis.set_ylabel(y_key)
+    figure.colorbar(cpf, ax=axis, label=label)
+
+
+def plot_battery_inverter_contour_map(
+    data_to_plot,
+    label: str,
+    variable: str,
+    weather_conditions: str = "average_weather_conditions",
+):
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+    fig.subplots_adjust(hspace=0.25)
+    # Abu dhabi
+    _subfigure_plot(
+        data_to_plot,
+        (axis := axes[0, 0]),
+        fig,
+        label,
+        "abu_dhabi",
         variable,
         weather_conditions,
     )
-    # Generate unique arrays pre-mershing
-    batt_uniq, batt_index = np.unique(battery_lifetimes, return_inverse=True)
-    inverter_uniq, inverter_index = np.unique(inverter_lifetimes, return_inverse=True)
-    batt_mesh, inverter_mesh = np.meshgrid(batt_uniq, inverter_uniq)
-    triang = tri.Triangulation(battery_lifetimes, inverter_lifetimes)
-    interpolator = tri.LinearTriInterpolator(triang, plotting_variable)
-    interpolator(batt_mesh, inverter_mesh)
-    # Generate the figure
-    fig, ax = plt.subplots()
-    # Generate the countours
-    contours = ax.contourf(
-        batt_mesh, inverter_mesh, plotting_mesh, 100, colorblind_cmap
+    axis.set_title("Abu Dhabi, UAE")
+    axis.text(
+        -0.08,
+        1.1,
+        "a.",
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
     )
-    # Add a colourbar
-    fig.colorbar(contours, ax=ax)
+    # Gando
+    _subfigure_plot(
+        data_to_plot,
+        (axis := axes[0, 1]),
+        fig,
+        label,
+        "gran_canaria",
+        variable,
+        weather_conditions,
+    )
+    axis.set_title("Gando, Gran Canaria")
+    axis.text(
+        -0.08,
+        1.1,
+        "b.",
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+    # Tijuana
+    _subfigure_plot(
+        data_to_plot,
+        (axis := axes[1, 0]),
+        fig,
+        label,
+        "tijuana",
+        variable,
+        weather_conditions,
+    )
+    axis.set_title("Tijuana, Mexico")
+    axis.text(
+        -0.08,
+        1.1,
+        "c.",
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+    # La Paz
+    _subfigure_plot(
+        data_to_plot,
+        (axis := axes[1, 1]),
+        fig,
+        label,
+        "la_paz",
+        variable,
+        weather_conditions,
+    )
+    axis.set_title("La Paz, Mexico")
+    axis.text(
+        -0.08,
+        1.1,
+        "d.",
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
 
 
-# Attempting to interpolate
-battery_lifetimes = [
-    float(regex.match(key).group("batt_cycles"))
-    for key in rahimi_battery_inverter_data
-    if regex.match(key).group("location") == (location := "abu_dhabi")
-]
-inverter_lifetimes = [
-    float(regex.match(key).group("inverter_lifetime"))
-    for key in rahimi_battery_inverter_data
-    if regex.match(key).group("location") == location
-]
-plotting_variable = _results_value(
-    {
-        key: value
-        for key, value in rahimi_battery_inverter_data.items()
-        if regex.match(key).group("location") == "abu_dhabi"
-    },
-    None,
-    "grid_electricity_fraction",
-    "average_weather_conditions",
-)
-
+plt.show()
 
 batt_uniq, batt_index = np.unique(battery_lifetimes, return_inverse=True)
 inverter_uniq, inverter_index = np.unique(inverter_lifetimes, return_inverse=True)
@@ -5658,7 +5698,7 @@ plotting_interpolated = interpolator(batt_mesh, inverter_mesh)
 
 fig, axes = plt.subplots(2, 2, figsize=(12, 8))
 contours = (ax := axes[0, 0]).contourf(
-    batt_mesh, inverter_mesh, plotting_interpolated, levels=100, cmap="PuBu"
+    batt_mesh, inverter_mesh, plotting_interpolated, levels=100, cmap=cmap
 )
 fig.colorbar(contours, ax=ax)
 
