@@ -136,7 +136,7 @@ solar_collectors:
 
   # Dualsun: Spring 300M Insulated
   # https://my.dualsun.com/wp-content/uploads/sites/2/DualSun-US-Datasheet-SPRING-300-Black.pdf
-  - area: !!float 1.64
+  - area: !!float 1.635
     cost: !!float 556
     land_use: !!float 1.64
     max_mass_flow_rate: null
@@ -177,7 +177,7 @@ solar_collectors:
       second_order: !!float 0
   # Solimpeks: Powervolt
   # https://solimpeks.com.tr/wp-content/uploads/Solimpeks_English_Catalogue.pdf
-  - area: !!float 1.64
+  - area: !!float 1.326
     cost: !!float 545
     land_use: !!float 1.37
     max_mass_flow_rate: null
