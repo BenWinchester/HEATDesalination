@@ -2574,7 +2574,7 @@ for location_name, location_filename in tqdm(LOCATIONS.items(), desc="locations"
                     new_optimisations.append(optimisation)
 
 with open(
-    os.path.join("inputs", "ecos_optimisations.json"), "w", encoding="UTF-8"
+    os.path.join("inputs", "ecos_optimisations_07_mar_23.json"), "w", encoding="UTF-8"
 ) as f:
     json.dump(new_optimisations, f)
 
