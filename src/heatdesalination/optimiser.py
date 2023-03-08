@@ -20,15 +20,18 @@ the needs of the desalination plant.
 __all__ = ("run_optimisation",)
 
 import abc
-from logging import Logger
+import dataclasses
 import os
-from typing import Callable, Tuple
 
 import json
 import math
 import numpy
 
+from contextlib import contextmanager
+from typing import Callable, Generator, Tuple
+from logging import Logger
 from scipy import optimize
+from tqdm import tqdm
 
 from .__utils__ import (
     CostableComponent,
@@ -940,6 +943,43 @@ class TotalCost(Criterion, criterion_name="total_cost"):
 #         )
 
 
+@contextmanager
+def temporary_hot_water_tank(
+    tank: HotWaterTank, tank_capacity: float
+) -> Generator[HotWaterTank, None, None]:
+    """
+    Return a temporary hot-water tank for use when modelling without overwriting.
+
+    The values of the costs of the hot-water tank scale with the capacity of the tank(s)
+    installed, as do the heat-loss parameters. Hence, for an accurate representation of
+    any hot-water tanks installed, the cost and area of the tanks installedneed to scale
+    with their capacity. Hence, a temporary tank instance is needed.
+
+    Inputs:
+        - tank
+            The :class:`HotWaterTank` instance to use as a base.
+        - tank_capacity:
+            The new value for the tank capacity.
+
+    Outputs:
+        A newly adjusted tank capacity.
+
+    """
+
+    # Generate a copy of the tank.
+    temp_buffer_tank: HotWaterTank = HotWaterTank(**tank.__dict__)
+
+    # Sanitise the units on the volume of the buffer tank and use the value provided
+    temp_buffer_tank.capacity = tank_capacity * 1000
+
+    # Increase the area of the tank by a factor of the volume increase accordingly.
+    temp_buffer_tank.area *= (temp_buffer_tank.capacity / tank.capacity) ** (2 / 3)
+
+    yield temp_buffer_tank
+
+    del temp_buffer_tank
+
+
 def _simulate_and_calculate_criterion(
     parameter_vector: numpy.ndarray,
     ambient_temperatures: dict[int, float],
@@ -1048,19 +1088,10 @@ def _simulate_and_calculate_criterion(
     )
 
     # Buffer-tank capacities
-    existing_buffer_tank_capacity: float = buffer_tank.capacity
-    buffer_tank.capacity = (
+    temp_buffer_tank_capacity = (
         buffer_tank_capacity
         if buffer_tank_capacity is not None
         else parameter_list.pop(0)
-    )
-    # Sanitise the units on the area of the buffer tank
-    buffer_tank.capacity = buffer_tank.capacity * 1000
-    _buffer_tank_capacity = buffer_tank.capacity
-
-    # Increase the area of the tank by a factor of the volume increase accordingly.
-    buffer_tank.area *= (buffer_tank.capacity / existing_buffer_tank_capacity) ** (
-        2 / 3
     )
 
     # Collector parameters
@@ -1087,34 +1118,37 @@ def _simulate_and_calculate_criterion(
     desalination_plant.reset_operating_hours()
 
     # Determine the steady-state solution.
-    try:
-        steady_state_solution: Solution = determine_steady_state_simulation(
-            ambient_temperatures,
-            battery,
-            _battery_capacity,
-            buffer_tank,
-            desalination_plant,
-            heat_pump,
-            _htf_mass_flow_rate,
-            hybrid_pv_t_panel,
-            logger,
-            pv_panel,
-            _pv_panel_system_size,
-            _pv_t_system_size,
-            scenario,
-            solar_irradiances,
-            solar_thermal_collector,
-            _solar_thermal_system_size,
-            system_lifetime,
-            water_pump,
-            wind_speeds,
-            disable_tqdm=disable_tqdm,
-        )
-    except FlowRateError:
-        logger.info(
-            "Flow-rate error encountered, doubling component sizes to throw optimizer.",
-        )
-        return UPPER_LIMIT
+    with temporary_hot_water_tank(
+        buffer_tank, temp_buffer_tank_capacity
+    ) as temp_buffer_tank:
+        try:
+            steady_state_solution: Solution = determine_steady_state_simulation(
+                ambient_temperatures,
+                battery,
+                _battery_capacity,
+                temp_buffer_tank,
+                desalination_plant,
+                heat_pump,
+                _htf_mass_flow_rate,
+                hybrid_pv_t_panel,
+                logger,
+                pv_panel,
+                _pv_panel_system_size,
+                _pv_t_system_size,
+                scenario,
+                solar_irradiances,
+                solar_thermal_collector,
+                _solar_thermal_system_size,
+                system_lifetime,
+                water_pump,
+                wind_speeds,
+                disable_tqdm=disable_tqdm,
+            )
+        except FlowRateError:
+            logger.info(
+                "Flow-rate error encountered, doubling component sizes to throw optimizer.",
+            )
+            return UPPER_LIMIT
 
     # Assemble the component sizes mapping.
     component_sizes: dict[CostableComponent, int | float] = {
@@ -1122,7 +1156,7 @@ def _simulate_and_calculate_criterion(
         * (  # type: ignore [dict-item,operator]
             1 + steady_state_solution.battery_replacements
         ),
-        buffer_tank: _buffer_tank_capacity,  # type: ignore [dict-item]
+        buffer_tank: temp_buffer_tank_capacity,  # type: ignore [dict-item]
         hybrid_pv_t_panel: _pv_t_system_size,  # type: ignore [dict-item]
         pv_panel: _pv_panel_system_size,  # type: ignore [dict-item]
         solar_thermal_collector: _solar_thermal_system_size,  # type: ignore [dict-item]
@@ -1237,6 +1271,193 @@ def _constraint_function(
             return -50
 
     return 0
+
+
+def _run_integer_simulations(
+    ambient_temperatures: dict[int, float],
+    battery: Battery | None,
+    battery_capacity: float,
+    buffer_tank: HotWaterTank,
+    buffer_tank_capacity: float,
+    desalination_plant: DesalinationPlant,
+    disable_tqdm: bool,
+    heat_pump: HeatPump,
+    htf_mass_flow_rate: float,
+    hybrid_pv_t_panel: HybridPVTPanel | None,
+    logger: Logger,
+    optimisation_parameters: OptimisationParameters,
+    pv_panel: PVPanel | None,
+    pv_system_size: float,
+    pv_t_system_size: float,
+    scenario: Scenario,
+    solar_irradiances: dict[int, float],
+    solar_thermal_collector: SolarThermalPanel | None,
+    solar_thermal_system_size: float,
+    system_lifetime: int,
+    water_pump: WaterPump,
+    wind_speeds: dict[int, float],
+):
+    """
+    Run integer simulations to probe the space surrounding the optimum system.
+
+    The optimisation process may produce systems with non-integer parameters for
+    variables which must take integer values. This calculation carries out simulations
+    that probe the integer values for systems surrounding these.
+
+    Inputs:
+        - ambient_temperatures:
+            The ambient temperature at each time step, measured in Kelvin.
+        - battery:
+            The battery installed or `None` if not battery is installed.
+        - battery_capacity:
+            The capacity in kWh of electrical storage installed, or `None` if none is
+            installed.
+        - buffer_tank:
+            The :class:`HotWaterTank` associated with the system.
+        - desalination_plant:
+            The :class:`DesalinationPlant` for which the systme is being simulated.
+        - heat_pump:
+            The :class:`HeatPump` to use for the run.
+        - htf_mass_flow_rate:
+            The mass flow rate of the HTF through the collectors.
+        - hybrid_pv_t_panel:
+            The :class:`HybridPVTPanel` associated with the run.
+        - logger:
+            The :class:`logging.Logger` for the run.
+        - pv_panel:
+            The :class:`PVPanel` associated with the system.
+        - pv_system_size:
+            The size of the PV system installed.
+        - pv_t_system_size:
+            The size of the PV-T system installed.
+        - scenario:
+            The :class:`Scenario` for the run.
+        - solar_irradiances:
+            The solar irradiances at each time step, measured in Kelvin.
+        - solar_thermal_collector:
+            The :class:`SolarThermalCollector` associated with the run.
+        - solar_thermal_system_size:
+            The size of the solar-thermal system.
+        - system_lifetime:
+            The lifetime of the system in years.
+        - water_pump:
+            The water pump for the system.
+        - wind_speeds:
+            The wind speeds at each time step, measured in meters per second.
+        - default_tank_temperature:
+            The default tank temperature to use for running for consistency.
+        - disable_tqdm:
+            Whether to disable the progress bar.
+
+    Outputs:
+        - The optimum system with parameters rounded if necessary.
+
+    """
+
+    # Determine input parameters that need probing.
+    logger.info("Determining integer simulations to carry out if necessary.")
+    battery_capacities = {math.floor(battery_capacity), math.ceil(battery_capacity)}
+    buffer_tank_capacities = {
+        math.floor(buffer_tank_capacity),
+        math.ceil(buffer_tank_capacity),
+    }
+    pv_system_sizes = {math.floor(pv_system_size), math.ceil(pv_system_size)}
+    pvt_system_sizes = {math.floor(pv_t_system_size), math.ceil(pv_t_system_size)}
+    solar_thermal_system_sizes = {
+        math.floor(solar_thermal_system_size),
+        math.ceil(solar_thermal_system_size),
+    }
+
+    logger.info("Running integer-valued simulations")
+    integer_valued_simulations: dict[float, Solution] = {}
+    # Carry out simulations.
+    for integer_battery_capatiy in tqdm(
+        battery_capacities, desc="battery capacities", disable=disable_tqdm, leave=False
+    ):
+        for integer_buffer_tank_capatiy in tqdm(
+            buffer_tank_capacities,
+            desc="buffer-tank capacities",
+            disable=disable_tqdm,
+            leave=False,
+        ):
+            for integer_pv_capatiy in tqdm(
+                pv_system_sizes,
+                desc="pv system capacities",
+                disable=disable_tqdm,
+                leave=False,
+            ):
+                for integer_pvt_capatiy in tqdm(
+                    pvt_system_sizes,
+                    desc="pv-t system capacities",
+                    disable=disable_tqdm,
+                    leave=False,
+                ):
+                    for integer_st_capatiy in tqdm(
+                        solar_thermal_system_sizes,
+                        desc="solar-thermal system capacities",
+                        disable=disable_tqdm,
+                        leave=False,
+                    ):
+                        with temporary_hot_water_tank(
+                            buffer_tank, integer_buffer_tank_capatiy
+                        ) as temp_buffer_tank:
+                            integer_simulation_result = (
+                                determine_steady_state_simulation(
+                                    ambient_temperatures,
+                                    battery,
+                                    integer_battery_capatiy,
+                                    temp_buffer_tank,
+                                    desalination_plant,
+                                    heat_pump,
+                                    htf_mass_flow_rate,
+                                    hybrid_pv_t_panel,
+                                    logger,
+                                    pv_panel,
+                                    integer_pv_capatiy,
+                                    integer_pvt_capatiy,
+                                    scenario,
+                                    solar_irradiances,
+                                    solar_thermal_collector,
+                                    integer_st_capatiy,
+                                    system_lifetime,
+                                    water_pump,
+                                    wind_speeds,
+                                    disable_tqdm=disable_tqdm,
+                                )
+                            )
+
+                        component_sizes: dict[CostableComponent, int | float] = {
+                            battery: integer_battery_capatiy
+                            * (  # type: ignore [dict-item,operator]
+                                1 + integer_simulation_result.battery_replacements
+                            ),
+                            buffer_tank: integer_buffer_tank_capatiy,  # type: ignore [dict-item]
+                            hybrid_pv_t_panel: integer_pvt_capatiy,  # type: ignore [dict-item]
+                            pv_panel: integer_pv_capatiy,  # type: ignore [dict-item]
+                            solar_thermal_collector: integer_st_capatiy,  # type: ignore [dict-item]
+                            water_pump: num_water_pumps(htf_mass_flow_rate, water_pump),  # type: ignore [dict-item]
+                        }
+
+                        criterion_value = (  # type: ignore [no-any-return]
+                            Criterion.calculate_value_map[
+                                optimisation_parameters.target_criterion
+                            ](
+                                component_sizes,
+                                logger,
+                                scenario,
+                                integer_simulation_result,
+                                system_lifetime,
+                            )
+                            / 10**6
+                        ) ** 3
+
+                        integer_valued_simulations[
+                            criterion_value
+                        ] = integer_simulation_result
+
+    # Return the simulation result which is smallest in size and the corresponding
+    # component sizes.
+    return
 
 
 def run_optimisation(
@@ -1461,6 +1682,34 @@ def run_optimisation(
         if optimisation_parameters.fixed_st_value is not None
         else parameter_list.pop(0)
     )
+
+    # Round the parametesr if necessary
+    _run_integer_simulations(
+        ambient_temperatures,
+        battery,
+        battery_capacity,
+        buffer_tank,
+        buffer_tank_capacity,
+        desalination_plant,
+        disable_tqdm,
+        heat_pump,
+        htf_mass_flow_rate,
+        hybrid_pv_t_panel,
+        logger,
+        optimisation_parameters,
+        pv_panel,
+        pv_system_size,
+        pv_t_system_size,
+        scenario,
+        solar_irradiances,
+        solar_thermal_collector,
+        solar_thermal_system_size,
+        system_lifetime,
+        water_pump,
+        wind_speeds,
+    )
+
+    # Calculate the optimisation criterion value and return this also.
 
     # Carry out a simulation.
     solution = determine_steady_state_simulation(
