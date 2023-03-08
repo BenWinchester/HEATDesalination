@@ -302,20 +302,36 @@ for index, keyword in enumerate(keywords_to_plot):
 # Post-simulation analysis plotting #
 #####################################
 
+import os
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib
 
+output_name: str = "8_mar_debug"
 
 ALPHA = 0.9
 sns.set_style("whitegrid")
-sns.set_palette("colorblind")
 sns.set_context("notebook")
 
+colorblind_palette = sns.color_palette(
+    [
+        "#E04606",  # Orange
+        "#F09F52",  # Pale orange
+        "#52C0AD",  # Pale green
+        "#006264",  # Green
+        "#D8247C",  # Pink
+        "#EDEDED",  # Pale pink
+        "#E7DFBE",  # Pale yellow
+        "#FBBB2C",  # Yellow
+    ]
+)
+
+sns.set_palette(colorblind_palette)
+
 with open(
-    "simulation_outputs\simulation_output_average_weather_conditions.csv",
+    os.path.join("simulation_outputs", f"{output_name}_average_weather_conditions.csv"),
     "r",
     encoding="UTF-8",
 ) as f:
@@ -323,7 +339,9 @@ with open(
 
 
 with open(
-    "simulation_outputs\simulation_output_lower_error_bar_weather_conditions.csv",
+    os.path.join(
+        "simulation_outputs", f"{output_name}_lower_error_bar_weather_conditions.csv"
+    ),
     "r",
     encoding="UTF-8",
 ) as f:
@@ -331,7 +349,9 @@ with open(
 
 
 with open(
-    "simulation_outputs\simulation_output_upper_error_bar_weather_conditions.csv",
+    os.path.join(
+        "simulation_outputs", f"{output_name}_upper_error_bar_weather_conditions.csv"
+    ),
     "r",
     encoding="UTF-8",
 ) as f:
@@ -340,8 +360,9 @@ with open(
 # Temperature plot
 x: list[int] = list(range(len(average_data)))
 keys: list[str] = [
-    "Collector system input temperature / degC",
-    "PV-T collector output temperature / degC",
+    "Ambient temperature / degC",
+    # "Collector system input temperature / degC",
+    # "PV-T collector output temperature / degC",
     "Collector system output temperature / degC",
     "Tank temperature / degC",
 ]
@@ -352,7 +373,7 @@ for index, key in enumerate(keys):
     # plt.plot(x, list(upper_error_data[key]), "--", c=f"C{index}")
     # plt.fill_between(x, list(lower_error_data[key]), list(upper_error_data[key]), color=f"C{index}", alpha=0.1)
 
-plt.legend(bbox_to_anchor=(1.0, 1.0))
+plt.legend()
 plt.xlabel("Hour of day")
 plt.ylabel("Temperature / degC")
 plt.show()
@@ -363,23 +384,23 @@ x: list[int] = list(range(len(average_data)))
 # Compute the hot-water demand in heat
 fig, ax = plt.subplots()
 hot_water_heat_demand = (
-    (average_data["Hot-water demand temperature / degC"] - 40)
+    (average_data["Hot-water demand temperature / degC"] - 65)
     * average_data["Hot-water demand volume / kg/s"]
     * 4.184
 )
 tank_heat_supply = (
-    (average_data["Tank temperature / degC"] - 40)
+    (average_data["Tank temperature / degC"] - 65)
     * average_data["Hot-water demand volume / kg/s"]
     * 4.184
 )
 
-ax.plot(x, hot_water_heat_demand, "--", c="C0")
+ax.plot(x, hot_water_heat_demand, "--", c="C2")
 # ax.plot(x, tank_heat_supply, c="C1", label="Hot-water tanks")
 ax.fill_between(
     x,
     [0] * len(x),
     tank_heat_supply,
-    color="C1",
+    color="C0",
     alpha=ALPHA,
     label="Heat supplied from tank(s)",
 )
@@ -388,7 +409,7 @@ ax.fill_between(
     x,
     tank_heat_supply,
     tank_heat_supply + average_data["Auxiliary heating demand / kWh(th)"],
-    color="C2",
+    color="C1",
     alpha=ALPHA,
     label="Heat supplied from heat pump(s)",
 )
@@ -398,8 +419,8 @@ ax2.plot(
     x, average_data["Tank temperature / degC"], "--", c="C3", label="Tank temperature"
 )
 
-ax.legend(bbox_to_anchor=(1.0, 1.0))
-ax2.legend(bbox_to_anchor=(1.0, 1.0))
+ax.legend()
+ax2.legend()
 ax.set_xlabel("Hour of day")
 ax.set_ylabel("Thermal Energy Supplied / kWh(th)")
 ax2.set_ylabel("Tank temperature / degC")
@@ -506,7 +527,7 @@ plt.plot(
     c="C0",
     label="Electricity demand / kWh",
 )
-plt.legend(bbox_to_anchor=(1.0, 1.0))
+plt.legend()
 plt.xlabel("Hour of day")
 plt.ylabel("Source of electrical power / kWh")
 plt.show()
@@ -2900,13 +2921,13 @@ colorblind_palette = sns.color_palette(
 sns.set_palette(colorblind_palette)
 
 # Read input data
-with open("02_mar_23.json", "r", encoding="UTF-8") as f:
+with open("08_mar_23.json", "r", encoding="UTF-8") as f:
     full_data = json.load(f)
 
 data = {
     key: value
     for key, value in full_data.items()
-    if "lg" not in key and "frac" not in key
+    if "lg" not in key and "frac" not in key and "batt" not in key
 }
 
 
@@ -3345,7 +3366,7 @@ def specific_cost_by_tech_frame(
 # Outputs boxen plot by location
 
 fig, axes = plt.subplots(2, 2, figsize=(12, 8))
-K_DEPTH: int = 6
+K_DEPTH: int = 3
 WEATHER_TYPE: str = "average_weather_conditions"
 # WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
 # WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
@@ -3358,10 +3379,10 @@ sns.boxenplot(
     k_depth=K_DEPTH,
 )
 axis.set_title("Abu Dhabi, UAE")
-axis.set_ylim(
-    max(min(min(boxen_frame(abu_dhabi_data)["Aux. heating"]) - 0.05, -0.05), -0.45),
-    1.05,
-)
+# axis.set_ylim(
+#     max(min(min(boxen_frame(abu_dhabi_data)["Aux. heating"]) - 0.05, -0.05), -0.8),
+#     1.05,
+# )
 axis.set_ylabel("Fraction")
 axis.text(
     -0.08,
@@ -3380,10 +3401,10 @@ sns.boxenplot(
     k_depth=K_DEPTH,
 )
 axis.set_title("Gando, Gran Canaria")
-axis.set_ylim(
-    max(min(min(boxen_frame(gran_canaria_data)["Aux. heating"]) - 0.05, -0.05), -0.45),
-    1.05,
-)
+# axis.set_ylim(
+#     max(min(min(boxen_frame(gran_canaria_data)["Aux. heating"]) - 0.05, -0.05), -0.8),
+#     1.05,
+# )
 axis.set_ylabel("Fraction")
 axis.text(
     -0.08,
@@ -3402,9 +3423,9 @@ sns.boxenplot(
     k_depth=K_DEPTH,
 )
 axis.set_title("Tijuana, Mexico")
-axis.set_ylim(
-    max(min(min(boxen_frame(tijuana_data)["Aux. heating"]) - 0.05, -0.05), -0.45), 1.05
-)
+# axis.set_ylim(
+#     max(min(min(boxen_frame(tijuana_data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
+# )
 axis.set_ylabel("Fraction")
 axis.text(
     -0.08,
@@ -3423,9 +3444,9 @@ sns.boxenplot(
     k_depth=K_DEPTH,
 )
 axis.set_title("La Paz, Mexico")
-axis.set_ylim(
-    max(min(min(boxen_frame(la_paz_data)["Aux. heating"]) - 0.05, -0.05), -0.45), 1.05
-)
+# axis.set_ylim(
+#     max(min(min(boxen_frame(la_paz_data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
+# )
 axis.set_ylabel("Fraction")
 axis.text(
     -0.08,
@@ -3439,12 +3460,12 @@ axis.text(
 )
 
 
-plt.savefig(
-    "fractions_6.png",
-    transparent=True,
-    dpi=300,
-    bbox_inches="tight",
-)
+# plt.savefig(
+#     "fractions_7.png",
+#     transparent=True,
+#     dpi=300,
+#     bbox_inches="tight",
+# )
 
 plt.show()
 
@@ -5723,5 +5744,5 @@ for filename in tqdm(os.listdir("."), desc="files", unit="file"):
     with open(filename, "r", encoding="UTF-8") as f:
         data[filename] = json.load(f)
 
-with open("02_mar_23.json", "w", encoding="UTF-8") as f:
+with open("08_mar_23.json", "w", encoding="UTF-8") as f:
     json.dump(data, f)
