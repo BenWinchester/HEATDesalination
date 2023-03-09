@@ -686,6 +686,10 @@ class RenewableElectricityFraction(
 
         """
 
+        raise NotImplementedError(
+            "The renewable electricity fraction has not yet been implemented."
+        )
+
 
 class RenewableHeatingFraction(Criterion, criterion_name="renewable_heating_fraction"):
     """
@@ -1275,7 +1279,7 @@ def _constraint_function(
 
 def _run_integer_simulations(
     ambient_temperatures: dict[int, float],
-    battery: Battery | None,
+    battery: Battery,
     battery_capacity: float,
     buffer_tank: HotWaterTank,
     buffer_tank_capacity: float,
@@ -1355,42 +1359,59 @@ def _run_integer_simulations(
 
     """
 
+    def _min_capacity(key: OptimisableComponent) -> float:
+        """
+        Determine the minimum capacity allowed for the component or zero if none allowed
+
+        Inputs:
+            - key:
+                The component to check
+
+        Outputs:
+            The minimum capacity allowed for the component.
+
+        """
+
+        # Return 0 if the component is boundless.
+        if key not in optimisation_parameters.bounds:
+            return 0
+
+        return optimisation_parameters.bounds[key].get(MIN, 0)  # type: ignore [return-value]
+
     # Determine input parameters that need probing.
     logger.info("Determining integer simulations to carry out if necessary.")
     battery_capacities = {
         max(
             math.floor(battery_capacity),
-            optimisation_parameters.bounds[OptimisableComponent.BATTERY_CAPACITY][MIN],
+            _min_capacity(OptimisableComponent.BATTERY_CAPACITY),
         ),
         math.ceil(battery_capacity),
     }
     buffer_tank_capacities = {
         max(
             math.floor(buffer_tank_capacity),
-            optimisation_parameters.bounds[OptimisableComponent.BUFFER_TANK_CAPACITY][
-                MIN
-            ],
+            _min_capacity(OptimisableComponent.BUFFER_TANK_CAPACITY),
         ),
         math.ceil(buffer_tank_capacity),
     }
     pv_system_sizes = {
         max(
             math.floor(pv_system_size),
-            optimisation_parameters.bounds[OptimisableComponent.PV][MIN],
+            _min_capacity(OptimisableComponent.PV),
         ),
         math.ceil(pv_system_size),
     }
     pvt_system_sizes = {
         max(
             math.floor(pv_t_system_size),
-            optimisation_parameters.bounds[OptimisableComponent.PV_T][MIN],
+            _min_capacity(OptimisableComponent.PV_T),
         ),
         math.ceil(pv_t_system_size),
     }
     solar_thermal_system_sizes = {
         max(
             math.floor(solar_thermal_system_size),
-            optimisation_parameters.bounds[OptimisableComponent.SOLAR_THERMAL][MIN],
+            _min_capacity(OptimisableComponent.SOLAR_THERMAL),
         ),
         math.ceil(solar_thermal_system_size),
     }

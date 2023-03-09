@@ -108,7 +108,7 @@ def save_simulation(
         "w",
         encoding="UTF-8",
     ) as output_file:
-        output_data.to_csv(output_file)
+        output_data.to_csv(output_file)  # type: ignore [arg-type]
 
 
 def save_optimisation(
@@ -348,7 +348,7 @@ def main(
                         pv_panel: pv_system_size,
                         hybrid_pv_t_panel: pv_t_system_size,
                         solar_thermal_collector: solar_thermal_system_size,
-                        water_pump: num_water_pumps(mass_flow_rate, water_pump),
+                        water_pump: num_water_pumps(mass_flow_rate, water_pump),  # type: ignore [arg-type]
                     },
                     logger,
                     scenario,

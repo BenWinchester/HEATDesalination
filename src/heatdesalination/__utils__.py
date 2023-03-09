@@ -1674,4 +1674,4 @@ class Solution(NamedTuple):
                 for key, value in self.solar_thermal_htf_output_temperatures.items()
             }
 
-        return pd.DataFrame.from_dict(output_information_dict).sort_index()
+        return pd.DataFrame.from_dict(output_information_dict).sort_index()  # type: ignore [attr-defined,no-any-return]
