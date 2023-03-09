@@ -20,7 +20,6 @@ the needs of the desalination plant.
 __all__ = ("run_optimisation",)
 
 import abc
-import dataclasses
 import os
 
 import json
@@ -28,10 +27,10 @@ import math
 import numpy
 
 from contextlib import contextmanager
-from typing import Callable, Generator, Tuple
 from logging import Logger
 from scipy import optimize
 from tqdm import tqdm
+from typing import Callable, Generator, Tuple
 
 from .__utils__ import (
     CostableComponent,
@@ -40,6 +39,7 @@ from .__utils__ import (
     FlowRateError,
     GridCostScheme,
     InputFileError,
+    MIN,
     OptimisableComponent,
     OptimisationParameters,
     ProfileDegradationType,
@@ -1351,25 +1351,65 @@ def _run_integer_simulations(
 
     Outputs:
         - The optimum system with parameters rounded if necessary.
+        - The system sizes of the optimum parameters.
 
     """
 
     # Determine input parameters that need probing.
     logger.info("Determining integer simulations to carry out if necessary.")
-    battery_capacities = {math.floor(battery_capacity), math.ceil(battery_capacity)}
+    battery_capacities = {
+        max(
+            math.floor(battery_capacity),
+            optimisation_parameters.bounds[OptimisableComponent.BATTERY_CAPACITY][MIN],
+        ),
+        math.ceil(battery_capacity),
+    }
     buffer_tank_capacities = {
-        math.floor(buffer_tank_capacity),
+        max(
+            math.floor(buffer_tank_capacity),
+            optimisation_parameters.bounds[OptimisableComponent.BUFFER_TANK_CAPACITY][
+                MIN
+            ],
+        ),
         math.ceil(buffer_tank_capacity),
     }
-    pv_system_sizes = {math.floor(pv_system_size), math.ceil(pv_system_size)}
-    pvt_system_sizes = {math.floor(pv_t_system_size), math.ceil(pv_t_system_size)}
+    pv_system_sizes = {
+        max(
+            math.floor(pv_system_size),
+            optimisation_parameters.bounds[OptimisableComponent.PV][MIN],
+        ),
+        math.ceil(pv_system_size),
+    }
+    pvt_system_sizes = {
+        max(
+            math.floor(pv_t_system_size),
+            optimisation_parameters.bounds[OptimisableComponent.PV_T][MIN],
+        ),
+        math.ceil(pv_t_system_size),
+    }
     solar_thermal_system_sizes = {
-        math.floor(solar_thermal_system_size),
+        max(
+            math.floor(solar_thermal_system_size),
+            optimisation_parameters.bounds[OptimisableComponent.SOLAR_THERMAL][MIN],
+        ),
         math.ceil(solar_thermal_system_size),
     }
 
     logger.info("Running integer-valued simulations")
-    integer_valued_simulations: dict[float, Solution] = {}
+    integer_valued_simulations: dict[
+        float,
+        Tuple[
+            Solution,
+            Tuple[
+                float | None,
+                float | None,
+                float | None,
+                float | None,
+                float | None,
+                float | None,
+            ],
+        ],
+    ] = {}
     # Carry out simulations.
     for integer_battery_capatiy in tqdm(
         battery_capacities, desc="battery capacities", disable=disable_tqdm, leave=False
@@ -1451,13 +1491,23 @@ def _run_integer_simulations(
                             / 10**6
                         ) ** 3
 
-                        integer_valued_simulations[
-                            criterion_value
-                        ] = integer_simulation_result
+                        integer_valued_simulations[criterion_value] = (
+                            integer_simulation_result,
+                            (
+                                integer_battery_capatiy,
+                                integer_buffer_tank_capatiy,
+                                htf_mass_flow_rate,
+                                integer_pv_capatiy,
+                                integer_pvt_capatiy,
+                                integer_st_capatiy,
+                            ),
+                        )
 
     # Return the simulation result which is smallest in size and the corresponding
     # component sizes.
-    return
+    if optimisation_parameters.minimise:
+        return integer_valued_simulations[min(integer_valued_simulations)]
+    return integer_valued_simulations[max(integer_valued_simulations)]
 
 
 def run_optimisation(
@@ -1684,7 +1734,7 @@ def run_optimisation(
     )
 
     # Round the parametesr if necessary
-    _run_integer_simulations(
+    solution, system_capacities = _run_integer_simulations(
         ambient_temperatures,
         battery,
         battery_capacity,
@@ -1710,38 +1760,22 @@ def run_optimisation(
     )
 
     # Calculate the optimisation criterion value and return this also.
-
-    # Carry out a simulation.
-    solution = determine_steady_state_simulation(
-        ambient_temperatures,
-        battery,
-        battery_capacity,
-        buffer_tank,
-        desalination_plant,
-        heat_pump,
+    (
+        integer_battery_capacity,
+        integer_buffer_tank_capacity,
         htf_mass_flow_rate,
-        hybrid_pv_t_panel,
-        logger,
-        pv_panel,
-        pv_system_size,
-        pv_t_system_size,
-        scenario,
-        solar_irradiances,
-        solar_thermal_collector,
-        solar_thermal_system_size,
-        system_lifetime,
-        water_pump,
-        wind_speeds,
-        disable_tqdm=disable_tqdm,
-    )
+        integer_pv_system_size,
+        integer_pv_t_system_size,
+        integer_solar_thermal_system_size,
+    ) = system_capacities
 
     # Assemble the component sizes mapping.
     component_sizes: dict[CostableComponent | None, float] = {
-        battery: battery_capacity * (1 + solution.battery_replacements),
-        buffer_tank: buffer_tank_capacity,
-        hybrid_pv_t_panel: pv_t_system_size,
-        pv_panel: pv_system_size,
-        solar_thermal_collector: solar_thermal_system_size,
+        battery: integer_battery_capacity * (1 + solution.battery_replacements),
+        buffer_tank: integer_buffer_tank_capacity,
+        hybrid_pv_t_panel: integer_pv_t_system_size,
+        pv_panel: integer_pv_system_size,
+        solar_thermal_collector: integer_solar_thermal_system_size,
         water_pump: num_water_pumps(htf_mass_flow_rate, water_pump),
     }
 
@@ -1778,4 +1812,4 @@ def run_optimisation(
     )
 
     # Return the value of the criterion along with the result from the simulation.
-    return criterion_map, list(optimisation_result.x)
+    return criterion_map, list(system_capacities)
