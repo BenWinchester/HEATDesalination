@@ -1,15 +1,26 @@
 {
     "access_right": "open",
     "creators": [
-        {"orcid": "0000-0002-2880-1243", "name": "Winchester, Benedict"},
-        {"orcid": "0000-0003-1048-1330", "name": "Nelson, Jenny"},
-        {"orcid": "0000-0002-4219-1867", "name": "Markides, Christos N."}
+        {
+            "orcid": "0000-0002-2880-1243",
+            "name": "Winchester, Benedict"
+        },
+        {
+            "orcid": "0000-0003-1048-1330",
+            "name": "Nelson, Jenny"
+        },
+        {
+            "orcid": "0000-0002-4219-1867",
+            "name": "Markides, Christos N."
+        }
     ],
     "description": "HEATDesalination: Simulation and optimisation of hybrid electric and thermal powered desalination systems",
-    "license": {"id": "MIT"},
+    "license": {
+        "id": "MIT"
+    },
     "notes": "If you use this software, please cite it as below.",
-    "publication_date": "2023-02-08",
+    "publication_date": "2023-03-09",
     "title": "HEATDesalination",
     "upload_type": "software",
-    "version": "v1.0.0a3"
+    "version": "v1.0.0b1"
 }

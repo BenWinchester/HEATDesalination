@@ -53,7 +53,7 @@ __all__ = ("main",)
 
 # __version__:
 #   The version of the software being used.
-__version__: str = "v1.0.0a3"
+__version__: str = "v1.0.0b1"
 
 # ANALYSIS_REQUESTS:
 #   Names of criteria to evaluate.
