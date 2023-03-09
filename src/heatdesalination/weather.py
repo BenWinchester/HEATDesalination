@@ -308,14 +308,19 @@ def main(  # pylint: disable=too-many-statements
         profile.reset_index(drop=True) for profile in daily_weather_profiles.values()
     ]
     average_profile: pd.DataFrame = pd.DataFrame(  # type: ignore [assignment,operator]
-        functools.reduce(lambda x, y: x.add(y, fill_value=0), unindexed_profiles)  # type: ignore [no-any-return,operator]
+        functools.reduce(
+            lambda x, y: x.add(y, fill_value=0),  # type: ignore [no-any-return,operator]
+            unindexed_profiles,
+        )
     ) / len(unindexed_profiles)
 
     # Determine the standard deviation.
     standard_deviation: pd.DataFrame = pd.DataFrame(
         np.sqrt(
             functools.reduce(  # type: ignore [operator]
-                lambda x, y: x.add((y - average_profile) ** 2, fill_value=0),  # type: ignore [no-any-return,operator]
+                lambda x, y: x.add(  # type: ignore [no-any-return]
+                    (y - average_profile) ** 2, fill_value=0  # type: ignore [operator]
+                ),
                 unindexed_profiles,
             )
             / len(unindexed_profiles)
@@ -329,15 +334,27 @@ def main(  # pylint: disable=too-many-statements
     max_profile = concatenated_frame.max()
     min_profile = concatenated_frame.min()
 
-    upper_std_profile: pd.DataFrame = average_profile + standard_deviation  # type: ignore [operator]
-    lower_std_profile: pd.DataFrame = average_profile - standard_deviation  # type: ignore [operator]
+    upper_std_profile: pd.DataFrame = (
+        average_profile + standard_deviation  # type: ignore [operator]
+    )
+    lower_std_profile: pd.DataFrame = (
+        average_profile - standard_deviation  # type: ignore [operator]
+    )
 
     # Ensure that no standard deviations are out of bounds.
     upper_std_profile = (
-        pd.concat([upper_std_profile, max_profile], keys=[0, 1]).groupby(level=1).min()  # type: ignore [call-arg,call-overload]
+        pd.concat(  # type: ignore [call-arg,call-overload]
+            [upper_std_profile, max_profile], keys=[0, 1]
+        )
+        .groupby(level=1)
+        .min()
     )
     lower_std_profile = (
-        pd.concat([lower_std_profile, min_profile], keys=[0, 1]).groupby(level=1).max()  # type: ignore [call-arg,call-overload]
+        pd.concat(  # type: ignore [call-arg,call-overload]
+            [lower_std_profile, min_profile], keys=[0, 1]
+        )
+        .groupby(level=1)
+        .max()
     )
 
     # Compute weather-based error bars.

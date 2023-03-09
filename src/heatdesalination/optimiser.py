@@ -24,13 +24,15 @@ import os
 
 import json
 import math
-import numpy
 
 from contextlib import contextmanager
 from logging import Logger
+from typing import Callable, Generator, Tuple
+
+import numpy as np
+
 from scipy import optimize
 from tqdm import tqdm
-from typing import Callable, Generator, Tuple
 
 from .__utils__ import (
     CostableComponent,
@@ -985,7 +987,7 @@ def temporary_hot_water_tank(
 
 
 def _simulate_and_calculate_criterion(
-    parameter_vector: numpy.ndarray,
+    parameter_vector: np.ndarray,
     ambient_temperatures: dict[int, float],
     battery: Battery,
     battery_capacity: int | None,
@@ -1177,7 +1179,7 @@ def _simulate_and_calculate_criterion(
 
 
 def _callback_function(
-    current_vector: numpy.ndarray, *args  # pylint: disable=unused-argument
+    current_vector: np.ndarray, *args  # pylint: disable=unused-argument
 ) -> None:
     """
     Callback function to execute after each itteration.
@@ -1196,7 +1198,7 @@ def _callback_function(
 
 
 def _constraint_function(
-    current_vector: numpy.ndarray,
+    current_vector: np.ndarray,
     hybrid_pv_t_panel: HybridPVTPanel,
     optimisation_parameters: OptimisationParameters,
     solar_thermal_collector: SolarThermalPanel,
@@ -1496,7 +1498,9 @@ def _run_integer_simulations(
                             hybrid_pv_t_panel: integer_pvt_capatiy,  # type: ignore [dict-item]
                             pv_panel: integer_pv_capatiy,  # type: ignore [dict-item]
                             solar_thermal_collector: integer_st_capatiy,  # type: ignore [dict-item]
-                            water_pump: num_water_pumps(htf_mass_flow_rate, water_pump),  # type: ignore [dict-item]
+                            water_pump: num_water_pumps(  # type: ignore [dict-item]
+                                htf_mass_flow_rate, water_pump
+                            ),
                         }
 
                         criterion_value = (  # type: ignore [no-any-return]
