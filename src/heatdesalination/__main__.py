@@ -53,7 +53,7 @@ __all__ = ("main",)
 
 # __version__:
 #   The version of the software being used.
-__version__: str = "v1.0.0a3"
+__version__: str = "v1.0.0b1"
 
 # ANALYSIS_REQUESTS:
 #   Names of criteria to evaluate.
@@ -108,7 +108,7 @@ def save_simulation(
         "w",
         encoding="UTF-8",
     ) as output_file:
-        output_data.to_csv(output_file)
+        output_data.to_csv(output_file)  # type: ignore [arg-type]
 
 
 def save_optimisation(
@@ -135,11 +135,10 @@ def save_optimisation(
 
     # Write to the output file.
     logger.info("Saving optimisation output file.")
+    filename: str = f"{os.path.join(OPTIMISATION_OUTPUTS_DIRECTORY, output)}.json"
     try:
         with open(
-            (
-                filename := f"{os.path.join(OPTIMISATION_OUTPUTS_DIRECTORY, output)}.json"
-            ),
+            (filename),
             "w",
             encoding="UTF-8",
         ) as output_file:
@@ -348,7 +347,9 @@ def main(
                         pv_panel: pv_system_size,
                         hybrid_pv_t_panel: pv_t_system_size,
                         solar_thermal_collector: solar_thermal_system_size,
-                        water_pump: num_water_pumps(mass_flow_rate, water_pump),
+                        water_pump: num_water_pumps(
+                            mass_flow_rate, water_pump  # type: ignore [arg-type]
+                        ),
                     },
                     logger,
                     scenario,
