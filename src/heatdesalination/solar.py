@@ -32,7 +32,8 @@ from typing import Any, Tuple, Type
 from .__utils__ import (
     AREA,
     COST,
-    CostableComponent,
+    EmissableComponent,
+    EMISSIONS,
     FlowRateError,
     HEAT_CAPACITY_OF_WATER,
     InputFileError,
@@ -447,7 +448,7 @@ def _thermal_performance(
     return positive_root, negative_root
 
 
-class SolarPanel(abc.ABC, CostableComponent):  # pylint: disable=too-few-public-methods
+class SolarPanel(abc.ABC, EmissableComponent):  # pylint: disable=too-few-public-methods
     """
     Represents a solar panel being considered.
 
@@ -469,6 +470,7 @@ class SolarPanel(abc.ABC, CostableComponent):  # pylint: disable=too-few-public-
         self,
         area: float,
         cost: float,
+        emissions: float,
         land_use: float,
         name: str,
     ) -> None:
@@ -480,6 +482,8 @@ class SolarPanel(abc.ABC, CostableComponent):  # pylint: disable=too-few-public-
                 The surface area of the panel in meters squared.
             - cost:
                 The cost of the solar panel per unit panel.
+            - emissions:
+                The emissions associated with the solar panel per unit panel.
             - land_use:
                 The land occupied by the panel in meters squared.
             - name:
@@ -491,7 +495,7 @@ class SolarPanel(abc.ABC, CostableComponent):  # pylint: disable=too-few-public-
         self.area: float = area
         self.land_use: float = land_use
 
-        super().__init__(cost, name)
+        super().__init__(cost, emissions, name)
 
     def __init_subclass__(cls, panel_type: SolarPanelType) -> None:
         """
@@ -609,6 +613,7 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
         absorptivity: float,
         area: float,
         cost: float,
+        emissions: float,
         emissivity: float,
         land_use: float,
         name: str,
@@ -627,6 +632,8 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
                 The surface area of the panel in meters squared.
             - cost:
                 The cost of the :class:`PVPanel`.
+            - emissions:
+                The emissions associated with the :class:`PVPanel`.
             - emissivity:
                 The emissivity of the panel.
             - land_use:
@@ -651,6 +658,7 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
         super().__init__(
             area,
             cost,
+            emissions,
             land_use,
             name,
         )
@@ -957,6 +965,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         super().__init__(
             solar_inputs[AREA],
             solar_inputs[COST],
+            solar_inputs[EMISSIONS],
             solar_inputs[LAND_USE],
             solar_inputs[NAME],
         )
@@ -1330,6 +1339,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
         super().__init__(
             solar_inputs[AREA],
             solar_inputs[COST],
+            solar_inputs[EMISSIONS],
             solar_inputs[LAND_USE],
             solar_inputs[NAME],
         )

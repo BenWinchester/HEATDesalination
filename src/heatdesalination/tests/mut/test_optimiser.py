@@ -42,6 +42,19 @@ class MockCostableComponent:
 
 
 @dataclasses.dataclass
+class MockEmissableComponent(MockCostableComponent):
+    """
+    Mocks the emissable component with an `emissions` attribute.
+
+    .. attribute:: emissions
+        The emissions per component unit.
+
+    """
+
+    emissions: float
+
+
+@dataclasses.dataclass
 class MockSolution:
     """
     Mocks the grid electricity supply profile attribute of the solution.

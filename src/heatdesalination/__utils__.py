@@ -35,6 +35,8 @@ __all__ = (
     "CostableComponent",
     "DEFAULT_SIMULATION_OUTPUT_FILE",
     "DONE",
+    "EmissableComponent",
+    "EMISSIONS",
     "FAILED",
     "FlowRateError",
     "HPCSimulation",
@@ -95,6 +97,10 @@ DEFAULT_SIMULATION_OUTPUT_FILE: str = "simulation_output"
 # DONE:
 #   Keyword for "done".
 DONE: str = "[  DONE  ]"
+
+# EMISSIONS:
+#   Keyword for the emissions of a component.
+EMISSIONS: str = "emissions"
 
 # FAILED:
 #   Keyword for "failed".
@@ -194,6 +200,8 @@ class CostableComponent:
         Inputs:
             - cost:
                 The cost of the component, per unit component.
+            - name:
+                The name of the component.
 
         """
 
@@ -223,6 +231,36 @@ class CostType(enum.Enum):
     GRID: str = "grid"
     HEAT_PUMP: str = "heat_pump"
     INVERTERS: str = "inverters"
+
+
+class EmissableComponent(CostableComponent):
+    """
+    Represents an emissable component.
+
+    .. attribute:: emissions
+        The carbon emissions associated with this component, per unit component, arising
+        from the manufacturing (and transport), i.e., embedded/embodied in the
+        component.
+
+    """
+
+    def __init__(self, cost: float, emissions: float, name: str) -> None:
+        """
+        Instantiate the costable component.
+
+        Inputs:
+            - cost:
+                The cost of the component, per unit component.
+            - name:
+                The name of the component.
+            - emissions:
+                The carbon emissions associated with the component.
+
+        """
+
+        self.emissions = emissions
+
+        super().__init__(cost, name)
 
 
 def get_logger(

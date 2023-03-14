@@ -35,9 +35,9 @@ from scipy import optimize
 from tqdm import tqdm
 
 from .__utils__ import (
-    CostableComponent,
     CostType,
     DAYS_PER_YEAR,
+    EmissableComponent,
     FlowRateError,
     GridCostScheme,
     InputFileError,
@@ -61,7 +61,7 @@ UPPER_LIMIT: float = 10**8
 
 
 def _inverter_cost(
-    component_sizes: dict[CostableComponent | None, float],
+    component_sizes: dict[EmissableComponent | None, float],
     scenario: Scenario,
     system_lifetime: int,
 ) -> float:
@@ -122,7 +122,7 @@ def _inverter_cost(
 
 
 def _total_component_costs(
-    component_sizes: dict[CostableComponent | None, float],
+    component_sizes: dict[EmissableComponent | None, float],
     logger: Logger,
     scenario: Scenario,
 ) -> float:
@@ -133,7 +133,7 @@ def _total_component_costs(
 
     Inputs:
         - component_sizes:
-            The mapping between :class:`CostableComponent` instances and their installed
+            The mapping between :class:`EmissableComponent` instances and their installed
             capacities.
         - logger:
             The :class:`logging.Logger` to use for the run.
@@ -367,7 +367,7 @@ def _total_grid_cost(
 
 
 def _total_cost(
-    component_sizes: dict[CostableComponent | None, float],
+    component_sizes: dict[EmissableComponent | None, float],
     logger: Logger,
     scenario: Scenario,
     solution: Solution,
@@ -501,7 +501,7 @@ class Criterion(abc.ABC):
     @abc.abstractmethod
     def calculate_value(
         cls,
-        component_sizes: dict[CostableComponent | None, float],
+        component_sizes: dict[EmissableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -534,7 +534,7 @@ class DumpedElectricity(Criterion, criterion_name="dumped_electricity"):
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: dict[CostableComponent | None, float],
+        component_sizes: dict[EmissableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -573,7 +573,7 @@ class GridElectricityFraction(Criterion, criterion_name="grid_electricity_fracti
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: dict[CostableComponent | None, float],
+        component_sizes: dict[EmissableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -619,7 +619,7 @@ class LCUE(Criterion, criterion_name="lcue"):
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: dict[CostableComponent | None, float],
+        component_sizes: dict[EmissableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -665,7 +665,7 @@ class RenewableElectricityFraction(
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: dict[CostableComponent | None, float],
+        component_sizes: dict[EmissableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -706,7 +706,7 @@ class RenewableHeatingFraction(Criterion, criterion_name="renewable_heating_frac
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: dict[CostableComponent | None, float],
+        component_sizes: dict[EmissableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -754,7 +754,7 @@ class AuxiliaryHeatingFraction(Criterion, criterion_name="auxiliary_heating_frac
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: dict[CostableComponent | None, float],
+        component_sizes: dict[EmissableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -791,7 +791,7 @@ class SolarElectricityFraction(Criterion, criterion_name="solar_electricity_frac
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: dict[CostableComponent | None, float],
+        component_sizes: dict[EmissableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -834,7 +834,7 @@ class StorageElectricityFraction(
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: dict[CostableComponent | None, float],
+        component_sizes: dict[EmissableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -884,7 +884,7 @@ class TotalCost(Criterion, criterion_name="total_cost"):
     @classmethod
     def calculate_value(
         cls,
-        component_sizes: dict[CostableComponent | None, float],
+        component_sizes: dict[EmissableComponent | None, float],
         logger: Logger,
         scenario: Scenario,
         solution: Solution,
@@ -1157,7 +1157,7 @@ def _simulate_and_calculate_criterion(
             return UPPER_LIMIT
 
     # Assemble the component sizes mapping.
-    component_sizes: dict[CostableComponent, int | float] = {
+    component_sizes: dict[EmissableComponent, int | float] = {
         battery: _battery_capacity
         * (  # type: ignore [dict-item,operator]
             1 + steady_state_solution.battery_replacements
@@ -1489,7 +1489,7 @@ def _run_integer_simulations(
                                 )
                             )
 
-                        component_sizes: dict[CostableComponent, int | float] = {
+                        component_sizes: dict[EmissableComponent, int | float] = {
                             battery: integer_battery_capatiy
                             * (  # type: ignore [dict-item,operator]
                                 1 + integer_simulation_result.battery_replacements
@@ -1795,7 +1795,7 @@ def run_optimisation(
     ) = system_capacities
 
     # Assemble the component sizes mapping.
-    component_sizes: dict[CostableComponent | None, float] = {
+    component_sizes: dict[EmissableComponent | None, float] = {
         battery: integer_battery_capacity * (1 + solution.battery_replacements),
         buffer_tank: integer_buffer_tank_capacity,
         hybrid_pv_t_panel: integer_pv_t_system_size,

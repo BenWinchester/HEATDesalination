@@ -26,9 +26,9 @@ from typing import Any
 from ..__utils__ import (
     AREA,
     COST,
+    EmissableComponent,
     HEAT_CAPACITY_OF_WATER,
     NAME,
-    CostableComponent,
     ResourceType,
 )
 
@@ -87,7 +87,7 @@ MAXIMUM_CHARGE: str = "maximum_charge"
 MINIMUM_CHARGE: str = "minimum_charge"
 
 
-class _BaseStorage(CostableComponent):
+class _BaseStorage(EmissableComponent):
     """
     Repsesents an abstract base storage unit.
 
@@ -127,6 +127,7 @@ class _BaseStorage(CostableComponent):
         capacity: float,
         cost: float,
         cycle_lifetime: int,
+        emissions: float,
         leakage: float,
         maximum_charge: float,
         minimum_charge: float,
@@ -144,6 +145,8 @@ class _BaseStorage(CostableComponent):
             - cycle_lifetime:
                 The number of cycles for which the :class:`_BaseStorage` instance can
                 perform.
+            - emissions:
+                The carbon emissions of the :class:`_BaseStorage` instance.
             - leakage:
                 The rate of leakage from the storage.
             - maximum_charge:
@@ -162,7 +165,7 @@ class _BaseStorage(CostableComponent):
         self.maximum_charge: float = maximum_charge
         self.minimum_charge: float = minimum_charge
 
-        super().__init__(cost, name)
+        super().__init__(cost, emissions, name)
 
     def __hash__(self) -> int:
         """
@@ -263,6 +266,7 @@ class Battery(_BaseStorage, label="battery", resource_type=ResourceType.ELECTRIC
         capacity: float,
         cost: float,
         cycle_lifetime: int,
+        emissions: float,
         leakage: float,
         maximum_charge: float,
         minimum_charge: float,
@@ -284,6 +288,8 @@ class Battery(_BaseStorage, label="battery", resource_type=ResourceType.ELECTRIC
             - cycle_lifetime:
                 The number of cycles for which the :class:`Battery` instance can
                 perform.
+            - emissions:
+                The emissions of the :class:`Battery` instance.
             - leakage:
                 The rate of leakage from the storage.
             - maximum_charge:
@@ -310,6 +316,7 @@ class Battery(_BaseStorage, label="battery", resource_type=ResourceType.ELECTRIC
             capacity,
             cost,
             cycle_lifetime,
+            emissions,
             leakage,
             maximum_charge,
             minimum_charge,
@@ -478,6 +485,7 @@ class HotWaterTank(
         capacity: int,
         cost: float,
         cycle_lifetime: int,
+        emissions: float,
         leakage: float,
         maximum_charge: float,
         minimum_charge: float,
@@ -497,6 +505,8 @@ class HotWaterTank(
             - cycle_lifetime:
                 The number of cycles for which the :class:`HotWaterTank` instance can
                 perform.
+            - emissions:
+                The emissions of the :class:`Battery` instance.
             - leakage:
                 The rate of leakage from the storage.
             - maximum_charge:
@@ -521,6 +531,7 @@ class HotWaterTank(
             capacity,
             cost,
             cycle_lifetime,
+            emissions,
             leakage,
             maximum_charge,
             minimum_charge,
