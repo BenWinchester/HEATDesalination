@@ -24,6 +24,14 @@ from scipy import interpolate
 
 __all__ = ("calculate_heat_pump_electricity_consumption_and_cost",)
 
+# HEAT_PUMP_SPECIFIC_EMISSIONS:
+#   The specific emissions of the heat pumps installed.
+#   Reference:
+#       Moret, S. Strategic energy planning under uncertainty. Ph.D. thesis, EPFL (2017)
+#       https://infoscience.epfl.ch/record/231814?ln=en
+#
+HEAT_PUMP_SPECIFIC_EMISSIONS: float = 174.8
+
 
 @dataclasses.dataclass
 class HeatPump:
@@ -81,6 +89,23 @@ class HeatPump:
         # Determine the cost
         return float(self._interpolator(cop)) * thermal_power
 
+    def get_emissions(self, thermal_power: float) -> float:
+        """
+        Calculate the emissions associated with the heat pump given its thermal power.
+
+        Inputs:
+            - thermal_power:
+                The thermal power rating of the heat pump, i.e., its maximum thermal
+                power output in kWh_th.
+
+        Outputs:
+            The emissions associated with the heat pump in USD.
+
+        """
+
+        # Determine the emissions
+        return HEAT_PUMP_SPECIFIC_EMISSIONS * thermal_power
+
 
 def _coefficient_of_performance(
     condensation_temperature: float,
@@ -126,14 +151,14 @@ def _coefficient_of_performance(
     )
 
 
-def calculate_heat_pump_electricity_consumption_and_cost(
+def calculate_heat_pump_electricity_consumption_and_cost_and_emissions(
     condensation_temperature: float,
     evaporation_temperature: float,
     heat_demand: float,
     heat_pump: HeatPump,
-) -> Tuple[float, float]:
+) -> Tuple[float, float, float]:
     """
-    Calculate the electricity comsumption and cost of the heat pump.
+    Calculate the electricity comsumption and the cost and emissions of the heat pump.
 
     The coefficient of performance of a heat pump gives the ratio between the heat
     demand which can be achieved and the electricity input which is required to achieve
@@ -145,6 +170,9 @@ def calculate_heat_pump_electricity_consumption_and_cost(
     Hence, this equation can be reversed to give:
 
         q_el = q_th / COP.
+
+    The heat pump has an associated specific emissions based on its thermal power
+    delivered which is calculated here also.
 
     Inputs:
         - condensation_temperature:
@@ -164,6 +192,7 @@ def calculate_heat_pump_electricity_consumption_and_cost(
 
     Outputs:
         - The cost of the heat pump in USD,
+        - The associated emissions, measured in kg CO2-eq,
         - The electricity consumption, measured in kiloWatts.
 
     """
@@ -174,5 +203,6 @@ def calculate_heat_pump_electricity_consumption_and_cost(
         )
     )
     cost = heat_pump.get_cost(cop, heat_demand)
+    emissions = heat_pump.get_emissions(heat_demand)
 
-    return (cost, power_consumption)
+    return (cost, emissions, power_consumption)

@@ -24,7 +24,7 @@ import json
 from .__utils__ import (
     AMBIENT_TEMPERATURE,
     AUTO_GENERATED_FILES_DIRECTORY,
-    GridCostScheme,
+    GridScheme,
     InputFileError,
     NAME,
     OptimisationParameters,
@@ -288,7 +288,7 @@ def parse_input_files(  # pylint: disable=too-many-statements
     scenarios = [
         Scenario(
             entry[BATTERY],
-            GridCostScheme(entry[GRID_COST_SCHEME]),
+            GridScheme(entry[GRID_COST_SCHEME]),
             entry[HEAT_EXCHANGER_EFFICIENCY],
             entry[HEAT_PUMP],
             entry[HOT_WATER_TANK],

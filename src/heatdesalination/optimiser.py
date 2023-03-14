@@ -39,7 +39,8 @@ from .__utils__ import (
     DAYS_PER_YEAR,
     EmissableComponent,
     FlowRateError,
-    GridCostScheme,
+    GridScheme,
+    GridSchemeType,
     InputFileError,
     MIN,
     OptimisableComponent,
@@ -179,6 +180,74 @@ def _total_component_costs(
     return sum(component_costs.values())
 
 
+def _total_component_emissions(
+    component_sizes: dict[EmissableComponent | None, float],
+    logger: Logger,
+    scenario: Scenario,
+) -> float:
+    """
+    Calculate the total emissions associated with the emissable components installed.
+
+    NOTE: The emission-increase factors are accounted for in this function.
+
+    Inputs:
+        - component_sizes:
+            The mapping between :class:`EmissableComponent` instances and their installed
+            capacities.
+        - logger:
+            The :class:`logging.Logger` to use for the run.
+        - scenario:
+            The scenario being considered.
+
+    Outputs:
+        The total emissions embodied within these components.
+
+    """
+
+    component_emissions = {
+        component: component.emissions * math.ceil(size)
+        for component, size in component_sizes.items()
+        if component is not None
+    }
+
+    # Cycle through the component costs and multiply by the fractional change values.
+    # (Apologies for the inelegant switch statement...)
+    for component in component_emissions:
+        if isinstance(component, Battery):
+            component_emissions[component] *= (
+                1 + scenario.fractional_battery_emissions_change
+            )
+        if isinstance(component, HotWaterTank):
+            component_emissions[component] *= 1000 * (
+                1 + scenario.fractional_hw_tank_emissions_change
+            )
+        if isinstance(component, PVPanel):
+            component_emissions[component] *= (
+                1 + scenario.fractional_pv_emissions_change
+            )
+        if isinstance(component, HybridPVTPanel):
+            component_emissions[component] *= (
+                1 + scenario.fractional_pvt_emissions_change
+            )
+        if isinstance(component, SolarThermalPanel):
+            component_emissions[component] *= (
+                1 + scenario.fractional_st_emissions_change
+            )
+        if isinstance(component, WaterPump):
+            component_emissions[component] *= (
+                1 + scenario.fractional_water_pump_emissions_change
+            )
+
+    logger.debug(
+        "Component emissions: %s",
+        json.dumps(
+            {str(key): value for key, value in component_emissions.items()}, indent=4
+        ),
+    )
+
+    return sum(component_emissions.values())
+
+
 def _grid_infrastructure_cost() -> float:
     """
     Calculate the costs associated with the infrastructure required for grid connections
@@ -188,6 +257,21 @@ def _grid_infrastructure_cost() -> float:
 
     Outputs:
         The costs, in USD, associated with the grid infrastructure.
+
+    """
+
+    return 0
+
+
+def _grid_infrastructure_emissions() -> float:
+    """
+    Calculate the emissions associated with the infrastructure required for the grid
+
+    NOTE: Currently, this function includes no calculation for these emissions but is
+    left here as a hook for future development.
+
+    Outputs:
+        The emissions, in kg CO2-eq, associated with the grid infrastructure.
 
     """
 
@@ -247,7 +331,7 @@ def _total_grid_cost(
         {entry for entry in grid_supply_profile.values() if entry is not None}
     )
 
-    if scenario.grid_cost_scheme == GridCostScheme.DUBAI_UAE:
+    if scenario.grid_scheme == GridSchemeType.DUBAI_UAE:
         # Dubai, UAE-specific code - a tiered tariff applied based on monthly usage.
         # The industrial slab tariff is used with an exchange rate to USD applied of
         # 1 AED to 0.27 USD as fixed due to currency pegging.
@@ -272,7 +356,7 @@ def _total_grid_cost(
         * daily_grid_consumption  # [kWh/day]
     )
 
-    if scenario.grid_cost_scheme == GridCostScheme.ABU_DHABI_UAE:
+    if scenario.grid_scheme == GridSchemeType.ABU_DHABI_UAE:
         # Abu Dhabi, UAE-specific code - a tiered tariff applied based on monthly usage.
         # The industrial fixed-rate tariff for <1MW installations is used.
         return (
@@ -280,7 +364,7 @@ def _total_grid_cost(
             + fixed_grid_infrastructure_cost  # [USD]
         )  # [USD/kWh]
 
-    if scenario.grid_cost_scheme == GridCostScheme.GRAN_CANARIA_SPAIN:
+    if scenario.grid_scheme == GridSchemeType.GRAN_CANARIA_SPAIN:
         # Gran-Canaria-specific code - a flat tariff per kWh consumed.
         # Gran Canaria grid-cost information obtained from:
         # Qiblawey Y, Alassi A, Zain ul Abideen M, Banales S.
@@ -293,16 +377,16 @@ def _total_grid_cost(
             + fixed_grid_infrastructure_cost  # [USD]
         )  # [USD]
 
-    if scenario.grid_cost_scheme in {
-        GridCostScheme.TIJUANA_MEXICO,
-        GridCostScheme.LA_PAZ_MEXICO,
+    if scenario.grid_scheme in {
+        GridSchemeType.TIJUANA_MEXICO,
+        GridSchemeType.LA_PAZ_MEXICO,
     }:
         # Mexico grid costs operate using a tiered structure and three costs:
         #   - a monthly flat-rate cost for using a grid connection,
         #   - a specific cost which depends on the amount of electricity used,
         #   - and a cost based on the peak power consumption.
         # All these values were obtained from the Comisión Federal de Electricidad.
-        if scenario.grid_cost_scheme == GridCostScheme.TIJUANA_MEXICO:
+        if scenario.grid_scheme == GridSchemeType.TIJUANA_MEXICO:
             # Tijuana-specific code - a two-tier tariff based on power consumption.
             if 0 < peak_grid_power <= 25:
                 fixed_monthly_cost: float = 59.85  # [USD/month]
@@ -316,7 +400,7 @@ def _total_grid_cost(
                 fixed_monthly_cost = 0
                 power_cost = 0
                 specific_electricity_cost = 0
-        elif scenario.grid_cost_scheme == GridCostScheme.LA_PAZ_MEXICO:
+        elif scenario.grid_scheme == GridSchemeType.LA_PAZ_MEXICO:
             # La-Paz-specific code - a two-tier tariff based on power consumption.
             if 0 < peak_grid_power <= 25:
                 fixed_monthly_cost = 59.85
@@ -331,12 +415,10 @@ def _total_grid_cost(
                 power_cost = 0
                 specific_electricity_cost = 0
         else:
-            logger.error(
-                "Grid cost scheme undefined: %s", scenario.grid_cost_scheme.value
-            )
+            logger.error("Grid cost scheme undefined: %s", scenario.grid_scheme.value)
             raise InputFileError(
                 os.path.join("inputs", "scenarios.json"),
-                f"Grid cost scheme f{scenario.grid_cost_scheme.value} not well defined.",
+                f"Grid cost scheme f{scenario.grid_scheme.value} not well defined.",
             )
 
         # Use the fixed monthly cost along with the electricity specific costs to
@@ -359,11 +441,73 @@ def _total_grid_cost(
             + total_specific_electricity_cost
         )
 
-    logger.error("Grid cost scheme undefined: %s", scenario.grid_cost_scheme.value)
+    logger.error("Grid cost scheme undefined: %s", scenario.grid_scheme.value)
     raise InputFileError(
         os.path.join("inputs", "scenarios.json"),
-        f"Grid cost scheme f{scenario.grid_cost_scheme.value} not well defined.",
+        f"Grid cost scheme f{scenario.grid_scheme.value} not well defined.",
     )
+
+
+def _total_grid_emissions(
+    logger: Logger,
+    scenario: Scenario,
+    solution: Solution,
+    system_lifetime: int,
+) -> float:
+    """
+    Calculate the total emissions arising from the grid electricity used.
+
+    NOTE: The fractional change in the grid electricity emissions are accounted for
+    within this function.
+
+    NOTE: There are currently no fixed grid infrastructure emissions available, though a
+    hook has been provided for including this functionality later on if required.
+
+    Inputs:
+        - logger:
+            The :class:`logging.Logger` to use for the run.
+        - scenario:
+            The scenario being considered.
+        - solution:
+            The steady-state solution for the simulation.
+        - system_lifetime:
+            The lifetime of the system in years.
+
+    Outputs:
+        The total emissions associated with electricity sourced from the grid.
+
+    """
+
+    # Calculate the fixed grid infrastructure emissions
+    fixed_grid_infrastructure_emissinos = _grid_infrastructure_emissions()
+
+    # Calculate the undiscounted emissions of grid electricity.
+    fractional_emissions_change = scenario.fractional_grid_emissions_change
+
+    # Exit if there was no electricity sourved from the grid
+    if (grid_supply_profile := solution.grid_electricity_supply_profile) is None:
+        logger.info("No grid-supply profile provided despite grid cost required.")
+        return 0
+
+    # All emission schemes use lifetime power consumption, so calculate this
+    grid_lifetime_electricity_consumption: float = (
+        DAYS_PER_YEAR  # [days/year]
+        * system_lifetime  # [years]
+        * sum(
+            entry for entry in grid_supply_profile.values() if entry is not None
+        )  # [kWh/day]
+    )
+
+    # Grid emissions in the case-study locations considered are coded into a mapping and
+    # fetched as necessary.
+    grid_electricity_consumption_emissions = (
+        GridScheme.scheme_type_to_scheme[scenario.grid_scheme].emissions
+        * grid_lifetime_electricity_consumption
+        * (1 + fractional_emissions_change)
+    )
+
+    # Return the electricity-consumption and fixed-infrastructure emissions.
+    return fixed_grid_infrastructure_emissinos + grid_electricity_consumption_emissions
 
 
 def _total_cost(
@@ -419,6 +563,68 @@ def _total_cost(
     )
 
     return total_cost
+
+
+def _total_emissions(
+    component_sizes: dict[EmissableComponent | None, float],
+    logger: Logger,
+    scenario: Scenario,
+    solution: Solution,
+    system_lifetime: int,
+) -> float:
+    """
+    Compute the total emissions associated with the system which was optimisable.
+
+    Inputs:
+        - component_sizes:
+            The sizes of the various components which are costable.
+        - logger:
+            The :class:`logging.Logger` to use for the run.
+        - scenario:
+            The scenario being considered.
+        - solution:
+            The steady-state solution for the simulation.
+        - system_lifetime:
+            The lifetime of the system in years.
+
+    Outputs:
+        The total emissions associated with the system components.
+
+    """
+
+    # Calculate the emissions associated with the various components which have
+    # associated embedded emissions.
+    total_component_emissions = _total_component_emissions(
+        component_sizes, logger, scenario
+    )
+
+    total_grid_emissions = _total_grid_emissions(
+        logger, scenario, solution, system_lifetime
+    )
+
+    # Add the emissions arising from the installation of an inverter for dealing with
+    # solar power generated
+    inverter_emissions = _inverter_emissions(component_sizes, scenario, system_lifetime)
+
+    # Add the emissions arising from any consumables such as diesel fuel or grid
+    # electricity.
+    total_emissions = (
+        total_component_emissions  # Already adjusted for emissions change
+        + max(total_grid_emissions, 0)  # Already adjusted for emissions change
+        + max(solution.heat_pump_emissions, 0)  # Already adjusted for emissions change
+        + max(inverter_emissions, 0)  # Already adjusted for emissions change
+    )  # + diesel_fuel_cost + grid_cost
+    logger.info(
+        "Total cost: %s, Total component emissions: %s, Total grid emissions %s, "
+        "Heat-pump emissions: "
+        "%s",
+        total_emissions,
+        total_component_emissions,
+        total_grid_emissions,
+        solution.heat_pump_emissions,
+    )
+
+    return total_emissions
 
 
 def _total_electricity_supplied(solution: Solution, system_lifetime: int) -> float:
@@ -911,6 +1117,46 @@ class TotalCost(Criterion, criterion_name="total_cost"):
         """
 
         return _total_cost(component_sizes, logger, scenario, solution, system_lifetime)
+
+
+class TotalEmissions(Criterion, criterion_name="total_emissions"):
+    """
+    Contains the calculation for the total carbon emissions associated with the system.
+
+    """
+
+    @classmethod
+    def calculate_value(
+        cls,
+        component_sizes: dict[EmissableComponent | None, float],
+        logger: Logger,
+        scenario: Scenario,
+        solution: Solution,
+        system_lifetime: int,
+    ) -> float:
+        """
+        Calculate the value of the total cost.
+
+        Inputs:
+            - component_sizes:
+                The sizes of the various components which are costable.
+            - logger:
+                The :class:`logging.Logger` to use for the run.
+            - scenario:
+                The scenario being considered.
+            - solution:
+                The solution from running the simulation.
+            - system_lifetime:
+                The lifetime of the system in years.
+
+        Outputs:
+            The total emissions associated with the system's costable components.
+
+        """
+
+        return _total_emissions(
+            component_sizes, logger, scenario, solution, system_lifetime
+        )
 
 
 # class UnmetElectricity(Criterion, criterion_name="unmet_electricity_fraction"):

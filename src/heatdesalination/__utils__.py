@@ -14,6 +14,7 @@ __utils__.py - The utility module for the HEATDeslination program.
 
 """
 
+import abc
 import dataclasses
 import enum
 import logging
@@ -342,7 +343,7 @@ class FlowRateError(Exception):
         super().__init__(f"Flow-rate mismatch for collector '{collector_name}': {msg}")
 
 
-class GridCostScheme(enum.Enum):
+class GridSchemeType(enum.Enum):
     """
     Denotes the grid-cost scheme used.
 
@@ -368,6 +369,127 @@ class GridCostScheme(enum.Enum):
     GRAN_CANARIA_SPAIN: str = "gran_canaria"
     LA_PAZ_MEXICO: str = "la_paz_mexico"
     TIJUANA_MEXICO: str = "tijuana_mexico"
+
+
+class GridScheme(abc.ABC):
+    """
+    Denotes the grid-cost scheme used.
+
+    """
+
+    emissions: float
+    scheme: GridSchemeType
+    scheme_type_to_scheme: dict[GridSchemeType, Any] = {}
+
+    def __init_subclass__(cls, emissions: float, scheme: GridSchemeType) -> None:
+        """
+        The init_subclass hook, run on instantiation of the :class:`GridScheme`.
+
+        Inputs:
+            - emissions:
+                The carbon emission associated with the system.
+            - name:
+                The name of the grid scheme.
+
+        Outputs:
+            An instantiated :class:`GridScheme` instance.
+
+        """
+
+        cls.emissions = emissions
+        cls.scheme = scheme
+        cls.scheme_type_to_scheme[scheme] = cls
+
+
+class AbuDhabiUAE(GridScheme, emissions=0.46185, scheme=GridSchemeType.ABU_DHABI_UAE):
+    """
+    Contains information pertaining to the grid in Abu Dhabi, UAE.
+
+    The emissions intensity of the grid in Abu Dhabi, UAE, is taken to be 461.85
+    gCO2-eq/kWh.
+
+    Information on the emissions intensity of the grid in the UAE is obtained from
+    [1] Ritchie, H. & Roser, M. CO2 and greenhouse gas emissions.
+        Our World in Data (2020).
+        https://ourworldindata.org/co2-emissions?utm_source=squamish%20chief&utm_campaign=squamish%20chief&utm_medium=referral .
+    [2] Ember. Yearly electricity data.
+        https://ember-climate.org/data-catalogue/yearly-electricity-data/
+        (2022). Accessed: 2023-3-6.
+
+    """
+
+
+class DubaiUAE(GridScheme, emissions=0.46185, scheme=GridSchemeType.DUBAI_UAE):
+    """
+    Contains information pertaining to the grid in Dubai, UAE.
+
+    The emissions intensity of the grid in Dubai, UAE, is taken to be 461.85
+    gCO2-eq/kWh.
+
+    Information on the emissions intensity of the grid in the UAE is obtained from
+    [1] Ritchie, H. & Roser, M. CO2 and greenhouse gas emissions.
+        Our World in Data (2020).
+        https://ourworldindata.org/co2-emissions?utm_source=squamish%20chief&utm_campaign=squamish%20chief&utm_medium=referral .
+    [2] Ember. Yearly electricity data.
+        https://ember-climate.org/data-catalogue/yearly-electricity-data/
+        (2022). Accessed: 2023-3-6.
+
+    """
+
+
+class GranCanariaSpain(
+    GridScheme, emissions=0.57654, scheme=GridSchemeType.GRAN_CANARIA_SPAIN
+):
+    """
+    Contains information pertaining to the grid in Gran Canaria, Spain.
+
+    The emissions intensity of the grid in Gran Canaria, Spain, is taken to be 576.541
+    gCO2-eq/kWh.
+
+    Information on the emissions intensity of the grid in on Gran Carnaia is obtained
+    from
+    [1] Qiblawey, Y., Alassi, A., Zain ul Abideen, M. & Ba ̃nales, S.
+        Techno-economic assessment of increasing the renewable energy supply in the
+        canary islands: The case of tenerife and gran canaria. Energy Policy 162, 112791
+        (2022).
+        https://www.sciencedirect.com/science/article/pii/S0301421522000167
+        https://doi.org/10.1016/j.enpol.2022.112791
+
+
+    """
+
+
+class LaPazMexico(GridScheme, emissions=0.890, scheme=GridSchemeType.LA_PAZ_MEXICO):
+    """
+    Contains information pertaining to the grid in La Paz, Mexico.
+
+    The emissions intensity of the grid in La Paz, Mexico, is taken to be 890
+    gCO2-eq/kWh.
+
+    Information on the emissions intensity of the grid in the county of La Paz, Mexico,
+    is obtained from
+    [1] Ivanova, A., Bermudez, A. & Martinez, A. in Climate action plan for the city of
+        la paz, baja california sur, mexico: A tool for sustainability, Vol. 194 439–449
+        (WIT Press, 2015).
+        http://www.witpress.com/elibrary/wit-transactions-on-ecology-and-the-environment/194/34380.
+
+    """
+
+
+class Tijuana(GridScheme, emissions=0.310, scheme=GridSchemeType.TIJUANA_MEXICO):
+    """
+    Contains information pertaining to the grid in Tijuana, Mexico.
+
+    The emissions intensity of the grid in Tijuana, Mexico, is taken to be 310
+    gCO2-eq/kWh.
+
+    Information on the emissions intensity of the grid in Baja California, Mexico, is
+    obtained from
+    [1] Center for Climate Strategies (CCS). Final report of the baja california phase 2
+        climate action plan. Tech. Rep. (2014).
+        https://uccrnna.org/wp-content/uploads/2017/06/2014_Baja-California_Climate-Action-Plan.pdf
+
+    """
 
 
 class ProfileType(enum.Enum):
@@ -1153,7 +1275,7 @@ class Scenario:
     """
 
     battery: str
-    grid_cost_scheme: GridCostScheme
+    grid_scheme: GridScheme
     heat_exchanger_efficiency: float
     heat_pump: str
     hot_water_tank: str
@@ -1314,6 +1436,10 @@ class Solution(NamedTuple):
         The cost of the heat pump installed in USD, sized based on the maximum cost
         required to meet demand.
 
+    .. attribute:: heat_pump_emissions
+        The emissions associated with the heat pump installed in kg CO2-eq, sized based
+        on the maximum cost required to meet demand.
+
     .. attribute:: hot_water_demand_temperature
         The temperature of the hot-water demand at each time step.
 
@@ -1411,6 +1537,7 @@ class Solution(NamedTuple):
     collector_system_output_temperatures: dict[int, float]
     electricity_demands: dict[int, float]
     heat_pump_cost: float
+    heat_pump_emissions: float
     hot_water_demand_temperature: dict[int, float | None]
     hot_water_demand_volume: dict[int, float | None]
     pump_electricity_demands: dict[int, float | None]
