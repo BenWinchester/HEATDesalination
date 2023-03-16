@@ -61,29 +61,20 @@ from .water_pump import num_water_pumps, WaterPump
 UPPER_LIMIT: float = 10**8
 
 
-def _inverter_cost(
+def _get_pv_and_pv_t_system_sizes(
     component_sizes: dict[EmissableComponent | None, float],
     scenario: Scenario,
-    system_lifetime: int,
-) -> float:
+) -> Tuple[float, float]:
     """
-    Calculate the costs associated with the inverter in the system.
-
-    NOTE: The fractional change in the inverter costs are taken account of in this
-    funciton.
+    Calculate the size of installed PV and PV-T components.
 
     Inputs:
         - component_sizes:
             The sizes of the various components which are costable.
-        - logger:
-            The :class:`logging.Logger` to use for the run.
-        - scenario:
-            The scenario being considered.
-        - system_lifetime:
-            The lifetime of the system in years.
 
     Outputs:
-        The costs associated with the inverter installed.
+        - The capacity of PV panels installed,
+        - The capacity of PV-T panels installed.
 
     """
 
@@ -112,14 +103,124 @@ def _inverter_cost(
     else:
         pv_t_system_size = 0
 
+    return pv_system_size, pv_t_system_size
+
+
+def _inverter_capacity(
+    inverter_lifetime: int,
+    inverter_unit: float,
+    solar_system_size: float,
+    system_lifetime: int,
+) -> int:
+    """
+    Determine the capacity of inverters installed based on the PV and PV-T system sizes.
+
+    Inputs:
+        - inverter_lifetime:
+            The lifetime of any inverters installed, in years.
+        - inverter_unit:
+            The size, in kWp_el, of the inverter(s) being considered.
+        - solar_system_size:
+            The size of the electrical solar system installed in kWp_el.
+        - system_lifetime:
+            The lifetime of the system in years.
+
+
+    Outputs:
+        The capacity of inverters installed in terms of kWp.
+
+    """
+
+    return (
+        inverter_unit
+        * math.ceil(solar_system_size / inverter_unit)
+        * math.ceil(system_lifetime // inverter_lifetime)
+    )
+
+
+def _inverter_cost(
+    component_sizes: dict[EmissableComponent | None, float],
+    scenario: Scenario,
+    system_lifetime: int,
+) -> float:
+    """
+    Calculate the costs associated with the inverter(s) in the system.
+
+    NOTE: The fractional change in the inverter costs are taken account of in this
+    funciton.
+
+    Inputs:
+        - component_sizes:
+            The sizes of the various components which are costable.
+        - logger:
+            The :class:`logging.Logger` to use for the run.
+        - scenario:
+            The scenario being considered.
+        - system_lifetime:
+            The lifetime of the system in years.
+
+    Outputs:
+        The costs associated with the inverter(s) installed in USD.
+
+    """
+
+    pv_system_size, pv_t_system_size = _get_pv_and_pv_t_system_sizes(
+        component_sizes, scenario
+    )
+
     # Determine the inverter sizing and costs associated
-    inverter_cost = (
-        (pv_system_size + pv_t_system_size)
-        * scenario.inverter_cost
-        * (system_lifetime // scenario.inverter_lifetime)
-    ) * (1 + scenario.fractional_inverter_cost_change)
+    inverter_cost = _inverter_capacity(
+        scenario.inverter_lifetime,
+        scenario.inverter_unit,
+        pv_system_size + pv_t_system_size,
+        system_lifetime,
+    ) * (scenario.inverter_cost * (1 + scenario.fractional_inverter_cost_change))
 
     return inverter_cost
+
+
+def _inverter_emissions(
+    component_sizes: dict[EmissableComponent | None, float],
+    scenario: Scenario,
+    system_lifetime: int,
+) -> float:
+    """
+    Calculate the emissions arrising from the inverter(s) in the system.
+
+    NOTE: The fractional change in the inverter costs are taken account of in this
+    funciton.
+
+    Inputs:
+        - component_sizes:
+            The sizes of the various components which are emissable.
+        - logger:
+            The :class:`logging.Logger` to use for the run.
+        - scenario:
+            The scenario being considered.
+        - system_lifetime:
+            The lifetime of the system in years.
+
+    Outputs:
+        The emissions arrising from the inverter(s) installed in kgCO2_eq.
+
+    """
+
+    pv_system_size, pv_t_system_size = _get_pv_and_pv_t_system_sizes(
+        component_sizes, scenario
+    )
+
+    # Determine the inverter sizing and costs associated
+    inverter_emissions = _inverter_capacity(
+        scenario.inverter_lifetime,
+        scenario.inverter_unit,
+        pv_system_size + pv_t_system_size,
+        system_lifetime,
+    ) * (
+        scenario.inverter_emissions
+        * (1 + scenario.fractional_inverter_emissions_change)
+    )
+
+    return inverter_emissions
 
 
 def _total_component_costs(

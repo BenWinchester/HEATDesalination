@@ -1158,41 +1158,108 @@ class Scenario:
         (all of the cost has been removed and the component is now free) and any
         positive number (indicating the fraction added to the original cost).
 
+    .. attribute:: fractional_battery_emissions_change
+        The fractional change in the emissions associated with the batteries installed,
+        defined between -1 (all of the emissions have been removed and the component is
+        now free of any carbon impact) and any positive number (indicating the fraction
+        added to the original emissions arising from the manufacturing and installation
+        of the component).
+
     .. attribute:: fractional_grid_cost_change
         The fractional change in the cost of grid electricity, defined between -1 (all
         of the cost has been removed and the component is now free) and any positive
         number (indicating the fraction added to the original cost).
+
+    .. attribute:: fractional_grid_emissions_change
+        The fractional change in the emissions associated with the grid, defined between
+        -1 (all of the emissions have been removed and the component is now free of any
+        carbon impact) and any positive number (indicating the fraction added to the
+        original emissions arising from energy taken from the grid).
 
     .. attribute:: fractional_heat_pump_cost_change
         The fractional change in the cost of the heat pump(s) installed, defined between
         -1 (all of the cost has been removed and the component is now free) and any
         positive number (indicating the fraction added to the original cost).
 
+    .. attribute:: fractional_heat_pump_emissions_change
+        The fractional change in the emissions associated with the heat pump(s)
+        installed, defined between -1 (all of the emissions have been removed and the
+        component is now free of any carbon impact) and any positive number (indicating
+        the fraction added to the original emissions arising from the manufacturing and
+        installation of the component).
+
     .. attribute:: fractional_hw_tank_cost_change
-        The fractional change in the cost of the hot-water tank installed, defined
+        The fractional change in the cost of the hot-water tank(s) installed, defined
         between -1 (all of the cost has been removed and the component is now free) and
         any positive number (indicating the fraction added to the original cost).
+
+    .. attribute:: fractional_hw_tank_emissions_change
+        The fractional change in the emissions associated with the hot-water tank(s)
+        installed, defined between -1 (all of the emissions have been removed and the
+        component is now free of any carbon impact) and any positive number (indicating
+        the fraction added to the original emissions arising from the manufacturing and
+        installation of the component).
 
     .. attribute:: fractional_inverter_cost_change
         The fractional change in the cost of the inverter(s) installed, defined between
         -1 (all of the cost has been removed and the component is now free) and any
         positive number (indicating the fraction added to the original cost).
 
+    .. attribute:: fractional_inverter_emissions_change
+        The fractional change in the emissions associated with the inverter(s) installed,
+        defined between -1 (all of the emissions have been removed and the component is
+        now free of any carbon impact) and any positive number (indicating the fraction
+        added to the original emissions arising from the manufacturing and installation
+        of the component).
+
     .. attribute:: fractional_pv_cost_change
         The fractional change in the cost of the PV panels installed, defined between -1
         (all of the cost has been removed and the component is now free) and any
         positive number (indicating the fraction added to the original cost).
+
+    .. attribute:: fractional_pv_emissions_change
+        The fractional change in the emissions associated with the PV panels(s)
+        installed, defined between -1 (all of the emissions have been removed and the
+        component is now free of any carbon impact) and any positive number (indicating
+        the fraction added to the original emissions arising from the manufacturing and
+        installation of the component).
 
     .. attribute:: fractional_pvt_cost_change
         The fractional change in the cost of the PV-T panels installed, defined between
         -1 (all of the cost has been removed and the component is now free) and any
         positive number (indicating the fraction added to the original cost).
 
+    .. attribute:: fractional_pvt_emissions_change
+        The fractional change in the emissions associated with the PV-T panels
+        installed, defined between -1 (all of the emissions have been removed and the
+        component is now free of any carbon impact) and any positive number (indicating
+        the fraction added to the original emissions arising from the manufacturing and
+        installation of the component).
+
     .. attribute:: fractional_st_cost_change
         The fractional change in the cost of the solar-thermal collectors installed,
         defined between -1 (all of the cost has been removed and the component is now
         free) and any positive number (indicating the fraction added to the original
         cost).
+
+    .. attribute:: fractional_st_emissions_change
+        The fractional change in the emissions associated with the solar-thermal
+        collector(s) installed, defined between -1 (all of the emissions have been
+        removed and the component is now free of any carbon impact) and any positive
+        number (indicating the fraction added to the original emissions arising from the
+        manufacturing and installation of the component).
+
+    .. attribute:: fractional_water_pump_cost_change
+        The fractional change in the cost of the water pump(s) installed, defined
+        between -1 (all of the cost has been removed and the component is now free) and
+        any positive number (indicating the fraction added to the original cost).
+
+    .. attribute:: fractional_water_pump_emissions_change
+        The fractional change in the emissions associated with the water pump(s)
+        installed, defined between -1 (all of the emissions have been removed and the
+        component is now free of any carbon impact) and any positive number (indicating
+        the fraction added to the original emissions arising from the manufacturing and
+        installation of the component).
 
     .. attribute:: grid_cost_scheme
         The name of the grid-cost scheme to use.
@@ -1211,6 +1278,13 @@ class Scenario:
 
     .. attribute:: inverter_cost
         The cost of the inverter for the solar system in USD/kW.
+
+    .. attribute:: inverter_emissions
+        The carbon emissions associated with the inverter for the solar system in
+        kgCO2-eq/kW.
+
+    .. attribute:: inverter_unit
+        The unit size of inverters being considered in kW.
 
     .. attribute:: inverter_lifetime
         The lifetime of the inverter in years.
@@ -1245,33 +1319,6 @@ class Scenario:
     .. attribute:: water_pump
         The name of the water pump to use.
 
-    .. attribute:: fractional_battery_cost_change
-        The fractional change in the cost of the battery.
-
-    .. attribute:: fractional_grid_cost_change
-        The fractional change in the price of grid electricity.
-
-    .. attribute:: fractional_heat_pump_cost_change
-        The fractional change in the cost of the heat-pump installed.
-
-    .. attribute:: fractional_hw_tank_cost_change
-        The fractional change in the cost of the hot-water tanks installed.
-
-    .. attribute:: fractional_inverter_cost_change
-        The fractional change in the cost of the inverter.
-
-    .. attribute:: fractional_pv_cost_change
-        The fractional change in the cost of the PV panels.
-
-    .. attribute:: fractional_pvt_cost_change
-        The fractional change in the cost of the PV-T collectors.
-
-    .. attribute:: fractional_st_cost_change
-        The fractional change in the cost of the solar-thermal collectors.
-
-    .. attribute:: fractional_water_pump_cost_change
-        The fractional change in the cost of the battery.
-
     """
 
     battery: str
@@ -1281,7 +1328,9 @@ class Scenario:
     hot_water_tank: str
     htf_heat_capacity: float
     inverter_cost: float
+    inverter_emissions: float
     inverter_lifetime: int
+    inverter_unit: float
     name: str
     plant: str
     pv_degradation_rate: float
@@ -1290,14 +1339,23 @@ class Scenario:
     _pv_t: bool | str
     _solar_thermal: bool | str
     fractional_battery_cost_change: float = 0
+    fractional_battery_emissions_change: float = 0
     fractional_grid_cost_change: float = 0
+    fractional_grid_emissions_change: float = 0
     fractional_heat_pump_cost_change: float = 0
+    fractional_heat_pump_emissions_change: float = 0
     fractional_hw_tank_cost_change: float = 0
+    fractional_hw_tank_emissions_change: float = 0
     fractional_inverter_cost_change: float = 0
+    fractional_inverter_emissions_change: float = 0
     fractional_pv_cost_change: float = 0
+    fractional_pv_emissions_change: float = 0
     fractional_pvt_cost_change: float = 0
+    fractional_pvt_emissions_change: float = 0
     fractional_st_cost_change: float = 0
+    fractional_st_emissions_change: float = 0
     fractional_water_pump_cost_change: float = 0
+    fractional_water_pump_emissions_change: float = 0
 
     @property
     def pv(self) -> bool:  # pylint: disable=invalid-name

@@ -35,7 +35,10 @@ from .__utils__ import (
     Solution,
     ZERO_CELCIUS_OFFSET,
 )
-from .heat_pump import calculate_heat_pump_electricity_consumption_and_cost, HeatPump
+from .heat_pump import (
+    calculate_heat_pump_electricity_consumption_and_cost_and_emissions,
+    HeatPump,
+)
 from .matrix import solve_matrix
 from .plant import DesalinationPlant
 from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel, electric_output
@@ -846,7 +849,7 @@ def run_simulation(  # pylint: disable=too-many-statements
                 heat_pump_cost,
                 heat_pump_emissions,
                 heat_pump_power_consumpion,
-            ) = calculate_heat_pump_electricity_consumption_and_cost(
+            ) = calculate_heat_pump_electricity_consumption_and_cost_and_emissions(
                 hot_water_temperature,
                 ambient_temperatures[hour],
                 auxiliary_heating_demand,
