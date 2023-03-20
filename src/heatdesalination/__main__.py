@@ -172,7 +172,14 @@ def main(
     verbose: bool = False,
 ) -> (
     dict[str, Tuple[Any, dict[str, Any]]]
-    | list[Tuple[dict[str, Any], dict[Any, Tuple[dict[str, float], list[float]]]]]
+    | list[
+        Tuple[
+            dict[str, Any],
+            dict[
+                Any, Tuple[dict[str, float | Tuple[float, float, float]], list[float]]
+            ],
+        ]
+    ]
     | None
 ):
     """
@@ -372,7 +379,13 @@ def main(
     if optimisation:
         # Setup a variable for storing the optimisation results.
         optimisation_results: list[
-            Tuple[dict[str, Any], dict[Any, Tuple[dict[str, float], list[float]]]]
+            Tuple[
+                dict[str, Any],
+                dict[
+                    Any,
+                    Tuple[dict[str, float | Tuple[float, float, float]], list[float]],
+                ],
+            ]
         ] = []
 
         for optimisation_parameters in tqdm(

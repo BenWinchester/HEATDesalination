@@ -111,7 +111,7 @@ def _inverter_capacity(
     inverter_unit: float,
     solar_system_size: float,
     system_lifetime: int,
-) -> int:
+) -> float:
     """
     Determine the capacity of inverters installed based on the PV and PV-T system sizes.
 
@@ -561,7 +561,8 @@ def _total_grid_cost(
             )
             raise InputFileError(
                 os.path.join("inputs", "scenarios.json"),
-                f"Grid cost scheme f{scenario.grid_scheme.value} not well defined.",
+                f"Grid cost scheme f{scenario.grid_scheme.scheme.value} not well "
+                "defined.",
             )
 
         # Use the fixed monthly cost along with the electricity specific costs to
@@ -643,8 +644,8 @@ def _total_grid_emissions(
 
     # Grid emissions in the case-study locations considered are coded into a mapping and
     # fetched as necessary.
-    grid_electricity_consumption_emissions = (
-        GridScheme.scheme_type_to_scheme[scenario.grid_scheme.scheme].emissions
+    grid_electricity_consumption_emissions = float(
+        float(GridScheme.scheme_type_to_scheme[scenario.grid_scheme.scheme].emissions)
         * grid_lifetime_electricity_consumption
         * (1 + fractional_emissions_change)
     )
@@ -1975,7 +1976,7 @@ def run_optimisation(
     wind_speeds: dict[int, float],
     *,
     disable_tqdm: bool = True,
-) -> Tuple[dict[str, float], list[float]]:
+) -> Tuple[dict[str, float | Tuple[float, float, float]], list[float]]:
     """
     Determine the optimum system conditions.
 
@@ -2016,7 +2017,12 @@ def run_optimisation(
     Outputs:
         - A mapping containing information about the values of all the optimisation
           criteria defined, as well as the costs of the various parts of the overall
-          system;
+          system, where values are either
+            - a single `float`,
+            - a `tuple` containing
+                - the mean (estimated) value,
+                - a lower-bound estimate of the value,
+                - and an upper-bound estimate of the value;
         - The optimised system.
 
     """
