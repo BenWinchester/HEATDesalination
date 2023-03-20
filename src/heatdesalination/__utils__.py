@@ -426,7 +426,7 @@ class AbuDhabiUAE(GridScheme, emissions=0.46185, scheme=GridSchemeType.ABU_DHABI
     Information on the emissions intensity of the grid in the UAE is obtained from
     [1] Ritchie, H. & Roser, M. CO2 and greenhouse gas emissions.
         Our World in Data (2020).
-        https://ourworldindata.org/co2-emissions?utm_source=squamish%20chief&utm_campaign=squamish%20chief&utm_medium=referral .
+        https://ourworldindata.org/co2-emissions?utm_source=squamish%20chief&utm_campaign=squamish%20chief&utm_medium=referral  # pylint: disable=line-too-long
     [2] Ember. Yearly electricity data.
         https://ember-climate.org/data-catalogue/yearly-electricity-data/
         (2022). Accessed: 2023-3-6.
@@ -444,7 +444,7 @@ class DubaiUAE(GridScheme, emissions=0.46185, scheme=GridSchemeType.DUBAI_UAE):
     Information on the emissions intensity of the grid in the UAE is obtained from
     [1] Ritchie, H. & Roser, M. CO2 and greenhouse gas emissions.
         Our World in Data (2020).
-        https://ourworldindata.org/co2-emissions?utm_source=squamish%20chief&utm_campaign=squamish%20chief&utm_medium=referral .
+        https://ourworldindata.org/co2-emissions?utm_source=squamish%20chief&utm_campaign=squamish%20chief&utm_medium=referral  # pylint: disable=line-too-long
     [2] Ember. Yearly electricity data.
         https://ember-climate.org/data-catalogue/yearly-electricity-data/
         (2022). Accessed: 2023-3-6.
