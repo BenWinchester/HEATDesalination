@@ -183,7 +183,7 @@ def _inverter_emissions(
     component_sizes: dict[EmissableComponent | None, float],
     scenario: Scenario,
     system_lifetime: int,
-) -> float:
+) -> Tuple[float, float, float]:
     """
     Calculate the emissions arrising from the inverter(s) in the system.
 
@@ -201,7 +201,9 @@ def _inverter_emissions(
             The lifetime of the system in years.
 
     Outputs:
-        The emissions arrising from the inverter(s) installed in kgCO2_eq.
+        - The emissions arrising from the inverter(s) installed in kgCO2_eq,
+        - A lower-bound estimate on the inverter emissions,
+        - An upper-bound estimate on the inverter emissions.
 
     """
 
@@ -210,17 +212,33 @@ def _inverter_emissions(
     )
 
     # Determine the inverter sizing and costs associated
-    inverter_emissions = _inverter_capacity(
-        scenario.inverter_lifetime,
-        scenario.inverter_unit,
-        pv_system_size + pv_t_system_size,
-        system_lifetime,
+    inverter_emissions = (
+        inverter_capacity := _inverter_capacity(
+            scenario.inverter_lifetime,
+            scenario.inverter_unit,
+            pv_system_size + pv_t_system_size,
+            system_lifetime,
+        )
     ) * (
         scenario.inverter_emissions
         * (1 + scenario.fractional_inverter_emissions_change)
     )
 
-    return inverter_emissions
+    # Determine the error-bar bounds on the inverter emissions
+    lower_bound_inverter_emissions = inverter_capacity * (
+        (scenario.inverter_emissions - scenario.inverter_emissions_range)
+        * (1 + scenario.fractional_inverter_emissions_change)
+    )
+    upper_bound_inverter_emissions = inverter_capacity * (
+        (scenario.inverter_emissions + scenario.inverter_emissions_range)
+        * (1 + scenario.fractional_inverter_emissions_change)
+    )
+
+    return (
+        inverter_emissions,
+        lower_bound_inverter_emissions,
+        upper_bound_inverter_emissions,
+    )
 
 
 def _total_component_costs(
@@ -285,7 +303,7 @@ def _total_component_emissions(
     component_sizes: dict[EmissableComponent | None, float],
     logger: Logger,
     scenario: Scenario,
-) -> float:
+) -> Tuple[float, float, float]:
     """
     Calculate the total emissions associated with the emissable components installed.
 
@@ -305,39 +323,57 @@ def _total_component_emissions(
 
     """
 
-    component_emissions = {
-        component: component.emissions * math.ceil(size)
-        for component, size in component_sizes.items()
-        if component is not None
-    }
+    def _fractional_emissions_change(
+        emissions_map: dict[EmissableComponent, float]
+    ) -> dict[EmissableComponent, float]:
+        """Cycle through the component costs and multiply by the fractional changes."""
+        # (Apologies for the inelegant switch statement...)
+        for component in emissions_map:
+            if isinstance(component, Battery):
+                emissions_map[component] *= (
+                    1 + scenario.fractional_battery_emissions_change
+                )
+            if isinstance(component, HotWaterTank):
+                emissions_map[component] *= 1000 * (
+                    1 + scenario.fractional_hw_tank_emissions_change
+                )
+            if isinstance(component, PVPanel):
+                emissions_map[component] *= 1 + scenario.fractional_pv_emissions_change
+            if isinstance(component, HybridPVTPanel):
+                emissions_map[component] *= 1 + scenario.fractional_pvt_emissions_change
+            if isinstance(component, SolarThermalPanel):
+                emissions_map[component] *= 1 + scenario.fractional_st_emissions_change
+            if isinstance(component, WaterPump):
+                emissions_map[component] *= (
+                    1 + scenario.fractional_water_pump_emissions_change
+                )
+        return emissions_map
 
-    # Cycle through the component costs and multiply by the fractional change values.
-    # (Apologies for the inelegant switch statement...)
-    for component in component_emissions:
-        if isinstance(component, Battery):
-            component_emissions[component] *= (
-                1 + scenario.fractional_battery_emissions_change
-            )
-        if isinstance(component, HotWaterTank):
-            component_emissions[component] *= 1000 * (
-                1 + scenario.fractional_hw_tank_emissions_change
-            )
-        if isinstance(component, PVPanel):
-            component_emissions[component] *= (
-                1 + scenario.fractional_pv_emissions_change
-            )
-        if isinstance(component, HybridPVTPanel):
-            component_emissions[component] *= (
-                1 + scenario.fractional_pvt_emissions_change
-            )
-        if isinstance(component, SolarThermalPanel):
-            component_emissions[component] *= (
-                1 + scenario.fractional_st_emissions_change
-            )
-        if isinstance(component, WaterPump):
-            component_emissions[component] *= (
-                1 + scenario.fractional_water_pump_emissions_change
-            )
+    component_emissions = _fractional_emissions_change(
+        {
+            component: component.emissions * math.ceil(size)
+            for component, size in component_sizes.items()
+            if component is not None
+        }
+    )
+
+    lower_bound_component_emissions = _fractional_emissions_change(
+        {
+            component: (component.emissions - component.emissions_range)
+            * math.ceil(size)
+            for component, size in component_sizes.items()
+            if component is not None
+        }
+    )
+
+    upper_bound_component_emissions = _fractional_emissions_change(
+        {
+            component: (component.emissions + component.emissions_range)
+            * math.ceil(size)
+            for component, size in component_sizes.items()
+            if component is not None
+        }
+    )
 
     logger.debug(
         "Component emissions: %s",
@@ -346,7 +382,11 @@ def _total_component_emissions(
         ),
     )
 
-    return sum(component_emissions.values())
+    return (
+        sum(component_emissions.values()),
+        sum(lower_bound_component_emissions.values()),
+        sum(upper_bound_component_emissions.values()),
+    )
 
 
 def _grid_infrastructure_cost() -> float:
@@ -674,7 +714,7 @@ def _total_emissions(
     scenario: Scenario,
     solution: Solution,
     system_lifetime: int,
-) -> float:
+) -> Tuple[float, float, float]:
     """
     Compute the total emissions associated with the system which was optimisable.
 
@@ -691,15 +731,20 @@ def _total_emissions(
             The lifetime of the system in years.
 
     Outputs:
-        The total emissions associated with the system components.
+        A tuple containing:
+            - The total emissions associated with the system components,
+            - A lower-bound estimate on the total emissions associated with the system;
+            - An upper-bound estimate on the total emissions associated with the system.
 
     """
 
     # Calculate the emissions associated with the various components which have
     # associated embedded emissions.
-    total_component_emissions = _total_component_emissions(
-        component_sizes, logger, scenario
-    )
+    (
+        total_component_emissions,
+        lower_bound_component_emissions,
+        upper_bound_component_emissions,
+    ) = _total_component_emissions(component_sizes, logger, scenario)
 
     total_grid_emissions = _total_grid_emissions(
         logger, scenario, solution, system_lifetime
@@ -707,7 +752,11 @@ def _total_emissions(
 
     # Add the emissions arising from the installation of an inverter for dealing with
     # solar power generated
-    inverter_emissions = _inverter_emissions(component_sizes, scenario, system_lifetime)
+    (
+        inverter_emissions,
+        lower_bound_inverter_emissions,
+        upper_bound_inverter_emissions,
+    ) = _inverter_emissions(component_sizes, scenario, system_lifetime)
 
     # Add the emissions arising from any consumables such as diesel fuel or grid
     # electricity.
@@ -716,18 +765,39 @@ def _total_emissions(
         + max(total_grid_emissions, 0)  # Already adjusted for emissions change
         + max(solution.heat_pump_emissions, 0)  # Already adjusted for emissions change
         + max(inverter_emissions, 0)  # Already adjusted for emissions change
-    )  # + diesel_fuel_cost + grid_cost
+    )  # + diesel_fuel_cost + fixed_grid_emissions
+
+    # Calculate the bounds on the emissions
+    total_lower_bound_emissions = (
+        lower_bound_component_emissions  # Already adjusted for emissions change
+        + max(total_grid_emissions, 0)  # Already adjusted for emissions change
+        + max(solution.heat_pump_emissions, 0)  # Already adjusted for emissions change
+        + max(
+            lower_bound_inverter_emissions, 0
+        )  # Already adjusted for emissions change
+    )  # + diesel_fuel_cost + fixed_grid_emissions
+    total_upper_bound_emissions = (
+        upper_bound_component_emissions  # Already adjusted for emissions change
+        + max(total_grid_emissions, 0)  # Already adjusted for emissions change
+        + max(solution.heat_pump_emissions, 0)  # Already adjusted for emissions change
+        + max(
+            upper_bound_inverter_emissions, 0
+        )  # Already adjusted for emissions change
+    )  # + diesel_fuel_cost + fixed_grid_emissions
+
     logger.info(
-        "Total cost: %s, Total component emissions: %s, Total grid emissions %s, "
-        "Heat-pump emissions: "
+        "Total cost: %s, Total component emissions: %s kgCO2eq (%s - %s kgCO2eq), "
+        "Total grid emissions %s, Heat-pump emissions: "
         "%s",
         total_emissions,
+        total_lower_bound_emissions,
+        total_upper_bound_emissions,
         total_component_emissions,
         total_grid_emissions,
         solution.heat_pump_emissions,
     )
 
-    return total_emissions
+    return total_emissions, total_lower_bound_emissions, total_upper_bound_emissions
 
 
 def _total_electricity_supplied(solution: Solution, system_lifetime: int) -> float:
@@ -1240,6 +1310,9 @@ class TotalEmissions(Criterion, criterion_name="total_emissions"):
         """
         Calculate the value of the total cost.
 
+        NOTE: The mean value is used for the emissions rather than the lower- and upper-
+        bound estimates.
+
         Inputs:
             - component_sizes:
                 The sizes of the various components which are costable.
@@ -1259,7 +1332,7 @@ class TotalEmissions(Criterion, criterion_name="total_emissions"):
 
         return _total_emissions(
             component_sizes, logger, scenario, solution, system_lifetime
-        )
+        )[0]
 
 
 # class UnmetElectricity(Criterion, criterion_name="unmet_electricity_fraction"):
@@ -2154,7 +2227,7 @@ def run_optimisation(
     }
 
     # Compute various criteria values.
-    criterion_map = {
+    criterion_map: dict[str, float | Tuple[float, float, float]] = {
         criterion.name: criterion.calculate_value(
             component_sizes, logger, scenario, solution, system_lifetime
         )

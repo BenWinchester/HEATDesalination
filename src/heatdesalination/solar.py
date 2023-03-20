@@ -34,6 +34,7 @@ from .__utils__ import (
     COST,
     EmissableComponent,
     EMISSIONS,
+    EMISSIONS_RANGE,
     FlowRateError,
     HEAT_CAPACITY_OF_WATER,
     InputFileError,
@@ -473,6 +474,8 @@ class SolarPanel(abc.ABC, EmissableComponent):  # pylint: disable=too-few-public
         emissions: float,
         land_use: float,
         name: str,
+        *,
+        emissions_range: float = 0,
     ) -> None:
         """
         Instantiate a :class:`SolarPanel` instance.
@@ -495,7 +498,7 @@ class SolarPanel(abc.ABC, EmissableComponent):  # pylint: disable=too-few-public
         self.area: float = area
         self.land_use: float = land_use
 
-        super().__init__(cost, emissions, name)
+        super().__init__(cost, emissions, name, emissions_range=emissions_range)
 
     def __init_subclass__(cls, panel_type: SolarPanelType) -> None:
         """
@@ -621,6 +624,8 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
         reference_efficiency: float,
         reference_temperature: float,
         thermal_coefficient: float,
+        *,
+        emissions_range: float = 0,
     ) -> None:
         """
         Instantiate a :class:`PVPanel` instance.
@@ -652,6 +657,8 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
             - thermal_coefficient:
                 The thermal coefficient of the PV layer of the panel, if required,
                 otherwise `None`.
+            - emissions_range:
+                The range of carbon emissions associated with the component.
 
         """
 
@@ -661,6 +668,7 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
             emissions,
             land_use,
             name,
+            emissions_range=emissions_range,
         )
 
         self.absorptivity = absorptivity
@@ -968,6 +976,7 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
             solar_inputs[EMISSIONS],
             solar_inputs[LAND_USE],
             solar_inputs[NAME],
+            emissions_range=solar_inputs.get(EMISSIONS_RANGE, 0),
         )
 
         self.electric_performance_curve: PerformanceCurve | None = (
@@ -1342,6 +1351,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
             solar_inputs[EMISSIONS],
             solar_inputs[LAND_USE],
             solar_inputs[NAME],
+            emissions_range=solar_inputs.get(EMISSIONS_RANGE, 0),
         )
 
         self.area: float = solar_inputs[AREA]

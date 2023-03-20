@@ -192,6 +192,11 @@ INVERTER_COST: str = "inverter_cost"
 #   Keyword for the emissions associated with the inverter(s) installed.
 INVERTER_EMISSIONS: str = "inverter_emissions"
 
+# INVERTER_EMISSIONS_RANGE:
+#   Keywrod for the range of uncertainty in emissions associated with the inverter(s)
+# installed.
+INVERTER_EMISSIONS_RANGE: str = "inverter_emissions_range"
+
 # INVERTER_LIFETIME:
 #   Keyword for the lifetime of the inverter installed.
 INVERTER_LIFETIME: str = "inverter_lifetime"
@@ -378,6 +383,7 @@ def parse_input_files(  # pylint: disable=too-many-statements
                 entry.get(FRACTIONAL_ST_EMISSIONS_CHANGE, 0),
                 entry.get(FRACTIONAL_WATER_PUMP_COST_CHANGE, 0),
                 entry.get(FRACTIONAL_WATER_PUMP_EMISSIONS_CHANGE, 0),
+                entry.get(INVERTER_EMISSIONS_RANGE, 0),
             )
             for entry in scenario_inputs[SCENARIOS]
         ]

@@ -28,6 +28,7 @@ from ..__utils__ import (
     COST,
     EmissableComponent,
     EMISSIONS,
+    EMISSIONS_RANGE,
     HEAT_CAPACITY_OF_WATER,
     NAME,
     ResourceType,
@@ -133,6 +134,8 @@ class _BaseStorage(EmissableComponent):
         maximum_charge: float,
         minimum_charge: float,
         name: str,
+        *,
+        emissions_range: float = 0,
     ) -> None:
         """
         Instantiate a :class:`Storage` instance.
@@ -157,6 +160,8 @@ class _BaseStorage(EmissableComponent):
                 discharge.
             - name:
                 The name to assign to the :class:`Storage` instance.
+            - emissions_range:
+                The range of carbon emissions associated with the component.
 
         """
 
@@ -166,7 +171,7 @@ class _BaseStorage(EmissableComponent):
         self.maximum_charge: float = maximum_charge
         self.minimum_charge: float = minimum_charge
 
-        super().__init__(cost, emissions, name)
+        super().__init__(cost, emissions, name, emissions_range=emissions_range)
 
     def __hash__(self) -> int:
         """
@@ -238,6 +243,7 @@ class _BaseStorage(EmissableComponent):
             storage_data[MAXIMUM_CHARGE],
             storage_data[MINIMUM_CHARGE],
             storage_data[NAME],
+            emissions_range=storage_data.get(EMISSIONS_RANGE, 0),
         )
 
 
@@ -278,6 +284,8 @@ class Battery(_BaseStorage, label="battery", resource_type=ResourceType.ELECTRIC
         conversion_in: float,
         conversion_out: float,
         lifetime_loss: float,
+        *,
+        emissions_range: float = 0,
     ) -> None:
         """
         Instantiate a :class:`Battery` instance.
@@ -311,6 +319,8 @@ class Battery(_BaseStorage, label="battery", resource_type=ResourceType.ELECTRIC
                 The efficiency of conversion of energy out of the :class:`Battery`.
             - lifetime_loss:
                 The loss in capacity of the :class:`Battery` over its lifetime.
+            - emissions_range:
+                The range of carbon emissions associated with the component.
 
         """
 
@@ -323,6 +333,7 @@ class Battery(_BaseStorage, label="battery", resource_type=ResourceType.ELECTRIC
             maximum_charge,
             minimum_charge,
             name,
+            emissions_range=emissions_range,
         )
         self.c_rate_charging: float = c_rate_charging
         self.c_rate_discharging: float = c_rate_discharging
@@ -412,6 +423,7 @@ class Battery(_BaseStorage, label="battery", resource_type=ResourceType.ELECTRIC
             storage_data[CONVERSION_IN],
             storage_data[CONVERSION_OUT],
             storage_data[LIFETIME_LOSS],
+            emissions_range=storage_data.get(EMISSIONS_RANGE, 0),
         )
 
 
@@ -496,6 +508,8 @@ class HotWaterTank(
         area: float,
         heat_capacity: float,
         heat_loss_coefficient: float,
+        *,
+        emissions_range: float = 0,
     ) -> None:
         """
         Instantiate a :class:`CleanWaterTank`.
@@ -527,6 +541,8 @@ class HotWaterTank(
                 The specific heat capacity of the contents of the :class:`HotWaterTank`.
             - heta_loss_coefficient:
                 The heat-loss coefficient for the :class:`HotWaterTank`.
+            - emissions_range:
+                The range of carbon emissions associated with the component.
 
         """
 
@@ -639,6 +655,7 @@ class HotWaterTank(
             if HEAT_CAPACITY in storage_data
             else HEAT_CAPACITY_OF_WATER,
             storage_data[HEAT_LOSS_COEFFICIENT],
+            emissions_range=storage_data.get(EMISSIONS_RANGE, 0),
         )
 
     @property

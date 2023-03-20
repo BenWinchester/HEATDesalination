@@ -38,6 +38,7 @@ __all__ = (
     "DONE",
     "EmissableComponent",
     "EMISSIONS",
+    "EMISSIONS_RANGE",
     "FAILED",
     "FlowRateError",
     "HPCSimulation",
@@ -102,6 +103,10 @@ DONE: str = "[  DONE  ]"
 # EMISSIONS:
 #   Keyword for the emissions of a component.
 EMISSIONS: str = "emissions"
+
+# EMISSIONS_RANGE:
+#   Keyword for the uncertainty range associated with the emissions of a component.
+EMISSIONS_RANGE: str = "emissions_range"
 
 # FAILED:
 #   Keyword for "failed".
@@ -241,27 +246,37 @@ class EmissableComponent(CostableComponent):
     .. attribute:: emissions
         The carbon emissions associated with this component, per unit component, arising
         from the manufacturing (and transport), i.e., embedded/embodied in the
-        component.
+        component measured in kgCO2-eq.
+
+    .. attribute:: emissions_range
+        The range of uncertainty in the carbon emissions associated witht the component,
+        measured in kgCO2-eq.
 
     """
 
-    def __init__(self, cost: float, emissions: float, name: str) -> None:
+    def __init__(
+        self, cost: float, emissions: float, name: str, *, emissions_range: float = 0
+    ) -> None:
         """
         Instantiate the costable component.
 
         Inputs:
             - cost:
                 The cost of the component, per unit component.
-            - name:
-                The name of the component.
             - emissions:
                 The carbon emissions associated with the component.
+            - emissions_range:
+                The range of uncertainty in the carbon emissions associated with the
+                component.
+            - name:
+                The name of the component.
 
         """
 
-        self.emissions = emissions
-
         super().__init__(cost, name)
+
+        self.emissions = emissions
+        self.emissions_range = emissions_range
 
 
 def get_logger(
@@ -1283,6 +1298,10 @@ class Scenario:
         The carbon emissions associated with the inverter for the solar system in
         kgCO2-eq/kW.
 
+    .. attribute:: inverter_emissions_range
+        The range of uncertainty in the carbon emissions associated with the inverter
+        for the solar system in kgCO2-eq/kW.
+
     .. attribute:: inverter_unit
         The unit size of inverters being considered in kW.
 
@@ -1356,6 +1375,7 @@ class Scenario:
     fractional_st_emissions_change: float = 0
     fractional_water_pump_cost_change: float = 0
     fractional_water_pump_emissions_change: float = 0
+    inverter_emissions_range: float = 0
 
     @property
     def pv(self) -> bool:  # pylint: disable=invalid-name

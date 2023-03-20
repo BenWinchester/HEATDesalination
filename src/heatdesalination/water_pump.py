@@ -51,6 +51,8 @@ class WaterPump(EmissableComponent):
         name: str,
         nominal_flow_rate: float,
         nominal_power: float,
+        *,
+        emissions_range: float = 0,
     ) -> None:
         """
         Instantiate a water pump.
@@ -68,10 +70,12 @@ class WaterPump(EmissableComponent):
                 The nominal flow rate of the pump, measured in kg/s.
             - nominal_power:
                 The nominal power consumption of the pump, measured in kW/pump.
+            - emissions_range:
+                The range of carbon emissions associated with the component.
 
         """
 
-        super().__init__(cost, emissions, name)
+        super().__init__(cost, emissions, name, emissions_range=emissions_range)
 
         self.efficiency = efficiency
         self.nominal_flow_rate = nominal_flow_rate
