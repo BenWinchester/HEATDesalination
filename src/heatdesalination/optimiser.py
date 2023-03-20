@@ -432,7 +432,7 @@ def _total_grid_cost(
         {entry for entry in grid_supply_profile.values() if entry is not None}
     )
 
-    if scenario.grid_scheme == GridSchemeType.DUBAI_UAE:
+    if scenario.grid_scheme.scheme == GridSchemeType.DUBAI_UAE:
         # Dubai, UAE-specific code - a tiered tariff applied based on monthly usage.
         # The industrial slab tariff is used with an exchange rate to USD applied of
         # 1 AED to 0.27 USD as fixed due to currency pegging.
@@ -457,7 +457,7 @@ def _total_grid_cost(
         * daily_grid_consumption  # [kWh/day]
     )
 
-    if scenario.grid_scheme == GridSchemeType.ABU_DHABI_UAE:
+    if scenario.grid_scheme.scheme == GridSchemeType.ABU_DHABI_UAE:
         # Abu Dhabi, UAE-specific code - a tiered tariff applied based on monthly usage.
         # The industrial fixed-rate tariff for <1MW installations is used.
         return (
@@ -465,7 +465,7 @@ def _total_grid_cost(
             + fixed_grid_infrastructure_cost  # [USD]
         )  # [USD/kWh]
 
-    if scenario.grid_scheme == GridSchemeType.GRAN_CANARIA_SPAIN:
+    if scenario.grid_scheme.scheme == GridSchemeType.GRAN_CANARIA_SPAIN:
         # Gran-Canaria-specific code - a flat tariff per kWh consumed.
         # Gran Canaria grid-cost information obtained from:
         # Qiblawey Y, Alassi A, Zain ul Abideen M, Banales S.
@@ -478,7 +478,7 @@ def _total_grid_cost(
             + fixed_grid_infrastructure_cost  # [USD]
         )  # [USD]
 
-    if scenario.grid_scheme in {
+    if scenario.grid_scheme.scheme in {
         GridSchemeType.TIJUANA_MEXICO,
         GridSchemeType.LA_PAZ_MEXICO,
     }:
@@ -487,7 +487,7 @@ def _total_grid_cost(
         #   - a specific cost which depends on the amount of electricity used,
         #   - and a cost based on the peak power consumption.
         # All these values were obtained from the Comisión Federal de Electricidad.
-        if scenario.grid_scheme == GridSchemeType.TIJUANA_MEXICO:
+        if scenario.grid_scheme.scheme == GridSchemeType.TIJUANA_MEXICO:
             # Tijuana-specific code - a two-tier tariff based on power consumption.
             if 0 < peak_grid_power <= 25:
                 fixed_monthly_cost: float = 59.85  # [USD/month]
@@ -501,7 +501,7 @@ def _total_grid_cost(
                 fixed_monthly_cost = 0
                 power_cost = 0
                 specific_electricity_cost = 0
-        elif scenario.grid_scheme == GridSchemeType.LA_PAZ_MEXICO:
+        elif scenario.grid_scheme.scheme == GridSchemeType.LA_PAZ_MEXICO:
             # La-Paz-specific code - a two-tier tariff based on power consumption.
             if 0 < peak_grid_power <= 25:
                 fixed_monthly_cost = 59.85
@@ -516,7 +516,9 @@ def _total_grid_cost(
                 power_cost = 0
                 specific_electricity_cost = 0
         else:
-            logger.error("Grid cost scheme undefined: %s", scenario.grid_scheme.value)
+            logger.error(
+                "Grid cost scheme undefined: %s", scenario.grid_scheme.scheme.value
+            )
             raise InputFileError(
                 os.path.join("inputs", "scenarios.json"),
                 f"Grid cost scheme f{scenario.grid_scheme.value} not well defined.",
@@ -542,10 +544,10 @@ def _total_grid_cost(
             + total_specific_electricity_cost
         )
 
-    logger.error("Grid cost scheme undefined: %s", scenario.grid_scheme.value)
+    logger.error("Grid cost scheme undefined: %s", scenario.grid_scheme.scheme.value)
     raise InputFileError(
         os.path.join("inputs", "scenarios.json"),
-        f"Grid cost scheme f{scenario.grid_scheme.value} not well defined.",
+        f"Grid cost scheme {scenario.grid_scheme.scheme.value} not well defined.",
     )
 
 
@@ -602,7 +604,7 @@ def _total_grid_emissions(
     # Grid emissions in the case-study locations considered are coded into a mapping and
     # fetched as necessary.
     grid_electricity_consumption_emissions = (
-        GridScheme.scheme_type_to_scheme[scenario.grid_scheme].emissions
+        GridScheme.scheme_type_to_scheme[scenario.grid_scheme.scheme].emissions
         * grid_lifetime_electricity_consumption
         * (1 + fractional_emissions_change)
     )
@@ -2163,21 +2165,35 @@ def run_optimisation(
             SolarElectricityFraction,
             StorageElectricityFraction,
             TotalCost,
+            TotalEmissions,
         ]
     }
 
     # Compute the costs of the various parts of the system and append this.
     criterion_map.update(
         {
-            CostType.COMPONENTS.value: _total_component_costs(
+            f"{CostType.COMPONENTS.value}_cost": _total_component_costs(
                 component_sizes, logger, scenario
             ),
-            CostType.GRID.value: _total_grid_cost(
+            f"{CostType.COMPONENTS.value}_emissions": _total_component_emissions(
+                component_sizes, logger, scenario
+            ),
+            f"{CostType.GRID.value}_emissions": _total_grid_cost(
                 logger, scenario, solution, system_lifetime
             ),
-            CostType.HEAT_PUMP.value: float(max(solution.heat_pump_cost, 0))
+            f"{CostType.GRID.value}_emissions": _total_grid_emissions(
+                logger, scenario, solution, system_lifetime
+            ),
+            f"{CostType.HEAT_PUMP.value}_cost": float(max(solution.heat_pump_cost, 0))
             * (1 + scenario.fractional_heat_pump_cost_change),
-            CostType.INVERTERS.value: _inverter_cost(
+            f"{CostType.HEAT_PUMP.value}_emissions": float(
+                max(solution.heat_pump_emissions, 0)
+            )
+            * (1 + scenario.fractional_heat_pump_cost_change),
+            f"{CostType.INVERTERS.value}_cost": _inverter_cost(
+                component_sizes, scenario, system_lifetime
+            ),
+            f"{CostType.INVERTERS.value}_emissions": _inverter_emissions(
                 component_sizes, scenario, system_lifetime
             ),
         }

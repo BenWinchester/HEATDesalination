@@ -45,6 +45,7 @@ from .optimiser import (
     SolarElectricityFraction,
     StorageElectricityFraction,
     TotalCost,
+    TotalEmissions,
 )
 from .simulator import determine_steady_state_simulation
 from .water_pump import num_water_pumps
@@ -65,6 +66,7 @@ ANALYSIS_REQUESTS = {
     SolarElectricityFraction.name,
     StorageElectricityFraction.name,
     TotalCost.name,
+    TotalEmissions.name,
 }
 
 # SIMULATION_OUTPUTS_DIRECTORY:
