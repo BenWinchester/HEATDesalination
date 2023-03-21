@@ -35,7 +35,10 @@ from .__utils__ import (
     Solution,
     ZERO_CELCIUS_OFFSET,
 )
-from .heat_pump import calculate_heat_pump_electricity_consumption_and_cost, HeatPump
+from .heat_pump import (
+    calculate_heat_pump_electricity_consumption_and_cost_and_emissions,
+    HeatPump,
+)
 from .matrix import solve_matrix
 from .plant import DesalinationPlant
 from .solar import HybridPVTPanel, PVPanel, SolarThermalPanel, electric_output
@@ -750,6 +753,7 @@ def run_simulation(  # pylint: disable=too-many-statements
     hot_water_demand_temperatures: dict[int, float | None] = {}
     hot_water_demand_volumes: dict[int, float | None] = {}
     max_heat_pump_cost: float = 0
+    max_heat_pump_emissions: float = 0
     pump_electricity_demands: dict[int, float | None] = {}
     pv_t_electrical_efficiencies: dict[int, float | None] = {}
     pv_t_electrical_output_power: dict[int, float | None] = {}
@@ -843,8 +847,9 @@ def run_simulation(  # pylint: disable=too-many-statements
 
             (
                 heat_pump_cost,
+                heat_pump_emissions,
                 heat_pump_power_consumpion,
-            ) = calculate_heat_pump_electricity_consumption_and_cost(
+            ) = calculate_heat_pump_electricity_consumption_and_cost_and_emissions(
                 hot_water_temperature,
                 ambient_temperatures[hour],
                 auxiliary_heating_demand,
@@ -862,6 +867,9 @@ def run_simulation(  # pylint: disable=too-many-statements
             max_heat_pump_cost = max(heat_pump_cost, max_heat_pump_cost) * (
                 1 + scenario.fractional_heat_pump_cost_change
             )
+            max_heat_pump_emissions = max(
+                heat_pump_emissions, max_heat_pump_emissions
+            ) * (1 + scenario.fractional_heat_pump_emissions_change)
         else:
             auxiliary_heating_demand = 0
             auxiliary_heating_electricity_demand = 0
@@ -997,6 +1005,7 @@ def run_simulation(  # pylint: disable=too-many-statements
         collector_system_output_temperatures,
         electricity_demands,
         max_heat_pump_cost,
+        max_heat_pump_emissions,
         hot_water_demand_temperatures,
         hot_water_demand_volumes,
         pump_electricity_demands,

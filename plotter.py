@@ -2485,7 +2485,7 @@ import yaml
 
 from tqdm import tqdm
 
-from src.heatdesalination.__utils__ import GridCostScheme
+from src.heatdesalination.__utils__ import GridScheme
 
 with open(
     (scenarios_filepath := os.path.join("inputs", "scenarios.json")),
@@ -2507,10 +2507,10 @@ DEFAULT_OPTIMISATION = {
 
 # Grid cost schemes
 GRID_COST_SCHEMES = {
-    (abu_dhabi := "abu_dhabi"): GridCostScheme.ABU_DHABI_UAE.value,
-    (gran_canaria := "gran_canaria"): GridCostScheme.GRAN_CANARIA_SPAIN.value,
-    (la_paz := "la_paz"): GridCostScheme.LA_PAZ_MEXICO.value,
-    (tijuana := "tijuana"): GridCostScheme.TIJUANA_MEXICO.value,
+    (abu_dhabi := "abu_dhabi"): GridScheme.ABU_DHABI_UAE.value,
+    (gran_canaria := "gran_canaria"): GridScheme.GRAN_CANARIA_SPAIN.value,
+    (la_paz := "la_paz"): GridScheme.LA_PAZ_MEXICO.value,
+    (tijuana := "tijuana"): GridScheme.TIJUANA_MEXICO.value,
 }
 
 # The mapping between location name and the corresponding filename

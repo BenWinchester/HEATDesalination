@@ -45,6 +45,7 @@ from .optimiser import (
     SolarElectricityFraction,
     StorageElectricityFraction,
     TotalCost,
+    TotalEmissions,
 )
 from .simulator import determine_steady_state_simulation
 from .water_pump import num_water_pumps
@@ -53,7 +54,7 @@ __all__ = ("main",)
 
 # __version__:
 #   The version of the software being used.
-__version__: str = "v1.0.0b1"
+__version__: str = "v1.0.0b2"
 
 # ANALYSIS_REQUESTS:
 #   Names of criteria to evaluate.
@@ -65,6 +66,7 @@ ANALYSIS_REQUESTS = {
     SolarElectricityFraction.name,
     StorageElectricityFraction.name,
     TotalCost.name,
+    TotalEmissions.name,
 }
 
 # SIMULATION_OUTPUTS_DIRECTORY:
@@ -170,7 +172,14 @@ def main(
     verbose: bool = False,
 ) -> (
     dict[str, Tuple[Any, dict[str, Any]]]
-    | list[Tuple[dict[str, Any], dict[Any, Tuple[dict[str, float], list[float]]]]]
+    | list[
+        Tuple[
+            dict[str, Any],
+            dict[
+                Any, Tuple[dict[str, float | Tuple[float, float, float]], list[float]]
+            ],
+        ]
+    ]
     | None
 ):
     """
@@ -370,7 +379,13 @@ def main(
     if optimisation:
         # Setup a variable for storing the optimisation results.
         optimisation_results: list[
-            Tuple[dict[str, Any], dict[Any, Tuple[dict[str, float], list[float]]]]
+            Tuple[
+                dict[str, Any],
+                dict[
+                    Any,
+                    Tuple[dict[str, float | Tuple[float, float, float]], list[float]],
+                ],
+            ]
         ] = []
 
         for optimisation_parameters in tqdm(

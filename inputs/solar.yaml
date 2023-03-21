@@ -45,6 +45,13 @@ solar_collectors:
     area: !!float 1.71  # [m^2]
     cost: !!float 313  # [USD/panel]
     emissivity: 0.9
+    emissions: !!float 161.34 # Scaled from REC emissions to 330 Wp
+    # Emissions information from
+    #   Michael, J. J. & Selvarasan, I. Economic analysis and environmental impact of
+    # flat plate roof mounted solar energy systems.
+    # Solar Energy 142, 159–170 (2017).
+    # https://www.sciencedirect.com/science/article/pii/S0038092X16306132
+    # https://doi.org/10.1016/j.solener.2016.12.019
     land_use: !!float 1.71  # [m^2]
     pv_unit: !!float 0.330   # [kWp]
     reference_efficiency: !!float 0.193
@@ -57,6 +64,13 @@ solar_collectors:
     area: !!float 1.94
     cost: !!float 111.74
     emissivity: 0.9
+    # Emissions information from [92]
+    #   Lu, J. et al. Spatiotemporal analysis of the future carbon footprint of solar
+    # electricity in the united states by a dynamic life cycle assessment.
+    # iScience 26 (3), 106188 (2023).
+    # http://dx.doi.org/10.1016/j.isci.2023.106188
+    # https://doi.org/10.1016/j.isci.2023.106188 .
+    emissions: 154.68
     land_use: !!float 1.94
     pv_unit: !!float 0.33
     reference_efficiency: !!float 0.17
@@ -69,6 +83,13 @@ solar_collectors:
     area: !!float 1.67
     cost: !!float 154.64
     emissivity: 0.9
+    # Emissions information from [90]
+    #   Michael, J. J. & Selvarasan, I. Economic analysis and environmental impact of
+    # flat plate roof mounted solar energy systems.
+    # Solar Energy 142, 159–170 (2017).
+    # https://www.sciencedirect.com/science/article/pii/S0038092X16306132
+    # https://doi.org/10.1016/j.solener.2016.12.019
+    emissions: 158.9
     land_use: !!float 1.67
     pv_unit: !!float 0.325
     reference_efficiency: !!float 0.195
@@ -84,6 +105,13 @@ solar_collectors:
   # https://www.sti-solar.de/zertifikate.html?file=files/sti-solar/content/download/zertifikate/fkf/FKF%20Datasheet%20Cu-Cu.pdf
   - area: !!float 2.22
     cost: !!float 494  # [USD/collector]
+    # Emissions information from [90]
+    #   Michael, J. J. & Selvarasan, I. Economic analysis and environmental impact of
+    # flat plate roof mounted solar energy systems.
+    # Solar Energy 142, 159–170 (2017).
+    # https://www.sciencedirect.com/science/article/pii/S0038092X16306132
+    # https://doi.org/10.1016/j.solener.2016.12.019
+    emissions: 199.3
     land_use: !!float 2.52
     # max_mass_flow_rate: !!float 100.8
     max_mass_flow_rate: null
@@ -103,6 +131,13 @@ solar_collectors:
   # https://www.solardirekt24.de/media/pdf/c5/7f/d2/vakuumrohrenkollektor_eurotherm_solar_pro_frauenhofer_ise_leistungsnachweis.pdf
   - area: !!float 1.87
     cost: !!float 631  # [USD/collector]
+    emissions: 563.93
+    # Emissions information from [91]
+    #   Henein, S. M., Abdel-Rehim, A. A. & El-Nagar, K. Energy, economic and
+    # environmental analysis of an evacuated tube solar collector using hybrid nanofluid
+    # Appl. Therm. Eng. 219, 119671 (2023).
+    # https://www.sciencedirect.com/science/article/pii/S1359431122016015
+    # https://doi.org/10.1016/j.applthermaleng.2022.119671
     land_use: !!float 3.1
     max_mass_flow_rate: null
     min_mass_flow_rate: 0
@@ -118,6 +153,13 @@ solar_collectors:
   # https://www.heatinglabel.de/sites/default/files/data/augusta-solar/files_public/15_09_26_Datenblatt_DF.pdf
   - area: 1.11
     cost: !!float 925  # [USD/collector]
+    emissions: 219.73
+    # Emissions information from [91]
+    #   Henein, S. M., Abdel-Rehim, A. A. & El-Nagar, K. Energy, economic and
+    # environmental analysis of an evacuated tube solar collector using hybrid nanofluid
+    # Appl. Therm. Eng. 219, 119671 (2023).
+    # https://www.sciencedirect.com/science/article/pii/S1359431122016015
+    # https://doi.org/10.1016/j.applthermaleng.2022.119671
     land_use: !!float 1.51
     max_mass_flow_rate: null
     min_mass_flow_rate: 0
@@ -138,6 +180,13 @@ solar_collectors:
   # https://my.dualsun.com/wp-content/uploads/sites/2/DualSun-US-Datasheet-SPRING-300-Black.pdf
   - area: !!float 1.635
     cost: !!float 556
+    # Emissions information from [91]
+    #   Henein, S. M., Abdel-Rehim, A. A. & El-Nagar, K. Energy, economic and
+    # environmental analysis of an evacuated tube solar collector using hybrid nanofluid
+    # Appl. Therm. Eng. 219, 119671 (2023).
+    # https://www.sciencedirect.com/science/article/pii/S1359431122016015
+    # https://doi.org/10.1016/j.applthermaleng.2022.119671
+    emissions: 316.14
     land_use: !!float 1.64
     max_mass_flow_rate: null
     min_mass_flow_rate: 0
@@ -160,6 +209,13 @@ solar_collectors:
     type: !!str pv_t
     area: !!float 1.876  # [m^2]
     cost: !!float 1022  # [USD/panel]
+    # Emissions information from [91]
+    #   Henein, S. M., Abdel-Rehim, A. A. & El-Nagar, K. Energy, economic and
+    # environmental analysis of an evacuated tube solar collector using hybrid nanofluid
+    # Appl. Therm. Eng. 219, 119671 (2023).
+    # https://www.sciencedirect.com/science/article/pii/S1359431122016015
+    # https://doi.org/10.1016/j.applthermaleng.2022.119671
+    emissions: 362.74
     land_use: !!float 1.876  # [m^2]
     max_mass_flow_rate: null  # [NaN]
     # min_mass_flow_rate: !!float 20  # [l/h]
@@ -179,6 +235,13 @@ solar_collectors:
   # https://solimpeks.com.tr/wp-content/uploads/Solimpeks_English_Catalogue.pdf
   - area: !!float 1.326
     cost: !!float 545
+    emissions: 264.90
+    # Emissions information from [91]
+    #   Henein, S. M., Abdel-Rehim, A. A. & El-Nagar, K. Energy, economic and
+    # environmental analysis of an evacuated tube solar collector using hybrid nanofluid
+    # Appl. Therm. Eng. 219, 119671 (2023).
+    # https://www.sciencedirect.com/science/article/pii/S1359431122016015
+    # https://doi.org/10.1016/j.applthermaleng.2022.119671
     land_use: !!float 1.37
     max_mass_flow_rate: null
     min_mass_flow_rate: 0
