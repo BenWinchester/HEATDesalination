@@ -19,7 +19,7 @@ and solar-thermal collectors. In doing so, they consume some amount of power.
 
 import math
 
-from .__utils__ import CostableComponent
+from .__utils__ import EmissableComponent
 
 __all__ = (
     "num_water_pumps",
@@ -27,7 +27,7 @@ __all__ = (
 )
 
 
-class WaterPump(CostableComponent):
+class WaterPump(EmissableComponent):
     """
     Represents a water pump within the system.
 
@@ -47,9 +47,12 @@ class WaterPump(CostableComponent):
         self,
         cost: float,
         efficiency: float,
+        emissions: float,
         name: str,
         nominal_flow_rate: float,
         nominal_power: float,
+        *,
+        emissions_range: float = 0,
     ) -> None:
         """
         Instantiate a water pump.
@@ -59,14 +62,20 @@ class WaterPump(CostableComponent):
                 The cost of the :class:`WaterPump` instance.
             - efficiency:
                 The efficiency of the water pump.
+            - emissions:
+                The embodied emissions associated with the water pump.
+            - name:
+                The name of the :class:`WaterPump` instance.
             - nominal_flow_rate:
                 The nominal flow rate of the pump, measured in kg/s.
             - nominal_power:
                 The nominal power consumption of the pump, measured in kW/pump.
+            - emissions_range:
+                The range of carbon emissions associated with the component.
 
         """
 
-        super().__init__(cost, name)
+        super().__init__(cost, emissions, name, emissions_range=emissions_range)
 
         self.efficiency = efficiency
         self.nominal_flow_rate = nominal_flow_rate
@@ -79,6 +88,7 @@ class WaterPump(CostableComponent):
             "WaterPump("
             + f"name={self.name}, "
             + f"cost={self.cost} USD/pump, "
+            + f"emissions={self.emissions} kgCO2-eq/pump, "
             + f"nominal_flow_rate={self.nominal_flow_rate} kg/s, "
             + f"nominal_power={self.nominal_power} kW"
             ")"

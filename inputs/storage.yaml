@@ -20,6 +20,8 @@ batteries:
     conversion_out: !!float 0.95  # Conversion efficiency (0.0 - 1.0)
     cost: !!float 494.90  # [USD/battery]
     cycle_lifetime: !!float 2000  # Expected number of cycles over lifetime
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: !!float 0.9  # State of charge (0.0 - 1.0)
     minimum_charge: !!float 0.1  # State of charge (0.0 - 1.0)
     leakage: !!float 0.000041666  # Fractional leakage per hour
@@ -36,6 +38,8 @@ batteries:
     cycle_lifetime: 100
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_100_cycles
@@ -48,6 +52,8 @@ batteries:
     cycle_lifetime: 200
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_200_cycles
@@ -60,6 +66,8 @@ batteries:
     cycle_lifetime: 300
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_300_cycles
@@ -72,6 +80,8 @@ batteries:
     cycle_lifetime: 400
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_400_cycles
@@ -84,6 +94,8 @@ batteries:
     cycle_lifetime: 500
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_500_cycles
@@ -96,6 +108,8 @@ batteries:
     cycle_lifetime: 600
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_600_cycles
@@ -108,6 +122,8 @@ batteries:
     cycle_lifetime: 700
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_700_cycles
@@ -120,6 +136,8 @@ batteries:
     cycle_lifetime: 800
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_800_cycles
@@ -132,6 +150,8 @@ batteries:
     cycle_lifetime: 900
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_900_cycles
@@ -144,6 +164,8 @@ batteries:
     cycle_lifetime: 1000
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_1000_cycles
@@ -156,6 +178,8 @@ batteries:
     cycle_lifetime: 1100
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_1100_cycles
@@ -168,6 +192,8 @@ batteries:
     cycle_lifetime: 1200
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_1200_cycles
@@ -180,6 +206,8 @@ batteries:
     cycle_lifetime: 1300
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_1300_cycles
@@ -192,6 +220,8 @@ batteries:
     cycle_lifetime: 1400
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_1400_cycles
@@ -204,6 +234,8 @@ batteries:
     cycle_lifetime: 1500
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_1500_cycles
@@ -216,6 +248,8 @@ batteries:
     cycle_lifetime: 1600
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_1600_cycles
@@ -228,6 +262,8 @@ batteries:
     cycle_lifetime: 1700
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_1700_cycles
@@ -240,6 +276,8 @@ batteries:
     cycle_lifetime: 1800
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_1800_cycles
@@ -252,6 +290,8 @@ batteries:
     cycle_lifetime: 1900
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_1900_cycles
@@ -264,6 +304,8 @@ batteries:
     cycle_lifetime: 2000
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_2000_cycles
@@ -276,6 +318,8 @@ batteries:
     cycle_lifetime: 2100
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_2100_cycles
@@ -288,6 +332,8 @@ batteries:
     cycle_lifetime: 2200
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_2200_cycles
@@ -300,6 +346,8 @@ batteries:
     cycle_lifetime: 2300
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_2300_cycles
@@ -312,6 +360,8 @@ batteries:
     cycle_lifetime: 2400
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_2400_cycles
@@ -324,6 +374,8 @@ batteries:
     cycle_lifetime: 2500
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_2500_cycles
@@ -336,6 +388,8 @@ batteries:
     cycle_lifetime: 2600
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_2600_cycles
@@ -348,6 +402,8 @@ batteries:
     cycle_lifetime: 2700
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_2700_cycles
@@ -360,6 +416,8 @@ batteries:
     cycle_lifetime: 2800
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_2800_cycles
@@ -372,6 +430,8 @@ batteries:
     cycle_lifetime: 2900
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_2900_cycles
@@ -384,6 +444,8 @@ batteries:
     cycle_lifetime: 3000
     leakage: 4.1666e-05
     lifetime_loss: 0.241
+    emissions: 192.4
+    emissions_range: 133.6
     maximum_charge: 0.9
     minimum_charge: 0.1
     name: renogy_12v_100ah_3000_cycles
@@ -394,6 +456,7 @@ hot_water_tanks:
     capacity: !!float 150  # [kg or litres]
     cost: !!float 8.35  # [USD/litre]
     cycle_lifetime: !!float 1500  # Expected number of cycles over lifetime
+    emissions: 230  # [kgCO2-eq/tank]
     heat_loss_coefficient: !!float 1.9  # [W/m^2*K]
     leakage: !!float 0  # Fractional leakage per hour
     maximum_charge: !!float 1  # State of charge (0.0 - 1.0)

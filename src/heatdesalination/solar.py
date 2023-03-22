@@ -32,7 +32,9 @@ from typing import Any, Tuple, Type
 from .__utils__ import (
     AREA,
     COST,
-    CostableComponent,
+    EmissableComponent,
+    EMISSIONS,
+    EMISSIONS_RANGE,
     FlowRateError,
     HEAT_CAPACITY_OF_WATER,
     InputFileError,
@@ -447,7 +449,7 @@ def _thermal_performance(
     return positive_root, negative_root
 
 
-class SolarPanel(abc.ABC, CostableComponent):  # pylint: disable=too-few-public-methods
+class SolarPanel(abc.ABC, EmissableComponent):  # pylint: disable=too-few-public-methods
     """
     Represents a solar panel being considered.
 
@@ -469,8 +471,11 @@ class SolarPanel(abc.ABC, CostableComponent):  # pylint: disable=too-few-public-
         self,
         area: float,
         cost: float,
+        emissions: float,
         land_use: float,
         name: str,
+        *,
+        emissions_range: float = 0,
     ) -> None:
         """
         Instantiate a :class:`SolarPanel` instance.
@@ -480,6 +485,8 @@ class SolarPanel(abc.ABC, CostableComponent):  # pylint: disable=too-few-public-
                 The surface area of the panel in meters squared.
             - cost:
                 The cost of the solar panel per unit panel.
+            - emissions:
+                The emissions associated with the solar panel per unit panel.
             - land_use:
                 The land occupied by the panel in meters squared.
             - name:
@@ -491,7 +498,7 @@ class SolarPanel(abc.ABC, CostableComponent):  # pylint: disable=too-few-public-
         self.area: float = area
         self.land_use: float = land_use
 
-        super().__init__(cost, name)
+        super().__init__(cost, emissions, name, emissions_range=emissions_range)
 
     def __init_subclass__(cls, panel_type: SolarPanelType) -> None:
         """
@@ -609,6 +616,7 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
         absorptivity: float,
         area: float,
         cost: float,
+        emissions: float,
         emissivity: float,
         land_use: float,
         name: str,
@@ -616,6 +624,8 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
         reference_efficiency: float,
         reference_temperature: float,
         thermal_coefficient: float,
+        *,
+        emissions_range: float = 0,
     ) -> None:
         """
         Instantiate a :class:`PVPanel` instance.
@@ -627,6 +637,8 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
                 The surface area of the panel in meters squared.
             - cost:
                 The cost of the :class:`PVPanel`.
+            - emissions:
+                The emissions associated with the :class:`PVPanel`.
             - emissivity:
                 The emissivity of the panel.
             - land_use:
@@ -645,14 +657,18 @@ class PVPanel(SolarPanel, panel_type=SolarPanelType.PV):
             - thermal_coefficient:
                 The thermal coefficient of the PV layer of the panel, if required,
                 otherwise `None`.
+            - emissions_range:
+                The range of carbon emissions associated with the component.
 
         """
 
         super().__init__(
             area,
             cost,
+            emissions,
             land_use,
             name,
+            emissions_range=emissions_range,
         )
 
         self.absorptivity = absorptivity
@@ -957,8 +973,10 @@ class HybridPVTPanel(SolarPanel, panel_type=SolarPanelType.PV_T):
         super().__init__(
             solar_inputs[AREA],
             solar_inputs[COST],
+            solar_inputs[EMISSIONS],
             solar_inputs[LAND_USE],
             solar_inputs[NAME],
+            emissions_range=solar_inputs.get(EMISSIONS_RANGE, 0),
         )
 
         self.electric_performance_curve: PerformanceCurve | None = (
@@ -1330,8 +1348,10 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
         super().__init__(
             solar_inputs[AREA],
             solar_inputs[COST],
+            solar_inputs[EMISSIONS],
             solar_inputs[LAND_USE],
             solar_inputs[NAME],
+            emissions_range=solar_inputs.get(EMISSIONS_RANGE, 0),
         )
 
         self.area: float = solar_inputs[AREA]

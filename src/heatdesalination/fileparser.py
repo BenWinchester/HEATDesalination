@@ -24,7 +24,8 @@ import json
 from .__utils__ import (
     AMBIENT_TEMPERATURE,
     AUTO_GENERATED_FILES_DIRECTORY,
-    GridCostScheme,
+    GridScheme,
+    GridSchemeType,
     InputFileError,
     NAME,
     OptimisationParameters,
@@ -70,37 +71,81 @@ DESALINATION_PLANTS: str = "desalination_plants"
 #   Keyword for the fractional change in the price of the batteries installed.
 FRACTIONAL_BATTERY_COST_CHANGE: str = "fractional_battery_cost_change"
 
+# FRACTIONAL_BATTERY_EMISSIONS_CHANGE:
+#   Keyword for the fractional change in the emissions associated with the batteries
+# installed.
+FRACTIONAL_BATTERY_EMISSIONS_CHANGE: str = "fractional_battery_emissions_change"
+
 # FRACTIONAL_GRID_COST_CHANGE:
 #   Keyword for the fractional change in the price of grid electricity.
 FRACTIONAL_GRID_COST_CHANGE: str = "fractional_grid_cost_change"
+
+# FRACTIONAL_GRID_EMISSIONS_CHANGE:
+#   Keyword for the fractional change in the emissions associated with grid electricity.
+FRACTIONAL_GRID_EMISSIONS_CHANGE: str = "fractional_grid_emissions_change"
 
 # FRACTIONAL_HEAT_PUMP_COST_CHANGE:
 #   Keyword for the fractional change in the cost of the heat pump(s) installed.
 FRACTIONAL_HEAT_PUMP_COST_CHANGE: str = "fractional_heat_pump_cost_change"
 
+# FRACTIONAL_HEAT_PUMP_EMISSIONS_CHANGE:
+#   Keyword for the fractional change in the emissions associated with the heat pump(s)
+# installed.
+FRACTIONAL_HEAT_PUMP_EMISSIONS_CHANGE: str = "fractional_heat_pump_emissions_change"
+
 # FRACTIONAL_HW_TANK_COST_CHANGE:
 #   Keyword for the fractional change in the cost of the hot-water tanks installed.
 FRACTIONAL_HW_TANK_COST_CHANGE: str = "fractional_hw_tank_cost_change"
+
+# FRACTIONAL_HW_TANK_EMISSIONS_CHANGE:
+#   Keyword for the fractional change in the emissions associated with the hot-water
+# tank(s) installed.
+FRACTIONAL_HW_TANK_EMISSIONS_CHANGE: str = "fractional_hw_tank_emissions_change"
 
 # FRACTIONAL_INVERTER_COST_CHANGE:
 #   Keyword for the fractional change in the price of the inverter(s) installed.
 FRACTIONAL_INVERTER_COST_CHANGE: str = "fractional_inverter_cost_change"
 
+# FRACTIONAL_INVERTER_EMISSIONS_CHANGE:
+#   Keyword for the fractional change in the emissions associated with the inverter(s)
+# installed.
+FRACTIONAL_INVERTER_EMISSIONS_CHANGE: str = "fractional_inverter_emissions_change"
+
 # FRACTIONAL_PV_COST_CHANGE:
 #   Keyword for the fractional change in the price of PV collectors.
 FRACTIONAL_PV_COST_CHANGE: str = "fractional_pv_cost_change"
+
+# FRACTIONAL_PV_EMISSIONS_CHANGE:
+#   Keyword for the fractional change in the emissions associated with the PV
+# collector(s) installed.
+FRACTIONAL_PV_EMISSIONS_CHANGE: str = "fractional_pv_emissions_change"
 
 # FRACTIONAL_PV_T_COST_CHANGE:
 #   Keyword for the fractional change in the price of PV-T collectors.
 FRACTIONAL_PV_T_COST_CHANGE: str = "fractional_pvt_cost_change"
 
+# FRACTIONAL_PV_T_EMISSIONS_CHANGE:
+#   Keyword for the fractional change in the emissions associated with the PV-T
+# collector(s) installed.
+FRACTIONAL_PV_T_EMISSIONS_CHANGE: str = "fractional_pv_t_emissions_change"
+
 # FRACTIONAL_ST_COST_CHANGE:
 #   Keyword for the fractional change in the price of solar-thermal collectors.
 FRACTIONAL_ST_COST_CHANGE: str = "fractional_st_cost_change"
 
+# FRACTIONAL_ST_EMISSIONS_CHANGE:
+#   Keyword for the fractional change in the emissions associated with the solar-thermal
+# collector(s) installed.
+FRACTIONAL_ST_EMISSIONS_CHANGE: str = "fractional_st_emissions_change"
+
 # FRACTIONAL_WATER_PUMP_COST_CHANGE:
 #   Keyword for the fractional change in the price of water pumps installed.
 FRACTIONAL_WATER_PUMP_COST_CHANGE: str = "fractional_water_pump_cost_change"
+
+# FRACTIONAL_WATER_PUMP_EMISSIONS_CHANGE:
+#   Keyword for the fractional change in the emissions associated with the water pump(s)
+# installed.
+FRACTIONAL_WATER_PUMP_EMISSIONS_CHANGE: str = "fractional_water_pump_emissions_change"
 
 # GRID_COST_SCHEME:
 #   Keyword for the name of the pricing scheme for the cost of grid (alternative/unmet)
@@ -143,9 +188,22 @@ INPUTS_DIRECTORY: str = "inputs"
 #   Keyword for the cost of the inverter installed.
 INVERTER_COST: str = "inverter_cost"
 
+# INVERTER_EMISSIONS:
+#   Keyword for the emissions associated with the inverter(s) installed.
+INVERTER_EMISSIONS: str = "inverter_emissions"
+
+# INVERTER_EMISSIONS_RANGE:
+#   Keywrod for the range of uncertainty in emissions associated with the inverter(s)
+# installed.
+INVERTER_EMISSIONS_RANGE: str = "inverter_emissions_range"
+
 # INVERTER_LIFETIME:
 #   Keyword for the lifetime of the inverter installed.
 INVERTER_LIFETIME: str = "inverter_lifetime"
+
+# INVERTER_UNIT:
+#   Keyword for the unit size of the inverter(s) considered.
+INVERTER_UNIT: str = "inverter_unit"
 
 # OPTIMISATION_INPUTS:
 #   The name of the optimisation inputs file.
@@ -285,35 +343,54 @@ def parse_input_files(  # pylint: disable=too-many-statements
             f"Scenario inputs must be a `dict` containing entries for `{SCENARIOS}`.",
         )
 
-    scenarios = [
-        Scenario(
-            entry[BATTERY],
-            GridCostScheme(entry[GRID_COST_SCHEME]),
-            entry[HEAT_EXCHANGER_EFFICIENCY],
-            entry[HEAT_PUMP],
-            entry[HOT_WATER_TANK],
-            entry[HTF_HEAT_CAPACITY],
-            entry[INVERTER_COST],
-            entry[INVERTER_LIFETIME],
-            entry[NAME],
-            entry[PLANT],
-            entry[PV_DEGRADATION_RATE],
-            entry[WATER_PUMP],
-            entry[PV],
-            entry[PV_T],
-            entry[SOLAR_THERMAL],
-            entry.get(FRACTIONAL_BATTERY_COST_CHANGE, 0),
-            entry.get(FRACTIONAL_GRID_COST_CHANGE, 0),
-            entry.get(FRACTIONAL_HEAT_PUMP_COST_CHANGE, 0),
-            entry.get(FRACTIONAL_HW_TANK_COST_CHANGE, 0),
-            entry.get(FRACTIONAL_INVERTER_COST_CHANGE, 0),
-            entry.get(FRACTIONAL_PV_COST_CHANGE, 0),
-            entry.get(FRACTIONAL_PV_T_COST_CHANGE, 0),
-            entry.get(FRACTIONAL_ST_COST_CHANGE, 0),
-            entry.get(FRACTIONAL_WATER_PUMP_COST_CHANGE, 0),
-        )
-        for entry in scenario_inputs[SCENARIOS]
-    ]
+    try:
+        scenarios = [
+            Scenario(
+                entry[BATTERY],
+                GridScheme.scheme_type_to_scheme[
+                    GridSchemeType(entry[GRID_COST_SCHEME])
+                ],
+                entry[HEAT_EXCHANGER_EFFICIENCY],
+                entry[HEAT_PUMP],
+                entry[HOT_WATER_TANK],
+                entry[HTF_HEAT_CAPACITY],
+                entry[INVERTER_COST],
+                entry[INVERTER_EMISSIONS],
+                entry[INVERTER_LIFETIME],
+                entry[INVERTER_UNIT],
+                entry[NAME],
+                entry[PLANT],
+                entry[PV_DEGRADATION_RATE],
+                entry[WATER_PUMP],
+                entry[PV],
+                entry[PV_T],
+                entry[SOLAR_THERMAL],
+                entry.get(FRACTIONAL_BATTERY_COST_CHANGE, 0),
+                entry.get(FRACTIONAL_BATTERY_EMISSIONS_CHANGE, 0),
+                entry.get(FRACTIONAL_GRID_COST_CHANGE, 0),
+                entry.get(FRACTIONAL_GRID_EMISSIONS_CHANGE, 0),
+                entry.get(FRACTIONAL_HEAT_PUMP_COST_CHANGE, 0),
+                entry.get(FRACTIONAL_HEAT_PUMP_EMISSIONS_CHANGE, 0),
+                entry.get(FRACTIONAL_HW_TANK_COST_CHANGE, 0),
+                entry.get(FRACTIONAL_HW_TANK_EMISSIONS_CHANGE, 0),
+                entry.get(FRACTIONAL_INVERTER_COST_CHANGE, 0),
+                entry.get(FRACTIONAL_INVERTER_EMISSIONS_CHANGE, 0),
+                entry.get(FRACTIONAL_PV_COST_CHANGE, 0),
+                entry.get(FRACTIONAL_PV_EMISSIONS_CHANGE, 0),
+                entry.get(FRACTIONAL_PV_T_COST_CHANGE, 0),
+                entry.get(FRACTIONAL_PV_T_EMISSIONS_CHANGE, 0),
+                entry.get(FRACTIONAL_ST_COST_CHANGE, 0),
+                entry.get(FRACTIONAL_ST_EMISSIONS_CHANGE, 0),
+                entry.get(FRACTIONAL_WATER_PUMP_COST_CHANGE, 0),
+                entry.get(FRACTIONAL_WATER_PUMP_EMISSIONS_CHANGE, 0),
+                entry.get(INVERTER_EMISSIONS_RANGE, 0),
+            )
+            for entry in scenario_inputs[SCENARIOS]
+        ]
+    except KeyError:
+        logger.error("Missing inputs information in scenarios file.")
+        raise
+
     try:
         scenario = [entry for entry in scenarios if entry.name == scenario_name][0]
     except IndexError:

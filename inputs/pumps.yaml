@@ -23,5 +23,12 @@ pumps:
   - name: crnf_15_1_a_ca_a_e_hqqe
     cost: 3961  # [USD/pump]
     efficiency: 0.85
+    # Emissions information from:
+    #   Todde, G. et al.
+    #   Embodied energy and environmental impact of Large-Power Stand-Alone photovoltaic
+    #   irrigation systems. Energies 11 (8), 2110 (2018).
+    #   https://www.mdpi.com/1996-1073/11/8/2110
+    #   https://doi.org/10.3390/en11082110
+    emissions: 145
     nominal_flow_rate: 5.69  # [kg/s]
     nominal_power: 1.73  # [kW/pump]

@@ -14,6 +14,7 @@ __utils__.py - The utility module for the HEATDeslination program.
 
 """
 
+import abc
 import dataclasses
 import enum
 import logging
@@ -35,6 +36,9 @@ __all__ = (
     "CostableComponent",
     "DEFAULT_SIMULATION_OUTPUT_FILE",
     "DONE",
+    "EmissableComponent",
+    "EMISSIONS",
+    "EMISSIONS_RANGE",
     "FAILED",
     "FlowRateError",
     "HPCSimulation",
@@ -95,6 +99,14 @@ DEFAULT_SIMULATION_OUTPUT_FILE: str = "simulation_output"
 # DONE:
 #   Keyword for "done".
 DONE: str = "[  DONE  ]"
+
+# EMISSIONS:
+#   Keyword for the emissions of a component.
+EMISSIONS: str = "emissions"
+
+# EMISSIONS_RANGE:
+#   Keyword for the uncertainty range associated with the emissions of a component.
+EMISSIONS_RANGE: str = "emissions_range"
 
 # FAILED:
 #   Keyword for "failed".
@@ -194,6 +206,8 @@ class CostableComponent:
         Inputs:
             - cost:
                 The cost of the component, per unit component.
+            - name:
+                The name of the component.
 
         """
 
@@ -223,6 +237,46 @@ class CostType(enum.Enum):
     GRID: str = "grid"
     HEAT_PUMP: str = "heat_pump"
     INVERTERS: str = "inverters"
+
+
+class EmissableComponent(CostableComponent):
+    """
+    Represents an emissable component.
+
+    .. attribute:: emissions
+        The carbon emissions associated with this component, per unit component, arising
+        from the manufacturing (and transport), i.e., embedded/embodied in the
+        component measured in kgCO2-eq.
+
+    .. attribute:: emissions_range
+        The range of uncertainty in the carbon emissions associated witht the component,
+        measured in kgCO2-eq.
+
+    """
+
+    def __init__(
+        self, cost: float, emissions: float, name: str, *, emissions_range: float = 0
+    ) -> None:
+        """
+        Instantiate the costable component.
+
+        Inputs:
+            - cost:
+                The cost of the component, per unit component.
+            - emissions:
+                The carbon emissions associated with the component.
+            - emissions_range:
+                The range of uncertainty in the carbon emissions associated with the
+                component.
+            - name:
+                The name of the component.
+
+        """
+
+        super().__init__(cost, name)
+
+        self.emissions = emissions
+        self.emissions_range = emissions_range
 
 
 def get_logger(
@@ -304,7 +358,7 @@ class FlowRateError(Exception):
         super().__init__(f"Flow-rate mismatch for collector '{collector_name}': {msg}")
 
 
-class GridCostScheme(enum.Enum):
+class GridSchemeType(enum.Enum):
     """
     Denotes the grid-cost scheme used.
 
@@ -330,6 +384,127 @@ class GridCostScheme(enum.Enum):
     GRAN_CANARIA_SPAIN: str = "gran_canaria"
     LA_PAZ_MEXICO: str = "la_paz_mexico"
     TIJUANA_MEXICO: str = "tijuana_mexico"
+
+
+class GridScheme(abc.ABC):
+    """
+    Denotes the grid-cost scheme used.
+
+    """
+
+    emissions: float
+    scheme: GridSchemeType
+    scheme_type_to_scheme: dict[GridSchemeType, Any] = {}
+
+    def __init_subclass__(cls, emissions: float, scheme: GridSchemeType) -> None:
+        """
+        The init_subclass hook, run on instantiation of the :class:`GridScheme`.
+
+        Inputs:
+            - emissions:
+                The carbon emission associated with the system.
+            - name:
+                The name of the grid scheme.
+
+        Outputs:
+            An instantiated :class:`GridScheme` instance.
+
+        """
+
+        cls.emissions = emissions
+        cls.scheme = scheme
+        cls.scheme_type_to_scheme[scheme] = cls
+
+
+class AbuDhabiUAE(GridScheme, emissions=0.46185, scheme=GridSchemeType.ABU_DHABI_UAE):
+    """
+    Contains information pertaining to the grid in Abu Dhabi, UAE.
+
+    The emissions intensity of the grid in Abu Dhabi, UAE, is taken to be 461.85
+    gCO2-eq/kWh.
+
+    Information on the emissions intensity of the grid in the UAE is obtained from
+    [1] Ritchie, H. & Roser, M. CO2 and greenhouse gas emissions.
+        Our World in Data (2020).
+        https://ourworldindata.org/co2-emissions?utm_source=squamish%20chief&utm_campaign=squamish%20chief&utm_medium=referral  # pylint: disable=line-too-long
+    [2] Ember. Yearly electricity data.
+        https://ember-climate.org/data-catalogue/yearly-electricity-data/
+        (2022). Accessed: 2023-3-6.
+
+    """
+
+
+class DubaiUAE(GridScheme, emissions=0.46185, scheme=GridSchemeType.DUBAI_UAE):
+    """
+    Contains information pertaining to the grid in Dubai, UAE.
+
+    The emissions intensity of the grid in Dubai, UAE, is taken to be 461.85
+    gCO2-eq/kWh.
+
+    Information on the emissions intensity of the grid in the UAE is obtained from
+    [1] Ritchie, H. & Roser, M. CO2 and greenhouse gas emissions.
+        Our World in Data (2020).
+        https://ourworldindata.org/co2-emissions?utm_source=squamish%20chief&utm_campaign=squamish%20chief&utm_medium=referral  # pylint: disable=line-too-long
+    [2] Ember. Yearly electricity data.
+        https://ember-climate.org/data-catalogue/yearly-electricity-data/
+        (2022). Accessed: 2023-3-6.
+
+    """
+
+
+class GranCanariaSpain(
+    GridScheme, emissions=0.57654, scheme=GridSchemeType.GRAN_CANARIA_SPAIN
+):
+    """
+    Contains information pertaining to the grid in Gran Canaria, Spain.
+
+    The emissions intensity of the grid in Gran Canaria, Spain, is taken to be 576.541
+    gCO2-eq/kWh.
+
+    Information on the emissions intensity of the grid in on Gran Carnaia is obtained
+    from
+    [1] Qiblawey, Y., Alassi, A., Zain ul Abideen, M. & Ba ̃nales, S.
+        Techno-economic assessment of increasing the renewable energy supply in the
+        canary islands: The case of tenerife and gran canaria. Energy Policy 162, 112791
+        (2022).
+        https://www.sciencedirect.com/science/article/pii/S0301421522000167
+        https://doi.org/10.1016/j.enpol.2022.112791
+
+
+    """
+
+
+class LaPazMexico(GridScheme, emissions=0.890, scheme=GridSchemeType.LA_PAZ_MEXICO):
+    """
+    Contains information pertaining to the grid in La Paz, Mexico.
+
+    The emissions intensity of the grid in La Paz, Mexico, is taken to be 890
+    gCO2-eq/kWh.
+
+    Information on the emissions intensity of the grid in the county of La Paz, Mexico,
+    is obtained from
+    [1] Ivanova, A., Bermudez, A. & Martinez, A. in Climate action plan for the city of
+        la paz, baja california sur, mexico: A tool for sustainability, Vol. 194 439–449
+        (WIT Press, 2015).
+        http://www.witpress.com/elibrary/wit-transactions-on-ecology-and-the-environment/194/34380.
+
+    """
+
+
+class Tijuana(GridScheme, emissions=0.310, scheme=GridSchemeType.TIJUANA_MEXICO):
+    """
+    Contains information pertaining to the grid in Tijuana, Mexico.
+
+    The emissions intensity of the grid in Tijuana, Mexico, is taken to be 310
+    gCO2-eq/kWh.
+
+    Information on the emissions intensity of the grid in Baja California, Mexico, is
+    obtained from
+    [1] Center for Climate Strategies (CCS). Final report of the baja california phase 2
+        climate action plan. Tech. Rep. (2014).
+        https://uccrnna.org/wp-content/uploads/2017/06/2014_Baja-California_Climate-Action-Plan.pdf
+
+    """
 
 
 class ProfileType(enum.Enum):
@@ -998,41 +1173,108 @@ class Scenario:
         (all of the cost has been removed and the component is now free) and any
         positive number (indicating the fraction added to the original cost).
 
+    .. attribute:: fractional_battery_emissions_change
+        The fractional change in the emissions associated with the batteries installed,
+        defined between -1 (all of the emissions have been removed and the component is
+        now free of any carbon impact) and any positive number (indicating the fraction
+        added to the original emissions arising from the manufacturing and installation
+        of the component).
+
     .. attribute:: fractional_grid_cost_change
         The fractional change in the cost of grid electricity, defined between -1 (all
         of the cost has been removed and the component is now free) and any positive
         number (indicating the fraction added to the original cost).
+
+    .. attribute:: fractional_grid_emissions_change
+        The fractional change in the emissions associated with the grid, defined between
+        -1 (all of the emissions have been removed and the component is now free of any
+        carbon impact) and any positive number (indicating the fraction added to the
+        original emissions arising from energy taken from the grid).
 
     .. attribute:: fractional_heat_pump_cost_change
         The fractional change in the cost of the heat pump(s) installed, defined between
         -1 (all of the cost has been removed and the component is now free) and any
         positive number (indicating the fraction added to the original cost).
 
+    .. attribute:: fractional_heat_pump_emissions_change
+        The fractional change in the emissions associated with the heat pump(s)
+        installed, defined between -1 (all of the emissions have been removed and the
+        component is now free of any carbon impact) and any positive number (indicating
+        the fraction added to the original emissions arising from the manufacturing and
+        installation of the component).
+
     .. attribute:: fractional_hw_tank_cost_change
-        The fractional change in the cost of the hot-water tank installed, defined
+        The fractional change in the cost of the hot-water tank(s) installed, defined
         between -1 (all of the cost has been removed and the component is now free) and
         any positive number (indicating the fraction added to the original cost).
+
+    .. attribute:: fractional_hw_tank_emissions_change
+        The fractional change in the emissions associated with the hot-water tank(s)
+        installed, defined between -1 (all of the emissions have been removed and the
+        component is now free of any carbon impact) and any positive number (indicating
+        the fraction added to the original emissions arising from the manufacturing and
+        installation of the component).
 
     .. attribute:: fractional_inverter_cost_change
         The fractional change in the cost of the inverter(s) installed, defined between
         -1 (all of the cost has been removed and the component is now free) and any
         positive number (indicating the fraction added to the original cost).
 
+    .. attribute:: fractional_inverter_emissions_change
+        The fractional change in the emissions associated with the inverter(s) installed,
+        defined between -1 (all of the emissions have been removed and the component is
+        now free of any carbon impact) and any positive number (indicating the fraction
+        added to the original emissions arising from the manufacturing and installation
+        of the component).
+
     .. attribute:: fractional_pv_cost_change
         The fractional change in the cost of the PV panels installed, defined between -1
         (all of the cost has been removed and the component is now free) and any
         positive number (indicating the fraction added to the original cost).
+
+    .. attribute:: fractional_pv_emissions_change
+        The fractional change in the emissions associated with the PV panels(s)
+        installed, defined between -1 (all of the emissions have been removed and the
+        component is now free of any carbon impact) and any positive number (indicating
+        the fraction added to the original emissions arising from the manufacturing and
+        installation of the component).
 
     .. attribute:: fractional_pvt_cost_change
         The fractional change in the cost of the PV-T panels installed, defined between
         -1 (all of the cost has been removed and the component is now free) and any
         positive number (indicating the fraction added to the original cost).
 
+    .. attribute:: fractional_pvt_emissions_change
+        The fractional change in the emissions associated with the PV-T panels
+        installed, defined between -1 (all of the emissions have been removed and the
+        component is now free of any carbon impact) and any positive number (indicating
+        the fraction added to the original emissions arising from the manufacturing and
+        installation of the component).
+
     .. attribute:: fractional_st_cost_change
         The fractional change in the cost of the solar-thermal collectors installed,
         defined between -1 (all of the cost has been removed and the component is now
         free) and any positive number (indicating the fraction added to the original
         cost).
+
+    .. attribute:: fractional_st_emissions_change
+        The fractional change in the emissions associated with the solar-thermal
+        collector(s) installed, defined between -1 (all of the emissions have been
+        removed and the component is now free of any carbon impact) and any positive
+        number (indicating the fraction added to the original emissions arising from the
+        manufacturing and installation of the component).
+
+    .. attribute:: fractional_water_pump_cost_change
+        The fractional change in the cost of the water pump(s) installed, defined
+        between -1 (all of the cost has been removed and the component is now free) and
+        any positive number (indicating the fraction added to the original cost).
+
+    .. attribute:: fractional_water_pump_emissions_change
+        The fractional change in the emissions associated with the water pump(s)
+        installed, defined between -1 (all of the emissions have been removed and the
+        component is now free of any carbon impact) and any positive number (indicating
+        the fraction added to the original emissions arising from the manufacturing and
+        installation of the component).
 
     .. attribute:: grid_cost_scheme
         The name of the grid-cost scheme to use.
@@ -1051,6 +1293,17 @@ class Scenario:
 
     .. attribute:: inverter_cost
         The cost of the inverter for the solar system in USD/kW.
+
+    .. attribute:: inverter_emissions
+        The carbon emissions associated with the inverter for the solar system in
+        kgCO2-eq/kW.
+
+    .. attribute:: inverter_emissions_range
+        The range of uncertainty in the carbon emissions associated with the inverter
+        for the solar system in kgCO2-eq/kW.
+
+    .. attribute:: inverter_unit
+        The unit size of inverters being considered in kW.
 
     .. attribute:: inverter_lifetime
         The lifetime of the inverter in years.
@@ -1085,43 +1338,18 @@ class Scenario:
     .. attribute:: water_pump
         The name of the water pump to use.
 
-    .. attribute:: fractional_battery_cost_change
-        The fractional change in the cost of the battery.
-
-    .. attribute:: fractional_grid_cost_change
-        The fractional change in the price of grid electricity.
-
-    .. attribute:: fractional_heat_pump_cost_change
-        The fractional change in the cost of the heat-pump installed.
-
-    .. attribute:: fractional_hw_tank_cost_change
-        The fractional change in the cost of the hot-water tanks installed.
-
-    .. attribute:: fractional_inverter_cost_change
-        The fractional change in the cost of the inverter.
-
-    .. attribute:: fractional_pv_cost_change
-        The fractional change in the cost of the PV panels.
-
-    .. attribute:: fractional_pvt_cost_change
-        The fractional change in the cost of the PV-T collectors.
-
-    .. attribute:: fractional_st_cost_change
-        The fractional change in the cost of the solar-thermal collectors.
-
-    .. attribute:: fractional_water_pump_cost_change
-        The fractional change in the cost of the battery.
-
     """
 
     battery: str
-    grid_cost_scheme: GridCostScheme
+    grid_scheme: GridScheme
     heat_exchanger_efficiency: float
     heat_pump: str
     hot_water_tank: str
     htf_heat_capacity: float
     inverter_cost: float
+    inverter_emissions: float
     inverter_lifetime: int
+    inverter_unit: float
     name: str
     plant: str
     pv_degradation_rate: float
@@ -1130,14 +1358,24 @@ class Scenario:
     _pv_t: bool | str
     _solar_thermal: bool | str
     fractional_battery_cost_change: float = 0
+    fractional_battery_emissions_change: float = 0
     fractional_grid_cost_change: float = 0
+    fractional_grid_emissions_change: float = 0
     fractional_heat_pump_cost_change: float = 0
+    fractional_heat_pump_emissions_change: float = 0
     fractional_hw_tank_cost_change: float = 0
+    fractional_hw_tank_emissions_change: float = 0
     fractional_inverter_cost_change: float = 0
+    fractional_inverter_emissions_change: float = 0
     fractional_pv_cost_change: float = 0
+    fractional_pv_emissions_change: float = 0
     fractional_pvt_cost_change: float = 0
+    fractional_pvt_emissions_change: float = 0
     fractional_st_cost_change: float = 0
+    fractional_st_emissions_change: float = 0
     fractional_water_pump_cost_change: float = 0
+    fractional_water_pump_emissions_change: float = 0
+    inverter_emissions_range: float = 0
 
     @property
     def pv(self) -> bool:  # pylint: disable=invalid-name
@@ -1276,6 +1514,10 @@ class Solution(NamedTuple):
         The cost of the heat pump installed in USD, sized based on the maximum cost
         required to meet demand.
 
+    .. attribute:: heat_pump_emissions
+        The emissions associated with the heat pump installed in kg CO2-eq, sized based
+        on the maximum cost required to meet demand.
+
     .. attribute:: hot_water_demand_temperature
         The temperature of the hot-water demand at each time step.
 
@@ -1373,6 +1615,7 @@ class Solution(NamedTuple):
     collector_system_output_temperatures: dict[int, float]
     electricity_demands: dict[int, float]
     heat_pump_cost: float
+    heat_pump_emissions: float
     hot_water_demand_temperature: dict[int, float | None]
     hot_water_demand_volume: dict[int, float | None]
     pump_electricity_demands: dict[int, float | None]
@@ -1674,4 +1917,6 @@ class Solution(NamedTuple):
                 for key, value in self.solar_thermal_htf_output_temperatures.items()
             }
 
-        return pd.DataFrame.from_dict(output_information_dict).sort_index()
+        return pd.DataFrame.from_dict(  # type: ignore [attr-defined,no-any-return]
+            output_information_dict
+        ).sort_index()
