@@ -2877,9 +2877,9 @@ plt.savefig(
     bbox_inches="tight",
 )
 
-#####################
-# ECOS HPC Analysis #
-#####################
+################################
+# NPJ Clean Water HPC Analysis #
+################################
 
 import enum
 import json
@@ -2889,6 +2889,7 @@ import pandas as pd
 import re
 import seaborn as sns
 
+from brokenaxes import brokenaxes
 from matplotlib import rc
 from matplotlib import ticker
 from typing import Any
@@ -2921,7 +2922,7 @@ colorblind_palette = sns.color_palette(
 sns.set_palette(colorblind_palette)
 
 # Read input data
-with open("08_mar_23.json", "r", encoding="UTF-8") as f:
+with open("28_mar_23.json", "r", encoding="UTF-8") as f:
     full_data = json.load(f)
 
 data = {
@@ -3234,10 +3235,10 @@ def components_boxen_frame(
 
 COST_KEY_TITLES: dict[str, str] = {
     "total_cost": "Total",
-    "components": "Components",
-    "grid": "Grid",
-    "heat_pump": "Heat-pump",
-    "inverters": "Inverter(s)",
+    "components_cost": "Components",
+    "grid_costs": "Grid",
+    "heat_pump_cost": "Heat-pump",
+    "inverters_cost": "Inverter(s)",
 }
 
 
@@ -3273,7 +3274,7 @@ def costs_boxen_frame(
                     data_to_boxen, tank_index, key, weather_type
                 )
             ]
-            for key in ["total_cost", "components", "grid", "heat_pump", "inverters"]
+            for key in ["total_cost", "components_cost", "grid_costs", "heat_pump_cost", "inverters_cost"]
         }
     )
     return pd.DataFrame(scenarios_map).set_index(scenario_key)
@@ -3281,7 +3282,6 @@ def costs_boxen_frame(
 
 class Plant(enum.Enum):
     """Specifies which plant is being considered."""
-
     JOO: str = "joo"
     EL_NASHAR: str = "el"
     RAHIMI: str = "rahimi"
@@ -3366,7 +3366,7 @@ def specific_cost_by_tech_frame(
 # Outputs boxen plot by location
 
 fig, axes = plt.subplots(2, 2, figsize=(12, 8))
-K_DEPTH: int = 3
+K_DEPTH: int = 4
 WEATHER_TYPE: str = "average_weather_conditions"
 # WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
 # WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
@@ -3379,10 +3379,10 @@ sns.boxenplot(
     k_depth=K_DEPTH,
 )
 axis.set_title("Abu Dhabi, UAE")
-# axis.set_ylim(
-#     max(min(min(boxen_frame(abu_dhabi_data)["Aux. heating"]) - 0.05, -0.05), -0.8),
-#     1.05,
-# )
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8),
+    1.05,
+)
 axis.set_ylabel("Fraction")
 axis.text(
     -0.08,
@@ -3401,10 +3401,10 @@ sns.boxenplot(
     k_depth=K_DEPTH,
 )
 axis.set_title("Gando, Gran Canaria")
-# axis.set_ylim(
-#     max(min(min(boxen_frame(gran_canaria_data)["Aux. heating"]) - 0.05, -0.05), -0.8),
-#     1.05,
-# )
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8),
+    1.05,
+)
 axis.set_ylabel("Fraction")
 axis.text(
     -0.08,
@@ -3423,9 +3423,9 @@ sns.boxenplot(
     k_depth=K_DEPTH,
 )
 axis.set_title("Tijuana, Mexico")
-# axis.set_ylim(
-#     max(min(min(boxen_frame(tijuana_data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
-# )
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
+)
 axis.set_ylabel("Fraction")
 axis.text(
     -0.08,
@@ -3444,9 +3444,9 @@ sns.boxenplot(
     k_depth=K_DEPTH,
 )
 axis.set_title("La Paz, Mexico")
-# axis.set_ylim(
-#     max(min(min(boxen_frame(la_paz_data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
-# )
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
+)
 axis.set_ylabel("Fraction")
 axis.text(
     -0.08,
@@ -3460,18 +3460,57 @@ axis.text(
 )
 
 
-# plt.savefig(
-#     "fractions_7.png",
-#     transparent=True,
-#     dpi=300,
-#     bbox_inches="tight",
-# )
+plt.savefig(
+    "fractions_8.png",
+    transparent=True,
+    dpi=300,
+    bbox_inches="tight",
+)
 
 plt.show()
 
 # Components boxen plot by location
 
-fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+def _post_process_split_axes(ax1, ax2):
+    """
+    Function to post-process the joining of axes.
+    Adapted from:
+        https://matplotlib.org/stable/gallery/subplots_axes_and_figures/broken_axis.html
+    """
+    # hide the spines between ax and ax2
+    ax1.spines.bottom.set_visible(False)
+    ax1.spines.top.set_visible(False)
+    ax2.spines.top.set_visible(False)
+    ax1.tick_params(labeltop=False, labelbottom=False)  # don't put tick labels at the top
+    ax2.xaxis.tick_bottom()
+    # Now, let's turn towards the cut-out slanted lines.
+    # We create line objects in axes coordinates, in which (0,0), (0,1),
+    # (1,0), and (1,1) are the four corners of the axes.
+    # The slanted lines themselves are markers at those locations, such that the
+    # lines keep their angle and position, independent of the axes size or scale
+    # Finally, we need to disable clipping.
+    d = .5  # proportion of vertical to horizontal extent of the slanted line
+    kwargs = dict(marker=[(-1, -d), (1, d)], markersize=12,
+                linestyle="none", color='k', mec='k', mew=1, clip_on=False)
+    ax1.plot([0], [0], transform=ax1.transAxes, **kwargs)
+    ax2.plot([0], [1], transform=ax2.transAxes, **kwargs)
+
+
+
+# Joo Plot
+gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.4, 1, 1]}
+fig, axes = plt.subplots(5, 2, figsize=(12, 8), gridspec_kw=gridspec)
+fig.subplots_adjust(hspace=0, wspace=0.25)
+
+axes[2, 0].set_visible(False)
+axes[2, 1].set_visible(False)
+y_label_coord: int = int(-850)
+
+axes[0, 0].get_shared_x_axes().join(axes[0, 0], axes[1, 0])
+axes[3, 0].get_shared_x_axes().join(axes[3, 0], axes[4, 0])
+axes[3, 1].get_shared_x_axes().join(axes[3, 1], axes[4, 1])
+axes[0, 1].get_shared_x_axes().join(axes[0, 1], axes[1, 1])
+
 K_DEPTH: int = 4
 WEATHER_TYPE: str = "average_weather_conditions"
 # WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
@@ -3479,19 +3518,48 @@ WEATHER_TYPE: str = "average_weather_conditions"
 
 TANK_INDEX: int | None = None
 
-sns.boxenplot(
-    components_boxen_frame(
-        abu_dhabi_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
-    ),
-    ax=(axis := axes[0, 0]),
-    k_depth=K_DEPTH,
-)
-axis.set_title("Abu Dhabi, UAE")
-# axis.set_ylim(max(min(min(boxen_frame(abu_dhabi_data)["Aux. heating"]), -0.05), -0.45), 1.05)
-axis.set_ylabel("Number of components")
-axis.text(
-    -0.08,
-    1.1,
+# Determine the upper y limit
+
+max_y_lim= max(
+            max((
+                max_frame := components_boxen_frame(
+                    la_paz_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+                )
+            )["PV"]),
+            max(max_frame["PV-T"]),
+            max(max_frame["Solar-thermal"]),
+        )
+
+# Determine the break y limit
+break_y_lim = 500
+y_text_position: float = 2.25
+y_x_label_coord: float = -1.25
+
+lower_y_limits = (0, break_y_lim)
+upper_y_limits = (break_y_lim + 1, 1.05 * max_y_lim)
+
+# Abu Dhabi Plot
+upper_axis = axes[0, 0]
+lower_axis = axes[1, 0]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        components_boxen_frame(
+            abu_dhabi_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        ),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Abu Dhabi, UAE")
+upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+lower_axis.set_xlabel("Component")
+upper_axis.text(
+    -0.1,
+    y_text_position,
     "a.",
     transform=axis.transAxes,
     fontsize=16,
@@ -3499,20 +3567,31 @@ axis.text(
     va="top",
     ha="right",
 )
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
 
-sns.boxenplot(
-    components_boxen_frame(
-        gran_canaria_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
-    ),
-    ax=(axis := axes[0, 1]),
-    k_depth=K_DEPTH,
-)
-axis.set_title("Gando, Gran Canaria")
-# axis.set_ylim(max(min(min(boxen_frame(gran_canaria_data)["Aux. heating"]), -0.05), -0.45), 1.05)
-axis.set_ylabel("Number of components")
-axis.text(
-    -0.08,
-    1.1,
+# Gran Canaria Plot
+upper_axis = axes[0, 1]
+lower_axis = axes[1, 1]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        components_boxen_frame(
+            gran_canaria_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        ),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Gando, Gran Canaria")
+upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+lower_axis.set_xlabel("Component")
+upper_axis.text(
+    -0.1,
+    y_text_position,
     "b.",
     transform=axis.transAxes,
     fontsize=16,
@@ -3520,20 +3599,31 @@ axis.text(
     va="top",
     ha="right",
 )
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
 
-sns.boxenplot(
-    components_boxen_frame(
-        tijuana_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
-    ),
-    ax=(axis := axes[1, 0]),
-    k_depth=K_DEPTH,
-)
-axis.set_title("Tijuana, Mexico")
-# axis.set_ylim(max(min(min(boxen_frame(tijuana_data)["Aux. heating"]), -0.05), -0.45), 1.05)
-axis.set_ylabel("Number of components")
-axis.text(
-    -0.08,
-    1.1,
+# Tijuana Plot
+upper_axis = axes[3, 0]
+lower_axis = axes[4, 0]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        components_boxen_frame(
+            tijuana_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        ),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Tijuana, Mexico")
+upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+lower_axis.set_xlabel("Component")
+upper_axis.text(
+    -0.1,
+    y_text_position,
     "c.",
     transform=axis.transAxes,
     fontsize=16,
@@ -3541,20 +3631,31 @@ axis.text(
     va="top",
     ha="right",
 )
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
 
-sns.boxenplot(
-    components_boxen_frame(
-        la_paz_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
-    ),
-    ax=(axis := axes[1, 1]),
-    k_depth=K_DEPTH,
-)
-axis.set_title("La Paz, Mexico")
-# axis.set_ylim(max(min(min(boxen_frame(la_paz_data)["Aux. heating"]), -0.05), -0.45), 1.05)
-axis.set_ylabel("Number of components")
-axis.text(
-    -0.08,
-    1.1,
+# La Paz Plot
+upper_axis = axes[3, 1]
+lower_axis = axes[4, 1]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        components_boxen_frame(
+            la_paz_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        ),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("La Paz, Mexico")
+lower_axis.set_xlabel("Component")
+upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+upper_axis.text(
+    -0.1,
+    y_text_position,
     "d.",
     transform=axis.transAxes,
     fontsize=16,
@@ -3562,9 +3663,471 @@ axis.text(
     va="top",
     ha="right",
 )
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
 
 plt.savefig(
-    "rahimi_component_sizes_6.png",
+    "joo_component_sizes_7.png",
+    transparent=True,
+    dpi=300,
+    bbox_inches="tight",
+)
+
+plt.show()
+
+
+# El-Nashar Plot
+gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.4, 1, 1]}
+fig, axes = plt.subplots(5, 2, figsize=(12, 8), gridspec_kw=gridspec)
+fig.subplots_adjust(hspace=0, wspace=0.25)
+
+axes[2, 0].set_visible(False)
+axes[2, 1].set_visible(False)
+y_label_coord: int = int(-6.8 * 10 ** 4)
+
+axes[0, 0].get_shared_x_axes().join(axes[0, 0], axes[1, 0])
+axes[3, 0].get_shared_x_axes().join(axes[3, 0], axes[4, 0])
+axes[3, 1].get_shared_x_axes().join(axes[3, 1], axes[4, 1])
+axes[0, 1].get_shared_x_axes().join(axes[0, 1], axes[1, 1])
+
+K_DEPTH: int = 4
+WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+# WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+
+# Determine the upper y limit
+
+max_y_lim= max(
+            max((
+                max_frame := components_boxen_frame(
+                    la_paz_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+                )
+            )["PV"]),
+            max(max_frame["PV-T"]),
+            max(max_frame["Solar-thermal"]),
+        )
+
+# Determine the break y limit
+break_y_lim = 5000
+y_text_position: float = 2.25
+y_x_label_coord: float = -1.35
+
+lower_y_limits = (0, break_y_lim)
+upper_y_limits = (break_y_lim + 1, 1.05 * max_y_lim)
+
+# Abu Dhabi Plot
+upper_axis = axes[0, 0]
+lower_axis = axes[1, 0]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        components_boxen_frame(
+            abu_dhabi_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        ),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Abu Dhabi, UAE")
+upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+lower_axis.set_xlabel("Component")
+upper_axis.text(
+    -0.1,
+    y_text_position,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# Gran Canaria Plot
+upper_axis = axes[0, 1]
+lower_axis = axes[1, 1]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+# for axis in (upper_axis, lower_axis):
+for axis in (upper_axis, lower_axis):
+    if axis == upper_axis:
+        axis.xaxis.grid(False)
+        continue
+    sns.boxenplot(
+        components_boxen_frame(
+            gran_canaria_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        ),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Gando, Gran Canaria")
+upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+lower_axis.set_xlabel("Component")
+upper_axis.text(
+    -0.1,
+    y_text_position,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# Tijuana Plot
+upper_axis = axes[3, 0]
+lower_axis = axes[4, 0]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+
+for axis in (upper_axis, lower_axis):
+    if axis == upper_axis:
+        tijuana_components_boxen_frame = components_boxen_frame(
+            tijuana_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        )
+        tijuana_components_boxen_frame["Batteries"] = [0] * len(tijuana_components_boxen_frame)
+        tijuana_components_boxen_frame["PV-T"] = [0] * len(tijuana_components_boxen_frame)
+        sns.boxenplot(
+            tijuana_components_boxen_frame,
+            ax=axis,
+            k_depth=K_DEPTH,
+        )
+        continue
+    sns.boxenplot(
+        components_boxen_frame(
+            tijuana_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        ),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Tijuana, Mexico")
+upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+lower_axis.set_xlabel("Component")
+upper_axis.text(
+    -0.1,
+    y_text_position,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# La Paz Plot
+upper_axis = axes[3, 1]
+lower_axis = axes[4, 1]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        components_boxen_frame(
+            la_paz_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        ),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("La Paz, Mexico")
+lower_axis.set_xlabel("Component")
+upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+upper_axis.text(
+    -0.1,
+    y_text_position,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+plt.savefig(
+    "el_nashar_component_sizes_7.png",
+    transparent=True,
+    dpi=300,
+    bbox_inches="tight",
+)
+
+plt.show()
+
+
+
+# Rahimi Plot
+
+from matplotlib.ticker import FuncFormatter
+def millions(x, pos):
+    """
+    The two args are the value and tick position
+    Function adapted from:
+        https://stackoverflow.com/questions/61330427/set-y-axis-in-millions
+    """
+    return '%1.2f M' % (x * 1e-6)
+
+formatter = FuncFormatter(millions)
+
+
+gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.4, 1, 1]}
+fig, axes = plt.subplots(5, 2, figsize=(12, 8), gridspec_kw=gridspec)
+fig.subplots_adjust(hspace=0, wspace=0.25)
+
+axes[2, 0].set_visible(False)
+axes[2, 1].set_visible(False)
+y_label_coord: int = int(-5.5 * 10 ** 5)
+
+axes[0, 0].get_shared_x_axes().join(axes[0, 0], axes[1, 0])
+axes[3, 0].get_shared_x_axes().join(axes[3, 0], axes[4, 0])
+axes[3, 1].get_shared_x_axes().join(axes[3, 1], axes[4, 1])
+axes[0, 1].get_shared_x_axes().join(axes[0, 1], axes[1, 1])
+
+axes[0, 0].yaxis.set_major_formatter(formatter)
+axes[1, 0].yaxis.set_major_formatter(formatter)
+axes[3, 0].yaxis.set_major_formatter(formatter)
+axes[4, 0].yaxis.set_major_formatter(formatter)
+axes[0, 1].yaxis.set_major_formatter(formatter)
+axes[1, 1].yaxis.set_major_formatter(formatter)
+axes[3, 1].yaxis.set_major_formatter(formatter)
+axes[4, 1].yaxis.set_major_formatter(formatter)
+
+
+K_DEPTH: int = 4
+WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+# WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+
+# Determine the upper y limit
+
+max_y_lim= max(
+            max((
+                max_frame := components_boxen_frame(
+                    la_paz_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+                )
+            )["PV"]),
+            max(max_frame["PV-T"]),
+            max(max_frame["Solar-thermal"]),
+        )
+
+# Determine the break y limit
+break_y_lim = 2 * 10 ** 5
+y_text_position: float = 2.25
+y_x_label_coord: float = -1.35
+
+lower_y_limits = (0, break_y_lim)
+upper_y_limits = (break_y_lim + 1, 1.05 * max_y_lim)
+
+# Abu Dhabi Plot
+upper_axis = axes[0, 0]
+lower_axis = axes[1, 0]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        components_boxen_frame(
+            abu_dhabi_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        ),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Abu Dhabi, UAE")
+upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+lower_axis.set_xlabel("Component")
+upper_axis.text(
+    -0.12,
+    y_text_position,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# Gran Canaria Plot
+upper_axis = axes[0, 1]
+lower_axis = axes[1, 1]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+# for axis in (upper_axis, lower_axis):
+for axis in (upper_axis, lower_axis):
+    # if axis == upper_axis:
+    #     axis.xaxis.grid(False)
+    #     continue
+    sns.boxenplot(
+        components_boxen_frame(
+            gran_canaria_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        ),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Gando, Gran Canaria")
+upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+lower_axis.set_xlabel("Component")
+upper_axis.text(
+    -0.12,
+    y_text_position,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# Tijuana Plot
+upper_axis = axes[3, 0]
+lower_axis = axes[4, 0]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+
+for axis in (upper_axis, lower_axis):
+    # if axis == upper_axis:
+    #     tijuana_components_boxen_frame = components_boxen_frame(
+    #         tijuana_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+    #     )
+    #     tijuana_components_boxen_frame["Batteries"] = [0] * len(tijuana_components_boxen_frame)
+    #     tijuana_components_boxen_frame["PV-T"] = [0] * len(tijuana_components_boxen_frame)
+    #     sns.boxenplot(
+    #         tijuana_components_boxen_frame,
+    #         ax=axis,
+    #         k_depth=K_DEPTH,
+    #     )
+    #     continue
+    sns.boxenplot(
+        components_boxen_frame(
+            tijuana_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        ),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Tijuana, Mexico")
+upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+lower_axis.set_xlabel("Component")
+upper_axis.text(
+    -0.12,
+    y_text_position,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# La Paz Plot
+upper_axis = axes[3, 1]
+lower_axis = axes[4, 1]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        components_boxen_frame(
+            la_paz_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        ),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("La Paz, Mexico")
+lower_axis.set_xlabel("Component")
+upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+upper_axis.text(
+    -0.12,
+    y_text_position,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# # sns.boxenplot(
+# #     components_boxen_frame(
+# #         tijuana_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+# #     ),
+# #     ax=(axis := axes[1, 0]),
+# #     k_depth=K_DEPTH,
+# # )
+# # axis.set_title("Tijuana, Mexico")
+# # axis.set_ylim(0, max_y_lim)
+# # # axis.set_yscale("log")
+# # axis.set_ylabel("Number of components")
+# # axis.text(
+# #     -0.08,
+# #     1.1,
+# #     "c.",
+# #     transform=axis.transAxes,
+# #     fontsize=16,
+# #     fontweight="bold",
+# #     va="top",
+# #     ha="right",
+# # )
+
+# sns.boxenplot(
+#     components_boxen_frame(
+#         la_paz_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+#     ),
+#     ax=(axis := axes[1, 1]),
+#     k_depth=K_DEPTH,
+# )
+# axis.set_title("La Paz, Mexico")
+# axis.set_ylim(0, max_y_lim)
+# # axis.set_yscale("log")
+# axis.set_ylabel("Number of components")
+# axis.text(
+#     -0.08,
+#     1.1,
+#     "d.",
+#     transform=axis.transAxes,
+#     fontsize=16,
+#     fontweight="bold",
+#     va="top",
+#     ha="right",
+# )
+
+plt.savefig(
+    "rahimi_component_sizes_7.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -4418,7 +4981,7 @@ axis.text(
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 plt.savefig(
-    "specific_costs_comparison_6.png", transparent=True, dpi=300, bbox_inches="tight"
+    "specific_costs_comparison_7.png", transparent=True, dpi=300, bbox_inches="tight"
 )
 
 plt.show()
@@ -5534,10 +6097,10 @@ COLORBLIND_COLOURS: dict[str, str] = {
     "grid_electricity_fraction": "#52C0AD",  # Pale green
     "auxiliary_heating_fraction": "#006264",  # Green
     "total_cost": "#D8247C",  # Pink
-    "components": "#E04606",  # Orange
-    "grid": "#F09F52",  # Pale orange
-    "inverters": "#52C0AD",  # Pale green
-    "heat_pump": "#006264",  # Green
+    "components_cost": "#E04606",  # Orange
+    "grid_costs": "#F09F52",  # Pale orange
+    "inverters_cost": "#52C0AD",  # Pale green
+    "heat_pump_cost": "#006264",  # Green
     # "#EDEDED",  # Pale pink
     # "#E7DFBE",  # Pale yellow
     # "#FBBB2C",  # Yellow
@@ -5744,5 +6307,5 @@ for filename in tqdm(os.listdir("."), desc="files", unit="file"):
     with open(filename, "r", encoding="UTF-8") as f:
         data[filename] = json.load(f)
 
-with open("08_mar_23.json", "w", encoding="UTF-8") as f:
+with open("28_mar_23.json", "w", encoding="UTF-8") as f:
     json.dump(data, f)
