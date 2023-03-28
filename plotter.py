@@ -3274,7 +3274,13 @@ def costs_boxen_frame(
                     data_to_boxen, tank_index, key, weather_type
                 )
             ]
-            for key in ["total_cost", "components_cost", "grid_costs", "heat_pump_cost", "inverters_cost"]
+            for key in [
+                "total_cost",
+                "components_cost",
+                "grid_costs",
+                "heat_pump_cost",
+                "inverters_cost",
+            ]
         }
     )
     return pd.DataFrame(scenarios_map).set_index(scenario_key)
@@ -3282,6 +3288,7 @@ def costs_boxen_frame(
 
 class Plant(enum.Enum):
     """Specifies which plant is being considered."""
+
     JOO: str = "joo"
     EL_NASHAR: str = "el"
     RAHIMI: str = "rahimi"
@@ -3471,6 +3478,7 @@ plt.show()
 
 # Components boxen plot by location
 
+
 def _post_process_split_axes(ax1, ax2):
     """
     Function to post-process the joining of axes.
@@ -3481,7 +3489,9 @@ def _post_process_split_axes(ax1, ax2):
     ax1.spines.bottom.set_visible(False)
     ax1.spines.top.set_visible(False)
     ax2.spines.top.set_visible(False)
-    ax1.tick_params(labeltop=False, labelbottom=False)  # don't put tick labels at the top
+    ax1.tick_params(
+        labeltop=False, labelbottom=False
+    )  # don't put tick labels at the top
     ax2.xaxis.tick_bottom()
     # Now, let's turn towards the cut-out slanted lines.
     # We create line objects in axes coordinates, in which (0,0), (0,1),
@@ -3489,12 +3499,18 @@ def _post_process_split_axes(ax1, ax2):
     # The slanted lines themselves are markers at those locations, such that the
     # lines keep their angle and position, independent of the axes size or scale
     # Finally, we need to disable clipping.
-    d = .5  # proportion of vertical to horizontal extent of the slanted line
-    kwargs = dict(marker=[(-1, -d), (1, d)], markersize=12,
-                linestyle="none", color='k', mec='k', mew=1, clip_on=False)
+    d = 0.5  # proportion of vertical to horizontal extent of the slanted line
+    kwargs = dict(
+        marker=[(-1, -d), (1, d)],
+        markersize=12,
+        linestyle="none",
+        color="k",
+        mec="k",
+        mew=1,
+        clip_on=False,
+    )
     ax1.plot([0], [0], transform=ax1.transAxes, **kwargs)
     ax2.plot([0], [1], transform=ax2.transAxes, **kwargs)
-
 
 
 # Joo Plot
@@ -3520,15 +3536,17 @@ TANK_INDEX: int | None = None
 
 # Determine the upper y limit
 
-max_y_lim= max(
-            max((
-                max_frame := components_boxen_frame(
-                    la_paz_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
-                )
-            )["PV"]),
-            max(max_frame["PV-T"]),
-            max(max_frame["Solar-thermal"]),
-        )
+max_y_lim = max(
+    max(
+        (
+            max_frame := components_boxen_frame(
+                la_paz_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+            )
+        )["PV"]
+    ),
+    max(max_frame["PV-T"]),
+    max(max_frame["Solar-thermal"]),
+)
 
 # Determine the break y limit
 break_y_lim = 500
@@ -3555,7 +3573,9 @@ for axis in (upper_axis, lower_axis):
     )
 
 upper_axis.set_title("Abu Dhabi, UAE")
-upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
 lower_axis.set_xlabel("Component")
 upper_axis.text(
     -0.1,
@@ -3587,7 +3607,9 @@ for axis in (upper_axis, lower_axis):
     )
 
 upper_axis.set_title("Gando, Gran Canaria")
-upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
 lower_axis.set_xlabel("Component")
 upper_axis.text(
     -0.1,
@@ -3619,7 +3641,9 @@ for axis in (upper_axis, lower_axis):
     )
 
 upper_axis.set_title("Tijuana, Mexico")
-upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
 lower_axis.set_xlabel("Component")
 upper_axis.text(
     -0.1,
@@ -3652,7 +3676,9 @@ for axis in (upper_axis, lower_axis):
 
 upper_axis.set_title("La Paz, Mexico")
 lower_axis.set_xlabel("Component")
-upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
 upper_axis.text(
     -0.1,
     y_text_position,
@@ -3683,7 +3709,7 @@ fig.subplots_adjust(hspace=0, wspace=0.25)
 
 axes[2, 0].set_visible(False)
 axes[2, 1].set_visible(False)
-y_label_coord: int = int(-6.8 * 10 ** 4)
+y_label_coord: int = int(-6.8 * 10**4)
 
 axes[0, 0].get_shared_x_axes().join(axes[0, 0], axes[1, 0])
 axes[3, 0].get_shared_x_axes().join(axes[3, 0], axes[4, 0])
@@ -3699,15 +3725,17 @@ TANK_INDEX: int | None = None
 
 # Determine the upper y limit
 
-max_y_lim= max(
-            max((
-                max_frame := components_boxen_frame(
-                    la_paz_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
-                )
-            )["PV"]),
-            max(max_frame["PV-T"]),
-            max(max_frame["Solar-thermal"]),
-        )
+max_y_lim = max(
+    max(
+        (
+            max_frame := components_boxen_frame(
+                la_paz_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+            )
+        )["PV"]
+    ),
+    max(max_frame["PV-T"]),
+    max(max_frame["Solar-thermal"]),
+)
 
 # Determine the break y limit
 break_y_lim = 5000
@@ -3734,7 +3762,9 @@ for axis in (upper_axis, lower_axis):
     )
 
 upper_axis.set_title("Abu Dhabi, UAE")
-upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
 lower_axis.set_xlabel("Component")
 upper_axis.text(
     -0.1,
@@ -3770,7 +3800,9 @@ for axis in (upper_axis, lower_axis):
     )
 
 upper_axis.set_title("Gando, Gran Canaria")
-upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
 lower_axis.set_xlabel("Component")
 upper_axis.text(
     -0.1,
@@ -3798,8 +3830,12 @@ for axis in (upper_axis, lower_axis):
         tijuana_components_boxen_frame = components_boxen_frame(
             tijuana_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
         )
-        tijuana_components_boxen_frame["Batteries"] = [0] * len(tijuana_components_boxen_frame)
-        tijuana_components_boxen_frame["PV-T"] = [0] * len(tijuana_components_boxen_frame)
+        tijuana_components_boxen_frame["Batteries"] = [0] * len(
+            tijuana_components_boxen_frame
+        )
+        tijuana_components_boxen_frame["PV-T"] = [0] * len(
+            tijuana_components_boxen_frame
+        )
         sns.boxenplot(
             tijuana_components_boxen_frame,
             ax=axis,
@@ -3815,7 +3851,9 @@ for axis in (upper_axis, lower_axis):
     )
 
 upper_axis.set_title("Tijuana, Mexico")
-upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
 lower_axis.set_xlabel("Component")
 upper_axis.text(
     -0.1,
@@ -3848,7 +3886,9 @@ for axis in (upper_axis, lower_axis):
 
 upper_axis.set_title("La Paz, Mexico")
 lower_axis.set_xlabel("Component")
-upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
 upper_axis.text(
     -0.1,
     y_text_position,
@@ -3872,17 +3912,19 @@ plt.savefig(
 plt.show()
 
 
-
 # Rahimi Plot
 
 from matplotlib.ticker import FuncFormatter
+
+
 def millions(x, pos):
     """
     The two args are the value and tick position
     Function adapted from:
         https://stackoverflow.com/questions/61330427/set-y-axis-in-millions
     """
-    return '%1.2f M' % (x * 1e-6)
+    return "%1.2f M" % (x * 1e-6)
+
 
 formatter = FuncFormatter(millions)
 
@@ -3893,7 +3935,7 @@ fig.subplots_adjust(hspace=0, wspace=0.25)
 
 axes[2, 0].set_visible(False)
 axes[2, 1].set_visible(False)
-y_label_coord: int = int(-5.5 * 10 ** 5)
+y_label_coord: int = int(-5.5 * 10**5)
 
 axes[0, 0].get_shared_x_axes().join(axes[0, 0], axes[1, 0])
 axes[3, 0].get_shared_x_axes().join(axes[3, 0], axes[4, 0])
@@ -3919,18 +3961,20 @@ TANK_INDEX: int | None = None
 
 # Determine the upper y limit
 
-max_y_lim= max(
-            max((
-                max_frame := components_boxen_frame(
-                    la_paz_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
-                )
-            )["PV"]),
-            max(max_frame["PV-T"]),
-            max(max_frame["Solar-thermal"]),
-        )
+max_y_lim = max(
+    max(
+        (
+            max_frame := components_boxen_frame(
+                la_paz_rahimi, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+            )
+        )["PV"]
+    ),
+    max(max_frame["PV-T"]),
+    max(max_frame["Solar-thermal"]),
+)
 
 # Determine the break y limit
-break_y_lim = 2 * 10 ** 5
+break_y_lim = 2 * 10**5
 y_text_position: float = 2.25
 y_x_label_coord: float = -1.35
 
@@ -3954,7 +3998,9 @@ for axis in (upper_axis, lower_axis):
     )
 
 upper_axis.set_title("Abu Dhabi, UAE")
-upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
 lower_axis.set_xlabel("Component")
 upper_axis.text(
     -0.12,
@@ -3990,7 +4036,9 @@ for axis in (upper_axis, lower_axis):
     )
 
 upper_axis.set_title("Gando, Gran Canaria")
-upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
 lower_axis.set_xlabel("Component")
 upper_axis.text(
     -0.12,
@@ -4035,7 +4083,9 @@ for axis in (upper_axis, lower_axis):
     )
 
 upper_axis.set_title("Tijuana, Mexico")
-upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
 lower_axis.set_xlabel("Component")
 upper_axis.text(
     -0.12,
@@ -4068,7 +4118,9 @@ for axis in (upper_axis, lower_axis):
 
 upper_axis.set_title("La Paz, Mexico")
 lower_axis.set_xlabel("Component")
-upper_axis.text(y_x_label_coord, y_label_coord, "Number of components", rotation="vertical")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
 upper_axis.text(
     -0.12,
     y_text_position,
