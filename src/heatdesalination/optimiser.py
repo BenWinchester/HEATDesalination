@@ -2257,7 +2257,7 @@ def run_optimisation(
             f"{CostType.COMPONENTS.value}_emissions": _total_component_emissions(
                 component_sizes, logger, scenario
             ),
-            f"{CostType.GRID.value}_emissions": _total_grid_cost(
+            f"{CostType.GRID.value}_cost": _total_grid_cost(
                 logger, scenario, solution, system_lifetime
             ),
             f"{CostType.GRID.value}_emissions": _total_grid_emissions(
