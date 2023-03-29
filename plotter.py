@@ -2883,6 +2883,7 @@ plt.savefig(
 
 import enum
 import json
+import math
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -2922,7 +2923,7 @@ colorblind_palette = sns.color_palette(
 sns.set_palette(colorblind_palette)
 
 # Read input data
-with open("28_mar_23.json", "r", encoding="UTF-8") as f:
+with open("29_mar_23.json", "r", encoding="UTF-8") as f:
     full_data = json.load(f)
 
 data = {
@@ -3242,6 +3243,15 @@ COST_KEY_TITLES: dict[str, str] = {
 }
 
 
+EMISSIONS_KEY_TITLES: dict[str, str] = {
+    "total_emissions": "Total",
+    "components_emissions": "Components",
+    "grid_emissions": "Grid",
+    "heat_pump_emissions": "Heat-pump",
+    "inverters_emissions": "Inverter(s)",
+}
+
+
 def costs_boxen_frame(
     data_to_boxen,
     specific_rescale: float = 1,
@@ -3286,12 +3296,97 @@ def costs_boxen_frame(
     return pd.DataFrame(scenarios_map).set_index(scenario_key)
 
 
+# format: off
+class DataType(enum.Enum):
+    """Determines the type of data to return, whether max. or min. estimate."""
+
+    MAX: str = "max"
+    MEAN: str = "mean"
+    MIN: str = "min"
+
+
+# format: on
+
+
+DATA_TYPE_TO_ENTRY_INDEX: dict[DataType, int] = {
+    DataType.MEAN: 0,
+    DataType.MIN: 1,
+    DataType.MAX: 2,
+}
+
+
+def emissions_boxen_frame(
+    data_to_boxen,
+    data_type: DataType = DataType.MEAN,
+    specific_rescale: float = 1,
+    tank_index: int | None = None,
+    unit: float = 10**6,
+    weather_type: str = "average_weather_conditions",
+):
+    """
+    Used for calculating the emissions.
+    Inputs:
+        - specific_rescale:
+            The specific emissions factor used to rescale the emissions.
+        - tank_index:
+            Which tank index to use.
+        - unit:
+            The emissions unit, usually kgCO2.
+        - weather_type:
+            Which type of weather data to use.
+    """
+    scenarios_map = {
+        (scenario_key := "scenario"): scenarios(data_to_boxen)[::3][
+            :: (3 if tank_index is not None else 1)
+        ]
+    }
+    scenarios_map.update(
+        {
+            EMISSIONS_KEY_TITLES[key]: [
+                (
+                    (
+                        entry
+                        if not isinstance(entry, list)
+                        else entry[DATA_TYPE_TO_ENTRY_INDEX[data_type]]
+                    )
+                    / (specific_rescale * unit)
+                    if entry is not None
+                    else entry
+                )
+                for entry in _results_value(
+                    data_to_boxen, tank_index, key, weather_type
+                )
+            ]
+            for key in [
+                "total_emissions",
+                "components_emissions",
+                "grid_emissions",
+                "heat_pump_emissions",
+                "inverters_emissions",
+            ]
+        }
+    )
+    # Re-parse to calculate the total emissions
+    scenarios_map["Total"] = [
+        scenarios_map["Components"][index]
+        + scenarios_map["Grid"][index]
+        + scenarios_map["Heat-pump"][index]
+        + scenarios_map["Inverter(s)"][index]
+        for index in range(len(scenarios_map["Total"]))
+    ]
+    return pd.DataFrame(scenarios_map).set_index(scenario_key)
+
+
+# format: off
 class Plant(enum.Enum):
     """Specifies which plant is being considered."""
 
     JOO: str = "joo"
     EL_NASHAR: str = "el"
     RAHIMI: str = "rahimi"
+
+
+# format: on
 
 
 def specific_costs_boxen_frame(
@@ -3309,6 +3404,30 @@ def specific_costs_boxen_frame(
     if plant == Plant.RAHIMI:
         return costs_boxen_frame(
             data_to_boxen, 18562005, tank_index, unit, weather_type
+        )
+    raise Exception("Unsupported plant type, %s, specified.", plant)
+
+
+def specific_emissions_boxen_frame(
+    data_to_boxen,
+    data_type: DataType = DataType.MEAN,
+    tank_index: int | None = None,
+    unit: float = 1,
+    weather_type: str = "average_weather_conditions",
+    *,
+    plant: Plant,
+):
+    if plant == Plant.JOO:
+        return emissions_boxen_frame(
+            data_to_boxen, data_type, 32872.5, tank_index, unit, weather_type
+        )
+    if plant == Plant.EL_NASHAR:
+        return emissions_boxen_frame(
+            data_to_boxen, data_type, 1314900, tank_index, unit, weather_type
+        )
+    if plant == Plant.RAHIMI:
+        return emissions_boxen_frame(
+            data_to_boxen, data_type, 18562005, tank_index, unit, weather_type
         )
     raise Exception("Unsupported plant type, %s, specified.", plant)
 
@@ -3368,6 +3487,17 @@ def specific_cost_by_tech_frame(
             )[cost_key],
         }
     )
+
+
+# Post-HPC Grid-cost calculation
+for top_entry in full_data.values():
+    for middle_entry in top_entry:
+        for bottom_entry in middle_entry[1].values():
+            bottom_entry[0]["grid_costs"] = bottom_entry[0]["total_cost"] - (
+                bottom_entry[0]["components_cost"]
+                + bottom_entry[0]["heat_pump_cost"]
+                + bottom_entry[0]["inverters_cost"]
+            )
 
 
 # Outputs boxen plot by location
@@ -5033,12 +5163,16 @@ axis.text(
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 plt.savefig(
-    "specific_costs_comparison_7.png", transparent=True, dpi=300, bbox_inches="tight"
+    "specific_costs_comparison_8.png", transparent=True, dpi=300, bbox_inches="tight"
 )
 
 plt.show()
 
-# Plot a stacked-bar plot with a specific technology set.
+###########################################################
+# Plot a stacked-bar plot with a specific technology set. #
+###########################################################
+
+import math
 
 fig, axes = plt.subplots(2, 2, figsize=(12, 8))
 fig.subplots_adjust(hspace=0.25)
@@ -5052,18 +5186,39 @@ WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
 TANK_INDEX: int | None = None
 Y_SCALE = "linear"
 
+specific_costs_y_lim: float = math.ceil(
+    max(
+        min(specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)["Total"]),
+        min(specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO)["Total"]),
+        min(specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO)["Total"]),
+        min(specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO)["Total"]),
+        min(specific_costs_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)["Total"]),
+        min(
+            specific_costs_boxen_frame(gran_canaria_el, plant=Plant.EL_NASHAR)["Total"]
+        ),
+        min(specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)["Total"]),
+        min(specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)["Total"]),
+        min(specific_costs_boxen_frame(abu_dhabi_rahimi, plant=Plant.RAHIMI)["Total"]),
+        min(
+            specific_costs_boxen_frame(gran_canaria_rahimi, plant=Plant.RAHIMI)["Total"]
+        ),
+        min(specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)["Total"]),
+        min(specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)["Total"]),
+    )
+)
+
 data_to_plot = (
     pd.DataFrame(
         {
             "Small": specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO).loc[
-                "hpc_abu_dhabi_joo_sharp_300_eurotherm"
+                "hpc_abu_dhabi_joo_sharp_300_augusta"
             ],
             "Medium": specific_costs_boxen_frame(
                 abu_dhabi_el, plant=Plant.EL_NASHAR
-            ).loc["hpc_abu_dhabi_el_sharp_300_eurotherm"],
+            ).loc["hpc_abu_dhabi_el_sharp_insulated_sti"],
             "Large": specific_costs_boxen_frame(
                 abu_dhabi_rahimi, plant=Plant.RAHIMI
-            ).loc["hpc_abu_dhabi_rahimi_sharp_300_eurotherm"],
+            ).loc["hpc_abu_dhabi_rahimi_rec_soli_augusta"],
         }
     )
     .drop("Total")
@@ -5076,7 +5231,7 @@ axis.set_ylabel("Specific cost / USD/m$^3$")
 axis.set_title("Abu Dhabi, UAE")
 axis.yaxis.set_minor_formatter(ticker.ScalarFormatter())
 axis.yaxis.set_major_formatter(ticker.ScalarFormatter())
-axis.set_ylim(0, 40)
+axis.set_ylim(0, specific_costs_y_lim)
 axis.text(
     -0.08,
     1.1,
@@ -5087,19 +5242,23 @@ axis.text(
     va="top",
     ha="right",
 )
+axis.axhspan(
+    0.156, 0.546, alpha=0.3, color="grey", zorder=0, hatch="//", label="Grid-RO"
+)
+axis.legend()
 
 data_to_plot = (
     pd.DataFrame(
         {
             "Small": specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO).loc[
-                "hpc_gran_canaria_joo_sharp_300_eurotherm"
+                "hpc_gran_canaria_joo_sharp_soli_sti"
             ],
             "Medium": specific_costs_boxen_frame(
                 gran_canaria_el, plant=Plant.EL_NASHAR
-            ).loc["hpc_gran_canaria_el_sharp_300_eurotherm"],
+            ).loc["hpc_gran_canaria_el_sharp_insulated_augusta"],
             "Large": specific_costs_boxen_frame(
                 gran_canaria_rahimi, plant=Plant.RAHIMI
-            ).loc["hpc_gran_canaria_rahimi_sharp_300_eurotherm"],
+            ).loc["hpc_gran_canaria_rahimi_sharp_soli_augusta"],
         }
     )
     .drop("Total")
@@ -5110,7 +5269,7 @@ axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
 axis.set_title("Gando, Gran Canaria")
-axis.set_ylim(0, 40)
+axis.set_ylim(0, specific_costs_y_lim)
 axis.text(
     -0.08,
     1.1,
@@ -5122,6 +5281,10 @@ axis.text(
     ha="right",
 )
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+axis.axhspan(
+    0.292, 1.022, alpha=0.3, color="grey", zorder=0, hatch="//", label="Grid-RO"
+)
+axis.legend()
 
 data_to_plot = (
     pd.DataFrame(
@@ -5130,10 +5293,10 @@ data_to_plot = (
                 "hpc_tijuana_joo_sharp_300_eurotherm"
             ],
             "Medium": specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR).loc[
-                "hpc_tijuana_el_sharp_300_eurotherm"
+                "hpc_tijuana_el_rec_soli_eurotherm"
             ],
-            "Large": specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.JOO).loc[
-                "hpc_tijuana_rahimi_sharp_300_eurotherm"
+            "Large": specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI).loc[
+                "hpc_tijuana_rahimi_sharp_soli_augusta"
             ],
         }
     )
@@ -5144,7 +5307,7 @@ data_to_plot.plot.bar(ax=(axis := axes[1, 0]), rot=0, stacked=True)
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
-axis.set_ylim(0, 40)
+axis.set_ylim(0, specific_costs_y_lim)
 axis.set_title("Tijuana, Mexico")
 axis.text(
     -0.08,
@@ -5157,18 +5320,44 @@ axis.text(
     ha="right",
 )
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+axis.axhspan(
+    5.587,
+    17.917,
+    xmax=0.33,
+    alpha=0.3,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    label="Grid-RO",
+    lw=0,
+)
+axis.axhspan(
+    5.597,
+    5.959,
+    xmin=0.33,
+    xmax=0.67,
+    alpha=0.3,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    lw=0,
+)
+axis.axhspan(
+    1.667, 5.807, xmin=0.67, alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
+)
+axis.legend(loc="upper right")
 
 data_to_plot = (
     pd.DataFrame(
         {
             "Small": specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO).loc[
-                "hpc_la_paz_joo_sharp_300_eurotherm"
+                "hpc_la_paz_joo_sharp_soli_augusta"
             ],
             "Medium": specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR).loc[
-                "hpc_la_paz_el_sharp_300_eurotherm"
+                "hpc_la_paz_el_sharp_300_sti"
             ],
             "Large": specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI).loc[
-                "hpc_la_paz_rahimi_sharp_300_eurotherm"
+                "hpc_la_paz_rahimi_sharp_soli_eurotherm"
             ],
         }
     )
@@ -5179,7 +5368,7 @@ data_to_plot.plot.bar(ax=(axis := axes[1, 1]), rot=0, stacked=True)
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
-axis.set_ylim(0, 40)
+axis.set_ylim(0, specific_costs_y_lim)
 axis.set_title("La Paz, Mexico")
 axis.text(
     -0.08,
@@ -5192,6 +5381,374 @@ axis.text(
     ha="right",
 )
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+axis.axhspan(
+    8.289,
+    27.347,
+    xmax=0.3,
+    alpha=0.3,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    label="Grid-RO",
+    lw=0,
+)
+axis.axhspan(
+    5.587,
+    20.525,
+    xmin=0.3,
+    xmax=0.7,
+    alpha=0.3,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    lw=0,
+)
+axis.axhspan(
+    5.829, 20.372, xmin=0.7, alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
+)
+axis.legend(loc="upper right")
+
+plt.savefig(
+    "specific_costs_comparison_8.png", transparent=True, dpi=300, bbox_inches="tight"
+)
+plt.show()
+
+
+################################################################################
+# Plot a stacked-bar plot with a specific technology set's specific emissions. #
+################################################################################
+
+import math
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+fig.subplots_adjust(hspace=0.25)
+
+K_DEPTH: int = 3
+
+# WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+Y_SCALE = "linear"
+
+specific_emissions_y_lim: float = (
+    math.ceil(
+        max(
+            min(
+                specific_emissions_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)["Total"]
+            ),
+            min(
+                specific_emissions_boxen_frame(gran_canaria_joo, plant=Plant.JOO)[
+                    "Total"
+                ]
+            ),
+            min(specific_emissions_boxen_frame(tijuana_joo, plant=Plant.JOO)["Total"]),
+            min(specific_emissions_boxen_frame(la_paz_joo, plant=Plant.JOO)["Total"]),
+            min(
+                specific_emissions_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)[
+                    "Total"
+                ]
+            ),
+            min(
+                specific_emissions_boxen_frame(gran_canaria_el, plant=Plant.EL_NASHAR)[
+                    "Total"
+                ]
+            ),
+            min(
+                specific_emissions_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)[
+                    "Total"
+                ]
+            ),
+            min(
+                specific_emissions_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)[
+                    "Total"
+                ]
+            ),
+            min(
+                specific_emissions_boxen_frame(abu_dhabi_rahimi, plant=Plant.RAHIMI)[
+                    "Total"
+                ]
+            ),
+            min(
+                specific_emissions_boxen_frame(gran_canaria_rahimi, plant=Plant.RAHIMI)[
+                    "Total"
+                ]
+            ),
+            min(
+                specific_emissions_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)[
+                    "Total"
+                ]
+            ),
+            min(
+                specific_emissions_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)[
+                    "Total"
+                ]
+            ),
+        )
+        / 10
+    )
+    * 10
+)
+
+data_to_error_bar = pd.DataFrame(
+    {
+        "Small": specific_emissions_boxen_frame(abu_dhabi_joo, plant=Plant.JOO).loc[
+            "hpc_abu_dhabi_joo_sharp_300_augusta"
+        ],
+        "Medium": specific_emissions_boxen_frame(
+            abu_dhabi_el, plant=Plant.EL_NASHAR
+        ).loc["hpc_abu_dhabi_el_sharp_insulated_sti"],
+        "Large": specific_emissions_boxen_frame(
+            abu_dhabi_rahimi, plant=Plant.RAHIMI
+        ).loc["hpc_abu_dhabi_rahimi_rec_soli_augusta"],
+    }
+).transpose()
+data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
+data_to_plot.plot.bar(ax=(axis := axes[0, 0]), rot=0, stacked=True, edgecolor="none")
+axis.errorbar(
+    x=data_to_error_bar.index,
+    y=data_to_error_bar["Total"],
+    yerr=[
+        specific_emissions_boxen_frame(
+            abu_dhabi_joo, data_type=DataType.MAX, plant=Plant.JOO
+        ).loc["hpc_abu_dhabi_joo_sharp_300_augusta"]["Total"]
+        - specific_emissions_boxen_frame(
+            abu_dhabi_joo, data_type=DataType.MIN, plant=Plant.JOO
+        ).loc["hpc_abu_dhabi_joo_sharp_300_augusta"]["Total"],
+        specific_emissions_boxen_frame(
+            abu_dhabi_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
+        ).loc["hpc_abu_dhabi_el_sharp_insulated_sti"]["Total"]
+        - specific_emissions_boxen_frame(
+            abu_dhabi_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
+        ).loc["hpc_abu_dhabi_el_sharp_insulated_sti"]["Total"],
+        specific_emissions_boxen_frame(
+            abu_dhabi_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
+        ).loc["hpc_abu_dhabi_rahimi_rec_soli_augusta"]["Total"]
+        - specific_emissions_boxen_frame(
+            abu_dhabi_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
+        ).loc["hpc_abu_dhabi_rahimi_rec_soli_augusta"]["Total"],
+    ],
+    capsize=10,
+    color="#1A0801",
+    fmt="none",
+)
+axis.grid(axis="x")
+axis.set_xlabel("MED Plant")
+axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axis.set_title("Abu Dhabi, UAE")
+axis.yaxis.set_minor_formatter(ticker.ScalarFormatter())
+axis.yaxis.set_major_formatter(ticker.ScalarFormatter())
+axis.set_ylim(0, specific_emissions_y_lim)
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.axhspan(
+    0.9237, 3.233, alpha=0.3, color="grey", zorder=0, hatch="//", label="Grid-RO"
+)
+axis.legend()
+
+
+data_to_error_bar = pd.DataFrame(
+    {
+        "Small": specific_emissions_boxen_frame(gran_canaria_joo, plant=Plant.JOO).loc[
+            "hpc_gran_canaria_joo_sharp_soli_sti"
+        ],
+        "Medium": specific_emissions_boxen_frame(
+            gran_canaria_el, plant=Plant.EL_NASHAR
+        ).loc["hpc_gran_canaria_el_sharp_insulated_augusta"],
+        "Large": specific_emissions_boxen_frame(
+            gran_canaria_rahimi, plant=Plant.RAHIMI
+        ).loc["hpc_gran_canaria_rahimi_sharp_soli_augusta"],
+    }
+).transpose()
+data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
+data_to_plot.plot.bar(ax=(axis := axes[0, 1]), rot=0, stacked=True, edgecolor="none")
+axis.errorbar(
+    x=data_to_error_bar.index,
+    y=data_to_error_bar["Total"],
+    yerr=[
+        specific_emissions_boxen_frame(
+            gran_canaria_joo, data_type=DataType.MAX, plant=Plant.JOO
+        ).loc["hpc_gran_canaria_joo_sharp_soli_sti"]["Total"]
+        - specific_emissions_boxen_frame(
+            gran_canaria_joo, data_type=DataType.MIN, plant=Plant.JOO
+        ).loc["hpc_gran_canaria_joo_sharp_soli_sti"]["Total"],
+        specific_emissions_boxen_frame(
+            gran_canaria_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
+        ).loc["hpc_gran_canaria_el_sharp_insulated_augusta"]["Total"]
+        - specific_emissions_boxen_frame(
+            gran_canaria_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
+        ).loc["hpc_gran_canaria_el_sharp_insulated_augusta"]["Total"],
+        specific_emissions_boxen_frame(
+            gran_canaria_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
+        ).loc["hpc_gran_canaria_rahimi_sharp_soli_augusta"]["Total"]
+        - specific_emissions_boxen_frame(
+            gran_canaria_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
+        ).loc["hpc_gran_canaria_rahimi_sharp_soli_augusta"]["Total"],
+    ],
+    capsize=10,
+    color="#1A0801",
+    fmt="none",
+)
+axis.grid(axis="x")
+axis.set_xlabel("MED Plant")
+axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axis.set_title("Gando, Gran Canaria")
+axis.set_ylim(0, specific_emissions_y_lim)
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+axis.axhspan(
+    1.15308, 4.03579, alpha=0.3, color="grey", zorder=0, hatch="//", label="Grid-RO"
+)
+axis.legend()
+
+data_to_error_bar = pd.DataFrame(
+    {
+        "Small": specific_emissions_boxen_frame(tijuana_joo, plant=Plant.JOO).loc[
+            "hpc_tijuana_joo_sharp_300_eurotherm"
+        ],
+        "Medium": specific_emissions_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR).loc[
+            "hpc_tijuana_el_rec_soli_eurotherm"
+        ],
+        "Large": specific_emissions_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI).loc[
+            "hpc_tijuana_rahimi_sharp_soli_augusta"
+        ],
+    }
+).transpose()
+data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
+data_to_plot.plot.bar(ax=(axis := axes[1, 0]), rot=0, stacked=True, edgecolor="none")
+axis.errorbar(
+    x=data_to_error_bar.index,
+    y=data_to_error_bar["Total"],
+    yerr=[
+        specific_emissions_boxen_frame(
+            tijuana_joo, data_type=DataType.MAX, plant=Plant.JOO
+        ).loc["hpc_tijuana_joo_sharp_300_eurotherm"]["Total"]
+        - specific_emissions_boxen_frame(
+            tijuana_joo, data_type=DataType.MIN, plant=Plant.JOO
+        ).loc["hpc_tijuana_joo_sharp_300_eurotherm"]["Total"],
+        specific_emissions_boxen_frame(
+            tijuana_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
+        ).loc["hpc_tijuana_el_rec_soli_eurotherm"]["Total"]
+        - specific_emissions_boxen_frame(
+            tijuana_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
+        ).loc["hpc_tijuana_el_rec_soli_eurotherm"]["Total"],
+        specific_emissions_boxen_frame(
+            tijuana_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
+        ).loc["hpc_tijuana_rahimi_sharp_soli_augusta"]["Total"]
+        - specific_emissions_boxen_frame(
+            tijuana_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
+        ).loc["hpc_tijuana_rahimi_sharp_soli_augusta"]["Total"],
+    ],
+    capsize=10,
+    color="#1A0801",
+    fmt="none",
+)
+axis.grid(axis="x")
+axis.set_xlabel("MED Plant")
+axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axis.set_ylim(0, specific_emissions_y_lim)
+axis.set_title("Tijuana, Mexico")
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+axis.axhspan(0.62, 2.17, alpha=0.3, color="grey", zorder=0, hatch="//", label="Grid-RO")
+axis.legend()
+
+data_to_error_bar = pd.DataFrame(
+    {
+        "Small": specific_emissions_boxen_frame(la_paz_joo, plant=Plant.JOO).loc[
+            "hpc_la_paz_joo_sharp_soli_augusta"
+        ],
+        "Medium": specific_emissions_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR).loc[
+            "hpc_la_paz_el_sharp_300_sti"
+        ],
+        "Large": specific_emissions_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI).loc[
+            "hpc_la_paz_rahimi_sharp_soli_eurotherm"
+        ],
+    }
+).transpose()
+data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
+data_to_plot.plot.bar(ax=(axis := axes[1, 1]), rot=0, stacked=True, edgecolor="none")
+axis.errorbar(
+    x=data_to_error_bar.index,
+    y=data_to_error_bar["Total"],
+    yerr=[
+        specific_emissions_boxen_frame(
+            la_paz_joo, data_type=DataType.MAX, plant=Plant.JOO
+        ).loc["hpc_la_paz_joo_sharp_soli_augusta"]["Total"]
+        - specific_emissions_boxen_frame(
+            la_paz_joo, data_type=DataType.MIN, plant=Plant.JOO
+        ).loc["hpc_la_paz_joo_sharp_soli_augusta"]["Total"],
+        specific_emissions_boxen_frame(
+            la_paz_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
+        ).loc["hpc_la_paz_el_sharp_300_sti"]["Total"]
+        - specific_emissions_boxen_frame(
+            la_paz_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
+        ).loc["hpc_la_paz_el_sharp_300_sti"]["Total"],
+        specific_emissions_boxen_frame(
+            la_paz_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
+        ).loc["hpc_la_paz_rahimi_sharp_soli_eurotherm"]["Total"]
+        - specific_emissions_boxen_frame(
+            la_paz_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
+        ).loc["hpc_la_paz_rahimi_sharp_soli_eurotherm"]["Total"],
+    ],
+    capsize=10,
+    color="#1A0801",
+    fmt="none",
+)
+axis.grid(axis="x")
+axis.set_xlabel("MED Plant")
+axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axis.set_ylim(0, specific_emissions_y_lim)
+axis.set_title("La Paz, Mexico")
+axis.text(
+    -0.08,
+    1.1,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+axis.axhspan(1.78, 6.23, alpha=0.3, color="grey", zorder=0, hatch="//", label="Grid-RO")
+axis.legend()
+
+plt.savefig(
+    "specific_emissions_comparison_8.png",
+    transparent=True,
+    dpi=300,
+    bbox_inches="tight",
+)
+plt.show()
+
 
 # Plot a bar plot of the component costs broken down for each plant.
 
@@ -6062,6 +6619,8 @@ hist_plot(tijuana_el)
 # Inverter-battery sensitivity analysis #
 #########################################
 
+from matplotlib import tri
+
 # Define levels in z-axis where we want lines to appear
 levels = np.array(
     [
@@ -6101,19 +6660,21 @@ regex = re.compile(
 
 # Filter out the battery-inverter data points
 battery_inverter_data = {
-    key: value for key, value in data.items() if regex.match(key) is not None
+    key: value for key, value in full_data.items() if regex.match(key) is not None
 }
 rahimi_battery_inverter_data = {
     key: value
-    for key, value in data.items()
+    for key, value in battery_inverter_data.items()
     if regex.match(key).group("plant") == "rahimi"
 }
 el_battery_inverter_data = {
-    key: value for key, value in data.items() if "el" in regex.match(key).group("plant")
+    key: value
+    for key, value in battery_inverter_data.items()
+    if "el" in regex.match(key).group("plant")
 }
 joo_battery_inverter_data = {
     key: value
-    for key, value in data.items()
+    for key, value in battery_inverter_data.items()
     if regex.match(key).group("plant") == "joo"
 }
 
@@ -6159,7 +6720,7 @@ COLORBLIND_COLOURS: dict[str, str] = {
 }
 
 
-def _subfigure_plot(
+def _subfigure_contour_plot(
     data_to_plot,
     axis,
     figure,
@@ -6239,7 +6800,7 @@ def plot_battery_inverter_contour_map(
     fig, axes = plt.subplots(2, 2, figsize=(12, 8))
     fig.subplots_adjust(hspace=0.25)
     # Abu dhabi
-    _subfigure_plot(
+    _subfigure_contour_plot(
         data_to_plot,
         (axis := axes[0, 0]),
         fig,
@@ -6260,7 +6821,7 @@ def plot_battery_inverter_contour_map(
         ha="right",
     )
     # Gando
-    _subfigure_plot(
+    _subfigure_contour_plot(
         data_to_plot,
         (axis := axes[0, 1]),
         fig,
@@ -6281,7 +6842,7 @@ def plot_battery_inverter_contour_map(
         ha="right",
     )
     # Tijuana
-    _subfigure_plot(
+    _subfigure_contour_plot(
         data_to_plot,
         (axis := axes[1, 0]),
         fig,
@@ -6302,7 +6863,173 @@ def plot_battery_inverter_contour_map(
         ha="right",
     )
     # La Paz
-    _subfigure_plot(
+    _subfigure_contour_plot(
+        data_to_plot,
+        (axis := axes[1, 1]),
+        fig,
+        label,
+        "la_paz",
+        variable,
+        weather_conditions,
+    )
+    axis.set_title("La Paz, Mexico")
+    axis.text(
+        -0.08,
+        1.1,
+        "d.",
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+
+
+def _subfigure_line_plot(
+    data_to_plot,
+    axis,
+    figure,
+    label: str,
+    location: str,
+    variable: str,
+    weather_conditions: str = "average_weather_conditions",
+):
+    """Plot a line plot for the subfigure showing the changing electricity fractions."""
+    # Determine the x data
+
+    # Determine the various variables to plot
+    storage_fraction = [
+        entry["result"][plot_index][1]["average_weather_conditions"][0][
+            "storage_electricity_fraction"
+        ]
+        for entry in data_to_plot
+    ]
+    solar_fraction = [
+        entry["result"][plot_index][1]["average_weather_conditions"][0][
+            "solar_electricity_fraction"
+        ]
+        for entry in data_to_plot
+    ]
+    grid_fraction = [
+        entry["result"][plot_index][1]["average_weather_conditions"][0][
+            "grid_electricity_fraction"
+        ]
+        for entry in data_to_plot
+    ]
+    plt.plot(
+        x,
+        (
+            grid_line := [
+                solar_fraction[index] + grid_fraction[index] + storage_fraction[index]
+                for index in range(len(storage_fraction))
+            ]
+        ),
+        color=f"C2",
+        label="grid fraction",
+    )
+    plt.plot(
+        x,
+        (
+            solar_line := [
+                storage_fraction[index] + solar_fraction[index]
+                for index in range(len(storage_fraction))
+            ]
+        ),
+        color=f"C1",
+        label="solar fraction",
+    )
+    plt.plot(x, storage_fraction, color=f"C0", label="storage fraction")
+    plt.fill_between(
+        x, [0] * len(storage_fraction), storage_fraction, color="C0", alpha=0.7
+    )
+    plt.fill_between(x, storage_fraction, solar_line, color="C1", alpha=0.7)
+    plt.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
+    plt.xlabel("Mean grid discount rate / %/year")
+    plt.ylabel("Fractional generation of electricity demand")
+    plt.title(f"Fractional electricity sources for {title.capitalize()}")
+    plt.legend(bbox_to_anchor=(1.0, 1.0))
+    plt.xlim(-25, 25)
+    plt.savefig(
+        f"{fig_identifier}_{key}_unsmoothed_electricity_sources.png",
+        dpi=DPI,
+        transparent=True,
+        bbox_inches="tight",
+    )
+
+
+def plot_battery_inverter_line_map(
+    data_to_plot,
+    label: str,
+    variable: str,
+    weather_conditions: str = "average_weather_conditions",
+):
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+    fig.subplots_adjust(hspace=0.25)
+    # Abu dhabi
+    _subfigure_line_plot(
+        data_to_plot,
+        (axis := axes[0, 0]),
+        fig,
+        label,
+        "abu_dhabi",
+        variable,
+        weather_conditions,
+    )
+    axis.set_title("Abu Dhabi, UAE")
+    axis.text(
+        -0.08,
+        1.1,
+        "a.",
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+    # Gando
+    _subfigure_line_plot(
+        data_to_plot,
+        (axis := axes[0, 1]),
+        fig,
+        label,
+        "gran_canaria",
+        variable,
+        weather_conditions,
+    )
+    axis.set_title("Gando, Gran Canaria")
+    axis.text(
+        -0.08,
+        1.1,
+        "b.",
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+    # Tijuana
+    _subfigure_line_plot(
+        data_to_plot,
+        (axis := axes[1, 0]),
+        fig,
+        label,
+        "tijuana",
+        variable,
+        weather_conditions,
+    )
+    axis.set_title("Tijuana, Mexico")
+    axis.text(
+        -0.08,
+        1.1,
+        "c.",
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+    # La Paz
+    _subfigure_line_plot(
         data_to_plot,
         (axis := axes[1, 1]),
         fig,
@@ -6359,5 +7086,5 @@ for filename in tqdm(os.listdir("."), desc="files", unit="file"):
     with open(filename, "r", encoding="UTF-8") as f:
         data[filename] = json.load(f)
 
-with open("28_mar_23.json", "w", encoding="UTF-8") as f:
+with open("29_mar_23.json", "w", encoding="UTF-8") as f:
     json.dump(data, f)
