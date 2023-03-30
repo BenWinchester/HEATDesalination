@@ -2481,20 +2481,47 @@ for plot_index, title in enumerate(optimisation_titles):
 import json
 import numpy as np
 import os
-import yaml
 
 from tqdm import tqdm
 
-from src.heatdesalination.__utils__ import GridScheme
+from src.heatdesalination.__utils__ import GridSchemeType
 
-with open(
-    (scenarios_filepath := os.path.join("inputs", "scenarios.json")),
-    "r",
-    encoding="UTF-8",
-) as f:
-    scenarios = yaml.safe_load(f)[(scenarios_key := "scenarios")]
+# with open(
+#     (scenarios_filepath := os.path.join("inputs", "scenarios.json")),
+#     "r",
+#     encoding="UTF-8",
+# ) as f:
+#     scenarios = yaml.safe_load(f)[(scenarios_key := "scenarios")]
 
-DEFAULT_SCENARIO = scenarios[0]
+DEFAULT_SCENARIO: dict[str, int | float | str | None] = {
+    "battery": "renogy_12v_100ah",
+    "fractional_battery_cost_change": 0.0,
+    "fractional_grid_cost_change": 0.0,
+    "fractional_heat_pump_cost_change": 0.0,
+    "fractional_hw_tank_cost_change": 0.0,
+    "fractional_inverter_cost_change": 0.0,
+    "fractional_pv_cost_change": 0.0,
+    "fractional_pvt_cost_change": 0.0,
+    "fractional_st_cost_change": 0.0,
+    "grid_cost_scheme": None,
+    "heat_exchanger_efficiency": 0.4,
+    "heat_pump": "ammonia",
+    "hot_water_tank": "grant_hpmono_ind150",
+    "htf_heat_capacity": 4182.0,
+    "inverter_cost": 148.5,
+    "inverter_lifetime": 13,
+    "name": None,
+    "plant": None,
+    "pv": None,
+    "pv_degradation_rate": 0.011,
+    "pv_t": None,
+    "solar_thermal": None,
+    "water_pump": "crnf_15_1_a_ca_a_e_hqqe",
+    "fractional_water_pump_cost_change": 0.0,
+    "inverter_unit": 6,
+    "inverter_emissions": 116.75,
+    "inverter_emissions_range": 49.5
+}
 
 DEFAULT_OPTIMISATION = {
     (location := "location"): "fujairah_united_arab_emirates",
@@ -2507,10 +2534,10 @@ DEFAULT_OPTIMISATION = {
 
 # Grid cost schemes
 GRID_COST_SCHEMES = {
-    (abu_dhabi := "abu_dhabi"): GridScheme.ABU_DHABI_UAE.value,
-    (gran_canaria := "gran_canaria"): GridScheme.GRAN_CANARIA_SPAIN.value,
-    (la_paz := "la_paz"): GridScheme.LA_PAZ_MEXICO.value,
-    (tijuana := "tijuana"): GridScheme.TIJUANA_MEXICO.value,
+    (abu_dhabi := "abu_dhabi"): GridSchemeType.ABU_DHABI_UAE.value,
+    (gran_canaria := "gran_canaria"): GridSchemeType.GRAN_CANARIA_SPAIN.value,
+    (la_paz := "la_paz"): GridSchemeType.LA_PAZ_MEXICO.value,
+    (tijuana := "tijuana"): GridSchemeType.TIJUANA_MEXICO.value,
 }
 
 # The mapping between location name and the corresponding filename
@@ -2595,12 +2622,12 @@ for location_name, location_filename in tqdm(LOCATIONS.items(), desc="locations"
                     new_optimisations.append(optimisation)
 
 with open(
-    os.path.join("inputs", "ecos_optimisations_07_mar_23.json"), "w", encoding="UTF-8"
+    os.path.join("inputs", "ecos_optimisations_30_mar_23.json"), "w", encoding="UTF-8"
 ) as f:
     json.dump(new_optimisations, f)
 
 with open(os.path.join("inputs", "scenarios.json"), "w", encoding="UTF-8") as f:
-    json.dump({"scenarios": new_scenarios}, f)
+    json.dump({"scenarios": new_scenarios}, f, indent=4)
 
 
 # Code for generating ECOS sensitivity anslysis
@@ -2677,9 +2704,9 @@ for fractional_change_name in tqdm(FRACTIONAL_CHANGES, desc="fractional_changes"
                 new_optimisations.append(optimisation)
 
 INVERTER_LIFETIMES = range(1, 31, 2)
-BATTERY_NAMES = {
+BATTERY_NAMES = [
     f"renogy_12v_100ah_{cycles}_cycles" for cycles in range(100, 3100, 100)
-}
+]
 
 for inverter_lifetime in tqdm(
     INVERTER_LIFETIMES, desc="inverter lifetimes", leave=True
@@ -2699,7 +2726,7 @@ for inverter_lifetime in tqdm(
                     f"{location_name}_"
                     f"{plant.split('_')[0]}_"
                     f"sharp_400_sti_"
-                    f"{cycles*100}_batt_cycles_"
+                    f"{(cycles + 1)*100}_batt_cycles_"
                     f"{inverter_lifetime}_inverter_years"
                 )
                 scenario[name] = scenario_name
@@ -2787,7 +2814,7 @@ for heat_pump_efficiency in np.linspace(0.01, 1, 100):
 
 
 with open(os.path.join("inputs", "scenarios.json"), "w", encoding="UTF-8") as f:
-    json.dump({"scenarios": new_scenarios}, f)
+    json.dump({"scenarios": new_scenarios}, f, indent=4)
 
 with open(
     os.path.join("inputs", "optimisations_pv_degradation.json"), "w", encoding="UTF-8"
@@ -2890,7 +2917,6 @@ import pandas as pd
 import re
 import seaborn as sns
 
-from brokenaxes import brokenaxes
 from matplotlib import rc
 from matplotlib import ticker
 from typing import Any
@@ -2923,7 +2949,7 @@ colorblind_palette = sns.color_palette(
 sns.set_palette(colorblind_palette)
 
 # Read input data
-with open("29_mar_23.json", "r", encoding="UTF-8") as f:
+with open("30_mar_23.json", "r", encoding="UTF-8") as f:
     full_data = json.load(f)
 
 data = {
@@ -3040,6 +3066,7 @@ def _p_si_data(data_to_process: dict[str, Any]):
 
 
 def scenarios(data_to_process: dict[str, Any]) -> list[str]:
+    """Returns a list of all the scenarios in the input data."""
     scenarios = []
     for entry in data_to_process.keys():
         scenarios.extend(3 * [entry.split(".json")[0]])
@@ -3192,6 +3219,7 @@ def boxen_frame(
     tank_index: int | None = None,
     weather_type: str = "average_weather_conditions",
 ):
+    """Generates a dataframe containing technical outputs"""
     scenarios_map = {
         (scenario_key := "scenario"): scenarios(data_to_boxen)[::3][
             :: (3 if tank_index is not None else 1)
@@ -3218,6 +3246,7 @@ def components_boxen_frame(
     tank_index: int | None = None,
     weather_type: str = "average_weather_conditions",
 ):
+    """Generates a dataframe containing the number of components."""
     scenarios_map = {
         (scenario_key := "scenario"): scenarios(data_to_boxen)[::3][
             :: (3 if tank_index is not None else 1)
@@ -3296,14 +3325,12 @@ def costs_boxen_frame(
     return pd.DataFrame(scenarios_map).set_index(scenario_key)
 
 
-# format: off
+# fmt: off
 class DataType(enum.Enum):
     """Determines the type of data to return, whether max. or min. estimate."""
-
     MAX: str = "max"
     MEAN: str = "mean"
     MIN: str = "min"
-
 
 # format: on
 
@@ -3377,14 +3404,12 @@ def emissions_boxen_frame(
     return pd.DataFrame(scenarios_map).set_index(scenario_key)
 
 
-# format: off
+# fmt: off
 class Plant(enum.Enum):
     """Specifies which plant is being considered."""
-
     JOO: str = "joo"
     EL_NASHAR: str = "el"
     RAHIMI: str = "rahimi"
-
 
 # format: on
 
@@ -5015,6 +5040,27 @@ TANK_INDEX: int | None = None
 Y_SCALE = "linear"
 
 
+specific_costs_y_lim: float = math.ceil(
+    max(
+        min(specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)["Total"]),
+        min(specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO)["Total"]),
+        min(specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO)["Total"]),
+        min(specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO)["Total"]),
+        min(specific_costs_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)["Total"]),
+        min(
+            specific_costs_boxen_frame(gran_canaria_el, plant=Plant.EL_NASHAR)["Total"]
+        ),
+        min(specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)["Total"]),
+        min(specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)["Total"]),
+        min(specific_costs_boxen_frame(abu_dhabi_rahimi, plant=Plant.RAHIMI)["Total"]),
+        min(
+            specific_costs_boxen_frame(gran_canaria_rahimi, plant=Plant.RAHIMI)["Total"]
+        ),
+        min(specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)["Total"]),
+        min(specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)["Total"]),
+    )
+)
+
 data_to_plot = (
     pd.DataFrame(
         {
@@ -5034,14 +5080,14 @@ data_to_plot = (
     .drop("Total")
     .transpose()
 )
-data_to_plot.plot.bar(ax=(axis := axes[0, 0]), rot=0, stacked=True)
+data_to_plot.plot.bar(ax=(axis := axes[0, 0]), rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
 axis.set_title("Abu Dhabi, UAE")
 axis.yaxis.set_minor_formatter(ticker.ScalarFormatter())
 axis.yaxis.set_major_formatter(ticker.ScalarFormatter())
-axis.set_ylim(0, 7)
+axis.set_ylim(0, specific_costs_y_lim)
 axis.text(
     -0.08,
     1.1,
@@ -5074,12 +5120,12 @@ data_to_plot = (
     .drop("Total")
     .transpose()
 )
-data_to_plot.plot.bar(ax=(axis := axes[0, 1]), rot=0, stacked=True)
+data_to_plot.plot.bar(ax=(axis := axes[0, 1]), rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
 axis.set_title("Gando, Gran Canaria")
-axis.set_ylim(0, 7)
+axis.set_ylim(0, specific_costs_y_lim)
 axis.text(
     -0.08,
     1.1,
@@ -5109,11 +5155,11 @@ data_to_plot = (
     .drop("Total")
     .transpose()
 )
-data_to_plot.plot.bar(ax=(axis := axes[1, 0]), rot=0, stacked=True)
+data_to_plot.plot.bar(ax=(axis := axes[1, 0]), rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
-axis.set_ylim(0, 7)
+axis.set_ylim(0, specific_costs_y_lim)
 axis.set_title("Tijuana, Mexico")
 axis.text(
     -0.08,
@@ -5144,11 +5190,11 @@ data_to_plot = (
     .drop("Total")
     .transpose()
 )
-data_to_plot.plot.bar(ax=(axis := axes[1, 1]), rot=0, stacked=True)
+data_to_plot.plot.bar(ax=(axis := axes[1, 1]), rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
-axis.set_ylim(0, 7)
+axis.set_ylim(0, specific_costs_y_lim)
 axis.set_title("La Paz, Mexico")
 axis.text(
     -0.08,
@@ -5224,7 +5270,7 @@ data_to_plot = (
     .drop("Total")
     .transpose()
 )
-data_to_plot.plot.bar(ax=(axis := axes[0, 0]), rot=0, stacked=True)
+data_to_plot.plot.bar(ax=(axis := axes[0, 0]), rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
@@ -5264,7 +5310,7 @@ data_to_plot = (
     .drop("Total")
     .transpose()
 )
-data_to_plot.plot.bar(ax=(axis := axes[0, 1]), rot=0, stacked=True)
+data_to_plot.plot.bar(ax=(axis := axes[0, 1]), rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
@@ -5303,7 +5349,7 @@ data_to_plot = (
     .drop("Total")
     .transpose()
 )
-data_to_plot.plot.bar(ax=(axis := axes[1, 0]), rot=0, stacked=True)
+data_to_plot.plot.bar(ax=(axis := axes[1, 0]), rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
@@ -5364,7 +5410,7 @@ data_to_plot = (
     .drop("Total")
     .transpose()
 )
-data_to_plot.plot.bar(ax=(axis := axes[1, 1]), rot=0, stacked=True)
+data_to_plot.plot.bar(ax=(axis := axes[1, 1]), rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
@@ -5510,24 +5556,24 @@ axis.errorbar(
     x=data_to_error_bar.index,
     y=data_to_error_bar["Total"],
     yerr=[
-        specific_emissions_boxen_frame(
+        (specific_emissions_boxen_frame(
             abu_dhabi_joo, data_type=DataType.MAX, plant=Plant.JOO
         ).loc["hpc_abu_dhabi_joo_sharp_300_augusta"]["Total"]
         - specific_emissions_boxen_frame(
             abu_dhabi_joo, data_type=DataType.MIN, plant=Plant.JOO
-        ).loc["hpc_abu_dhabi_joo_sharp_300_augusta"]["Total"],
-        specific_emissions_boxen_frame(
+        ).loc["hpc_abu_dhabi_joo_sharp_300_augusta"]["Total"]) / 2,
+        (specific_emissions_boxen_frame(
             abu_dhabi_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
         ).loc["hpc_abu_dhabi_el_sharp_insulated_sti"]["Total"]
         - specific_emissions_boxen_frame(
             abu_dhabi_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
-        ).loc["hpc_abu_dhabi_el_sharp_insulated_sti"]["Total"],
-        specific_emissions_boxen_frame(
+        ).loc["hpc_abu_dhabi_el_sharp_insulated_sti"]["Total"]) / 2,
+        (specific_emissions_boxen_frame(
             abu_dhabi_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
         ).loc["hpc_abu_dhabi_rahimi_rec_soli_augusta"]["Total"]
         - specific_emissions_boxen_frame(
             abu_dhabi_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
-        ).loc["hpc_abu_dhabi_rahimi_rec_soli_augusta"]["Total"],
+        ).loc["hpc_abu_dhabi_rahimi_rec_soli_augusta"]["Total"]) / 2,
     ],
     capsize=10,
     color="#1A0801",
@@ -5575,24 +5621,24 @@ axis.errorbar(
     x=data_to_error_bar.index,
     y=data_to_error_bar["Total"],
     yerr=[
-        specific_emissions_boxen_frame(
+        (specific_emissions_boxen_frame(
             gran_canaria_joo, data_type=DataType.MAX, plant=Plant.JOO
         ).loc["hpc_gran_canaria_joo_sharp_soli_sti"]["Total"]
         - specific_emissions_boxen_frame(
             gran_canaria_joo, data_type=DataType.MIN, plant=Plant.JOO
-        ).loc["hpc_gran_canaria_joo_sharp_soli_sti"]["Total"],
-        specific_emissions_boxen_frame(
+        ).loc["hpc_gran_canaria_joo_sharp_soli_sti"]["Total"])  / 2,
+        (specific_emissions_boxen_frame(
             gran_canaria_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
         ).loc["hpc_gran_canaria_el_sharp_insulated_augusta"]["Total"]
         - specific_emissions_boxen_frame(
             gran_canaria_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
-        ).loc["hpc_gran_canaria_el_sharp_insulated_augusta"]["Total"],
-        specific_emissions_boxen_frame(
+        ).loc["hpc_gran_canaria_el_sharp_insulated_augusta"]["Total"]) / 2,
+        (specific_emissions_boxen_frame(
             gran_canaria_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
         ).loc["hpc_gran_canaria_rahimi_sharp_soli_augusta"]["Total"]
         - specific_emissions_boxen_frame(
             gran_canaria_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
-        ).loc["hpc_gran_canaria_rahimi_sharp_soli_augusta"]["Total"],
+        ).loc["hpc_gran_canaria_rahimi_sharp_soli_augusta"]["Total"]) / 2,
     ],
     capsize=10,
     color="#1A0801",
@@ -5638,24 +5684,24 @@ axis.errorbar(
     x=data_to_error_bar.index,
     y=data_to_error_bar["Total"],
     yerr=[
-        specific_emissions_boxen_frame(
+        (specific_emissions_boxen_frame(
             tijuana_joo, data_type=DataType.MAX, plant=Plant.JOO
         ).loc["hpc_tijuana_joo_sharp_300_eurotherm"]["Total"]
         - specific_emissions_boxen_frame(
             tijuana_joo, data_type=DataType.MIN, plant=Plant.JOO
-        ).loc["hpc_tijuana_joo_sharp_300_eurotherm"]["Total"],
-        specific_emissions_boxen_frame(
+        ).loc["hpc_tijuana_joo_sharp_300_eurotherm"]["Total"]) / 2,
+        (specific_emissions_boxen_frame(
             tijuana_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
         ).loc["hpc_tijuana_el_rec_soli_eurotherm"]["Total"]
         - specific_emissions_boxen_frame(
             tijuana_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
-        ).loc["hpc_tijuana_el_rec_soli_eurotherm"]["Total"],
-        specific_emissions_boxen_frame(
+        ).loc["hpc_tijuana_el_rec_soli_eurotherm"]["Total"]) / 2,
+        (specific_emissions_boxen_frame(
             tijuana_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
         ).loc["hpc_tijuana_rahimi_sharp_soli_augusta"]["Total"]
         - specific_emissions_boxen_frame(
             tijuana_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
-        ).loc["hpc_tijuana_rahimi_sharp_soli_augusta"]["Total"],
+        ).loc["hpc_tijuana_rahimi_sharp_soli_augusta"]["Total"]) / 2,
     ],
     capsize=10,
     color="#1A0801",
@@ -5699,24 +5745,24 @@ axis.errorbar(
     x=data_to_error_bar.index,
     y=data_to_error_bar["Total"],
     yerr=[
-        specific_emissions_boxen_frame(
+        s(pecific_emissions_boxen_frame(
             la_paz_joo, data_type=DataType.MAX, plant=Plant.JOO
         ).loc["hpc_la_paz_joo_sharp_soli_augusta"]["Total"]
         - specific_emissions_boxen_frame(
             la_paz_joo, data_type=DataType.MIN, plant=Plant.JOO
-        ).loc["hpc_la_paz_joo_sharp_soli_augusta"]["Total"],
-        specific_emissions_boxen_frame(
+        ).loc["hpc_la_paz_joo_sharp_soli_augusta"]["Total"]) / 2,
+        (specific_emissions_boxen_frame(
             la_paz_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
         ).loc["hpc_la_paz_el_sharp_300_sti"]["Total"]
         - specific_emissions_boxen_frame(
             la_paz_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
-        ).loc["hpc_la_paz_el_sharp_300_sti"]["Total"],
-        specific_emissions_boxen_frame(
+        ).loc["hpc_la_paz_el_sharp_300_sti"]["Total"]) / 2,
+        (specific_emissions_boxen_frame(
             la_paz_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
         ).loc["hpc_la_paz_rahimi_sharp_soli_eurotherm"]["Total"]
         - specific_emissions_boxen_frame(
             la_paz_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
-        ).loc["hpc_la_paz_rahimi_sharp_soli_eurotherm"]["Total"],
+        ).loc["hpc_la_paz_rahimi_sharp_soli_eurotherm"]["Total"]) / 2,
     ],
     capsize=10,
     color="#1A0801",
@@ -7086,5 +7132,6 @@ for filename in tqdm(os.listdir("."), desc="files", unit="file"):
     with open(filename, "r", encoding="UTF-8") as f:
         data[filename] = json.load(f)
 
-with open("29_mar_23.json", "w", encoding="UTF-8") as f:
+with open("30_mar_23.json", "w", encoding="UTF-8") as f:
     json.dump(data, f)
+
