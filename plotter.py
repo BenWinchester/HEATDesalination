@@ -5098,6 +5098,10 @@ axis.text(
     va="top",
     ha="right",
 )
+axis.axhspan(
+    0.156, 0.546, alpha=0.3, color="grey", zorder=0, hatch="//", label="Grid-RO"
+)
+axis.legend()
 
 data_to_plot = (
     pd.DataFrame(
@@ -5137,6 +5141,10 @@ axis.text(
     ha="right",
 )
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+axis.axhspan(
+    0.292, 1.022, alpha=0.3, color="grey", zorder=0, hatch="//", label="Grid-RO"
+)
+axis.legend()
 
 data_to_plot = (
     pd.DataFrame(
@@ -5172,6 +5180,32 @@ axis.text(
     ha="right",
 )
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+axis.axhspan(
+    5.587,
+    17.917,
+    xmax=(1 / 3),
+    alpha=0.3,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    label="Grid-RO",
+    lw=0,
+)
+axis.axhspan(
+    5.597,
+    5.959,
+    xmin=(1 / 3),
+    xmax=(2 / 3),
+    alpha=0.3,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    lw=0,
+)
+axis.axhspan(
+    1.667, 5.807, xmin=(2 / 3), alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
+)
+axis.legend(loc="upper right")
 
 data_to_plot = (
     pd.DataFrame(
@@ -5207,6 +5241,33 @@ axis.text(
     ha="right",
 )
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+axis.axhspan(
+    8.289,
+    27.347,
+    xmax=(1 / 3),
+    alpha=0.3,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    label="Grid-RO",
+    lw=0,
+)
+axis.axhspan(
+    5.587,
+    20.525,
+    xmin=(1 / 3),
+    xmax=(2 / 3),
+    alpha=0.3,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    lw=0,
+)
+axis.axhspan(
+    5.829, 20.372, xmin=(2 / 3), alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
+)
+axis.legend(loc="upper right")
+
 
 plt.savefig(
     "specific_costs_comparison_8.png", transparent=True, dpi=300, bbox_inches="tight"
@@ -5369,7 +5430,7 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 axis.axhspan(
     5.587,
     17.917,
-    xmax=0.33,
+    xmax=(1 / 3),
     alpha=0.3,
     color="grey",
     zorder=0,
@@ -5380,8 +5441,8 @@ axis.axhspan(
 axis.axhspan(
     5.597,
     5.959,
-    xmin=0.33,
-    xmax=0.67,
+    xmin=(1 / 3),
+    xmax=(2 / 3),
     alpha=0.3,
     color="grey",
     zorder=0,
@@ -5389,7 +5450,7 @@ axis.axhspan(
     lw=0,
 )
 axis.axhspan(
-    1.667, 5.807, xmin=0.67, alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
+    1.667, 5.807, xmin=(2 / 3), alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
 )
 axis.legend(loc="upper right")
 
@@ -5430,7 +5491,7 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 axis.axhspan(
     8.289,
     27.347,
-    xmax=0.3,
+    xmax=(1 / 3),
     alpha=0.3,
     color="grey",
     zorder=0,
@@ -5441,8 +5502,8 @@ axis.axhspan(
 axis.axhspan(
     5.587,
     20.525,
-    xmin=0.3,
-    xmax=0.7,
+    xmin=(1 / 3),
+    xmax=(2 / 3),
     alpha=0.3,
     color="grey",
     zorder=0,
@@ -5450,7 +5511,7 @@ axis.axhspan(
     lw=0,
 )
 axis.axhspan(
-    5.829, 20.372, xmin=0.7, alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
+    5.829, 20.372, xmin=(2 / 3), alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
 )
 axis.legend(loc="upper right")
 
@@ -5745,7 +5806,7 @@ axis.errorbar(
     x=data_to_error_bar.index,
     y=data_to_error_bar["Total"],
     yerr=[
-        s(pecific_emissions_boxen_frame(
+        (specific_emissions_boxen_frame(
             la_paz_joo, data_type=DataType.MAX, plant=Plant.JOO
         ).loc["hpc_la_paz_joo_sharp_soli_augusta"]["Total"]
         - specific_emissions_boxen_frame(
@@ -7117,6 +7178,7 @@ fig.colorbar(contours, ax=ax)
 
 import os
 import json
+import shutil
 
 from typing import Any
 
@@ -7132,6 +7194,7 @@ for filename in tqdm(os.listdir("."), desc="files", unit="file"):
     with open(filename, "r", encoding="UTF-8") as f:
         data[filename] = json.load(f)
 
-with open("30_mar_23.json", "w", encoding="UTF-8") as f:
+with open("30_mar_23_v2.json", "w", encoding="UTF-8") as f:
     json.dump(data, f)
 
+shutil.copy2("30_mar_23_v2.json", os.path.join("..", "30_mar_23_v2.json"))
