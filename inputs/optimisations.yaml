@@ -104,7 +104,7 @@ optimisations:
   - bounds:
       battery_capacity:
         # fixed: 0
-        initial_guess: 10
+        initial_guess: 600
         min: 0
         max: null
       buffer_tank_capacity:
@@ -119,17 +119,17 @@ optimisations:
         max: null
       pv:
         # fixed: 0
-        initial_guess: 150  # Number of PV collectors
+        initial_guess: 6000  # Number of PV collectors
         min: 0
         max: null
       pv_t:
         # fixed: 1262
-        initial_guess: 150  # Number of PV-T collectors
+        initial_guess: 6000  # Number of PV-T collectors
         min: 0
         max: null
       st:
         # fixed: 0
-        initial_guess: 100  # Number of solar-thermal collectors
+        initial_guess: 6000  # Number of solar-thermal collectors
         min: 0
         max: null
       start_hour:
@@ -144,7 +144,7 @@ optimisations:
   - bounds:
       battery_capacity:
         # fixed: 0
-        initial_guess: 10
+        initial_guess: 5000
         min: 0
         max: null
       buffer_tank_capacity:
@@ -154,22 +154,22 @@ optimisations:
         max: null  # [m^3]
       mass_flow_rate:
         # fixed: 80
-        initial_guess: 100  # [kg/s]
+        initial_guess: 25000  # [kg/s]
         min: 2
         max: null
       pv:
         # fixed: 0
-        initial_guess: 150  # Number of PV collectors
+        initial_guess: 25000  # Number of PV collectors
         min: 0
         max: null
       pv_t:
         # fixed: 1262
-        initial_guess: 150  # Number of PV-T collectors
+        initial_guess: 25000  # Number of PV-T collectors
         min: 0
         max: null
       st:
         # fixed: 0
-        initial_guess: 100  # Number of solar-thermal collectors
+        initial_guess: 25000  # Number of solar-thermal collectors
         min: 0
         max: null
       start_hour:
