@@ -2949,7 +2949,7 @@ colorblind_palette = sns.color_palette(
 sns.set_palette(colorblind_palette)
 
 # Read input data
-with open("31_mar_23.json", "r", encoding="UTF-8") as f:
+with open("31_mar_23_v2.json", "r", encoding="UTF-8") as f:
     full_data = json.load(f)
 
 data = {
@@ -3623,13 +3623,122 @@ axis.text(
 
 
 plt.savefig(
-    "fractions_9.png",
+    "fractions_10.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
 )
 
 plt.show()
+
+# TEMPLATE Do not plot
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+K_DEPTH: int = 4
+WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+# WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+
+y_axis_label: str = "Specific cost / \$/m$^3$"
+
+sns.boxenplot(
+    boxen_frame(abu_dhabi_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    ax=(axis := axes[0, 0]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("Abu Dhabi, UAE")
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8),
+    1.05,
+)
+axis.set_ylabel(y_axis_label)
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+sns.boxenplot(
+    boxen_frame(gran_canaria_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    ax=(axis := axes[0, 1]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("Gando, Gran Canaria")
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8),
+    1.05,
+)
+axis.set_ylabel(y_axis_label)
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+sns.boxenplot(
+    boxen_frame(tijuana_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    ax=(axis := axes[1, 0]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("Tijuana, Mexico")
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
+)
+axis.set_ylabel(y_axis_label)
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+sns.boxenplot(
+    boxen_frame(la_paz_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    ax=(axis := axes[1, 1]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("La Paz, Mexico")
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
+)
+axis.set_ylabel(y_axis_label)
+axis.text(
+    -0.08,
+    1.1,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+
+plt.savefig(
+    "template_for_letters_and_axis_labels.png",
+    transparent=True,
+    dpi=1200,
+    bbox_inches="tight",
+)
+
+plt.show()
+
 
 # Components boxen plot by location
 
@@ -3852,26 +3961,26 @@ _post_process_split_axes(upper_axis, lower_axis)
 # Add grey rectangles
 rect=mpatches.Rectangle(
     [axes[0, 0].get_position().x0,axes[1, 0].get_position().y1], axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0, axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
-    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
 upper_axis.add_patch(rect)
 rect=mpatches.Rectangle(
     [axes[3, 0].get_position().x0,axes[4, 0].get_position().y1], axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0, axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
-    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
 upper_axis.add_patch(rect)
 rect=mpatches.Rectangle(
     [axes[0, 1].get_position().x0,axes[1, 1].get_position().y1], axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0, axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
-    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
 upper_axis.add_patch(rect)
 rect=mpatches.Rectangle(
     [axes[3, 1].get_position().x0,axes[4, 1].get_position().y1], axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0, axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
-    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
 upper_axis.add_patch(rect)
 
 
 plt.savefig(
-    "joo_component_sizes_9.png",
+    "joo_component_sizes_10.png",
     transparent=True,
-    dpi=300,
+    dpi=1200,
     bbox_inches="tight",
 )
 
@@ -3965,9 +4074,9 @@ for axis in (upper_axis, lower_axis):
     )
 
 upper_axis.set_title("Abu Dhabi, UAE")
-upper_axis.text(
-    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
-)
+# upper_axis.text(
+#     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+# )
 lower_axis.set_xlabel("Component")
 upper_axis.text(
     -0.1,
@@ -4000,9 +4109,9 @@ for axis in (upper_axis, lower_axis):
     )
 
 upper_axis.set_title("Gando, Gran Canaria")
-upper_axis.text(
-    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
-)
+# upper_axis.text(
+#     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+# )
 lower_axis.set_xlabel("Component")
 upper_axis.text(
     -0.1,
@@ -4035,9 +4144,9 @@ for axis in (upper_axis, lower_axis):
     )
 
 upper_axis.set_title("Tijuana, Mexico")
-upper_axis.text(
-    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
-)
+# upper_axis.text(
+#     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+# )
 lower_axis.set_xlabel("Component")
 upper_axis.text(
     -0.1,
@@ -4070,9 +4179,9 @@ for axis in (upper_axis, lower_axis):
 
 upper_axis.set_title("La Paz, Mexico")
 lower_axis.set_xlabel("Component")
-upper_axis.text(
-    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
-)
+# upper_axis.text(
+#     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+# )
 upper_axis.text(
     -0.1,
     y_text_position,
@@ -4090,26 +4199,26 @@ _post_process_split_axes(upper_axis, lower_axis)
 # Add grey rectangles
 rect=mpatches.Rectangle(
     [axes[0, 0].get_position().x0,axes[1, 0].get_position().y1], axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0, axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
-    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
 upper_axis.add_patch(rect)
 rect=mpatches.Rectangle(
     [axes[3, 0].get_position().x0,axes[4, 0].get_position().y1], axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0, axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
-    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
 upper_axis.add_patch(rect)
 rect=mpatches.Rectangle(
     [axes[0, 1].get_position().x0,axes[1, 1].get_position().y1], axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0, axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
-    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
 upper_axis.add_patch(rect)
 rect=mpatches.Rectangle(
     [axes[3, 1].get_position().x0,axes[4, 1].get_position().y1], axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0, axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
-    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
 upper_axis.add_patch(rect)
 
 
 plt.savefig(
-    "el_nashar_component_sizes_9.png",
+    "el_nashar_component_sizes_10.png",
     transparent=True,
-    dpi=300,
+    dpi=600,
     bbox_inches="tight",
 )
 
@@ -4202,9 +4311,9 @@ for axis in (upper_axis, lower_axis):
     )
 
 upper_axis.set_title("Abu Dhabi, UAE")
-upper_axis.text(
-    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
-)
+# upper_axis.text(
+#     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+# )
 lower_axis.set_xlabel("Component")
 upper_axis.text(
     -0.12,
@@ -4240,9 +4349,9 @@ for axis in (upper_axis, lower_axis):
     )
 
 upper_axis.set_title("Gando, Gran Canaria")
-upper_axis.text(
-    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
-)
+# upper_axis.text(
+#     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+# )
 lower_axis.set_xlabel("Component")
 upper_axis.text(
     -0.12,
@@ -4287,9 +4396,9 @@ for axis in (upper_axis, lower_axis):
     )
 
 upper_axis.set_title("Tijuana, Mexico")
-upper_axis.text(
-    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
-)
+# upper_axis.text(
+#     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+# )
 lower_axis.set_xlabel("Component")
 upper_axis.text(
     -0.12,
@@ -4322,9 +4431,9 @@ for axis in (upper_axis, lower_axis):
 
 upper_axis.set_title("La Paz, Mexico")
 lower_axis.set_xlabel("Component")
-upper_axis.text(
-    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
-)
+# upper_axis.text(
+#     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+# )
 upper_axis.text(
     -0.12,
     y_text_position,
@@ -4385,26 +4494,26 @@ _post_process_split_axes(upper_axis, lower_axis)
 # Add grey rectangles
 rect=mpatches.Rectangle(
     [axes[0, 0].get_position().x0,axes[1, 0].get_position().y1], axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0, axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
-    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
 upper_axis.add_patch(rect)
 rect=mpatches.Rectangle(
     [axes[3, 0].get_position().x0,axes[4, 0].get_position().y1], axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0, axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
-    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
 upper_axis.add_patch(rect)
 rect=mpatches.Rectangle(
     [axes[0, 1].get_position().x0,axes[1, 1].get_position().y1], axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0, axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
-    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
 upper_axis.add_patch(rect)
 rect=mpatches.Rectangle(
     [axes[3, 1].get_position().x0,axes[4, 1].get_position().y1], axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0, axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
-    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
 upper_axis.add_patch(rect)
 
 
 plt.savefig(
-    "rahimi_component_sizes_9.png",
+    "rahimi_component_sizes_10.png",
     transparent=True,
-    dpi=300,
+    dpi=1200,
     bbox_inches="tight",
 )
 
@@ -4974,6 +5083,12 @@ upper_axis.set_ylim(*upper_y_limits)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
+    if axis == upper_axis:
+        sns.boxenplot(
+            specific_cost_by_tech_frame(gran_canaria_joo, cost_key="Total", plant=PLANT) * - 100,
+            ax=axis,
+            k_depth=K_DEPTH,
+        )
     sns.boxenplot(
         specific_cost_by_tech_frame(gran_canaria_joo, cost_key="Total", plant=PLANT),
         ax=axis,
@@ -5081,7 +5196,7 @@ rect=mpatches.Rectangle(
 upper_axis.add_patch(rect)
 
 plt.savefig(
-    "joo_specific_technology_types_9.png",
+    "joo_specific_technology_types_10.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -5303,7 +5418,7 @@ axes[0, 1].get_shared_x_axes().join(axes[0, 1], axes[1, 1])
 
 
 max_y_lim = math.ceil(max(
-    max(specific_cost_by_tech_frame(abu_dhabi_rahiimi, cost_key="Total", plant=PLANT).max()),
+    max(specific_cost_by_tech_frame(abu_dhabi_rahimi, cost_key="Total", plant=PLANT).max()),
     max(specific_cost_by_tech_frame(tijuana_rahimi, cost_key="Total", plant=PLANT).max()),
     max(specific_cost_by_tech_frame(gran_canaria_rahimi, cost_key="Total", plant=PLANT).max()),
     max(specific_cost_by_tech_frame(la_paz_rahimi, cost_key="Total", plant=PLANT).max()),
@@ -5317,7 +5432,7 @@ min_y_lim = math.floor(min(
 
 # min_y_lim = 6
 
-break_y_lim = 8.75
+break_y_lim = 3.4
 # break_y_lim = 8
 
 lower_y_limits = (min_y_lim, break_y_lim)
@@ -5468,7 +5583,7 @@ rect=mpatches.Rectangle(
 upper_axis.add_patch(rect)
 
 plt.savefig(
-    "rahimi_specific_technology_types_9.png",
+    "rahimi_specific_technology_types_10.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -5630,9 +5745,9 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 
 plt.savefig(
-    "all_plant_specific_technology_types_6.png",
+    "all_plant_specific_technology_types_10.png",
     transparent=True,
-    dpi=300,
+    dpi=1200,
     bbox_inches="tight",
 )
 
@@ -5849,26 +5964,27 @@ TANK_INDEX: int | None = None
 Y_SCALE = "linear"
 
 
-specific_costs_y_lim: float = math.ceil(
-    max(
-        min(specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)["Total"]),
-        min(specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO)["Total"]),
-        min(specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO)["Total"]),
-        min(specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO)["Total"]),
-        min(specific_costs_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)["Total"]),
-        min(
-            specific_costs_boxen_frame(gran_canaria_el, plant=Plant.EL_NASHAR)["Total"]
-        ),
-        min(specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)["Total"]),
-        min(specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)["Total"]),
-        min(specific_costs_boxen_frame(abu_dhabi_rahimi, plant=Plant.RAHIMI)["Total"]),
-        min(
-            specific_costs_boxen_frame(gran_canaria_rahimi, plant=Plant.RAHIMI)["Total"]
-        ),
-        min(specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)["Total"]),
-        min(specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)["Total"]),
-    )
-)
+# specific_costs_y_lim: float = math.ceil(
+#     max(
+#         min(specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)["Total"]),
+#         min(specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO)["Total"]),
+#         min(specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO)["Total"]),
+#         min(specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO)["Total"]),
+#         min(specific_costs_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)["Total"]),
+#         min(
+#             specific_costs_boxen_frame(gran_canaria_el, plant=Plant.EL_NASHAR)["Total"]
+#         ),
+#         min(specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)["Total"]),
+#         min(specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)["Total"]),
+#         min(specific_costs_boxen_frame(abu_dhabi_rahimi, plant=Plant.RAHIMI)["Total"]),
+#         min(
+#             specific_costs_boxen_frame(gran_canaria_rahimi, plant=Plant.RAHIMI)["Total"]
+#         ),
+#         min(specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)["Total"]),
+#         min(specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)["Total"]),
+#     )
+# )
+specific_costs_y_lim: float = 9
 
 data_to_plot = (
     pd.DataFrame(
@@ -6079,7 +6195,7 @@ axis.legend(loc="upper right")
 
 
 plt.savefig(
-    "specific_costs_comparison_8.png", transparent=True, dpi=300, bbox_inches="tight"
+    "specific_costs_comparison_10.png", transparent=True, dpi=300, bbox_inches="tight"
 )
 
 plt.show()
@@ -6122,6 +6238,7 @@ specific_costs_y_lim: float = math.ceil(
         min(specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)["Total"]),
     )
 )
+# specific_costs_y_lim: float = 9
 
 data_to_plot = (
     pd.DataFrame(
@@ -8078,7 +8195,7 @@ fig.colorbar(contours, ax=ax)
 import matplotlib.ticker as mticker
 
 _, axis = plt.subplots(figsize=(12, 8))
-axis.set(xscale="log", yscale="log")
+# axis.set(xscale="log", yscale="log")
 abu_dhabi_joo_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)["Total"], "emissions": specific_emissions_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)["Total"]})
 gran_canaria_joo_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO)["Total"], "emissions": specific_emissions_boxen_frame(gran_canaria_joo, plant=Plant.JOO)["Total"]})
 tijuana_joo_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO)["Total"], "emissions": specific_emissions_boxen_frame(tijuana_joo, plant=Plant.JOO)["Total"]})
@@ -8185,7 +8302,7 @@ data: dict[str, Any] = {}
 @contextmanager
 def ensure_optimisations_output_dir() -> Generator[None, None, None]:
     """Ensure that we're in the optimisations output directory."""
-    if not os.path.basename(os.getcwd()) == (optimisations_directory:="optimisation_outputs"):
+    if (optimisations_directory:="optimisation_outputs") not in os.path.basename(os.getcwd()):
         os.chdir(optimisations_directory)
     yield
     if os.path.basename(os.getcwd()) == optimisations_directory:
@@ -8199,7 +8316,6 @@ with ensure_optimisations_output_dir():
             continue
         with open(filename, "r", encoding="UTF-8") as f:
             data[filename] = json.load(f)
-    with open((output_filename:="31_mar_23.json"), "w", encoding="UTF-8") as f:
+    with open((output_filename:="31_mar_23_v2.json"), "w", encoding="UTF-8") as f:
         json.dump(data, f)
     shutil.copy2(output_filename, os.path.join("..", output_filename))
-
