@@ -2520,7 +2520,7 @@ DEFAULT_SCENARIO: dict[str, int | float | str | None] = {
     "fractional_water_pump_cost_change": 0.0,
     "inverter_unit": 6,
     "inverter_emissions": 116.75,
-    "inverter_emissions_range": 49.5
+    "inverter_emissions_range": 49.5,
 }
 
 DEFAULT_OPTIMISATION = {
@@ -2949,7 +2949,7 @@ colorblind_palette = sns.color_palette(
 sns.set_palette(colorblind_palette)
 
 # Read input data
-with open("30_mar_23.json", "r", encoding="UTF-8") as f:
+with open("31_mar_23.json", "r", encoding="UTF-8") as f:
     full_data = json.load(f)
 
 data = {
@@ -3623,7 +3623,7 @@ axis.text(
 
 
 plt.savefig(
-    "fractions_8.png",
+    "fractions_9.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -3633,6 +3633,7 @@ plt.show()
 
 # Components boxen plot by location
 
+import matplotlib.patches as mpatches
 
 def _post_process_split_axes(ax1, ax2):
     """
@@ -3695,7 +3696,7 @@ max_y_lim = max(
     max(
         (
             max_frame := components_boxen_frame(
-                la_paz_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+                tijuana_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
             )
         )["PV"]
     ),
@@ -3704,7 +3705,7 @@ max_y_lim = max(
 )
 
 # Determine the break y limit
-break_y_lim = 500
+break_y_lim = 750
 y_text_position: float = 2.25
 y_x_label_coord: float = -1.25
 
@@ -3844,11 +3845,31 @@ upper_axis.text(
     va="top",
     ha="right",
 )
+
 sns.despine(top=True)
 _post_process_split_axes(upper_axis, lower_axis)
 
+# Add grey rectangles
+rect=mpatches.Rectangle(
+    [axes[0, 0].get_position().x0,axes[1, 0].get_position().y1], axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0, axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
+    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[3, 0].get_position().x0,axes[4, 0].get_position().y1], axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0, axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
+    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[0, 1].get_position().x0,axes[1, 1].get_position().y1], axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0, axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
+    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[3, 1].get_position().x0,axes[4, 1].get_position().y1], axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0, axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
+    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+
+
 plt.savefig(
-    "joo_component_sizes_7.png",
+    "joo_component_sizes_9.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -3884,6 +3905,33 @@ max_y_lim = max(
     max(
         (
             max_frame := components_boxen_frame(
+                abu_dhabi_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+            )
+        )["PV"]
+    ),
+    max(max_frame["PV-T"]),
+    max(max_frame["Solar-thermal"]),
+    max(
+        (
+            max_frame := components_boxen_frame(
+                gran_canaria_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+            )
+        )["PV"]
+    ),
+    max(max_frame["PV-T"]),
+    max(max_frame["Solar-thermal"]),
+    max(
+        (
+            max_frame := components_boxen_frame(
+                tijuana_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+            )
+        )["PV"]
+    ),
+    max(max_frame["PV-T"]),
+    max(max_frame["Solar-thermal"]),
+    max(
+        (
+            max_frame := components_boxen_frame(
                 la_paz_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
             )
         )["PV"]
@@ -3893,7 +3941,7 @@ max_y_lim = max(
 )
 
 # Determine the break y limit
-break_y_lim = 5000
+break_y_lim = 1600
 y_text_position: float = 2.25
 y_x_label_coord: float = -1.35
 
@@ -3943,9 +3991,6 @@ lower_axis.set_ylim(*lower_y_limits)
 
 # for axis in (upper_axis, lower_axis):
 for axis in (upper_axis, lower_axis):
-    if axis == upper_axis:
-        axis.xaxis.grid(False)
-        continue
     sns.boxenplot(
         components_boxen_frame(
             gran_canaria_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
@@ -3981,22 +4026,6 @@ lower_axis.set_ylim(*lower_y_limits)
 
 
 for axis in (upper_axis, lower_axis):
-    if axis == upper_axis:
-        tijuana_components_boxen_frame = components_boxen_frame(
-            tijuana_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
-        )
-        tijuana_components_boxen_frame["Batteries"] = [0] * len(
-            tijuana_components_boxen_frame
-        )
-        tijuana_components_boxen_frame["PV-T"] = [0] * len(
-            tijuana_components_boxen_frame
-        )
-        sns.boxenplot(
-            tijuana_components_boxen_frame,
-            ax=axis,
-            k_depth=K_DEPTH,
-        )
-        continue
     sns.boxenplot(
         components_boxen_frame(
             tijuana_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
@@ -4057,8 +4086,28 @@ upper_axis.text(
 sns.despine(top=True)
 _post_process_split_axes(upper_axis, lower_axis)
 
+
+# Add grey rectangles
+rect=mpatches.Rectangle(
+    [axes[0, 0].get_position().x0,axes[1, 0].get_position().y1], axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0, axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
+    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[3, 0].get_position().x0,axes[4, 0].get_position().y1], axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0, axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
+    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[0, 1].get_position().x0,axes[1, 1].get_position().y1], axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0, axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
+    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[3, 1].get_position().x0,axes[4, 1].get_position().y1], axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0, axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
+    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+
+
 plt.savefig(
-    "el_nashar_component_sizes_7.png",
+    "el_nashar_component_sizes_9.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -4090,7 +4139,7 @@ fig.subplots_adjust(hspace=0, wspace=0.25)
 
 axes[2, 0].set_visible(False)
 axes[2, 1].set_visible(False)
-y_label_coord: int = int(-5.5 * 10**5)
+y_label_coord: int = int(-10**5)
 
 axes[0, 0].get_shared_x_axes().join(axes[0, 0], axes[1, 0])
 axes[3, 0].get_shared_x_axes().join(axes[3, 0], axes[4, 0])
@@ -4129,7 +4178,7 @@ max_y_lim = max(
 )
 
 # Determine the break y limit
-break_y_lim = 2 * 10**5
+break_y_lim = 4 * 10**4
 y_text_position: float = 2.25
 y_x_label_coord: float = -1.35
 
@@ -4333,8 +4382,27 @@ _post_process_split_axes(upper_axis, lower_axis)
 #     ha="right",
 # )
 
+# Add grey rectangles
+rect=mpatches.Rectangle(
+    [axes[0, 0].get_position().x0,axes[1, 0].get_position().y1], axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0, axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
+    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[3, 0].get_position().x0,axes[4, 0].get_position().y1], axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0, axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
+    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[0, 1].get_position().x0,axes[1, 1].get_position().y1], axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0, axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
+    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[3, 1].get_position().x0,axes[4, 1].get_position().y1], axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0, axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
+    ec='k', fc='grey', hatch="//", alpha=0.3, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+
+
 plt.savefig(
-    "rahimi_component_sizes_7.png",
+    "rahimi_component_sizes_9.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -4549,13 +4617,14 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 
 plt.savefig(
-    "joo_technology_types_6.png", transparent=True, dpi=300, bbox_inches="tight"
+    "joo_technology_types_9.png", transparent=True, dpi=300, bbox_inches="tight"
 )
 
 plt.show()
 
 # Specific cost technology types
 
+# JOO
 fig, axes = plt.subplots(2, 2, figsize=(12, 8))
 fig.subplots_adjust(hspace=0.25)
 
@@ -4661,7 +4730,7 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 
 plt.savefig(
-    "joo_specific_technology_types_6.png",
+    "joo_specific_technology_types_9.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -4669,6 +4738,746 @@ plt.savefig(
 
 plt.show()
 
+
+# El-Nashar
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+fig.subplots_adjust(hspace=0.25)
+
+K_DEPTH: int = 3
+PLANT: Plant = Plant.EL_NASHAR
+# WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+Y_SCALE = "linear"
+
+sns.boxenplot(
+    specific_cost_by_tech_frame(abu_dhabi_el, cost_key="Total", plant=PLANT),
+    ax=(axis := axes[0, 0]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("Abu Dhabi, UAE")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+ax.yaxis.set_minor_formatter(ticker.ScalarFormatter())
+ax.yaxis.set_major_formatter(ticker.ScalarFormatter())
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+sns.boxenplot(
+    specific_cost_by_tech_frame(gran_canaria_el, cost_key="Total", plant=PLANT),
+    ax=(axis := axes[0, 1]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("Gando, Gran Canaria")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+sns.boxenplot(
+    specific_cost_by_tech_frame(tijuana_el, cost_key="Total", plant=PLANT),
+    ax=(axis := axes[1, 0]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("Tijuana, Mexico")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+sns.boxenplot(
+    specific_cost_by_tech_frame(la_paz_el, cost_key="Total", plant=PLANT),
+    ax=(axis := axes[1, 1]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("La Paz, Mexico")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+
+# axis.set_title("La Paz, Mexico")
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+
+plt.savefig(
+    "el_nashar_specific_technology_types_9.png",
+    transparent=True,
+    dpi=300,
+    bbox_inches="tight",
+)
+
+plt.show()
+
+
+# Broken specific costs by technology types
+
+def _post_process_split_axes(ax1, ax2):
+    """
+    Function to post-process the joining of axes.
+    Adapted from:
+        https://matplotlib.org/stable/gallery/subplots_axes_and_figures/broken_axis.html
+    """
+    # hide the spines between ax and ax2
+    ax1.spines.bottom.set_visible(False)
+    ax1.spines.top.set_visible(False)
+    ax2.spines.top.set_visible(False)
+    ax1.tick_params(
+        labeltop=False, labelbottom=False
+    )  # don't put tick labels at the top
+    ax2.xaxis.tick_bottom()
+    # Now, let's turn towards the cut-out slanted lines.
+    # We create line objects in axes coordinates, in which (0,0), (0,1),
+    # (1,0), and (1,1) are the four corners of the axes.
+    # The slanted lines themselves are markers at those locations, such that the
+    # lines keep their angle and position, independent of the axes size or scale
+    # Finally, we need to disable clipping.
+    d = 0.5  # proportion of vertical to horizontal extent of the slanted line
+    kwargs = dict(
+        marker=[(-1, -d), (1, d)],
+        markersize=12,
+        linestyle="none",
+        color="k",
+        mec="k",
+        mew=1,
+        clip_on=False,
+    )
+    ax1.plot([0], [0], transform=ax1.transAxes, **kwargs)
+    ax2.plot([0], [1], transform=ax2.transAxes, **kwargs)
+
+
+K_DEPTH: int = 3
+PLANT: Plant = Plant.JOO
+# WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+Y_SCALE = "linear"
+
+# Joo Plot
+gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.4, 1, 1]}
+fig, axes = plt.subplots(5, 2, figsize=(12, 8), gridspec_kw=gridspec)
+fig.subplots_adjust(hspace=0, wspace=0.25)
+
+axes[2, 0].set_visible(False)
+axes[2, 1].set_visible(False)
+y_label_coord: int = int(-850)
+
+axes[0, 0].get_shared_x_axes().join(axes[0, 0], axes[1, 0])
+axes[3, 0].get_shared_x_axes().join(axes[3, 0], axes[4, 0])
+axes[3, 1].get_shared_x_axes().join(axes[3, 1], axes[4, 1])
+axes[0, 1].get_shared_x_axes().join(axes[0, 1], axes[1, 1])
+
+
+max_y_lim = math.ceil(max(
+    max(specific_cost_by_tech_frame(abu_dhabi_joo, cost_key="Total", plant=PLANT).max()),
+    max(specific_cost_by_tech_frame(tijuana_joo, cost_key="Total", plant=PLANT).max()),
+    max(specific_cost_by_tech_frame(gran_canaria_joo, cost_key="Total", plant=PLANT).max()),
+    max(specific_cost_by_tech_frame(la_paz_joo, cost_key="Total", plant=PLANT).max()),
+) / 5) * 5
+# min_y_lim = math.floor(max(
+#     min(specific_cost_by_tech_frame(abu_dhabi_joo, cost_key="Total", plant=PLANT).min()),
+#     min(specific_cost_by_tech_frame(tijuana_joo, cost_key="Total", plant=PLANT).min()),
+#     min(specific_cost_by_tech_frame(gran_canaria_joo, cost_key="Total", plant=PLANT).min()),
+#     min(specific_cost_by_tech_frame(la_paz_joo, cost_key="Total", plant=PLANT).min()),
+# ) / 1) * 1
+
+min_y_lim = 6
+
+break_y_lim = 12
+# break_y_lim = 8
+
+lower_y_limits = (min_y_lim, break_y_lim)
+upper_y_limits = (break_y_lim + 0.1, max_y_lim)
+
+# Abu Dhabi Plot
+upper_axis = axes[0, 0]
+lower_axis = axes[1, 0]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        specific_cost_by_tech_frame(abu_dhabi_joo, cost_key="Total", plant=PLANT),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Abu Dhabi, UAE")
+lower_axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    y_text_position,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# Gran Canaria Plot
+upper_axis = axes[0, 1]
+lower_axis = axes[1, 1]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        specific_cost_by_tech_frame(gran_canaria_joo, cost_key="Total", plant=PLANT),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Gando, Gran Canaria")
+lower_axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    y_text_position,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# axis.set_title("La Paz, Mexico")
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+# Tijuana Plot
+upper_axis = axes[3, 0]
+lower_axis = axes[4, 0]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        specific_cost_by_tech_frame(tijuana_joo, cost_key="Total", plant=PLANT),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Tijuana, Mexico")
+lower_axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    y_text_position,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# axis.set_title("La Paz, Mexico")
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+# La Paz Plot
+upper_axis = axes[3, 1]
+lower_axis = axes[4, 1]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        specific_cost_by_tech_frame(la_paz_joo, cost_key="Total", plant=PLANT),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("La Paz, Mexico")
+lower_axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    y_text_position,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# Add grey rectangles
+rect=mpatches.Rectangle(
+    [axes[0, 0].get_position().x0,axes[1, 0].get_position().y1], axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0, axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
+    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[3, 0].get_position().x0,axes[4, 0].get_position().y1], axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0, axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
+    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[0, 1].get_position().x0,axes[1, 1].get_position().y1], axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0, axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
+    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[3, 1].get_position().x0,axes[4, 1].get_position().y1], axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0, axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
+    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+
+plt.savefig(
+    "joo_specific_technology_types_9.png",
+    transparent=True,
+    dpi=300,
+    bbox_inches="tight",
+)
+
+# axis.set_title("La Paz, Mexico")
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+plt.show()
+
+
+# El-Nashar Plot
+gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.4, 1, 1]}
+fig, axes = plt.subplots(5, 2, figsize=(12, 8), gridspec_kw=gridspec)
+fig.subplots_adjust(hspace=0, wspace=0.25)
+
+axes[2, 0].set_visible(False)
+axes[2, 1].set_visible(False)
+y_label_coord: int = int(-850)
+
+axes[0, 0].get_shared_x_axes().join(axes[0, 0], axes[1, 0])
+axes[3, 0].get_shared_x_axes().join(axes[3, 0], axes[4, 0])
+axes[3, 1].get_shared_x_axes().join(axes[3, 1], axes[4, 1])
+axes[0, 1].get_shared_x_axes().join(axes[0, 1], axes[1, 1])
+
+
+max_y_lim = math.ceil(max(
+    max(specific_cost_by_tech_frame(abu_dhabi_el, cost_key="Total", plant=PLANT).max()),
+    max(specific_cost_by_tech_frame(tijuana_el, cost_key="Total", plant=PLANT).max()),
+    max(specific_cost_by_tech_frame(gran_canaria_el, cost_key="Total", plant=PLANT).max()),
+    max(specific_cost_by_tech_frame(la_paz_el, cost_key="Total", plant=PLANT).max()),
+) / 5) * 5
+min_y_lim = math.floor(max(
+    min(specific_cost_by_tech_frame(abu_dhabi_joo, cost_key="Total", plant=PLANT).min()),
+    min(specific_cost_by_tech_frame(tijuana_joo, cost_key="Total", plant=PLANT).min()),
+    min(specific_cost_by_tech_frame(gran_canaria_joo, cost_key="Total", plant=PLANT).min()),
+    min(specific_cost_by_tech_frame(la_paz_joo, cost_key="Total", plant=PLANT).min()),
+) / 1) * 1
+
+# min_y_lim = 6
+
+break_y_lim = 12
+# break_y_lim = 8
+
+lower_y_limits = (min_y_lim, break_y_lim)
+upper_y_limits = (break_y_lim + 0.1, max_y_lim)
+
+# Abu Dhabi Plot
+upper_axis = axes[0, 0]
+lower_axis = axes[1, 0]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        specific_cost_by_tech_frame(abu_dhabi_el, cost_key="Total", plant=PLANT),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Abu Dhabi, UAE")
+lower_axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    y_text_position,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# Gran Canaria Plot
+upper_axis = axes[0, 1]
+lower_axis = axes[1, 1]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        specific_cost_by_tech_frame(gran_canaria_el, cost_key="Total", plant=PLANT),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Gando, Gran Canaria")
+lower_axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    y_text_position,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# axis.set_title("La Paz, Mexico")
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+# Tijuana Plot
+upper_axis = axes[3, 0]
+lower_axis = axes[4, 0]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        specific_cost_by_tech_frame(tijuana_el, cost_key="Total", plant=PLANT),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Tijuana, Mexico")
+lower_axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    y_text_position,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# axis.set_title("La Paz, Mexico")
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+# La Paz Plot
+upper_axis = axes[3, 1]
+lower_axis = axes[4, 1]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        specific_cost_by_tech_frame(la_paz_el, cost_key="Total", plant=PLANT),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("La Paz, Mexico")
+lower_axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    y_text_position,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# Add grey rectangles
+rect=mpatches.Rectangle(
+    [axes[0, 0].get_position().x0,axes[1, 0].get_position().y1], axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0, axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
+    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[3, 0].get_position().x0,axes[4, 0].get_position().y1], axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0, axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
+    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[0, 1].get_position().x0,axes[1, 1].get_position().y1], axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0, axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
+    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[3, 1].get_position().x0,axes[4, 1].get_position().y1], axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0, axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
+    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+
+plt.savefig(
+    "el_nashar_specific_technology_types_9.png",
+    transparent=True,
+    dpi=300,
+    bbox_inches="tight",
+)
+
+# axis.set_title("La Paz, Mexico")
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+plt.show()
+
+
+# Rahimi Plot
+PLANT: Plant = Plant.RAHIMI
+gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.4, 1, 1]}
+fig, axes = plt.subplots(5, 2, figsize=(12, 8), gridspec_kw=gridspec)
+fig.subplots_adjust(hspace=0, wspace=0.25)
+
+axes[2, 0].set_visible(False)
+axes[2, 1].set_visible(False)
+y_label_coord: int = int(-850)
+
+axes[0, 0].get_shared_x_axes().join(axes[0, 0], axes[1, 0])
+axes[3, 0].get_shared_x_axes().join(axes[3, 0], axes[4, 0])
+axes[3, 1].get_shared_x_axes().join(axes[3, 1], axes[4, 1])
+axes[0, 1].get_shared_x_axes().join(axes[0, 1], axes[1, 1])
+
+
+max_y_lim = math.ceil(max(
+    max(specific_cost_by_tech_frame(abu_dhabi_rahiimi, cost_key="Total", plant=PLANT).max()),
+    max(specific_cost_by_tech_frame(tijuana_rahimi, cost_key="Total", plant=PLANT).max()),
+    max(specific_cost_by_tech_frame(gran_canaria_rahimi, cost_key="Total", plant=PLANT).max()),
+    max(specific_cost_by_tech_frame(la_paz_rahimi, cost_key="Total", plant=PLANT).max()),
+) / 5) * 5
+min_y_lim = math.floor(min(
+    min(specific_cost_by_tech_frame(abu_dhabi_rahimi, cost_key="Total", plant=PLANT).min()),
+    min(specific_cost_by_tech_frame(tijuana_rahimi, cost_key="Total", plant=PLANT).min()),
+    min(specific_cost_by_tech_frame(gran_canaria_rahimi, cost_key="Total", plant=PLANT).min()),
+    min(specific_cost_by_tech_frame(la_paz_rahimi, cost_key="Total", plant=PLANT).min()),
+) / 0.5) * 0.5
+
+# min_y_lim = 6
+
+break_y_lim = 8.75
+# break_y_lim = 8
+
+lower_y_limits = (min_y_lim, break_y_lim)
+upper_y_limits = (break_y_lim + 0.1, max_y_lim)
+
+# Abu Dhabi Plot
+upper_axis = axes[0, 0]
+lower_axis = axes[1, 0]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        specific_cost_by_tech_frame(abu_dhabi_rahimi, cost_key="Total", plant=PLANT),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Abu Dhabi, UAE")
+lower_axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    y_text_position,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# Gran Canaria Plot
+upper_axis = axes[0, 1]
+lower_axis = axes[1, 1]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        specific_cost_by_tech_frame(gran_canaria_rahimi, cost_key="Total", plant=PLANT),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Gando, Gran Canaria")
+lower_axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    y_text_position,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# axis.set_title("La Paz, Mexico")
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+# Tijuana Plot
+upper_axis = axes[3, 0]
+lower_axis = axes[4, 0]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        specific_cost_by_tech_frame(tijuana_rahimi, cost_key="Total", plant=PLANT),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("Tijuana, Mexico")
+lower_axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    y_text_position,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# axis.set_title("La Paz, Mexico")
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+# La Paz Plot
+upper_axis = axes[3, 1]
+lower_axis = axes[4, 1]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.boxenplot(
+        specific_cost_by_tech_frame(la_paz_rahimi, cost_key="Total", plant=PLANT),
+        ax=axis,
+        k_depth=K_DEPTH,
+    )
+
+upper_axis.set_title("La Paz, Mexico")
+lower_axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    y_text_position,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# Add grey rectangles
+rect=mpatches.Rectangle(
+    [axes[0, 0].get_position().x0,axes[1, 0].get_position().y1], axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0, axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
+    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[3, 0].get_position().x0,axes[4, 0].get_position().y1], axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0, axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
+    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[0, 1].get_position().x0,axes[1, 1].get_position().y1], axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0, axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
+    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+rect=mpatches.Rectangle(
+    [axes[3, 1].get_position().x0,axes[4, 1].get_position().y1], axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0, axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
+    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+upper_axis.add_patch(rect)
+
+plt.savefig(
+    "rahimi_specific_technology_types_9.png",
+    transparent=True,
+    dpi=300,
+    bbox_inches="tight",
+)
+
+# axis.set_title("La Paz, Mexico")
+# axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
+
+plt.show()
 
 # All-plants specific technology type plot
 
@@ -5098,6 +5907,10 @@ axis.text(
     va="top",
     ha="right",
 )
+axis.axhspan(
+    0.156, 0.546, alpha=0.3, color="grey", zorder=0, hatch="//", label="Grid-RO"
+)
+axis.legend()
 
 data_to_plot = (
     pd.DataFrame(
@@ -5137,6 +5950,10 @@ axis.text(
     ha="right",
 )
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+axis.axhspan(
+    0.292, 1.022, alpha=0.3, color="grey", zorder=0, hatch="//", label="Grid-RO"
+)
+axis.legend()
 
 data_to_plot = (
     pd.DataFrame(
@@ -5172,6 +5989,32 @@ axis.text(
     ha="right",
 )
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+axis.axhspan(
+    5.587,
+    17.917,
+    xmax=(1 / 3),
+    alpha=0.3,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    label="Grid-RO",
+    lw=0,
+)
+axis.axhspan(
+    5.597,
+    5.959,
+    xmin=(1 / 3),
+    xmax=(2 / 3),
+    alpha=0.3,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    lw=0,
+)
+axis.axhspan(
+    1.667, 5.807, xmin=(2 / 3), alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
+)
+axis.legend(loc="upper right")
 
 data_to_plot = (
     pd.DataFrame(
@@ -5207,6 +6050,33 @@ axis.text(
     ha="right",
 )
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+axis.axhspan(
+    8.289,
+    27.347,
+    xmax=(1 / 3),
+    alpha=0.3,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    label="Grid-RO",
+    lw=0,
+)
+axis.axhspan(
+    5.587,
+    20.525,
+    xmin=(1 / 3),
+    xmax=(2 / 3),
+    alpha=0.3,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    lw=0,
+)
+axis.axhspan(
+    5.829, 20.372, xmin=(2 / 3), alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
+)
+axis.legend(loc="upper right")
+
 
 plt.savefig(
     "specific_costs_comparison_8.png", transparent=True, dpi=300, bbox_inches="tight"
@@ -5369,7 +6239,7 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 axis.axhspan(
     5.587,
     17.917,
-    xmax=0.33,
+    xmax=(1 / 3),
     alpha=0.3,
     color="grey",
     zorder=0,
@@ -5380,8 +6250,8 @@ axis.axhspan(
 axis.axhspan(
     5.597,
     5.959,
-    xmin=0.33,
-    xmax=0.67,
+    xmin=(1 / 3),
+    xmax=(2 / 3),
     alpha=0.3,
     color="grey",
     zorder=0,
@@ -5389,7 +6259,7 @@ axis.axhspan(
     lw=0,
 )
 axis.axhspan(
-    1.667, 5.807, xmin=0.67, alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
+    1.667, 5.807, xmin=(2 / 3), alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
 )
 axis.legend(loc="upper right")
 
@@ -5430,7 +6300,7 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 axis.axhspan(
     8.289,
     27.347,
-    xmax=0.3,
+    xmax=(1 / 3),
     alpha=0.3,
     color="grey",
     zorder=0,
@@ -5441,8 +6311,8 @@ axis.axhspan(
 axis.axhspan(
     5.587,
     20.525,
-    xmin=0.3,
-    xmax=0.7,
+    xmin=(1 / 3),
+    xmax=(2 / 3),
     alpha=0.3,
     color="grey",
     zorder=0,
@@ -5450,7 +6320,7 @@ axis.axhspan(
     lw=0,
 )
 axis.axhspan(
-    5.829, 20.372, xmin=0.7, alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
+    5.829, 20.372, xmin=(2 / 3), alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
 )
 axis.legend(loc="upper right")
 
@@ -5745,7 +6615,7 @@ axis.errorbar(
     x=data_to_error_bar.index,
     y=data_to_error_bar["Total"],
     yerr=[
-        s(pecific_emissions_boxen_frame(
+        (specific_emissions_boxen_frame(
             la_paz_joo, data_type=DataType.MAX, plant=Plant.JOO
         ).loc["hpc_la_paz_joo_sharp_soli_augusta"]["Total"]
         - specific_emissions_boxen_frame(
@@ -6931,76 +7801,169 @@ def plot_battery_inverter_contour_map(
     )
 
 
-def _subfigure_line_plot(
-    data_to_plot,
-    axis,
-    figure,
-    label: str,
-    location: str,
-    variable: str,
-    weather_conditions: str = "average_weather_conditions",
-):
-    """Plot a line plot for the subfigure showing the changing electricity fractions."""
-    # Determine the x data
-
+def _subfigure_line_plot(data_to_plot, location: str, plant: Plant, fixed_battery_lifetime: float | None,
+        fixed_inverter_lifetime: float | None,
+        weather_conditions: str,
+        axis) -> None:
+    plant_index = {
+        Plant.JOO: 0,
+        Plant.EL_NASHAR: 1,
+        Plant.RAHIMI: 2
+    }[plant]
+    battery_lifetimes = [
+        float(regex.match(key).group("batt_cycles"))
+        for key in data_to_plot
+        if regex.match(key).group("location") == location
+    ]
+    inverter_lifetimes = [
+        float(regex.match(key).group("inverter_lifetime"))
+        for key in data_to_plot
+        if regex.match(key).group("location") == location
+    ]
     # Determine the various variables to plot
     storage_fraction = [
-        entry["result"][plot_index][1]["average_weather_conditions"][0][
+        entry[plant_index][1]["average_weather_conditions"][0][
             "storage_electricity_fraction"
         ]
-        for entry in data_to_plot
+        for key, entry in data_to_plot.items()
+        if regex.match(key).group("location") == location
     ]
     solar_fraction = [
-        entry["result"][plot_index][1]["average_weather_conditions"][0][
+        entry[plant_index][1]["average_weather_conditions"][0][
             "solar_electricity_fraction"
         ]
-        for entry in data_to_plot
+        for key, entry in data_to_plot.items()
+        if regex.match(key).group("location") == location
     ]
     grid_fraction = [
-        entry["result"][plot_index][1]["average_weather_conditions"][0][
+        entry[plant_index][1]["average_weather_conditions"][0][
             "grid_electricity_fraction"
         ]
-        for entry in data_to_plot
+        for key, entry in data_to_plot.items()
+        if regex.match(key).group("location") == location
     ]
-    plt.plot(
+    # Use the fixed battery and inverter lifetimes
+    data = pd.DataFrame({
+        (battery_key:="battery_lifetimes"): battery_lifetimes,
+        (inverter_key:="inverter_lifetimes"): inverter_lifetimes,
+        (storage_key:="storage_fraction"): storage_fraction,
+        (solar_key:="solar_fraction"): solar_fraction,
+        (grid_key:="grid_fraction"): grid_fraction
+        })
+    if fixed_battery_lifetime is not None:
+        data = data[data[battery_key] == fixed_battery_lifetime].sort_values(inverter_key)
+        x = data[inverter_key]
+        x_label: str = "Inverter lifetime / years"
+    elif fixed_inverter_lifetime is not None:
+        data = data[data[inverter_key] == fixed_inverter_lifetime].sort_values(battery_key)
+        x = data[battery_key]
+        x_label: str = "Battery cycle lifetime / cycles"
+    else:
+        raise Exception("Must specify battery or lifetime fixed value for line plot.")
+    data = data.reset_index(drop=True)
+    axis.plot(
         x,
         (
             grid_line := [
-                solar_fraction[index] + grid_fraction[index] + storage_fraction[index]
-                for index in range(len(storage_fraction))
+                data[solar_key][index] + data[grid_key][index] + data[storage_key][index]
+                for index in range(len(x))
             ]
         ),
         color=f"C2",
         label="grid fraction",
     )
-    plt.plot(
+    axis.plot(
         x,
         (
             solar_line := [
-                storage_fraction[index] + solar_fraction[index]
-                for index in range(len(storage_fraction))
+                data[storage_key][index] + data[solar_key][index]
+                for index in range(len(x))
             ]
         ),
         color=f"C1",
         label="solar fraction",
     )
-    plt.plot(x, storage_fraction, color=f"C0", label="storage fraction")
-    plt.fill_between(
-        x, [0] * len(storage_fraction), storage_fraction, color="C0", alpha=0.7
+    axis.plot(x, data[storage_key], color=f"C0", label="storage fraction")
+    axis.fill_between(
+        x, [0] * len(x), data[storage_key], color="C0", alpha=0.7
     )
-    plt.fill_between(x, storage_fraction, solar_line, color="C1", alpha=0.7)
-    plt.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
-    plt.xlabel("Mean grid discount rate / %/year")
-    plt.ylabel("Fractional generation of electricity demand")
-    plt.title(f"Fractional electricity sources for {title.capitalize()}")
-    plt.legend(bbox_to_anchor=(1.0, 1.0))
-    plt.xlim(-25, 25)
+    axis.fill_between(x, data[storage_key], solar_line, color="C1", alpha=0.7)
+    axis.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
+    axis.set_xlabel(x_label)
+    axis.set_ylabel("Fractional generation of electricity demand")
+    axis.set_title(f"{location.capitalize()}")
+    axis.text(
+        -0.08,
+        1.1,
+        {"abu_dhabi": "a.", "gran_canaria": "b.", "tijuana": "c.", "la_paz": "d."}[location],
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+    axis.legend()
+
+
+def plot_battery_inverter_line_plot(
+    data_to_plot,
+    *,
+    plant: Plant,
+    save_fig_name: str,
+    fixed_battery_lifetime: float | None = None,
+    fixed_inverter_lifetime: float | None = None,
+    weather_conditions: str = "average_weather_conditions",
+):
+    """Plot a line plot for the subfigure showing the changing electricity fractions."""
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+    fig.subplots_adjust(hspace=0.25)
+    # Abu dhabi
+    _subfigure_line_plot(
+        data_to_plot,
+        "abu_dhabi",
+        plant,
+        fixed_battery_lifetime,
+        fixed_inverter_lifetime,
+        weather_conditions,
+        axis=axes[0, 0],
+    )
+    # Gran Canaria
+    _subfigure_line_plot(
+        data_to_plot,
+        "gran_canaria",
+        plant,
+        fixed_battery_lifetime,
+        fixed_inverter_lifetime,
+        weather_conditions,
+        axis=axes[0, 1],
+    )
+    # Tijuana
+    _subfigure_line_plot(
+        data_to_plot,
+        "tijuana",
+        plant,
+        fixed_battery_lifetime,
+        fixed_inverter_lifetime,
+        weather_conditions,
+        axis=axes[1, 0],
+    )
+    # La Paz
+    _subfigure_line_plot(
+        data_to_plot,
+        "la_paz",
+        plant,
+        fixed_battery_lifetime,
+        fixed_inverter_lifetime,
+        weather_conditions,
+        axis=axes[1, 1],
+    )
     plt.savefig(
-        f"{fig_identifier}_{key}_unsmoothed_electricity_sources.png",
+        f"{save_fig_name}_unsmoothed_electricity_sources.png",
         dpi=DPI,
         transparent=True,
         bbox_inches="tight",
     )
+    plt.show()
 
 
 def plot_battery_inverter_line_map(
@@ -7096,7 +8059,6 @@ def plot_battery_inverter_line_map(
         ha="right",
     )
 
-
 plt.show()
 
 batt_uniq, batt_index = np.unique(battery_lifetimes, return_inverse=True)
@@ -7111,27 +8073,133 @@ contours = (ax := axes[0, 0]).contourf(
 )
 fig.colorbar(contours, ax=ax)
 
+# Costs-emissions scatter plot
+# JOO
+import matplotlib.ticker as mticker
+
+_, axis = plt.subplots(figsize=(12, 8))
+axis.set(xscale="log", yscale="log")
+abu_dhabi_joo_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)["Total"], "emissions": specific_emissions_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)["Total"]})
+gran_canaria_joo_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO)["Total"], "emissions": specific_emissions_boxen_frame(gran_canaria_joo, plant=Plant.JOO)["Total"]})
+tijuana_joo_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO)["Total"], "emissions": specific_emissions_boxen_frame(tijuana_joo, plant=Plant.JOO)["Total"]})
+la_paz_joo_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO)["Total"], "emissions": specific_emissions_boxen_frame(la_paz_joo, plant=Plant.JOO)["Total"]})
+
+axis.scatter(
+    (frame:=abu_dhabi_joo_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Abu Dhabi"
+)
+axis.scatter(
+    (frame:=gran_canaria_joo_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Gran Canaria"
+)
+axis.scatter(
+    (frame:=tijuana_joo_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Tijuana"
+)
+axis.scatter(
+    (frame:=la_paz_joo_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="La Paz"
+)
+
+axis.set_xlabel("Specific cost / USD/m$^3$")
+axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axis.set_title("Smallest-capacity plant")
+locmin = mticker.LogLocator(base=10, subs=np.arange(0.1,10,0.1),numticks=100)
+
+axis.legend()
+
+plt.show()
+
+# El-Nashar
+_, axis = plt.subplots(figsize=(12, 8))
+axis.set(xscale="log", yscale="log")
+
+abu_dhabi_el_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)["Total"], "emissions": specific_emissions_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)["Total"]})
+gran_canaria_el_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(gran_canaria_el, plant=Plant.EL_NASHAR)["Total"], "emissions": specific_emissions_boxen_frame(gran_canaria_el, plant=Plant.EL_NASHAR)["Total"]})
+tijuana_el_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)["Total"], "emissions": specific_emissions_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)["Total"]})
+la_paz_el_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)["Total"], "emissions": specific_emissions_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)["Total"]})
+
+axis.scatter(
+    (frame:=abu_dhabi_el_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Abu Dhabi"
+)
+axis.scatter(
+    (frame:=gran_canaria_el_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Gran Canaria"
+)
+axis.scatter(
+    (frame:=tijuana_el_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Tijuana"
+)
+axis.scatter(
+    (frame:=la_paz_el_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="La Paz"
+)
+
+axis.set_xlabel("Specific cost / USD/m$^3$")
+axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axis.set_title("Medium-capacity plant")
+
+axis.legend()
+
+plt.show()
+
+# Rahimi
+_, axis = plt.subplots(figsize=(12, 8))
+axis.set(xscale="log", yscale="log")
+
+abu_dhabi_rahimi_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(abu_dhabi_rahimi, plant=Plant.RAHIMI)["Total"], "emissions": specific_emissions_boxen_frame(abu_dhabi_rahimi, plant=Plant.RAHIMI)["Total"]})
+gran_canaria_rahimi_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(gran_canaria_rahimi, plant=Plant.RAHIMI)["Total"], "emissions": specific_emissions_boxen_frame(gran_canaria_rahimi, plant=Plant.RAHIMI)["Total"]})
+tijuana_rahimi_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)["Total"], "emissions": specific_emissions_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)["Total"]})
+la_paz_rahimi_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)["Total"], "emissions": specific_emissions_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)["Total"]})
+
+axis.scatter(
+    (frame:=abu_dhabi_rahimi_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Abu Dhabi"
+)
+axis.scatter(
+    (frame:=gran_canaria_rahimi_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Gran Canaria"
+)
+axis.scatter(
+    (frame:=tijuana_rahimi_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Tijuana"
+)
+axis.scatter(
+    (frame:=la_paz_rahimi_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="La Paz"
+)
+
+axis.set_xlabel("Specific cost / USD/m$^3$")
+axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axis.set_title("Largest-capacity plant")
+locmin = mticker.LogLocator(base=10, subs=np.arange(0.1,1,0.1),numticks=10)
+
+axis.legend()
+
+plt.show()
+
 ##########################
 # HPC Combination script #
 ##########################
 
 import os
 import json
+import shutil
 
-from typing import Any
+from contextlib import contextmanager
+from typing import Any, Generator
 
 from tqdm import tqdm
 
 data: dict[str, Any] = {}
 
-for filename in tqdm(os.listdir("."), desc="files", unit="file"):
-    if "feb" in filename:
-        continue
-    if "mar" in filename:
-        continue
-    with open(filename, "r", encoding="UTF-8") as f:
-        data[filename] = json.load(f)
+@contextmanager
+def ensure_optimisations_output_dir() -> Generator[None, None, None]:
+    """Ensure that we're in the optimisations output directory."""
+    if not os.path.basename(os.getcwd()) == (optimisations_directory:="optimisation_outputs"):
+        os.chdir(optimisations_directory)
+    yield
+    if os.path.basename(os.getcwd()) == optimisations_directory:
+        os.chdir("..")
 
-with open("30_mar_23.json", "w", encoding="UTF-8") as f:
-    json.dump(data, f)
+with ensure_optimisations_output_dir():
+    for filename in tqdm(os.listdir("."), desc="files", unit="file"):
+        if "feb" in filename:
+            continue
+        if "mar" in filename:
+            continue
+        with open(filename, "r", encoding="UTF-8") as f:
+            data[filename] = json.load(f)
+    with open((output_filename:="31_mar_23.json"), "w", encoding="UTF-8") as f:
+        json.dump(data, f)
+    shutil.copy2(output_filename, os.path.join("..", output_filename))
 
