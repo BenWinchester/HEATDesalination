@@ -3332,7 +3332,7 @@ class DataType(enum.Enum):
     MEAN: str = "mean"
     MIN: str = "min"
 
-# format: on
+# fmt: on
 
 
 DATA_TYPE_TO_ENTRY_INDEX: dict[DataType, int] = {
@@ -3411,7 +3411,7 @@ class Plant(enum.Enum):
     EL_NASHAR: str = "el"
     RAHIMI: str = "rahimi"
 
-# format: on
+# fmt: on
 
 
 def specific_costs_boxen_frame(
@@ -3744,6 +3744,7 @@ plt.show()
 
 import matplotlib.patches as mpatches
 
+
 def _post_process_split_axes(ax1, ax2):
     """
     Function to post-process the joining of axes.
@@ -3959,21 +3960,53 @@ sns.despine(top=True)
 _post_process_split_axes(upper_axis, lower_axis)
 
 # Add grey rectangles
-rect=mpatches.Rectangle(
-    [axes[0, 0].get_position().x0,axes[1, 0].get_position().y1], axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0, axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
-    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[0, 0].get_position().x0, axes[1, 0].get_position().y1],
+    axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0,
+    axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[3, 0].get_position().x0,axes[4, 0].get_position().y1], axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0, axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
-    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[3, 0].get_position().x0, axes[4, 0].get_position().y1],
+    axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0,
+    axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[0, 1].get_position().x0,axes[1, 1].get_position().y1], axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0, axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
-    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[0, 1].get_position().x0, axes[1, 1].get_position().y1],
+    axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0,
+    axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[3, 1].get_position().x0,axes[4, 1].get_position().y1], axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0, axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
-    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[3, 1].get_position().x0, axes[4, 1].get_position().y1],
+    axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0,
+    axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
 
 
@@ -4197,21 +4230,53 @@ _post_process_split_axes(upper_axis, lower_axis)
 
 
 # Add grey rectangles
-rect=mpatches.Rectangle(
-    [axes[0, 0].get_position().x0,axes[1, 0].get_position().y1], axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0, axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
-    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[0, 0].get_position().x0, axes[1, 0].get_position().y1],
+    axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0,
+    axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[3, 0].get_position().x0,axes[4, 0].get_position().y1], axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0, axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
-    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[3, 0].get_position().x0, axes[4, 0].get_position().y1],
+    axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0,
+    axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[0, 1].get_position().x0,axes[1, 1].get_position().y1], axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0, axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
-    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[0, 1].get_position().x0, axes[1, 1].get_position().y1],
+    axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0,
+    axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[3, 1].get_position().x0,axes[4, 1].get_position().y1], axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0, axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
-    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[3, 1].get_position().x0, axes[4, 1].get_position().y1],
+    axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0,
+    axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
 
 
@@ -4248,7 +4313,7 @@ fig.subplots_adjust(hspace=0, wspace=0.25)
 
 axes[2, 0].set_visible(False)
 axes[2, 1].set_visible(False)
-y_label_coord: int = int(-10**5)
+y_label_coord: int = int(-(10**5))
 
 axes[0, 0].get_shared_x_axes().join(axes[0, 0], axes[1, 0])
 axes[3, 0].get_shared_x_axes().join(axes[3, 0], axes[4, 0])
@@ -4492,21 +4557,53 @@ _post_process_split_axes(upper_axis, lower_axis)
 # )
 
 # Add grey rectangles
-rect=mpatches.Rectangle(
-    [axes[0, 0].get_position().x0,axes[1, 0].get_position().y1], axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0, axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
-    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[0, 0].get_position().x0, axes[1, 0].get_position().y1],
+    axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0,
+    axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[3, 0].get_position().x0,axes[4, 0].get_position().y1], axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0, axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
-    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[3, 0].get_position().x0, axes[4, 0].get_position().y1],
+    axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0,
+    axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[0, 1].get_position().x0,axes[1, 1].get_position().y1], axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0, axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
-    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[0, 1].get_position().x0, axes[1, 1].get_position().y1],
+    axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0,
+    axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[3, 1].get_position().x0,axes[4, 1].get_position().y1], axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0, axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
-    ec='k', fc='grey', alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[3, 1].get_position().x0, axes[4, 1].get_position().y1],
+    axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0,
+    axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
 
 
@@ -4966,6 +5063,7 @@ plt.show()
 
 # Broken specific costs by technology types
 
+
 def _post_process_split_axes(ax1, ax2):
     """
     Function to post-process the joining of axes.
@@ -5024,12 +5122,34 @@ axes[3, 1].get_shared_x_axes().join(axes[3, 1], axes[4, 1])
 axes[0, 1].get_shared_x_axes().join(axes[0, 1], axes[1, 1])
 
 
-max_y_lim = math.ceil(max(
-    max(specific_cost_by_tech_frame(abu_dhabi_joo, cost_key="Total", plant=PLANT).max()),
-    max(specific_cost_by_tech_frame(tijuana_joo, cost_key="Total", plant=PLANT).max()),
-    max(specific_cost_by_tech_frame(gran_canaria_joo, cost_key="Total", plant=PLANT).max()),
-    max(specific_cost_by_tech_frame(la_paz_joo, cost_key="Total", plant=PLANT).max()),
-) / 5) * 5
+max_y_lim = (
+    math.ceil(
+        max(
+            max(
+                specific_cost_by_tech_frame(
+                    abu_dhabi_joo, cost_key="Total", plant=PLANT
+                ).max()
+            ),
+            max(
+                specific_cost_by_tech_frame(
+                    tijuana_joo, cost_key="Total", plant=PLANT
+                ).max()
+            ),
+            max(
+                specific_cost_by_tech_frame(
+                    gran_canaria_joo, cost_key="Total", plant=PLANT
+                ).max()
+            ),
+            max(
+                specific_cost_by_tech_frame(
+                    la_paz_joo, cost_key="Total", plant=PLANT
+                ).max()
+            ),
+        )
+        / 5
+    )
+    * 5
+)
 # min_y_lim = math.floor(max(
 #     min(specific_cost_by_tech_frame(abu_dhabi_joo, cost_key="Total", plant=PLANT).min()),
 #     min(specific_cost_by_tech_frame(tijuana_joo, cost_key="Total", plant=PLANT).min()),
@@ -5085,7 +5205,8 @@ lower_axis.set_ylim(*lower_y_limits)
 for axis in (upper_axis, lower_axis):
     if axis == upper_axis:
         sns.boxenplot(
-            specific_cost_by_tech_frame(gran_canaria_joo, cost_key="Total", plant=PLANT) * - 100,
+            specific_cost_by_tech_frame(gran_canaria_joo, cost_key="Total", plant=PLANT)
+            * -100,
             ax=axis,
             k_depth=K_DEPTH,
         )
@@ -5178,21 +5299,57 @@ sns.despine(top=True)
 _post_process_split_axes(upper_axis, lower_axis)
 
 # Add grey rectangles
-rect=mpatches.Rectangle(
-    [axes[0, 0].get_position().x0,axes[1, 0].get_position().y1], axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0, axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
-    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[0, 0].get_position().x0, axes[1, 0].get_position().y1],
+    axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0,
+    axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
+    ec="k",
+    fc="grey",
+    hatch="",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[3, 0].get_position().x0,axes[4, 0].get_position().y1], axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0, axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
-    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[3, 0].get_position().x0, axes[4, 0].get_position().y1],
+    axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0,
+    axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
+    ec="k",
+    fc="grey",
+    hatch="",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[0, 1].get_position().x0,axes[1, 1].get_position().y1], axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0, axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
-    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[0, 1].get_position().x0, axes[1, 1].get_position().y1],
+    axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0,
+    axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
+    ec="k",
+    fc="grey",
+    hatch="",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[3, 1].get_position().x0,axes[4, 1].get_position().y1], axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0, axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
-    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[3, 1].get_position().x0, axes[4, 1].get_position().y1],
+    axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0,
+    axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
+    ec="k",
+    fc="grey",
+    hatch="",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
 
 plt.savefig(
@@ -5223,18 +5380,62 @@ axes[3, 1].get_shared_x_axes().join(axes[3, 1], axes[4, 1])
 axes[0, 1].get_shared_x_axes().join(axes[0, 1], axes[1, 1])
 
 
-max_y_lim = math.ceil(max(
-    max(specific_cost_by_tech_frame(abu_dhabi_el, cost_key="Total", plant=PLANT).max()),
-    max(specific_cost_by_tech_frame(tijuana_el, cost_key="Total", plant=PLANT).max()),
-    max(specific_cost_by_tech_frame(gran_canaria_el, cost_key="Total", plant=PLANT).max()),
-    max(specific_cost_by_tech_frame(la_paz_el, cost_key="Total", plant=PLANT).max()),
-) / 5) * 5
-min_y_lim = math.floor(max(
-    min(specific_cost_by_tech_frame(abu_dhabi_joo, cost_key="Total", plant=PLANT).min()),
-    min(specific_cost_by_tech_frame(tijuana_joo, cost_key="Total", plant=PLANT).min()),
-    min(specific_cost_by_tech_frame(gran_canaria_joo, cost_key="Total", plant=PLANT).min()),
-    min(specific_cost_by_tech_frame(la_paz_joo, cost_key="Total", plant=PLANT).min()),
-) / 1) * 1
+max_y_lim = (
+    math.ceil(
+        max(
+            max(
+                specific_cost_by_tech_frame(
+                    abu_dhabi_el, cost_key="Total", plant=PLANT
+                ).max()
+            ),
+            max(
+                specific_cost_by_tech_frame(
+                    tijuana_el, cost_key="Total", plant=PLANT
+                ).max()
+            ),
+            max(
+                specific_cost_by_tech_frame(
+                    gran_canaria_el, cost_key="Total", plant=PLANT
+                ).max()
+            ),
+            max(
+                specific_cost_by_tech_frame(
+                    la_paz_el, cost_key="Total", plant=PLANT
+                ).max()
+            ),
+        )
+        / 5
+    )
+    * 5
+)
+min_y_lim = (
+    math.floor(
+        max(
+            min(
+                specific_cost_by_tech_frame(
+                    abu_dhabi_joo, cost_key="Total", plant=PLANT
+                ).min()
+            ),
+            min(
+                specific_cost_by_tech_frame(
+                    tijuana_joo, cost_key="Total", plant=PLANT
+                ).min()
+            ),
+            min(
+                specific_cost_by_tech_frame(
+                    gran_canaria_joo, cost_key="Total", plant=PLANT
+                ).min()
+            ),
+            min(
+                specific_cost_by_tech_frame(
+                    la_paz_joo, cost_key="Total", plant=PLANT
+                ).min()
+            ),
+        )
+        / 1
+    )
+    * 1
+)
 
 # min_y_lim = 6
 
@@ -5371,21 +5572,57 @@ sns.despine(top=True)
 _post_process_split_axes(upper_axis, lower_axis)
 
 # Add grey rectangles
-rect=mpatches.Rectangle(
-    [axes[0, 0].get_position().x0,axes[1, 0].get_position().y1], axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0, axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
-    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[0, 0].get_position().x0, axes[1, 0].get_position().y1],
+    axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0,
+    axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
+    ec="k",
+    fc="grey",
+    hatch="",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[3, 0].get_position().x0,axes[4, 0].get_position().y1], axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0, axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
-    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[3, 0].get_position().x0, axes[4, 0].get_position().y1],
+    axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0,
+    axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
+    ec="k",
+    fc="grey",
+    hatch="",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[0, 1].get_position().x0,axes[1, 1].get_position().y1], axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0, axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
-    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[0, 1].get_position().x0, axes[1, 1].get_position().y1],
+    axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0,
+    axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
+    ec="k",
+    fc="grey",
+    hatch="",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[3, 1].get_position().x0,axes[4, 1].get_position().y1], axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0, axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
-    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[3, 1].get_position().x0, axes[4, 1].get_position().y1],
+    axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0,
+    axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
+    ec="k",
+    fc="grey",
+    hatch="",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
 
 plt.savefig(
@@ -5417,18 +5654,62 @@ axes[3, 1].get_shared_x_axes().join(axes[3, 1], axes[4, 1])
 axes[0, 1].get_shared_x_axes().join(axes[0, 1], axes[1, 1])
 
 
-max_y_lim = math.ceil(max(
-    max(specific_cost_by_tech_frame(abu_dhabi_rahimi, cost_key="Total", plant=PLANT).max()),
-    max(specific_cost_by_tech_frame(tijuana_rahimi, cost_key="Total", plant=PLANT).max()),
-    max(specific_cost_by_tech_frame(gran_canaria_rahimi, cost_key="Total", plant=PLANT).max()),
-    max(specific_cost_by_tech_frame(la_paz_rahimi, cost_key="Total", plant=PLANT).max()),
-) / 5) * 5
-min_y_lim = math.floor(min(
-    min(specific_cost_by_tech_frame(abu_dhabi_rahimi, cost_key="Total", plant=PLANT).min()),
-    min(specific_cost_by_tech_frame(tijuana_rahimi, cost_key="Total", plant=PLANT).min()),
-    min(specific_cost_by_tech_frame(gran_canaria_rahimi, cost_key="Total", plant=PLANT).min()),
-    min(specific_cost_by_tech_frame(la_paz_rahimi, cost_key="Total", plant=PLANT).min()),
-) / 0.5) * 0.5
+max_y_lim = (
+    math.ceil(
+        max(
+            max(
+                specific_cost_by_tech_frame(
+                    abu_dhabi_rahimi, cost_key="Total", plant=PLANT
+                ).max()
+            ),
+            max(
+                specific_cost_by_tech_frame(
+                    tijuana_rahimi, cost_key="Total", plant=PLANT
+                ).max()
+            ),
+            max(
+                specific_cost_by_tech_frame(
+                    gran_canaria_rahimi, cost_key="Total", plant=PLANT
+                ).max()
+            ),
+            max(
+                specific_cost_by_tech_frame(
+                    la_paz_rahimi, cost_key="Total", plant=PLANT
+                ).max()
+            ),
+        )
+        / 5
+    )
+    * 5
+)
+min_y_lim = (
+    math.floor(
+        min(
+            min(
+                specific_cost_by_tech_frame(
+                    abu_dhabi_rahimi, cost_key="Total", plant=PLANT
+                ).min()
+            ),
+            min(
+                specific_cost_by_tech_frame(
+                    tijuana_rahimi, cost_key="Total", plant=PLANT
+                ).min()
+            ),
+            min(
+                specific_cost_by_tech_frame(
+                    gran_canaria_rahimi, cost_key="Total", plant=PLANT
+                ).min()
+            ),
+            min(
+                specific_cost_by_tech_frame(
+                    la_paz_rahimi, cost_key="Total", plant=PLANT
+                ).min()
+            ),
+        )
+        / 0.5
+    )
+    * 0.5
+)
 
 # min_y_lim = 6
 
@@ -5565,21 +5846,57 @@ sns.despine(top=True)
 _post_process_split_axes(upper_axis, lower_axis)
 
 # Add grey rectangles
-rect=mpatches.Rectangle(
-    [axes[0, 0].get_position().x0,axes[1, 0].get_position().y1], axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0, axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
-    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[0, 0].get_position().x0, axes[1, 0].get_position().y1],
+    axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0,
+    axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
+    ec="k",
+    fc="grey",
+    hatch="",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[3, 0].get_position().x0,axes[4, 0].get_position().y1], axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0, axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
-    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[3, 0].get_position().x0, axes[4, 0].get_position().y1],
+    axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0,
+    axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
+    ec="k",
+    fc="grey",
+    hatch="",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[0, 1].get_position().x0,axes[1, 1].get_position().y1], axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0, axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
-    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[0, 1].get_position().x0, axes[1, 1].get_position().y1],
+    axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0,
+    axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
+    ec="k",
+    fc="grey",
+    hatch="",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
-rect=mpatches.Rectangle(
-    [axes[3, 1].get_position().x0,axes[4, 1].get_position().y1], axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0, axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
-    ec='k', fc='grey', hatch="", alpha=0.1, clip_on=False, transform=fig.transFigure, linewidth=0)
+rect = mpatches.Rectangle(
+    [axes[3, 1].get_position().x0, axes[4, 1].get_position().y1],
+    axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0,
+    axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
+    ec="k",
+    fc="grey",
+    hatch="",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
 upper_axis.add_patch(rect)
 
 plt.savefig(
@@ -6543,24 +6860,33 @@ axis.errorbar(
     x=data_to_error_bar.index,
     y=data_to_error_bar["Total"],
     yerr=[
-        (specific_emissions_boxen_frame(
-            abu_dhabi_joo, data_type=DataType.MAX, plant=Plant.JOO
-        ).loc["hpc_abu_dhabi_joo_sharp_300_augusta"]["Total"]
-        - specific_emissions_boxen_frame(
-            abu_dhabi_joo, data_type=DataType.MIN, plant=Plant.JOO
-        ).loc["hpc_abu_dhabi_joo_sharp_300_augusta"]["Total"]) / 2,
-        (specific_emissions_boxen_frame(
-            abu_dhabi_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
-        ).loc["hpc_abu_dhabi_el_sharp_insulated_sti"]["Total"]
-        - specific_emissions_boxen_frame(
-            abu_dhabi_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
-        ).loc["hpc_abu_dhabi_el_sharp_insulated_sti"]["Total"]) / 2,
-        (specific_emissions_boxen_frame(
-            abu_dhabi_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
-        ).loc["hpc_abu_dhabi_rahimi_rec_soli_augusta"]["Total"]
-        - specific_emissions_boxen_frame(
-            abu_dhabi_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
-        ).loc["hpc_abu_dhabi_rahimi_rec_soli_augusta"]["Total"]) / 2,
+        (
+            specific_emissions_boxen_frame(
+                abu_dhabi_joo, data_type=DataType.MAX, plant=Plant.JOO
+            ).loc["hpc_abu_dhabi_joo_sharp_300_augusta"]["Total"]
+            - specific_emissions_boxen_frame(
+                abu_dhabi_joo, data_type=DataType.MIN, plant=Plant.JOO
+            ).loc["hpc_abu_dhabi_joo_sharp_300_augusta"]["Total"]
+        )
+        / 2,
+        (
+            specific_emissions_boxen_frame(
+                abu_dhabi_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
+            ).loc["hpc_abu_dhabi_el_sharp_insulated_sti"]["Total"]
+            - specific_emissions_boxen_frame(
+                abu_dhabi_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
+            ).loc["hpc_abu_dhabi_el_sharp_insulated_sti"]["Total"]
+        )
+        / 2,
+        (
+            specific_emissions_boxen_frame(
+                abu_dhabi_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
+            ).loc["hpc_abu_dhabi_rahimi_rec_soli_augusta"]["Total"]
+            - specific_emissions_boxen_frame(
+                abu_dhabi_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
+            ).loc["hpc_abu_dhabi_rahimi_rec_soli_augusta"]["Total"]
+        )
+        / 2,
     ],
     capsize=10,
     color="#1A0801",
@@ -6608,24 +6934,33 @@ axis.errorbar(
     x=data_to_error_bar.index,
     y=data_to_error_bar["Total"],
     yerr=[
-        (specific_emissions_boxen_frame(
-            gran_canaria_joo, data_type=DataType.MAX, plant=Plant.JOO
-        ).loc["hpc_gran_canaria_joo_sharp_soli_sti"]["Total"]
-        - specific_emissions_boxen_frame(
-            gran_canaria_joo, data_type=DataType.MIN, plant=Plant.JOO
-        ).loc["hpc_gran_canaria_joo_sharp_soli_sti"]["Total"])  / 2,
-        (specific_emissions_boxen_frame(
-            gran_canaria_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
-        ).loc["hpc_gran_canaria_el_sharp_insulated_augusta"]["Total"]
-        - specific_emissions_boxen_frame(
-            gran_canaria_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
-        ).loc["hpc_gran_canaria_el_sharp_insulated_augusta"]["Total"]) / 2,
-        (specific_emissions_boxen_frame(
-            gran_canaria_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
-        ).loc["hpc_gran_canaria_rahimi_sharp_soli_augusta"]["Total"]
-        - specific_emissions_boxen_frame(
-            gran_canaria_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
-        ).loc["hpc_gran_canaria_rahimi_sharp_soli_augusta"]["Total"]) / 2,
+        (
+            specific_emissions_boxen_frame(
+                gran_canaria_joo, data_type=DataType.MAX, plant=Plant.JOO
+            ).loc["hpc_gran_canaria_joo_sharp_soli_sti"]["Total"]
+            - specific_emissions_boxen_frame(
+                gran_canaria_joo, data_type=DataType.MIN, plant=Plant.JOO
+            ).loc["hpc_gran_canaria_joo_sharp_soli_sti"]["Total"]
+        )
+        / 2,
+        (
+            specific_emissions_boxen_frame(
+                gran_canaria_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
+            ).loc["hpc_gran_canaria_el_sharp_insulated_augusta"]["Total"]
+            - specific_emissions_boxen_frame(
+                gran_canaria_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
+            ).loc["hpc_gran_canaria_el_sharp_insulated_augusta"]["Total"]
+        )
+        / 2,
+        (
+            specific_emissions_boxen_frame(
+                gran_canaria_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
+            ).loc["hpc_gran_canaria_rahimi_sharp_soli_augusta"]["Total"]
+            - specific_emissions_boxen_frame(
+                gran_canaria_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
+            ).loc["hpc_gran_canaria_rahimi_sharp_soli_augusta"]["Total"]
+        )
+        / 2,
     ],
     capsize=10,
     color="#1A0801",
@@ -6671,24 +7006,33 @@ axis.errorbar(
     x=data_to_error_bar.index,
     y=data_to_error_bar["Total"],
     yerr=[
-        (specific_emissions_boxen_frame(
-            tijuana_joo, data_type=DataType.MAX, plant=Plant.JOO
-        ).loc["hpc_tijuana_joo_sharp_300_eurotherm"]["Total"]
-        - specific_emissions_boxen_frame(
-            tijuana_joo, data_type=DataType.MIN, plant=Plant.JOO
-        ).loc["hpc_tijuana_joo_sharp_300_eurotherm"]["Total"]) / 2,
-        (specific_emissions_boxen_frame(
-            tijuana_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
-        ).loc["hpc_tijuana_el_rec_soli_eurotherm"]["Total"]
-        - specific_emissions_boxen_frame(
-            tijuana_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
-        ).loc["hpc_tijuana_el_rec_soli_eurotherm"]["Total"]) / 2,
-        (specific_emissions_boxen_frame(
-            tijuana_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
-        ).loc["hpc_tijuana_rahimi_sharp_soli_augusta"]["Total"]
-        - specific_emissions_boxen_frame(
-            tijuana_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
-        ).loc["hpc_tijuana_rahimi_sharp_soli_augusta"]["Total"]) / 2,
+        (
+            specific_emissions_boxen_frame(
+                tijuana_joo, data_type=DataType.MAX, plant=Plant.JOO
+            ).loc["hpc_tijuana_joo_sharp_300_eurotherm"]["Total"]
+            - specific_emissions_boxen_frame(
+                tijuana_joo, data_type=DataType.MIN, plant=Plant.JOO
+            ).loc["hpc_tijuana_joo_sharp_300_eurotherm"]["Total"]
+        )
+        / 2,
+        (
+            specific_emissions_boxen_frame(
+                tijuana_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
+            ).loc["hpc_tijuana_el_rec_soli_eurotherm"]["Total"]
+            - specific_emissions_boxen_frame(
+                tijuana_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
+            ).loc["hpc_tijuana_el_rec_soli_eurotherm"]["Total"]
+        )
+        / 2,
+        (
+            specific_emissions_boxen_frame(
+                tijuana_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
+            ).loc["hpc_tijuana_rahimi_sharp_soli_augusta"]["Total"]
+            - specific_emissions_boxen_frame(
+                tijuana_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
+            ).loc["hpc_tijuana_rahimi_sharp_soli_augusta"]["Total"]
+        )
+        / 2,
     ],
     capsize=10,
     color="#1A0801",
@@ -6732,24 +7076,33 @@ axis.errorbar(
     x=data_to_error_bar.index,
     y=data_to_error_bar["Total"],
     yerr=[
-        (specific_emissions_boxen_frame(
-            la_paz_joo, data_type=DataType.MAX, plant=Plant.JOO
-        ).loc["hpc_la_paz_joo_sharp_soli_augusta"]["Total"]
-        - specific_emissions_boxen_frame(
-            la_paz_joo, data_type=DataType.MIN, plant=Plant.JOO
-        ).loc["hpc_la_paz_joo_sharp_soli_augusta"]["Total"]) / 2,
-        (specific_emissions_boxen_frame(
-            la_paz_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
-        ).loc["hpc_la_paz_el_sharp_300_sti"]["Total"]
-        - specific_emissions_boxen_frame(
-            la_paz_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
-        ).loc["hpc_la_paz_el_sharp_300_sti"]["Total"]) / 2,
-        (specific_emissions_boxen_frame(
-            la_paz_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
-        ).loc["hpc_la_paz_rahimi_sharp_soli_eurotherm"]["Total"]
-        - specific_emissions_boxen_frame(
-            la_paz_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
-        ).loc["hpc_la_paz_rahimi_sharp_soli_eurotherm"]["Total"]) / 2,
+        (
+            specific_emissions_boxen_frame(
+                la_paz_joo, data_type=DataType.MAX, plant=Plant.JOO
+            ).loc["hpc_la_paz_joo_sharp_soli_augusta"]["Total"]
+            - specific_emissions_boxen_frame(
+                la_paz_joo, data_type=DataType.MIN, plant=Plant.JOO
+            ).loc["hpc_la_paz_joo_sharp_soli_augusta"]["Total"]
+        )
+        / 2,
+        (
+            specific_emissions_boxen_frame(
+                la_paz_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
+            ).loc["hpc_la_paz_el_sharp_300_sti"]["Total"]
+            - specific_emissions_boxen_frame(
+                la_paz_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
+            ).loc["hpc_la_paz_el_sharp_300_sti"]["Total"]
+        )
+        / 2,
+        (
+            specific_emissions_boxen_frame(
+                la_paz_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
+            ).loc["hpc_la_paz_rahimi_sharp_soli_eurotherm"]["Total"]
+            - specific_emissions_boxen_frame(
+                la_paz_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
+            ).loc["hpc_la_paz_rahimi_sharp_soli_eurotherm"]["Total"]
+        )
+        / 2,
     ],
     capsize=10,
     color="#1A0801",
@@ -7918,15 +8271,16 @@ def plot_battery_inverter_contour_map(
     )
 
 
-def _subfigure_line_plot(data_to_plot, location: str, plant: Plant, fixed_battery_lifetime: float | None,
-        fixed_inverter_lifetime: float | None,
-        weather_conditions: str,
-        axis) -> None:
-    plant_index = {
-        Plant.JOO: 0,
-        Plant.EL_NASHAR: 1,
-        Plant.RAHIMI: 2
-    }[plant]
+def _subfigure_line_plot(
+    data_to_plot,
+    location: str,
+    plant: Plant,
+    fixed_battery_lifetime: float | None,
+    fixed_inverter_lifetime: float | None,
+    weather_conditions: str,
+    axis,
+) -> None:
+    plant_index = {Plant.JOO: 0, Plant.EL_NASHAR: 1, Plant.RAHIMI: 2}[plant]
     battery_lifetimes = [
         float(regex.match(key).group("batt_cycles"))
         for key in data_to_plot
@@ -7960,19 +8314,25 @@ def _subfigure_line_plot(data_to_plot, location: str, plant: Plant, fixed_batter
         if regex.match(key).group("location") == location
     ]
     # Use the fixed battery and inverter lifetimes
-    data = pd.DataFrame({
-        (battery_key:="battery_lifetimes"): battery_lifetimes,
-        (inverter_key:="inverter_lifetimes"): inverter_lifetimes,
-        (storage_key:="storage_fraction"): storage_fraction,
-        (solar_key:="solar_fraction"): solar_fraction,
-        (grid_key:="grid_fraction"): grid_fraction
-        })
+    data = pd.DataFrame(
+        {
+            (battery_key := "battery_lifetimes"): battery_lifetimes,
+            (inverter_key := "inverter_lifetimes"): inverter_lifetimes,
+            (storage_key := "storage_fraction"): storage_fraction,
+            (solar_key := "solar_fraction"): solar_fraction,
+            (grid_key := "grid_fraction"): grid_fraction,
+        }
+    )
     if fixed_battery_lifetime is not None:
-        data = data[data[battery_key] == fixed_battery_lifetime].sort_values(inverter_key)
+        data = data[data[battery_key] == fixed_battery_lifetime].sort_values(
+            inverter_key
+        )
         x = data[inverter_key]
         x_label: str = "Inverter lifetime / years"
     elif fixed_inverter_lifetime is not None:
-        data = data[data[inverter_key] == fixed_inverter_lifetime].sort_values(battery_key)
+        data = data[data[inverter_key] == fixed_inverter_lifetime].sort_values(
+            battery_key
+        )
         x = data[battery_key]
         x_label: str = "Battery cycle lifetime / cycles"
     else:
@@ -7982,7 +8342,9 @@ def _subfigure_line_plot(data_to_plot, location: str, plant: Plant, fixed_batter
         x,
         (
             grid_line := [
-                data[solar_key][index] + data[grid_key][index] + data[storage_key][index]
+                data[solar_key][index]
+                + data[grid_key][index]
+                + data[storage_key][index]
                 for index in range(len(x))
             ]
         ),
@@ -8001,9 +8363,7 @@ def _subfigure_line_plot(data_to_plot, location: str, plant: Plant, fixed_batter
         label="solar fraction",
     )
     axis.plot(x, data[storage_key], color=f"C0", label="storage fraction")
-    axis.fill_between(
-        x, [0] * len(x), data[storage_key], color="C0", alpha=0.7
-    )
+    axis.fill_between(x, [0] * len(x), data[storage_key], color="C0", alpha=0.7)
     axis.fill_between(x, data[storage_key], solar_line, color="C1", alpha=0.7)
     axis.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
     axis.set_xlabel(x_label)
@@ -8012,7 +8372,9 @@ def _subfigure_line_plot(data_to_plot, location: str, plant: Plant, fixed_batter
     axis.text(
         -0.08,
         1.1,
-        {"abu_dhabi": "a.", "gran_canaria": "b.", "tijuana": "c.", "la_paz": "d."}[location],
+        {"abu_dhabi": "a.", "gran_canaria": "b.", "tijuana": "c.", "la_paz": "d."}[
+            location
+        ],
         transform=axis.transAxes,
         fontsize=16,
         fontweight="bold",
@@ -8176,6 +8538,7 @@ def plot_battery_inverter_line_map(
         ha="right",
     )
 
+
 plt.show()
 
 batt_uniq, batt_index = np.unique(battery_lifetimes, return_inverse=True)
@@ -8196,53 +8559,519 @@ import matplotlib.ticker as mticker
 
 _, axis = plt.subplots(figsize=(12, 8))
 # axis.set(xscale="log", yscale="log")
-abu_dhabi_joo_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)["Total"], "emissions": specific_emissions_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)["Total"]})
-gran_canaria_joo_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO)["Total"], "emissions": specific_emissions_boxen_frame(gran_canaria_joo, plant=Plant.JOO)["Total"]})
-tijuana_joo_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO)["Total"], "emissions": specific_emissions_boxen_frame(tijuana_joo, plant=Plant.JOO)["Total"]})
-la_paz_joo_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO)["Total"], "emissions": specific_emissions_boxen_frame(la_paz_joo, plant=Plant.JOO)["Total"]})
+abu_dhabi_joo_costs_emissions_frame = pd.DataFrame(
+    {
+        "costs": specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)["Total"],
+        "emissions": specific_emissions_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)[
+            "Total"
+        ],
+        "location": [
+            "Abu Dhabi"
+            for entry in specific_emissions_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)[
+                "Total"
+            ]
+        ],
+    }
+)
+gran_canaria_joo_costs_emissions_frame = pd.DataFrame(
+    {
+        "costs": specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO)["Total"],
+        "emissions": specific_emissions_boxen_frame(gran_canaria_joo, plant=Plant.JOO)[
+            "Total"
+        ],
+        "location": [
+            "Gando"
+            for entry in specific_emissions_boxen_frame(
+                gran_canaria_joo, plant=Plant.JOO
+            )["Total"]
+        ],
+    }
+)
+tijuana_joo_costs_emissions_frame = pd.DataFrame(
+    {
+        "costs": specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO)["Total"],
+        "emissions": specific_emissions_boxen_frame(tijuana_joo, plant=Plant.JOO)[
+            "Total"
+        ],
+        "location": [
+            "Tijuana"
+            for entry in specific_emissions_boxen_frame(tijuana_joo, plant=Plant.JOO)[
+                "Total"
+            ]
+        ],
+    }
+)
+la_paz_joo_costs_emissions_frame = pd.DataFrame(
+    {
+        "costs": specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO)["Total"],
+        "emissions": specific_emissions_boxen_frame(la_paz_joo, plant=Plant.JOO)[
+            "Total"
+        ],
+        "location": [
+            "La Paz"
+            for entry in specific_emissions_boxen_frame(la_paz_joo, plant=Plant.JOO)[
+                "Total"
+            ]
+        ],
+    }
+)
 
 axis.scatter(
-    (frame:=abu_dhabi_joo_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Abu Dhabi"
+    (frame := abu_dhabi_joo_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Abu Dhabi",
 )
 axis.scatter(
-    (frame:=gran_canaria_joo_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Gran Canaria"
+    (frame := gran_canaria_joo_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Gran Canaria",
 )
 axis.scatter(
-    (frame:=tijuana_joo_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Tijuana"
+    (frame := tijuana_joo_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Tijuana",
 )
 axis.scatter(
-    (frame:=la_paz_joo_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="La Paz"
+    (frame := la_paz_joo_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="La Paz",
 )
 
 axis.set_xlabel("Specific cost / USD/m$^3$")
 axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
 axis.set_title("Smallest-capacity plant")
-locmin = mticker.LogLocator(base=10, subs=np.arange(0.1,10,0.1),numticks=100)
+locmin = mticker.LogLocator(base=10, subs=np.arange(0.1, 10, 0.1), numticks=100)
 
 axis.legend()
 
 plt.show()
 
+
+# KDE Plot
+fig, axes = plt.subplots(
+    1, 2, figsize=(12, 8), gridspec_kw={"width_ratios": [0.25, 1, 0.25]}
+)
+fig.subplots_adjust(hspace=0.1, wspace=0.05)
+try:
+    for axis in axes:
+        axis.set(
+            # xscale="log",
+            yscale="log"
+        )
+except Exception:
+    pass
+
+if isinstance(axes, plt.Axes):
+    axis = axes
+else:
+    axis = axes[1]
+
+axes[1].get_shared_y_axes().join(axes[0], axes[1])
+axes[1].get_shared_y_axes().join(axes[2], axes[1])
+
+
+def _post_process_split_kde_axes(ax1, ax2):
+    """
+    Function to post-process the joining of axes.
+    Adapted from:
+        https://matplotlib.org/stable/gallery/subplots_axes_and_figures/broken_axis.html
+    """
+    # hide the spines between ax and ax2
+    # Now, let's turn towards the cut-out slanted lines.
+    # We create line objects in axes coordinates, in which (0,0), (0,1),
+    # (1,0), and (1,1) are the four corners of the axes.
+    # The slanted lines themselves are markers at those locations, such that the
+    # lines keep their angle and position, independent of the axes size or scale
+    # Finally, we need to disable clipping.
+    d = 0.5  # proportion of vertical to horizontal extent of the slanted line
+    kwargs = dict(
+        marker=[(-1, -d), (1, d)],
+        markersize=12,
+        linestyle="none",
+        color="k",
+        mec="k",
+        mew=1,
+        clip_on=False,
+    )
+    ax1.plot([1], [0], transform=ax1.transAxes, **kwargs)
+    ax2.plot([0], [0], transform=ax2.transAxes, **kwargs)
+
+
+axis.scatter(
+    (frame := abu_dhabi_joo_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Abu Dhabi",
+    color="C0",
+)
+axis.errorbar(
+    frame["costs"],
+    frame["emissions"],
+    yerr=(
+        specific_emissions_boxen_frame(
+            abu_dhabi_joo, data_type=DataType.MAX, plant=Plant.JOO
+        )["Total"]
+        - specific_emissions_boxen_frame(
+            abu_dhabi_joo, data_type=DataType.MIN, plant=Plant.JOO
+        )["Total"]
+    )
+    / 2,
+    alpha=(errorbar_alpha := 0.8),
+    capsize=(capsize := 5),
+    color="C0",
+    fmt="none",
+)
+axes[0].scatter(
+    *(mean_coords := (0.351, 2.07835)),
+    marker="^",
+    color="C0",
+    label="Abu Dhabi Grid-RO",
+)
+axes[0].errorbar(
+    *mean_coords,
+    xerr=0.195,
+    yerr=1.15465,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C0",
+    fmt="none",
+)
+
+axis.scatter(
+    (frame := gran_canaria_joo_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Gran Canaria",
+    color="C1",
+)
+axis.errorbar(
+    frame["costs"],
+    frame["emissions"],
+    yerr=(
+        specific_emissions_boxen_frame(
+            gran_canaria_joo, data_type=DataType.MAX, plant=Plant.JOO
+        )["Total"]
+        - specific_emissions_boxen_frame(
+            gran_canaria_joo, data_type=DataType.MIN, plant=Plant.JOO
+        )["Total"]
+    )
+    / 2,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C1",
+    fmt="none",
+)
+axes[0].scatter(
+    *(mean_coords := (0.657, 2.59443)), marker="^", color="C1", label="Gando Grid-RO"
+)
+axes[0].errorbar(
+    *mean_coords,
+    xerr=0.365,
+    yerr=1.44135,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C1",
+    fmt="none",
+)
+
+axis.scatter(
+    (frame := tijuana_joo_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Tijuana",
+    color="C2",
+)
+axis.errorbar(
+    frame["costs"],
+    frame["emissions"],
+    yerr=(
+        specific_emissions_boxen_frame(
+            tijuana_joo, data_type=DataType.MAX, plant=Plant.JOO
+        )["Total"]
+        - specific_emissions_boxen_frame(
+            tijuana_joo, data_type=DataType.MIN, plant=Plant.JOO
+        )["Total"]
+    )
+    / 2,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C2",
+    fmt="none",
+)
+axes[2].scatter(
+    *(mean_coords := (5.773, 1.395)), marker="^", color="C2", label="Tijuana Grid-RO"
+)
+axes[2].errorbar(
+    *mean_coords,
+    xerr=0.186,
+    yerr=0.7750,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C2",
+    fmt="none",
+)
+
+axis.scatter(
+    (frame := la_paz_joo_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="La Paz",
+    color="C3",
+)
+axis.errorbar(
+    frame["costs"],
+    frame["emissions"],
+    yerr=(
+        specific_emissions_boxen_frame(
+            la_paz_joo, data_type=DataType.MAX, plant=Plant.JOO
+        )["Total"]
+        - specific_emissions_boxen_frame(
+            la_paz_joo, data_type=DataType.MIN, plant=Plant.JOO
+        )["Total"]
+    )
+    / 2,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C3",
+    fmt="none",
+)
+axes[2].scatter(
+    *(mean_coords := (13.056, 4.005)), marker="^", color="C3", label="La Paz Grid-RO"
+)
+axes[2].errorbar(
+    *mean_coords,
+    xerr=7.469,
+    yerr=2.225,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C3",
+    fmt="none",
+)
+
+
+kde_frame = pd.concat(
+    [
+        abu_dhabi_joo_costs_emissions_frame,
+        gran_canaria_joo_costs_emissions_frame,
+        tijuana_joo_costs_emissions_frame,
+        la_paz_joo_costs_emissions_frame,
+    ]
+)
+sns.kdeplot(
+    data=kde_frame,
+    x="costs",
+    y="emissions",
+    hue="location",
+    alpha=0.4,
+    ax=axis,
+    levels=(levels := 4),
+    thresh=(thresh := 0.005),
+    fill=True,
+    # clip=[(min(kde_frame["costs"]), None), (min(kde_frame["emissions"]), None)]
+    cut=(cut := 0.5),
+    bw_adjust=(bw_adjust := 0.4),
+)
+sns.kdeplot(
+    data=kde_frame,
+    x="costs",
+    y="emissions",
+    hue="location",
+    levels=levels,
+    thresh=thresh,
+    fill=False,
+    # clip=[(min(kde_frame["costs"]), None), (min(kde_frame["emissions"]), None)]
+    ax=axis,
+    cut=cut,
+    bw_adjust=bw_adjust,
+)
+axis.set_xlabel("Specific cost / USD/m$^3$")
+axes[0].set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axis.set_title("Medium-capacity plant")
+axis.set_ylabel("")
+
+axis.set_xlim(
+    0.5 * math.floor((lim := axis.set_xlim(auto=True))[0] / 0.5),
+    # 0,f
+    0.5 * math.ceil((lim := axis.set_xlim(auto=True))[1] / 0.5),
+)
+axis.set_ylim(math.floor((lim := axis.set_ylim(auto=True))[0]), math.ceil(lim[1]))
+
+# Create the combined legend
+all_handles, all_labels = ([], [])
+for ax in axes:
+    handles, labels = ax.get_legend_handles_labels()
+    all_handles.extend(handles)
+    all_labels.extend(labels)
+
+all_handles = [
+    all_handles[2],
+    all_handles[0],
+    all_handles[3],
+    all_handles[1],
+    all_handles[4],
+    all_handles[6],
+    all_handles[5],
+    all_handles[7],
+]
+
+all_labels = [
+    all_labels[2],
+    all_labels[0],
+    all_labels[3],
+    all_labels[1],
+    all_labels[4],
+    all_labels[6],
+    all_labels[5],
+    all_labels[7],
+]
+
+axes[2].legend(all_handles, all_labels, loc="upper center")
+
+axis.legend().remove()
+
+# Add grey rectangles
+import matplotlib.patches as mpatches
+
+rect = mpatches.Rectangle(
+    [axes[0].get_position().x1, axes[1].get_position().y1],
+    axes[1].get_position().x0 - axes[0].get_position().x1,
+    axes[1].get_position().y0 - axes[1].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
+axis.add_patch(rect)
+rect = mpatches.Rectangle(
+    [axes[1].get_position().x1, axes[1].get_position().y1],
+    axes[1].get_position().x0 - axes[0].get_position().x1,
+    axes[1].get_position().y0 - axes[1].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
+axis.add_patch(rect)
+
+_post_process_split_kde_axes(axes[0], axis)
+_post_process_split_kde_axes(axis, axes[2])
+
+axes[2].spines.right.set_visible(False)
+axes[1].spines.right.set_visible(False)
+axes[0].spines.right.set_visible(False)
+axes[2].spines.left.set_visible(False)
+axes[1].spines.left.set_visible(False)
+axes[2].tick_params(labelleft=False, labelright=False)
+axes[1].tick_params(labelleft=False, labelright=False)
+axes[0].xaxis.tick_bottom()
+axes[0].yaxis.tick_left()
+
+# plt.savefig(
+#     "joo_specific_costs_emissions_kde_10.png",
+#     dpi=1200,
+#     transparent=True,
+#     bbox_inches="tight",
+# )
+
+plt.show()
+
+
 # El-Nashar
 _, axis = plt.subplots(figsize=(12, 8))
-axis.set(xscale="log", yscale="log")
+# axis.set(xscale="log", yscale="log")
 
-abu_dhabi_el_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)["Total"], "emissions": specific_emissions_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)["Total"]})
-gran_canaria_el_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(gran_canaria_el, plant=Plant.EL_NASHAR)["Total"], "emissions": specific_emissions_boxen_frame(gran_canaria_el, plant=Plant.EL_NASHAR)["Total"]})
-tijuana_el_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)["Total"], "emissions": specific_emissions_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)["Total"]})
-la_paz_el_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)["Total"], "emissions": specific_emissions_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)["Total"]})
+abu_dhabi_el_costs_emissions_frame = pd.DataFrame(
+    {
+        "costs": specific_costs_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)[
+            "Total"
+        ],
+        "emissions": specific_emissions_boxen_frame(
+            abu_dhabi_el, plant=Plant.EL_NASHAR
+        )["Total"],
+        "location": [
+            "Abu Dhabi"
+            for entry in specific_emissions_boxen_frame(abu_dhabi_el, plant=Plant.JOO)[
+                "Total"
+            ]
+        ],
+    }
+)
+gran_canaria_el_costs_emissions_frame = pd.DataFrame(
+    {
+        "costs": specific_costs_boxen_frame(gran_canaria_el, plant=Plant.EL_NASHAR)[
+            "Total"
+        ],
+        "emissions": specific_emissions_boxen_frame(
+            gran_canaria_el, plant=Plant.EL_NASHAR
+        )["Total"],
+        "location": [
+            "Gando"
+            for entry in specific_emissions_boxen_frame(
+                gran_canaria_el, plant=Plant.JOO
+            )["Total"]
+        ],
+    }
+)
+tijuana_el_costs_emissions_frame = pd.DataFrame(
+    {
+        "costs": specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)["Total"],
+        "emissions": specific_emissions_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)[
+            "Total"
+        ],
+        "location": [
+            "Tijuana"
+            for entry in specific_emissions_boxen_frame(tijuana_el, plant=Plant.JOO)[
+                "Total"
+            ]
+        ],
+    }
+)
+la_paz_el_costs_emissions_frame = pd.DataFrame(
+    {
+        "costs": specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)["Total"],
+        "emissions": specific_emissions_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)[
+            "Total"
+        ],
+        "location": [
+            "La Paz"
+            for entry in specific_emissions_boxen_frame(la_paz_el, plant=Plant.JOO)[
+                "Total"
+            ]
+        ],
+    }
+)
 
 axis.scatter(
-    (frame:=abu_dhabi_el_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Abu Dhabi"
+    (frame := abu_dhabi_el_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Abu Dhabi",
 )
 axis.scatter(
-    (frame:=gran_canaria_el_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Gran Canaria"
+    (frame := gran_canaria_el_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Gran Canaria",
 )
 axis.scatter(
-    (frame:=tijuana_el_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Tijuana"
+    (frame := tijuana_el_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Tijuana",
 )
 axis.scatter(
-    (frame:=la_paz_el_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="La Paz"
+    (frame := la_paz_el_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="La Paz",
 )
 
 axis.set_xlabel("Specific cost / USD/m$^3$")
@@ -8253,34 +9082,776 @@ axis.legend()
 
 plt.show()
 
+# KDE Plot
+fig, axes = plt.subplots(
+    1, 3, figsize=(12, 8), gridspec_kw={"width_ratios": [0.25, 1, 0.25]}
+)
+fig.subplots_adjust(hspace=0.1, wspace=0.05)
+try:
+    for axis in axes:
+        axis.set(
+            # xscale="log",
+            # yscale="log"
+        )
+except Exception:
+    pass
+
+if isinstance(axes, plt.Axes):
+    axis = axes
+else:
+    axis = axes[1]
+
+axes[1].get_shared_y_axes().join(axes[0], axes[1])
+axes[1].get_shared_y_axes().join(axes[2], axes[1])
+
+
+def _post_process_split_kde_axes(ax1, ax2):
+    """
+    Function to post-process the joining of axes.
+    Adapted from:
+        https://matplotlib.org/stable/gallery/subplots_axes_and_figures/broken_axis.html
+    """
+    # hide the spines between ax and ax2
+    # Now, let's turn towards the cut-out slanted lines.
+    # We create line objects in axes coordinates, in which (0,0), (0,1),
+    # (1,0), and (1,1) are the four corners of the axes.
+    # The slanted lines themselves are markers at those locations, such that the
+    # lines keep their angle and position, independent of the axes size or scale
+    # Finally, we need to disable clipping.
+    d = 0.5  # proportion of vertical to horizontal extent of the slanted line
+    kwargs = dict(
+        marker=[(-1, -d), (1, d)],
+        markersize=12,
+        linestyle="none",
+        color="k",
+        mec="k",
+        mew=1,
+        clip_on=False,
+    )
+    ax1.plot([1], [0], transform=ax1.transAxes, **kwargs)
+    ax2.plot([0], [0], transform=ax2.transAxes, **kwargs)
+
+
+axis.scatter(
+    (frame := abu_dhabi_el_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Abu Dhabi",
+    color="C0",
+)
+axis.errorbar(
+    frame["costs"],
+    frame["emissions"],
+    yerr=(
+        specific_emissions_boxen_frame(
+            abu_dhabi_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
+        )["Total"]
+        - specific_emissions_boxen_frame(
+            abu_dhabi_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
+        )["Total"]
+    )
+    / 2,
+    alpha=(errorbar_alpha := 0.8),
+    capsize=(capsize := 5),
+    color="C0",
+    fmt="none",
+)
+axes[0].scatter(
+    *(mean_coords := (0.351, 2.07835)),
+    marker="^",
+    color="C0",
+    label="Abu Dhabi Grid-RO",
+)
+axes[0].errorbar(
+    *mean_coords,
+    xerr=0.195,
+    yerr=1.15465,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C0",
+    fmt="none",
+)
+
+axis.scatter(
+    (frame := gran_canaria_el_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Gran Canaria",
+    color="C1",
+)
+axis.errorbar(
+    frame["costs"],
+    frame["emissions"],
+    yerr=(
+        specific_emissions_boxen_frame(
+            gran_canaria_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
+        )["Total"]
+        - specific_emissions_boxen_frame(
+            gran_canaria_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
+        )["Total"]
+    )
+    / 2,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C1",
+    fmt="none",
+)
+axes[0].scatter(
+    *(mean_coords := (0.657, 2.59443)), marker="^", color="C1", label="Gando Grid-RO"
+)
+axes[0].errorbar(
+    *mean_coords,
+    xerr=0.365,
+    yerr=1.44135,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C1",
+    fmt="none",
+)
+
+axis.scatter(
+    (frame := tijuana_el_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Tijuana",
+    color="C2",
+)
+axis.errorbar(
+    frame["costs"],
+    frame["emissions"],
+    yerr=(
+        specific_emissions_boxen_frame(
+            tijuana_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
+        )["Total"]
+        - specific_emissions_boxen_frame(
+            tijuana_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
+        )["Total"]
+    )
+    / 2,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C2",
+    fmt="none",
+)
+axes[2].scatter(
+    *(mean_coords := (5.773, 1.395)), marker="^", color="C2", label="Tijuana Grid-RO"
+)
+axes[2].errorbar(
+    *mean_coords,
+    xerr=0.186,
+    yerr=0.7750,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C2",
+    fmt="none",
+)
+
+axis.scatter(
+    (frame := la_paz_el_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="La Paz",
+    color="C3",
+)
+axis.errorbar(
+    frame["costs"],
+    frame["emissions"],
+    yerr=(
+        specific_emissions_boxen_frame(
+            la_paz_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
+        )["Total"]
+        - specific_emissions_boxen_frame(
+            la_paz_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
+        )["Total"]
+    )
+    / 2,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C3",
+    fmt="none",
+)
+axes[2].scatter(
+    *(mean_coords := (13.056, 4.005)), marker="^", color="C3", label="La Paz Grid-RO"
+)
+axes[2].errorbar(
+    *mean_coords,
+    xerr=7.469,
+    yerr=2.225,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C3",
+    fmt="none",
+)
+
+
+kde_frame = pd.concat(
+    [
+        abu_dhabi_el_costs_emissions_frame,
+        gran_canaria_el_costs_emissions_frame,
+        tijuana_el_costs_emissions_frame,
+        la_paz_el_costs_emissions_frame,
+    ]
+)
+sns.kdeplot(
+    data=kde_frame,
+    x="costs",
+    y="emissions",
+    hue="location",
+    alpha=0.4,
+    ax=axis,
+    levels=(levels := 4),
+    thresh=(thresh := 0.2),
+    fill=True,
+    # clip=[(min(kde_frame["costs"]), None), (min(kde_frame["emissions"]), None)]
+    cut=(cut := 0.5),
+    bw_adjust=(bw_adjust := 0.4),
+)
+sns.kdeplot(
+    data=kde_frame,
+    x="costs",
+    y="emissions",
+    hue="location",
+    levels=levels,
+    thresh=thresh,
+    fill=False,
+    # clip=[(min(kde_frame["costs"]), None), (min(kde_frame["emissions"]), None)]
+    ax=axis,
+    cut=cut,
+    bw_adjust=bw_adjust,
+)
+axis.set_xlabel("Specific cost / USD/m$^3$")
+axes[0].set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axis.set_title("Medium-capacity plant")
+axis.set_ylabel("")
+
+axis.set_xlim(
+    0.5 * math.floor((lim := axis.set_xlim(auto=True))[0] / 0.5),
+    # 0,f
+    0.5 * math.ceil((lim := axis.set_xlim(auto=True))[1] / 0.5),
+)
+axis.set_ylim(math.floor((lim := axis.set_ylim(auto=True))[0]), math.ceil(lim[1]))
+
+# Create the combined legend
+all_handles, all_labels = ([], [])
+for ax in axes:
+    handles, labels = ax.get_legend_handles_labels()
+    all_handles.extend(handles)
+    all_labels.extend(labels)
+
+all_handles = [
+    all_handles[2],
+    all_handles[0],
+    all_handles[3],
+    all_handles[1],
+    all_handles[4],
+    all_handles[6],
+    all_handles[5],
+    all_handles[7],
+]
+
+all_labels = [
+    all_labels[2],
+    all_labels[0],
+    all_labels[3],
+    all_labels[1],
+    all_labels[4],
+    all_labels[6],
+    all_labels[5],
+    all_labels[7],
+]
+
+axes[2].legend(all_handles, all_labels, loc="upper center")
+
+axis.legend().remove()
+
+# Add grey rectangles
+import matplotlib.patches as mpatches
+
+rect = mpatches.Rectangle(
+    [axes[0].get_position().x1, axes[1].get_position().y1],
+    axes[1].get_position().x0 - axes[0].get_position().x1,
+    axes[1].get_position().y0 - axes[1].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
+axis.add_patch(rect)
+rect = mpatches.Rectangle(
+    [axes[1].get_position().x1, axes[1].get_position().y1],
+    axes[1].get_position().x0 - axes[0].get_position().x1,
+    axes[1].get_position().y0 - axes[1].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
+axis.add_patch(rect)
+
+_post_process_split_kde_axes(axes[0], axis)
+_post_process_split_kde_axes(axis, axes[2])
+
+axes[2].spines.right.set_visible(False)
+axes[1].spines.right.set_visible(False)
+axes[0].spines.right.set_visible(False)
+axes[2].spines.left.set_visible(False)
+axes[1].spines.left.set_visible(False)
+axes[2].tick_params(labelleft=False, labelright=False)
+axes[1].tick_params(labelleft=False, labelright=False)
+axes[0].xaxis.tick_bottom()
+axes[0].yaxis.tick_left()
+
+plt.savefig(
+    "el_nashar_specific_costs_emissions_kde_10.png",
+    dpi=1200,
+    transparent=True,
+    bbox_inches="tight",
+)
+
+plt.show()
+
 # Rahimi
 _, axis = plt.subplots(figsize=(12, 8))
-axis.set(xscale="log", yscale="log")
+# axis.set(xscale="log", yscale="log")
 
-abu_dhabi_rahimi_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(abu_dhabi_rahimi, plant=Plant.RAHIMI)["Total"], "emissions": specific_emissions_boxen_frame(abu_dhabi_rahimi, plant=Plant.RAHIMI)["Total"]})
-gran_canaria_rahimi_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(gran_canaria_rahimi, plant=Plant.RAHIMI)["Total"], "emissions": specific_emissions_boxen_frame(gran_canaria_rahimi, plant=Plant.RAHIMI)["Total"]})
-tijuana_rahimi_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)["Total"], "emissions": specific_emissions_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)["Total"]})
-la_paz_rahimi_costs_emissions_frame = pd.DataFrame({"costs": specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)["Total"], "emissions": specific_emissions_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)["Total"]})
+abu_dhabi_rahimi_costs_emissions_frame = pd.DataFrame(
+    {
+        "costs": specific_costs_boxen_frame(abu_dhabi_rahimi, plant=Plant.RAHIMI)[
+            "Total"
+        ],
+        "emissions": specific_emissions_boxen_frame(
+            abu_dhabi_rahimi, plant=Plant.RAHIMI
+        )["Total"],
+        "location": [
+            "Abu Dhabi"
+            for entry in specific_emissions_boxen_frame(
+                abu_dhabi_rahimi, plant=Plant.JOO
+            )["Total"]
+        ],
+    }
+)
+gran_canaria_rahimi_costs_emissions_frame = pd.DataFrame(
+    {
+        "costs": specific_costs_boxen_frame(gran_canaria_rahimi, plant=Plant.RAHIMI)[
+            "Total"
+        ],
+        "emissions": specific_emissions_boxen_frame(
+            gran_canaria_rahimi, plant=Plant.RAHIMI
+        )["Total"],
+        "location": [
+            "Gando"
+            for entry in specific_emissions_boxen_frame(
+                gran_canaria_rahimi, plant=Plant.JOO
+            )["Total"]
+        ],
+    }
+)
+tijuana_rahimi_costs_emissions_frame = pd.DataFrame(
+    {
+        "costs": specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)[
+            "Total"
+        ],
+        "emissions": specific_emissions_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)[
+            "Total"
+        ],
+        "location": [
+            "Tijuana"
+            for entry in specific_emissions_boxen_frame(
+                tijuana_rahimi, plant=Plant.JOO
+            )["Total"]
+        ],
+    }
+)
+la_paz_rahimi_costs_emissions_frame = pd.DataFrame(
+    {
+        "costs": specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)["Total"],
+        "emissions": specific_emissions_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)[
+            "Total"
+        ],
+        "location": [
+            "La Paz"
+            for entry in specific_emissions_boxen_frame(la_paz_rahimi, plant=Plant.JOO)[
+                "Total"
+            ]
+        ],
+    }
+)
 
 axis.scatter(
-    (frame:=abu_dhabi_rahimi_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Abu Dhabi"
+    (frame := abu_dhabi_rahimi_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Abu Dhabi",
 )
 axis.scatter(
-    (frame:=gran_canaria_rahimi_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Gran Canaria"
+    (frame := gran_canaria_rahimi_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Gran Canaria",
 )
 axis.scatter(
-    (frame:=tijuana_rahimi_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="Tijuana"
+    (frame := tijuana_rahimi_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Tijuana",
 )
 axis.scatter(
-    (frame:=la_paz_rahimi_costs_emissions_frame)["costs"], frame["emissions"], marker="x", label="La Paz"
+    (frame := la_paz_rahimi_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="La Paz",
 )
 
 axis.set_xlabel("Specific cost / USD/m$^3$")
 axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
-axis.set_title("Largest-capacity plant")
-locmin = mticker.LogLocator(base=10, subs=np.arange(0.1,1,0.1),numticks=10)
+axis.set_title("Medium-capacity plant")
 
 axis.legend()
+
+plt.show()
+
+# KDE Plot
+fig, axes = plt.subplots(
+    1, 2, figsize=(12, 8), gridspec_kw={"width_ratios": [0.25, 1.25]}
+)
+fig.subplots_adjust(hspace=0.1, wspace=0.05)
+try:
+    for axis in axes:
+        axis.set(
+            # xscale="log",
+            yscale="log"
+        )
+except Exception:
+    pass
+
+axes[1].set(xscale="log")
+
+if isinstance(axes, plt.Axes):
+    axis = axes
+else:
+    axis = axes[1]
+
+axes[1].get_shared_y_axes().join(axes[0], axes[1])
+
+
+def _post_process_split_kde_axes(ax1, ax2):
+    """
+    Function to post-process the joining of axes.
+    Adapted from:
+        https://matplotlib.org/stable/gallery/subplots_axes_and_figures/broken_axis.html
+    """
+    # hide the spines between ax and ax2
+    # Now, let's turn towards the cut-out slanted lines.
+    # We create line objects in axes coordinates, in which (0,0), (0,1),
+    # (1,0), and (1,1) are the four corners of the axes.
+    # The slanted lines themselves are markers at those locations, such that the
+    # lines keep their angle and position, independent of the axes size or scale
+    # Finally, we need to disable clipping.
+    d = 0.5  # proportion of vertical to horizontal extent of the slanted line
+    kwargs = dict(
+        marker=[(-1, -d), (1, d)],
+        markersize=12,
+        linestyle="none",
+        color="k",
+        mec="k",
+        mew=1,
+        clip_on=False,
+    )
+    ax1.plot([1], [0], transform=ax1.transAxes, **kwargs)
+    ax2.plot([0], [0], transform=ax2.transAxes, **kwargs)
+
+
+axis.scatter(
+    (frame := abu_dhabi_rahimi_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Abu Dhabi",
+    color="C0",
+)
+axis.errorbar(
+    frame["costs"],
+    frame["emissions"],
+    yerr=(
+        specific_emissions_boxen_frame(
+            abu_dhabi_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
+        )["Total"]
+        - specific_emissions_boxen_frame(
+            abu_dhabi_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
+        )["Total"]
+    )
+    / 2,
+    alpha=(errorbar_alpha := 0.8),
+    capsize=(capsize := 5),
+    color="C0",
+    fmt="none",
+)
+axes[0].scatter(
+    *(mean_coords := (0.351, 2.07835)),
+    marker="^",
+    color="C0",
+    label="Abu Dhabi Grid-RO",
+)
+axes[0].errorbar(
+    *mean_coords,
+    xerr=0.195,
+    yerr=1.15465,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C0",
+    fmt="none",
+)
+
+axis.scatter(
+    (frame := gran_canaria_rahimi_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Gran Canaria",
+    color="C1",
+)
+axis.errorbar(
+    frame["costs"],
+    frame["emissions"],
+    yerr=(
+        specific_emissions_boxen_frame(
+            gran_canaria_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
+        )["Total"]
+        - specific_emissions_boxen_frame(
+            gran_canaria_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
+        )["Total"]
+    )
+    / 2,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C1",
+    fmt="none",
+)
+axes[0].scatter(
+    *(mean_coords := (0.657, 2.59443)), marker="^", color="C1", label="Gando Grid-RO"
+)
+axes[0].errorbar(
+    *mean_coords,
+    xerr=0.365,
+    yerr=1.44135,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C1",
+    fmt="none",
+)
+
+axis.scatter(
+    (frame := tijuana_rahimi_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="Tijuana",
+    color="C2",
+)
+axis.errorbar(
+    frame["costs"],
+    frame["emissions"],
+    yerr=(
+        specific_emissions_boxen_frame(
+            tijuana_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
+        )["Total"]
+        - specific_emissions_boxen_frame(
+            tijuana_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
+        )["Total"]
+    )
+    / 2,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C2",
+    fmt="none",
+)
+axis.scatter(
+    *(mean_coords := (3.707, 1.395)), marker="^", color="C2", label="Tijuana Grid-RO"
+)
+axis.errorbar(
+    *mean_coords,
+    xerr=2.1,
+    yerr=0.7750,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C2",
+    fmt="none",
+)
+
+axis.scatter(
+    (frame := la_paz_rahimi_costs_emissions_frame)["costs"],
+    frame["emissions"],
+    marker="x",
+    label="La Paz",
+    color="C3",
+)
+axis.errorbar(
+    frame["costs"],
+    frame["emissions"],
+    yerr=(
+        specific_emissions_boxen_frame(
+            la_paz_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
+        )["Total"]
+        - specific_emissions_boxen_frame(
+            la_paz_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
+        )["Total"]
+    )
+    / 2,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C3",
+    fmt="none",
+)
+axis.scatter(
+    *(mean_coords := (13.1005, 4.005)), marker="^", color="C3", label="La Paz Grid-RO"
+)
+axis.errorbar(
+    *mean_coords,
+    xerr=7.2715,
+    yerr=2.225,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C3",
+    fmt="none",
+)
+
+
+kde_frame = pd.concat(
+    [
+        abu_dhabi_rahimi_costs_emissions_frame,
+        gran_canaria_rahimi_costs_emissions_frame,
+        tijuana_rahimi_costs_emissions_frame,
+        la_paz_rahimi_costs_emissions_frame,
+    ]
+)
+sns.kdeplot(
+    data=kde_frame,
+    x="costs",
+    y="emissions",
+    hue="location",
+    alpha=0.4,
+    ax=axis,
+    levels=(levels := 4),
+    thresh=(thresh := 0.005),
+    fill=True,
+    # clip=[(min(kde_frame["costs"]), None), (min(kde_frame["emissions"]), None)]
+    cut=(cut := 0.5),
+    bw_adjust=(bw_adjust := 0.4),
+)
+sns.kdeplot(
+    data=kde_frame,
+    x="costs",
+    y="emissions",
+    hue="location",
+    levels=levels,
+    thresh=thresh,
+    fill=False,
+    # clip=[(min(kde_frame["costs"]), None), (min(kde_frame["emissions"]), None)]
+    ax=axis,
+    cut=cut,
+    bw_adjust=bw_adjust,
+)
+axis.set_xlabel("Specific cost / USD/m$^3$")
+plt.figtext(
+    0.5,
+    axis.get_position().y0 - 0.05,
+    "Specific cost / USD/m$^3$",
+    ha="center",
+    va="center",
+)
+axes[0].set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+plt.figtext(
+    0.5,
+    axis.get_position().y1 + 0.014,
+    "Largest-capacity plant",
+    ha="center",
+    va="center",
+)
+axis.set_ylabel("")
+
+axis.set_xlim(
+    0.5 * math.floor((lim := axis.set_xlim(auto=True))[0] / 0.5),
+    # 0,f
+    0.5 * math.ceil((lim := axis.set_xlim(auto=True))[1] / 0.5),
+)
+axis.set_ylim(math.floor((lim := axis.set_ylim(auto=True))[0]), math.ceil(lim[1]))
+
+# Create the combined legend
+all_handles, all_labels = ([], [])
+for ax in axes:
+    handles, labels = ax.get_legend_handles_labels()
+    all_handles.extend(handles)
+    all_labels.extend(labels)
+
+all_handles = [
+    all_handles[2],
+    all_handles[0],
+    all_handles[3],
+    all_handles[1],
+    all_handles[4],
+    all_handles[6],
+    all_handles[5],
+    all_handles[7],
+]
+
+all_labels = [
+    all_labels[2],
+    all_labels[0],
+    all_labels[3],
+    all_labels[1],
+    all_labels[4],
+    all_labels[6],
+    all_labels[5],
+    all_labels[7],
+]
+
+axis.legend().remove()
+axis.legend(all_handles, all_labels)
+
+
+# Add grey rectangles
+import matplotlib.patches as mpatches
+
+rect = mpatches.Rectangle(
+    [axes[0].get_position().x1, axes[1].get_position().y1],
+    axes[1].get_position().x0 - axes[0].get_position().x1,
+    axes[1].get_position().y0 - axes[1].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
+axis.add_patch(rect)
+
+_post_process_split_kde_axes(axes[0], axis)
+
+axes[1].spines.right.set_visible(False)
+axes[0].spines.right.set_visible(False)
+axes[1].spines.left.set_visible(False)
+axes[1].tick_params(labelleft=False, labelright=False)
+axes[0].xaxis.tick_bottom()
+axes[0].yaxis.tick_left()
+
+# Correct for ticks on log scales
+axis.xaxis.grid(True, which="both")
+axis.xaxis.set_minor_formatter(ticker.FormatStrFormatter("%.0f"))
+axis.xaxis.set_major_formatter(ticker.FormatStrFormatter("%.0f"))
+axis.yaxis.grid(True, which="both")
+
+axes[0].yaxis.grid(True, which="both")
+axes[0].yaxis.set_minor_formatter(ticker.FormatStrFormatter("%.1f"))
+axes[0].yaxis.set_major_formatter(ticker.FormatStrFormatter("%.1f"))
+plt.grid(True, which="both")
+
+plt.savefig(
+    "rahimi_specific_costs_emissions_kde_10.png",
+    dpi=1200,
+    transparent=True,
+    bbox_inches="tight",
+)
 
 plt.show()
 
@@ -8299,14 +9870,18 @@ from tqdm import tqdm
 
 data: dict[str, Any] = {}
 
+
 @contextmanager
 def ensure_optimisations_output_dir() -> Generator[None, None, None]:
     """Ensure that we're in the optimisations output directory."""
-    if (optimisations_directory:="optimisation_outputs") not in os.path.basename(os.getcwd()):
+    if (optimisations_directory := "optimisation_outputs") not in os.path.basename(
+        os.getcwd()
+    ):
         os.chdir(optimisations_directory)
     yield
     if os.path.basename(os.getcwd()) == optimisations_directory:
         os.chdir("..")
+
 
 with ensure_optimisations_output_dir():
     for filename in tqdm(os.listdir("."), desc="files", unit="file"):
@@ -8316,6 +9891,6 @@ with ensure_optimisations_output_dir():
             continue
         with open(filename, "r", encoding="UTF-8") as f:
             data[filename] = json.load(f)
-    with open((output_filename:="31_mar_23_v2.json"), "w", encoding="UTF-8") as f:
+    with open((output_filename := "31_mar_23_v2.json"), "w", encoding="UTF-8") as f:
         json.dump(data, f)
     shutil.copy2(output_filename, os.path.join("..", output_filename))
