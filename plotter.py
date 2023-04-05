@@ -2170,7 +2170,7 @@ for plot_index, title in enumerate(optimisation_titles[:1]):
     plt.fill_between(x, storage_fraction, solar_line, color="C1", alpha=0.7)
     plt.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
     plt.xlabel("Mean grid discount rate / %/year")
-    plt.ylabel("Fractional generation of electricity demand")
+    plt.ylabel("Fraction")
     plt.title(f"Fractional electricity sources for {title.capitalize()}")
     plt.legend(bbox_to_anchor=(1.0, 1.0))
     plt.xlim(-25, 25)
@@ -3623,7 +3623,7 @@ axis.text(
 
 
 plt.savefig(
-    "fractions_10.png",
+    "fractions_11.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -4011,7 +4011,7 @@ upper_axis.add_patch(rect)
 
 
 plt.savefig(
-    "joo_component_sizes_10.png",
+    "joo_component_sizes_11.png",
     transparent=True,
     dpi=1200,
     bbox_inches="tight",
@@ -4281,7 +4281,7 @@ upper_axis.add_patch(rect)
 
 
 plt.savefig(
-    "el_nashar_component_sizes_10.png",
+    "el_nashar_component_sizes_11.png",
     transparent=True,
     dpi=600,
     bbox_inches="tight",
@@ -4608,7 +4608,7 @@ upper_axis.add_patch(rect)
 
 
 plt.savefig(
-    "rahimi_component_sizes_10.png",
+    "rahimi_component_sizes_11.png",
     transparent=True,
     dpi=1200,
     bbox_inches="tight",
@@ -4823,7 +4823,7 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 
 plt.savefig(
-    "joo_technology_types_9.png", transparent=True, dpi=300, bbox_inches="tight"
+    "joo_technology_types_11.png", transparent=True, dpi=300, bbox_inches="tight"
 )
 
 plt.show()
@@ -4936,7 +4936,7 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 
 plt.savefig(
-    "joo_specific_technology_types_9.png",
+    "joo_specific_technology_types_11.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -5052,7 +5052,7 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 
 plt.savefig(
-    "el_nashar_specific_technology_types_9.png",
+    "el_nashar_specific_technology_types_11.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -5353,7 +5353,7 @@ rect = mpatches.Rectangle(
 upper_axis.add_patch(rect)
 
 plt.savefig(
-    "joo_specific_technology_types_10.png",
+    "joo_specific_technology_types_11.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -5626,7 +5626,7 @@ rect = mpatches.Rectangle(
 upper_axis.add_patch(rect)
 
 plt.savefig(
-    "el_nashar_specific_technology_types_9.png",
+    "el_nashar_specific_technology_types_11.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -5900,7 +5900,7 @@ rect = mpatches.Rectangle(
 upper_axis.add_patch(rect)
 
 plt.savefig(
-    "rahimi_specific_technology_types_10.png",
+    "rahimi_specific_technology_types_11.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -6062,7 +6062,7 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 
 plt.savefig(
-    "all_plant_specific_technology_types_10.png",
+    "all_plant_specific_technology_types_11.png",
     transparent=True,
     dpi=1200,
     bbox_inches="tight",
@@ -6512,7 +6512,7 @@ axis.legend(loc="upper right")
 
 
 plt.savefig(
-    "specific_costs_comparison_10.png", transparent=True, dpi=300, bbox_inches="tight"
+    "specific_costs_comparison_11.png", transparent=True, dpi=300, bbox_inches="tight"
 )
 
 plt.show()
@@ -6759,7 +6759,7 @@ axis.axhspan(
 axis.legend(loc="upper right")
 
 plt.savefig(
-    "specific_costs_comparison_8.png", transparent=True, dpi=300, bbox_inches="tight"
+    "specific_costs_comparison_11.png", transparent=True, dpi=300, bbox_inches="tight"
 )
 plt.show()
 
@@ -6836,22 +6836,22 @@ specific_emissions_y_lim: float = (
                 ]
             ),
         )
-        / 10
+        / 5
     )
-    * 10
+    * 5
 )
 
 data_to_error_bar = pd.DataFrame(
     {
         "Small": specific_emissions_boxen_frame(abu_dhabi_joo, plant=Plant.JOO).loc[
-            "hpc_abu_dhabi_joo_sharp_300_augusta"
+            (min_cost_id_joo:=specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)["Total"].idxmin())
         ],
         "Medium": specific_emissions_boxen_frame(
             abu_dhabi_el, plant=Plant.EL_NASHAR
-        ).loc["hpc_abu_dhabi_el_sharp_insulated_sti"],
+        ).loc[(min_cost_id_el:=specific_costs_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)["Total"].idxmin())],
         "Large": specific_emissions_boxen_frame(
             abu_dhabi_rahimi, plant=Plant.RAHIMI
-        ).loc["hpc_abu_dhabi_rahimi_rec_soli_augusta"],
+        ).loc[(min_cost_id_rahimi:=specific_costs_boxen_frame(abu_dhabi_rahimi, plant=Plant.RAHIMI)["Total"].idxmin())],
     }
 ).transpose()
 data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
@@ -6863,28 +6863,28 @@ axis.errorbar(
         (
             specific_emissions_boxen_frame(
                 abu_dhabi_joo, data_type=DataType.MAX, plant=Plant.JOO
-            ).loc["hpc_abu_dhabi_joo_sharp_300_augusta"]["Total"]
+            ).loc[min_cost_id_joo]["Total"]
             - specific_emissions_boxen_frame(
                 abu_dhabi_joo, data_type=DataType.MIN, plant=Plant.JOO
-            ).loc["hpc_abu_dhabi_joo_sharp_300_augusta"]["Total"]
+            ).loc[min_cost_id_joo]["Total"]
         )
         / 2,
         (
             specific_emissions_boxen_frame(
                 abu_dhabi_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
-            ).loc["hpc_abu_dhabi_el_sharp_insulated_sti"]["Total"]
+            ).loc[min_cost_id_el]["Total"]
             - specific_emissions_boxen_frame(
                 abu_dhabi_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
-            ).loc["hpc_abu_dhabi_el_sharp_insulated_sti"]["Total"]
+            ).loc[min_cost_id_el]["Total"]
         )
         / 2,
         (
             specific_emissions_boxen_frame(
                 abu_dhabi_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
-            ).loc["hpc_abu_dhabi_rahimi_rec_soli_augusta"]["Total"]
+            ).loc[min_cost_id_rahimi]["Total"]
             - specific_emissions_boxen_frame(
                 abu_dhabi_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
-            ).loc["hpc_abu_dhabi_rahimi_rec_soli_augusta"]["Total"]
+            ).loc[min_cost_id_rahimi]["Total"]
         )
         / 2,
     ],
@@ -6918,14 +6918,14 @@ axis.legend()
 data_to_error_bar = pd.DataFrame(
     {
         "Small": specific_emissions_boxen_frame(gran_canaria_joo, plant=Plant.JOO).loc[
-            "hpc_gran_canaria_joo_sharp_soli_sti"
+            (min_cost_id_joo:=specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO)["Total"].idxmin())
         ],
         "Medium": specific_emissions_boxen_frame(
             gran_canaria_el, plant=Plant.EL_NASHAR
-        ).loc["hpc_gran_canaria_el_sharp_insulated_augusta"],
+        ).loc[(min_cost_id_el:=specific_costs_boxen_frame(gran_canaria_el, plant=Plant.EL_NASHAR)["Total"].idxmin())],
         "Large": specific_emissions_boxen_frame(
             gran_canaria_rahimi, plant=Plant.RAHIMI
-        ).loc["hpc_gran_canaria_rahimi_sharp_soli_augusta"],
+        ).loc[(min_cost_id_rahimi:=specific_costs_boxen_frame(gran_canaria_rahimi, plant=Plant.RAHIMI)["Total"].idxmin())],
     }
 ).transpose()
 data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
@@ -6937,28 +6937,28 @@ axis.errorbar(
         (
             specific_emissions_boxen_frame(
                 gran_canaria_joo, data_type=DataType.MAX, plant=Plant.JOO
-            ).loc["hpc_gran_canaria_joo_sharp_soli_sti"]["Total"]
+            ).loc[min_cost_id_joo]["Total"]
             - specific_emissions_boxen_frame(
                 gran_canaria_joo, data_type=DataType.MIN, plant=Plant.JOO
-            ).loc["hpc_gran_canaria_joo_sharp_soli_sti"]["Total"]
+            ).loc[min_cost_id_joo]["Total"]
         )
         / 2,
         (
             specific_emissions_boxen_frame(
                 gran_canaria_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
-            ).loc["hpc_gran_canaria_el_sharp_insulated_augusta"]["Total"]
+            ).loc[min_cost_id_el]["Total"]
             - specific_emissions_boxen_frame(
                 gran_canaria_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
-            ).loc["hpc_gran_canaria_el_sharp_insulated_augusta"]["Total"]
+            ).loc[min_cost_id_el]["Total"]
         )
         / 2,
         (
             specific_emissions_boxen_frame(
                 gran_canaria_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
-            ).loc["hpc_gran_canaria_rahimi_sharp_soli_augusta"]["Total"]
+            ).loc[min_cost_id_rahimi]["Total"]
             - specific_emissions_boxen_frame(
                 gran_canaria_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
-            ).loc["hpc_gran_canaria_rahimi_sharp_soli_augusta"]["Total"]
+            ).loc[min_cost_id_rahimi]["Total"]
         )
         / 2,
     ],
@@ -6990,13 +6990,13 @@ axis.legend()
 data_to_error_bar = pd.DataFrame(
     {
         "Small": specific_emissions_boxen_frame(tijuana_joo, plant=Plant.JOO).loc[
-            "hpc_tijuana_joo_sharp_300_eurotherm"
+            (min_cost_id_joo:=specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO)["Total"].idxmin())
         ],
         "Medium": specific_emissions_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR).loc[
-            "hpc_tijuana_el_rec_soli_eurotherm"
+            (min_cost_id_el:=specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)["Total"].idxmin())
         ],
         "Large": specific_emissions_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI).loc[
-            "hpc_tijuana_rahimi_sharp_soli_augusta"
+            (min_cost_id_rahimi:=specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)["Total"].idxmin())
         ],
     }
 ).transpose()
@@ -7009,28 +7009,28 @@ axis.errorbar(
         (
             specific_emissions_boxen_frame(
                 tijuana_joo, data_type=DataType.MAX, plant=Plant.JOO
-            ).loc["hpc_tijuana_joo_sharp_300_eurotherm"]["Total"]
+            ).loc[min_cost_id_joo]["Total"]
             - specific_emissions_boxen_frame(
                 tijuana_joo, data_type=DataType.MIN, plant=Plant.JOO
-            ).loc["hpc_tijuana_joo_sharp_300_eurotherm"]["Total"]
+            ).loc[min_cost_id_joo]["Total"]
         )
         / 2,
         (
             specific_emissions_boxen_frame(
                 tijuana_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
-            ).loc["hpc_tijuana_el_rec_soli_eurotherm"]["Total"]
+            ).loc[min_cost_id_el]["Total"]
             - specific_emissions_boxen_frame(
                 tijuana_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
-            ).loc["hpc_tijuana_el_rec_soli_eurotherm"]["Total"]
+            ).loc[min_cost_id_el]["Total"]
         )
         / 2,
         (
             specific_emissions_boxen_frame(
                 tijuana_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
-            ).loc["hpc_tijuana_rahimi_sharp_soli_augusta"]["Total"]
+            ).loc[min_cost_id_rahimi]["Total"]
             - specific_emissions_boxen_frame(
                 tijuana_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
-            ).loc["hpc_tijuana_rahimi_sharp_soli_augusta"]["Total"]
+            ).loc[min_cost_id_rahimi]["Total"]
         )
         / 2,
     ],
@@ -7060,13 +7060,13 @@ axis.legend()
 data_to_error_bar = pd.DataFrame(
     {
         "Small": specific_emissions_boxen_frame(la_paz_joo, plant=Plant.JOO).loc[
-            "hpc_la_paz_joo_sharp_soli_augusta"
+            (min_cost_id_joo:=specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO)["Total"].idxmin())
         ],
         "Medium": specific_emissions_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR).loc[
-            "hpc_la_paz_el_sharp_300_sti"
+            (min_cost_id_el:=specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)["Total"].idxmin())
         ],
         "Large": specific_emissions_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI).loc[
-            "hpc_la_paz_rahimi_sharp_soli_eurotherm"
+            (min_cost_id_rahimi:=specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)["Total"].idxmin())
         ],
     }
 ).transpose()
@@ -7079,28 +7079,28 @@ axis.errorbar(
         (
             specific_emissions_boxen_frame(
                 la_paz_joo, data_type=DataType.MAX, plant=Plant.JOO
-            ).loc["hpc_la_paz_joo_sharp_soli_augusta"]["Total"]
+            ).loc[min_cost_id_joo]["Total"]
             - specific_emissions_boxen_frame(
                 la_paz_joo, data_type=DataType.MIN, plant=Plant.JOO
-            ).loc["hpc_la_paz_joo_sharp_soli_augusta"]["Total"]
+            ).loc[min_cost_id_joo]["Total"]
         )
         / 2,
         (
             specific_emissions_boxen_frame(
                 la_paz_el, data_type=DataType.MAX, plant=Plant.EL_NASHAR
-            ).loc["hpc_la_paz_el_sharp_300_sti"]["Total"]
+            ).loc[min_cost_id_el]["Total"]
             - specific_emissions_boxen_frame(
                 la_paz_el, data_type=DataType.MIN, plant=Plant.EL_NASHAR
-            ).loc["hpc_la_paz_el_sharp_300_sti"]["Total"]
+            ).loc[min_cost_id_el]["Total"]
         )
         / 2,
         (
             specific_emissions_boxen_frame(
                 la_paz_rahimi, data_type=DataType.MAX, plant=Plant.RAHIMI
-            ).loc["hpc_la_paz_rahimi_sharp_soli_eurotherm"]["Total"]
+            ).loc[min_cost_id_rahimi]["Total"]
             - specific_emissions_boxen_frame(
                 la_paz_rahimi, data_type=DataType.MIN, plant=Plant.RAHIMI
-            ).loc["hpc_la_paz_rahimi_sharp_soli_eurotherm"]["Total"]
+            ).loc[min_cost_id_rahimi]["Total"]
         )
         / 2,
     ],
@@ -7128,7 +7128,7 @@ axis.axhspan(1.78, 6.23, alpha=0.3, color="grey", zorder=0, hatch="//", label="G
 axis.legend()
 
 plt.savefig(
-    "specific_emissions_comparison_8.png",
+    "specific_emissions_comparison_11.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -8975,7 +8975,7 @@ axes[0].xaxis.tick_bottom()
 axes[0].yaxis.tick_left()
 
 # plt.savefig(
-#     "joo_specific_costs_emissions_kde_10.png",
+#     "joo_specific_costs_emissions_kde_11.png",
 #     dpi=1200,
 #     transparent=True,
 #     bbox_inches="tight",
@@ -9406,7 +9406,7 @@ axes[0].xaxis.tick_bottom()
 axes[0].yaxis.tick_left()
 
 plt.savefig(
-    "el_nashar_specific_costs_emissions_kde_10.png",
+    "el_nashar_specific_costs_emissions_kde_11.png",
     dpi=1200,
     transparent=True,
     bbox_inches="tight",
@@ -9847,7 +9847,7 @@ axes[0].yaxis.set_major_formatter(ticker.FormatStrFormatter("%.1f"))
 plt.grid(True, which="both")
 
 plt.savefig(
-    "rahimi_specific_costs_emissions_kde_10.png",
+    "rahimi_specific_costs_emissions_kde_11.png",
     dpi=1200,
     transparent=True,
     bbox_inches="tight",
