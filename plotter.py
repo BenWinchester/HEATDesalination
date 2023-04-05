@@ -6844,14 +6844,30 @@ specific_emissions_y_lim: float = (
 data_to_error_bar = pd.DataFrame(
     {
         "Small": specific_emissions_boxen_frame(abu_dhabi_joo, plant=Plant.JOO).loc[
-            (min_cost_id_joo:=specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)["Total"].idxmin())
+            (
+                min_cost_id_joo := specific_costs_boxen_frame(
+                    abu_dhabi_joo, plant=Plant.JOO
+                )["Total"].idxmin()
+            )
         ],
         "Medium": specific_emissions_boxen_frame(
             abu_dhabi_el, plant=Plant.EL_NASHAR
-        ).loc[(min_cost_id_el:=specific_costs_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)["Total"].idxmin())],
+        ).loc[
+            (
+                min_cost_id_el := specific_costs_boxen_frame(
+                    abu_dhabi_el, plant=Plant.EL_NASHAR
+                )["Total"].idxmin()
+            )
+        ],
         "Large": specific_emissions_boxen_frame(
             abu_dhabi_rahimi, plant=Plant.RAHIMI
-        ).loc[(min_cost_id_rahimi:=specific_costs_boxen_frame(abu_dhabi_rahimi, plant=Plant.RAHIMI)["Total"].idxmin())],
+        ).loc[
+            (
+                min_cost_id_rahimi := specific_costs_boxen_frame(
+                    abu_dhabi_rahimi, plant=Plant.RAHIMI
+                )["Total"].idxmin()
+            )
+        ],
     }
 ).transpose()
 data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
@@ -6918,14 +6934,30 @@ axis.legend()
 data_to_error_bar = pd.DataFrame(
     {
         "Small": specific_emissions_boxen_frame(gran_canaria_joo, plant=Plant.JOO).loc[
-            (min_cost_id_joo:=specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO)["Total"].idxmin())
+            (
+                min_cost_id_joo := specific_costs_boxen_frame(
+                    gran_canaria_joo, plant=Plant.JOO
+                )["Total"].idxmin()
+            )
         ],
         "Medium": specific_emissions_boxen_frame(
             gran_canaria_el, plant=Plant.EL_NASHAR
-        ).loc[(min_cost_id_el:=specific_costs_boxen_frame(gran_canaria_el, plant=Plant.EL_NASHAR)["Total"].idxmin())],
+        ).loc[
+            (
+                min_cost_id_el := specific_costs_boxen_frame(
+                    gran_canaria_el, plant=Plant.EL_NASHAR
+                )["Total"].idxmin()
+            )
+        ],
         "Large": specific_emissions_boxen_frame(
             gran_canaria_rahimi, plant=Plant.RAHIMI
-        ).loc[(min_cost_id_rahimi:=specific_costs_boxen_frame(gran_canaria_rahimi, plant=Plant.RAHIMI)["Total"].idxmin())],
+        ).loc[
+            (
+                min_cost_id_rahimi := specific_costs_boxen_frame(
+                    gran_canaria_rahimi, plant=Plant.RAHIMI
+                )["Total"].idxmin()
+            )
+        ],
     }
 ).transpose()
 data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
@@ -6990,13 +7022,25 @@ axis.legend()
 data_to_error_bar = pd.DataFrame(
     {
         "Small": specific_emissions_boxen_frame(tijuana_joo, plant=Plant.JOO).loc[
-            (min_cost_id_joo:=specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO)["Total"].idxmin())
+            (
+                min_cost_id_joo := specific_costs_boxen_frame(
+                    tijuana_joo, plant=Plant.JOO
+                )["Total"].idxmin()
+            )
         ],
         "Medium": specific_emissions_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR).loc[
-            (min_cost_id_el:=specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)["Total"].idxmin())
+            (
+                min_cost_id_el := specific_costs_boxen_frame(
+                    tijuana_el, plant=Plant.EL_NASHAR
+                )["Total"].idxmin()
+            )
         ],
         "Large": specific_emissions_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI).loc[
-            (min_cost_id_rahimi:=specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)["Total"].idxmin())
+            (
+                min_cost_id_rahimi := specific_costs_boxen_frame(
+                    tijuana_rahimi, plant=Plant.RAHIMI
+                )["Total"].idxmin()
+            )
         ],
     }
 ).transpose()
@@ -7060,13 +7104,25 @@ axis.legend()
 data_to_error_bar = pd.DataFrame(
     {
         "Small": specific_emissions_boxen_frame(la_paz_joo, plant=Plant.JOO).loc[
-            (min_cost_id_joo:=specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO)["Total"].idxmin())
+            (
+                min_cost_id_joo := specific_costs_boxen_frame(
+                    la_paz_joo, plant=Plant.JOO
+                )["Total"].idxmin()
+            )
         ],
         "Medium": specific_emissions_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR).loc[
-            (min_cost_id_el:=specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)["Total"].idxmin())
+            (
+                min_cost_id_el := specific_costs_boxen_frame(
+                    la_paz_el, plant=Plant.EL_NASHAR
+                )["Total"].idxmin()
+            )
         ],
         "Large": specific_emissions_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI).loc[
-            (min_cost_id_rahimi:=specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)["Total"].idxmin())
+            (
+                min_cost_id_rahimi := specific_costs_boxen_frame(
+                    la_paz_rahimi, plant=Plant.RAHIMI
+                )["Total"].idxmin()
+            )
         ],
     }
 ).transpose()
@@ -8349,7 +8405,7 @@ def _subfigure_line_plot(
             ]
         ),
         color=f"C2",
-        label="grid fraction",
+        label="Grid",
     )
     axis.plot(
         x,
@@ -8360,15 +8416,37 @@ def _subfigure_line_plot(
             ]
         ),
         color=f"C1",
-        label="solar fraction",
+        label="Solar",
     )
-    axis.plot(x, data[storage_key], color=f"C0", label="storage fraction")
+    # axis.plot(x, data[solar_key], color=f"C1", label="Solar")
+    # axis.plot(
+    #     x,
+    #     (
+    #         storage_line := [
+    #             data[storage_key][index] + data[solar_key][index]
+    #             for index in range(len(x))
+    #         ]
+    #     ),
+    #     color=f"C0",
+    #     label="Storage",
+    # )
+    axis.plot(x, data[storage_key], color=f"C0", label="Storage")
     axis.fill_between(x, [0] * len(x), data[storage_key], color="C0", alpha=0.7)
     axis.fill_between(x, data[storage_key], solar_line, color="C1", alpha=0.7)
     axis.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
+    # axis.fill_between(x, [0] * len(x), data[solar_key], color="C1", alpha=0.7)
+    # axis.fill_between(x, data[solar_key], storage_line, color="C0", alpha=0.7)
+    # axis.fill_between(x, storage_line, grid_line, color="C2", alpha=0.7)
     axis.set_xlabel(x_label)
-    axis.set_ylabel("Fractional generation of electricity demand")
-    axis.set_title(f"{location.capitalize()}")
+    axis.set_ylabel("Fraction")
+    axis.set_title(
+        {
+            "abu_dhabi": "Abu Dhabi, UAE",
+            "gran_canaria": "Gando, Gran Canaria",
+            "tijuana": "Tijuana, Mexico",
+            "la_paz": "La Paz, Mexico",
+        }[location]
+    )
     axis.text(
         -0.08,
         1.1,
@@ -8381,7 +8459,7 @@ def _subfigure_line_plot(
         va="top",
         ha="right",
     )
-    axis.legend()
+    axis.legend(loc="upper right")
 
 
 def plot_battery_inverter_line_plot(
@@ -8437,7 +8515,7 @@ def plot_battery_inverter_line_plot(
         axis=axes[1, 1],
     )
     plt.savefig(
-        f"{save_fig_name}_unsmoothed_electricity_sources.png",
+        f"{save_fig_name}",
         dpi=DPI,
         transparent=True,
         bbox_inches="tight",
