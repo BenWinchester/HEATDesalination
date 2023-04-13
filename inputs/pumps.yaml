@@ -21,7 +21,7 @@ pumps:
   # (accessed February 1, 2023).
   #
   - name: crnf_15_1_a_ca_a_e_hqqe
-    cost: 3961  # [USD/pump]
+    cost: 4170  # [USD/pump]
     efficiency: 0.85
     # Emissions information from:
     #   Todde, G. et al.
