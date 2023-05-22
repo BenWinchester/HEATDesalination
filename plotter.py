@@ -3631,6 +3631,227 @@ plt.savefig(
 
 plt.show()
 
+# Fractions violin plot
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+ALPHA=0.2
+K_DEPTH: int = 4
+WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+# WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+
+sns.violinplot(
+    data=boxen_frame(abu_dhabi_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    alpha=0.5,
+    ax=(axis := axes[0, 0]),
+    cut=0,
+    inner="stick"
+)
+axis.set_title("Abu Dhabi, UAE")
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8),
+    1.05,
+)
+axis.set_ylabel("Fraction")
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+sns.violinplot(
+    data=boxen_frame(gran_canaria_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    alpha=0.5,
+    ax=(axis := axes[0, 1]),
+    cut=0,
+    inner="stick"
+)
+axis.set_title("Gando, Gran Canaria")
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8),
+    1.05,
+)
+axis.set_ylabel("Fraction")
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+sns.violinplot(
+    data=boxen_frame(tijuana_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    alpha=0.5,
+    ax=(axis := axes[1, 0]),
+    cut=0,
+    inner="stick"
+)
+axis.set_title("Tijuana, Mexico")
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
+)
+axis.set_ylabel("Fraction")
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+sns.violinplot(
+    data=boxen_frame(la_paz_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    alpha=0.5,
+    ax=(axis := axes[1, 1]),
+    cut=0,
+    inner="stick"
+)
+axis.set_title("La Paz, Mexico")
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
+)
+axis.set_ylabel("Fraction")
+axis.text(
+    -0.08,
+    1.1,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+
+plt.savefig(
+    "fractions_11_violin.png",
+    transparent=True,
+    dpi=300,
+    bbox_inches="tight",
+)
+
+plt.show()
+
+# Outputs box plot with observations
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+K_DEPTH: int = 4
+WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+# WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+
+sns.boxenplot(
+    boxen_frame(abu_dhabi_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    ax=(axis := axes[0, 0]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("Abu Dhabi, UAE")
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8),
+    1.05,
+)
+axis.set_ylabel("Fraction")
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+sns.boxenplot(
+    boxen_frame(gran_canaria_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    ax=(axis := axes[0, 1]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("Gando, Gran Canaria")
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8),
+    1.05,
+)
+axis.set_ylabel("Fraction")
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+sns.boxenplot(
+    boxen_frame(tijuana_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    ax=(axis := axes[1, 0]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("Tijuana, Mexico")
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
+)
+axis.set_ylabel("Fraction")
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+sns.boxenplot(
+    boxen_frame(la_paz_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    ax=(axis := axes[1, 1]),
+    k_depth=K_DEPTH,
+)
+axis.set_title("La Paz, Mexico")
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
+)
+axis.set_ylabel("Fraction")
+axis.text(
+    -0.08,
+    1.1,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+
+plt.savefig(
+    "fractions_11.png",
+    transparent=True,
+    dpi=300,
+    bbox_inches="tight",
+)
+
+plt.show()
+
 # TEMPLATE Do not plot
 
 fig, axes = plt.subplots(2, 2, figsize=(12, 8))
