@@ -3746,9 +3746,10 @@ plt.savefig(
 
 plt.show()
 
-# Outputs box plot with observations
+# Fractions violin plot with observations
 
 fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+ALPHA=0.2
 K_DEPTH: int = 4
 WEATHER_TYPE: str = "average_weather_conditions"
 # WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
@@ -3756,10 +3757,18 @@ WEATHER_TYPE: str = "average_weather_conditions"
 
 TANK_INDEX: int | None = None
 
-sns.boxenplot(
-    boxen_frame(abu_dhabi_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+sns.violinplot(
+    data=boxen_frame(abu_dhabi_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    alpha=0.5,
     ax=(axis := axes[0, 0]),
-    k_depth=K_DEPTH,
+    cut=0,
+)
+sns.stripplot(
+    boxen_frame(abu_dhabi_data),
+    ax=axis,
+    color=".3",
+    linewidth=0,
+    size=4
 )
 axis.set_title("Abu Dhabi, UAE")
 axis.set_ylim(
@@ -3778,10 +3787,18 @@ axis.text(
     ha="right",
 )
 
-sns.boxenplot(
-    boxen_frame(gran_canaria_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+sns.violinplot(
+    data=boxen_frame(gran_canaria_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    alpha=0.5,
     ax=(axis := axes[0, 1]),
-    k_depth=K_DEPTH,
+    cut=0,
+)
+sns.stripplot(
+    boxen_frame(gran_canaria_data),
+    ax=axis,
+    color=".3",
+    linewidth=0,
+    size=4
 )
 axis.set_title("Gando, Gran Canaria")
 axis.set_ylim(
@@ -3800,10 +3817,18 @@ axis.text(
     ha="right",
 )
 
-sns.boxenplot(
-    boxen_frame(tijuana_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+sns.violinplot(
+    data=boxen_frame(tijuana_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    alpha=0.5,
     ax=(axis := axes[1, 0]),
-    k_depth=K_DEPTH,
+    cut=0,
+)
+sns.stripplot(
+    boxen_frame(tijuana_data),
+    ax=axis,
+    color=".3",
+    linewidth=0,
+    size=4
 )
 axis.set_title("Tijuana, Mexico")
 axis.set_ylim(
@@ -3821,10 +3846,18 @@ axis.text(
     ha="right",
 )
 
-sns.boxenplot(
-    boxen_frame(la_paz_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+sns.violinplot(
+    data=boxen_frame(la_paz_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    alpha=0.5,
     ax=(axis := axes[1, 1]),
-    k_depth=K_DEPTH,
+    cut=0,
+)
+sns.stripplot(
+    boxen_frame(la_paz_data),
+    ax=axis,
+    color=".3",
+    linewidth=0,
+    size=4
 )
 axis.set_title("La Paz, Mexico")
 axis.set_ylim(
@@ -3844,7 +3877,145 @@ axis.text(
 
 
 plt.savefig(
-    "fractions_11.png",
+    "fractions_11_violin_with_obvs.png",
+    transparent=True,
+    dpi=300,
+    bbox_inches="tight",
+)
+
+plt.show()
+
+# Outputs box plot with observations
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+K_DEPTH: int = 4
+WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+# WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+
+sns.boxplot(
+    boxen_frame(abu_dhabi_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    ax=(axis := axes[0, 0]),
+    whis=[0, 100],
+    width=0.6
+)
+sns.stripplot(
+    boxen_frame(abu_dhabi_data),
+    ax=axis,
+    color=".3",
+    linewidth=0,
+    size=4
+)
+axis.set_title("Abu Dhabi, UAE")
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8),
+    1.05,
+)
+axis.set_ylabel("Fraction")
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+sns.boxplot(
+    boxen_frame(gran_canaria_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    ax=(axis := axes[0, 1]),
+    whis=[0, 100],
+    width=0.6
+)
+sns.stripplot(
+    boxen_frame(gran_canaria_data),
+    ax=axis,
+    color=".3",
+    linewidth=0,
+    size=4
+)
+axis.set_title("Gando, Gran Canaria")
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8),
+    1.05,
+)
+axis.set_ylabel("Fraction")
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+sns.boxplot(
+    boxen_frame(tijuana_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    ax=(axis := axes[1, 0]),
+    whis=[0, 100],
+    width=0.6
+)
+sns.stripplot(
+    boxen_frame(tijuana_data),
+    ax=axis,
+    color=".3",
+    linewidth=0,
+    size=4
+)
+axis.set_title("Tijuana, Mexico")
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
+)
+axis.set_ylabel("Fraction")
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+sns.boxplot(
+    boxen_frame(la_paz_data, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE),
+    ax=(axis := axes[1, 1]),
+    whis=[0, 100],
+    width=0.6
+)
+sns.stripplot(
+    boxen_frame(la_paz_data),
+    ax=axis,
+    color=".3",
+    linewidth=0,
+    size=4
+)
+axis.set_title("La Paz, Mexico")
+axis.set_ylim(
+    max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
+)
+axis.set_ylabel("Fraction")
+axis.text(
+    -0.08,
+    1.1,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+
+plt.savefig(
+    "fractions_11_box_with_obvs.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -4241,6 +4412,278 @@ plt.savefig(
 plt.show()
 
 
+# Joo Plot violin with obvs
+gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.4, 1, 1]}
+fig, axes = plt.subplots(5, 2, figsize=(12, 8), gridspec_kw=gridspec)
+fig.subplots_adjust(hspace=0, wspace=0.25)
+
+axes[2, 0].set_visible(False)
+axes[2, 1].set_visible(False)
+y_label_coord: int = int(-850)
+
+axes[0, 0].get_shared_x_axes().join(axes[0, 0], axes[1, 0])
+axes[3, 0].get_shared_x_axes().join(axes[3, 0], axes[4, 0])
+axes[3, 1].get_shared_x_axes().join(axes[3, 1], axes[4, 1])
+axes[0, 1].get_shared_x_axes().join(axes[0, 1], axes[1, 1])
+
+K_DEPTH: int = 4
+WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+# WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+
+# Determine the upper y limit
+
+max_y_lim = max(
+    max(
+        (
+            max_frame := components_boxen_frame(
+                tijuana_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+            )
+        )["PV"]
+    ),
+    max(max_frame["PV-T"]),
+    max(max_frame["Solar-thermal"]),
+)
+
+# Determine the break y limit
+break_y_lim = 750
+y_text_position: float = 2.25
+y_x_label_coord: float = -1.25
+
+lower_y_limits = (0, break_y_lim)
+upper_y_limits = (break_y_lim + 1, 1.05 * max_y_lim)
+
+# Abu Dhabi Plot
+upper_axis = axes[0, 0]
+lower_axis = axes[1, 0]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.violinplot(
+        data=(data_to_plot:=components_boxen_frame(
+            abu_dhabi_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        )),
+        alpha=0.5,
+        ax=axis,
+        cut=0,
+    )
+    sns.stripplot(
+        data_to_plot,
+        ax=axis,
+        color=".3",
+        linewidth=0,
+        size=4
+    )
+
+upper_axis.set_title("Abu Dhabi, UAE")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
+lower_axis.set_xlabel("Component")
+upper_axis.text(
+    -0.1,
+    y_text_position,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# Gran Canaria Plot
+upper_axis = axes[0, 1]
+lower_axis = axes[1, 1]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.violinplot(
+        data=(data_to_plot:=components_boxen_frame(
+            gran_canaria_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        )),
+        alpha=0.5,
+        ax=axis,
+        cut=0,
+    )
+    sns.stripplot(
+        data_to_plot,
+        ax=axis,
+        color=".3",
+        linewidth=0,
+        size=4
+    )
+
+upper_axis.set_title("Gando, Gran Canaria")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
+lower_axis.set_xlabel("Component")
+upper_axis.text(
+    -0.1,
+    y_text_position,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# Tijuana Plot
+upper_axis = axes[3, 0]
+lower_axis = axes[4, 0]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.violinplot(
+        data=(data_to_plot:=components_boxen_frame(
+            tijuana_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        )),
+        alpha=0.5,
+        ax=axis,
+        cut=0,
+    )
+    sns.stripplot(
+        data_to_plot,
+        ax=axis,
+        color=".3",
+        linewidth=0,
+        size=4
+    )
+
+upper_axis.set_title("Tijuana, Mexico")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
+lower_axis.set_xlabel("Component")
+upper_axis.text(
+    -0.1,
+    y_text_position,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# La Paz Plot
+upper_axis = axes[3, 1]
+lower_axis = axes[4, 1]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.violinplot(
+        data=(data_to_plot:=components_boxen_frame(
+            la_paz_joo, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        )),
+        alpha=0.5,
+        ax=axis,
+        cut=0,
+    )
+    sns.stripplot(
+        data_to_plot,
+        ax=axis,
+        color=".3",
+        linewidth=0,
+        size=4
+    )
+
+upper_axis.set_title("La Paz, Mexico")
+lower_axis.set_xlabel("Component")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
+upper_axis.text(
+    -0.1,
+    y_text_position,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# Add grey rectangles
+rect = mpatches.Rectangle(
+    [axes[0, 0].get_position().x0, axes[1, 0].get_position().y1],
+    axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0,
+    axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
+upper_axis.add_patch(rect)
+rect = mpatches.Rectangle(
+    [axes[3, 0].get_position().x0, axes[4, 0].get_position().y1],
+    axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0,
+    axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
+upper_axis.add_patch(rect)
+rect = mpatches.Rectangle(
+    [axes[0, 1].get_position().x0, axes[1, 1].get_position().y1],
+    axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0,
+    axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
+upper_axis.add_patch(rect)
+rect = mpatches.Rectangle(
+    [axes[3, 1].get_position().x0, axes[4, 1].get_position().y1],
+    axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0,
+    axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
+upper_axis.add_patch(rect)
+
+
+plt.savefig(
+    "joo_component_sizes_12_violin_with_obvs.png",
+    transparent=True,
+    dpi=1200,
+    bbox_inches="tight",
+)
+
+plt.show()
+
 # El-Nashar Plot
 gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.4, 1, 1]}
 fig, axes = plt.subplots(5, 2, figsize=(12, 8), gridspec_kw=gridspec)
@@ -4510,6 +4953,278 @@ plt.savefig(
 
 plt.show()
 
+
+# El-Nashar Plot violin with obvs
+gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.4, 1, 1]}
+fig, axes = plt.subplots(5, 2, figsize=(12, 8), gridspec_kw=gridspec)
+fig.subplots_adjust(hspace=0, wspace=0.25)
+
+axes[2, 0].set_visible(False)
+axes[2, 1].set_visible(False)
+y_label_coord: int = int(-850)
+
+axes[0, 0].get_shared_x_axes().join(axes[0, 0], axes[1, 0])
+axes[3, 0].get_shared_x_axes().join(axes[3, 0], axes[4, 0])
+axes[3, 1].get_shared_x_axes().join(axes[3, 1], axes[4, 1])
+axes[0, 1].get_shared_x_axes().join(axes[0, 1], axes[1, 1])
+
+K_DEPTH: int = 4
+WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+# WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+
+# Determine the upper y limit
+
+max_y_lim = max(
+    max(
+        (
+            max_frame := components_boxen_frame(
+                tijuana_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+            )
+        )["PV"]
+    ),
+    max(max_frame["PV-T"]),
+    max(max_frame["Solar-thermal"]),
+)
+
+# Determine the break y limit
+break_y_lim = 750
+y_text_position: float = 2.25
+y_x_label_coord: float = -1.25
+
+lower_y_limits = (0, break_y_lim)
+upper_y_limits = (break_y_lim + 1, 1.05 * max_y_lim)
+
+# Abu Dhabi Plot
+upper_axis = axes[0, 0]
+lower_axis = axes[1, 0]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.violinplot(
+        data=(data_to_plot:=components_boxen_frame(
+            abu_dhabi_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        )),
+        alpha=0.5,
+        ax=axis,
+        cut=0,
+    )
+    sns.stripplot(
+        data_to_plot,
+        ax=axis,
+        color=".3",
+        linewidth=0,
+        size=4
+    )
+
+upper_axis.set_title("Abu Dhabi, UAE")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
+lower_axis.set_xlabel("Component")
+upper_axis.text(
+    -0.1,
+    y_text_position,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# Gran Canaria Plot
+upper_axis = axes[0, 1]
+lower_axis = axes[1, 1]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.violinplot(
+        data=(data_to_plot:=components_boxen_frame(
+            gran_canaria_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        )),
+        alpha=0.5,
+        ax=axis,
+        cut=0,
+    )
+    sns.stripplot(
+        data_to_plot,
+        ax=axis,
+        color=".3",
+        linewidth=0,
+        size=4
+    )
+
+upper_axis.set_title("Gando, Gran Canaria")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
+lower_axis.set_xlabel("Component")
+upper_axis.text(
+    -0.1,
+    y_text_position,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# Tijuana Plot
+upper_axis = axes[3, 0]
+lower_axis = axes[4, 0]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.violinplot(
+        data=(data_to_plot:=components_boxen_frame(
+            tijuana_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        )),
+        alpha=0.5,
+        ax=axis,
+        cut=0,
+    )
+    sns.stripplot(
+        data_to_plot,
+        ax=axis,
+        color=".3",
+        linewidth=0,
+        size=4
+    )
+
+upper_axis.set_title("Tijuana, Mexico")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
+lower_axis.set_xlabel("Component")
+upper_axis.text(
+    -0.1,
+    y_text_position,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# La Paz Plot
+upper_axis = axes[3, 1]
+lower_axis = axes[4, 1]
+
+upper_axis.set_ylim(*upper_y_limits)
+lower_axis.set_ylim(*lower_y_limits)
+
+for axis in (upper_axis, lower_axis):
+    sns.violinplot(
+        data=(data_to_plot:=components_boxen_frame(
+            la_paz_el, tank_index=TANK_INDEX, weather_type=WEATHER_TYPE
+        )),
+        alpha=0.5,
+        ax=axis,
+        cut=0,
+    )
+    sns.stripplot(
+        data_to_plot,
+        ax=axis,
+        color=".3",
+        linewidth=0,
+        size=4
+    )
+
+upper_axis.set_title("La Paz, Mexico")
+lower_axis.set_xlabel("Component")
+upper_axis.text(
+    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+)
+upper_axis.text(
+    -0.1,
+    y_text_position,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+
+sns.despine(top=True)
+_post_process_split_axes(upper_axis, lower_axis)
+
+# Add grey rectangles
+rect = mpatches.Rectangle(
+    [axes[0, 0].get_position().x0, axes[1, 0].get_position().y1],
+    axes[0, 0].get_position().x1 - axes[0, 0].get_position().x0,
+    axes[0, 0].get_position().y0 - axes[1, 0].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
+upper_axis.add_patch(rect)
+rect = mpatches.Rectangle(
+    [axes[3, 0].get_position().x0, axes[4, 0].get_position().y1],
+    axes[3, 0].get_position().x1 - axes[3, 0].get_position().x0,
+    axes[3, 0].get_position().y0 - axes[4, 0].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
+upper_axis.add_patch(rect)
+rect = mpatches.Rectangle(
+    [axes[0, 1].get_position().x0, axes[1, 1].get_position().y1],
+    axes[0, 1].get_position().x1 - axes[0, 1].get_position().x0,
+    axes[0, 1].get_position().y0 - axes[1, 1].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
+upper_axis.add_patch(rect)
+rect = mpatches.Rectangle(
+    [axes[3, 1].get_position().x0, axes[4, 1].get_position().y1],
+    axes[3, 1].get_position().x1 - axes[3, 1].get_position().x0,
+    axes[3, 1].get_position().y0 - axes[4, 1].get_position().y1,
+    ec="k",
+    fc="grey",
+    alpha=0.1,
+    clip_on=False,
+    transform=fig.transFigure,
+    linewidth=0,
+)
+upper_axis.add_patch(rect)
+
+
+plt.savefig(
+    "el_nashar_component_sizes_12_violin_with_obvs.png",
+    transparent=True,
+    dpi=1200,
+    bbox_inches="tight",
+)
+
+plt.show()
 
 # Rahimi Plot
 
