@@ -7926,13 +7926,421 @@ mean_component_numbers = {
 
 print(json.dumps(mean_component_numbers, indent=4))
 
+# Plot using an added 10% height ONLY to the error bars
+
+fig, axes = plt.subplots(2, 2, figsize=(48 / 5, 32 / 5))
+fig.subplots_adjust(hspace=0.35)
+
+
+# Generate a color-map palette in-keeping with the colorblind colour scheme
+colorblind_cmap_traffic_lights = sns.color_palette(
+    [
+        "#006264",  # Green
+        "#52C0AD",  # Pale green
+        "#F09F52",  # Pale orange
+        "#E04606",  # Orange
+        "#D8247C",  # Pink
+        "#EDEDED",  # Pale pink
+        "#E7DFBE",  # Pale yellow
+        "#FBBB2C",  # Yellow
+    ],
+    as_cmap=True,
+)
+
+sns.set_palette(colorblind_cmap_traffic_lights)
+
+K_DEPTH: int = 3
+MED_COSTS_ERROR_OFFSET: float = 1.1
+RO_SPECIFIC_NON_ENERGY_COSTS: float = 0.602  # DOI 10.1016/j.seta.2022.102740
+WEATHER_TYPE: str = "average_weather_conditions"
+# WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
+# WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+
+TANK_INDEX: int | None = None
+Y_SCALE = "linear"
+
+
+# specific_costs_y_lim: float = math.ceil(
+#     max(
+#         min(specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)["Total"]),
+#         min(specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO)["Total"]),
+#         min(specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO)["Total"]),
+#         min(specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO)["Total"]),
+#         min(specific_costs_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)["Total"]),
+#         min(
+#             specific_costs_boxen_frame(gran_canaria_el, plant=Plant.EL_NASHAR)["Total"]
+#         ),
+#         min(specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)["Total"]),
+#         min(specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)["Total"]),
+#         min(specific_costs_boxen_frame(abu_dhabi_rahimi, plant=Plant.RAHIMI)["Total"]),
+#         min(
+#             specific_costs_boxen_frame(gran_canaria_rahimi, plant=Plant.RAHIMI)["Total"]
+#         ),
+#         min(specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)["Total"]),
+#         min(specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)["Total"]),
+#     )
+# )
+specific_costs_y_lim: float = 9
+
+data_to_plot = pd.DataFrame(
+    {
+        "Small": (
+            frame := specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)
+        ).loc[(min_cost_id_joo := frame["Total"].idxmin())],
+        "Medium": (
+            frame := specific_costs_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)
+        ).loc[(min_cost_id_el := frame["Total"].idxmin())],
+        "Large": (
+            frame := specific_costs_boxen_frame(abu_dhabi_rahimi, plant=Plant.RAHIMI)
+        ).loc[(min_cost_id_rahimi := frame["Total"].idxmin())],
+    }
+)
+y_max = [
+    MED_COSTS_ERROR_OFFSET * data_to_plot["Small"].loc["Total"],
+    MED_COSTS_ERROR_OFFSET * data_to_plot["Medium"].loc["Total"],
+    MED_COSTS_ERROR_OFFSET * data_to_plot["Large"].loc["Total"],
+]
+y_min = [
+    1 * data_to_plot["Small"].loc["Total"],
+    1 * data_to_plot["Medium"].loc["Total"],
+    1 * data_to_plot["Large"].loc["Total"],
+]
+data_to_plot = data_to_plot.drop("Total").transpose()
+data_to_plot.plot.bar(ax=(axis := axes[0, 0]), rot=0, stacked=True, edgecolor="none")
+axis.errorbar(
+    x=data_to_plot.index,
+    y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
+    yerr=[abs(max_entry - y_min[index]) / 2 for index, max_entry in enumerate(y_max)],
+    capsize=10,
+    color="#1A0801",
+    fmt="none",
+)
+axis.grid(axis="x")
+axis.set_xlabel("MED Plant")
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_title("Abu Dhabi, UAE")
+axis.yaxis.set_minor_formatter(ticker.ScalarFormatter())
+axis.yaxis.set_major_formatter(ticker.ScalarFormatter())
+axis.set_ylim(0, specific_costs_y_lim)
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.axhspan(
+    0.156 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    0.546 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    alpha=0.2,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    label="Grid-RO",
+)
+axis.axhspan(
+    2.728423 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    10.4888 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    alpha=0.3,
+    color="#FBBB2C",
+    zorder=0,
+    hatch="\\\\",
+    label="PV-RO",
+    lw=0,
+)
+axis.legend()
+
+data_to_plot = pd.DataFrame(
+    {
+        "Small": (
+            frame := specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO)
+        ).loc[(min_cost_id_joo := frame["Total"].idxmin())],
+        "Medium": (
+            frame := specific_costs_boxen_frame(gran_canaria_el, plant=Plant.EL_NASHAR)
+        ).loc[(min_cost_id_el := frame["Total"].idxmin())],
+        "Large": (
+            frame := specific_costs_boxen_frame(gran_canaria_rahimi, plant=Plant.RAHIMI)
+        ).loc[(min_cost_id_rahimi := frame["Total"].idxmin())],
+    }
+)
+y_max = [
+    MED_COSTS_ERROR_OFFSET * data_to_plot["Small"].loc["Total"],
+    MED_COSTS_ERROR_OFFSET * data_to_plot["Medium"].loc["Total"],
+    MED_COSTS_ERROR_OFFSET * data_to_plot["Large"].loc["Total"],
+]
+y_min = [
+    1 * data_to_plot["Small"].loc["Total"],
+    1 * data_to_plot["Medium"].loc["Total"],
+    1 * data_to_plot["Large"].loc["Total"],
+]
+data_to_plot = data_to_plot.drop("Total").transpose()
+data_to_plot.plot.bar(ax=(axis := axes[0, 1]), rot=0, stacked=True, edgecolor="none")
+axis.errorbar(
+    x=data_to_error_bar.index,
+    y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
+    yerr=[abs(max_entry - y_min[index]) / 2 for index, max_entry in enumerate(y_max)],
+    capsize=10,
+    color="#1A0801",
+    fmt="none",
+)
+axis.grid(axis="x")
+axis.set_xlabel("MED Plant")
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_title("Gando, Gran Canaria")
+axis.set_ylim(0, specific_costs_y_lim)
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+axis.axhspan(
+    0.292 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    1.022 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    alpha=0.2,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    label="Grid-RO",
+)
+axis.axhspan(
+    3.469907 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    13.530135 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    alpha=0.3,
+    color="#FBBB2C",
+    zorder=0,
+    hatch="\\\\",
+    label="PV-RO",
+    lw=0,
+)
+
+axis.legend()
+
+data_to_plot = pd.DataFrame(
+    {
+        "Small": (
+            frame := specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO)
+        ).loc[(min_cost_id_joo := frame["Total"].idxmin())],
+        "Medium": (
+            frame := specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)
+        ).loc[(min_cost_id_el := frame["Total"].idxmin())],
+        "Large": (
+            frame := specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)
+        ).loc[(min_cost_id_rahimi := frame["Total"].idxmin())],
+    }
+)
+y_max = [
+    MED_COSTS_ERROR_OFFSET * data_to_plot["Small"].loc["Total"],
+    MED_COSTS_ERROR_OFFSET * data_to_plot["Medium"].loc["Total"],
+    MED_COSTS_ERROR_OFFSET * data_to_plot["Large"].loc["Total"],
+]
+y_min = [
+    1 * data_to_plot["Small"].loc["Total"],
+    1 * data_to_plot["Medium"].loc["Total"],
+    1 * data_to_plot["Large"].loc["Total"],
+]
+data_to_plot = data_to_plot.drop("Total").transpose()
+data_to_plot.plot.bar(ax=(axis := axes[1, 0]), rot=0, stacked=True, edgecolor="none")
+axis.errorbar(
+    x=data_to_plot.index,
+    y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
+    yerr=[abs(max_entry - y_min[index]) / 2 for index, max_entry in enumerate(y_max)],
+    capsize=10,
+    color="#1A0801",
+    fmt="none",
+)
+axis.grid(axis="x")
+axis.set_xlabel("MED Plant")
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_ylim(0, specific_costs_y_lim)
+axis.set_title("Tijuana, Mexico")
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+axis.axhspan(
+    5.587 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    17.917 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    xmax=(1 / 3),
+    alpha=0.2,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    label="Grid-RO",
+    lw=0,
+)
+axis.axhspan(
+    5.597 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    5.959 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    xmin=(1 / 3),
+    xmax=(2 / 3),
+    alpha=0.2,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    lw=0,
+)
+axis.axhspan(
+    1.667 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    5.807 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    xmin=(2 / 3),
+    alpha=0.2,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    lw=0,
+)
+axis.axhspan(
+    3.8273 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    13.136170 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    alpha=0.3,
+    color="#FBBB2C",
+    zorder=0,
+    hatch="\\\\",
+    label="PV-RO",
+    lw=0,
+)
+axis.legend(loc="upper right")
+
+data_to_plot = pd.DataFrame(
+    {
+        "Small": (frame := specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO)).loc[
+            (min_cost_id_joo := frame["Total"].idxmin())
+        ],
+        "Medium": (
+            frame := specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)
+        ).loc[(min_cost_id_el := frame["Total"].idxmin())],
+        "Large": (
+            frame := specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)
+        ).loc[(min_cost_id_rahimi := frame["Total"].idxmin())],
+    }
+)
+y_max = [
+    MED_COSTS_ERROR_OFFSET * data_to_plot["Small"].loc["Total"],
+    MED_COSTS_ERROR_OFFSET * data_to_plot["Medium"].loc["Total"],
+    MED_COSTS_ERROR_OFFSET * data_to_plot["Large"].loc["Total"],
+]
+y_min = [
+    1 * data_to_plot["Small"].loc["Total"],
+    1 * data_to_plot["Medium"].loc["Total"],
+    1 * data_to_plot["Large"].loc["Total"],
+]
+data_to_plot = data_to_plot.drop("Total").transpose()
+data_to_plot.plot.bar(ax=(axis := axes[1, 1]), rot=0, stacked=True, edgecolor="none")
+axis.errorbar(
+    x=data_to_plot.index,
+    y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
+    yerr=[abs(max_entry - y_min[index]) / 2 for index, max_entry in enumerate(y_max)],
+    capsize=10,
+    color="#1A0801",
+    fmt="none",
+)
+axis.grid(axis="x")
+axis.set_xlabel("MED Plant")
+axis.set_ylabel("Specific cost / USD/m$^3$")
+axis.set_ylim(0, specific_costs_y_lim)
+axis.set_title("La Paz, Mexico")
+axis.text(
+    -0.08,
+    1.1,
+    "d.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+axis.axhspan(
+    8.289,
+    27.347,
+    xmax=(1 / 3),
+    alpha=0.2,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    label="Grid-RO",
+    lw=0,
+)
+axis.axhspan(
+    5.587,
+    20.525,
+    xmin=(1 / 3),
+    xmax=(2 / 3),
+    alpha=0.2,
+    color="grey",
+    zorder=0,
+    hatch="//",
+    lw=0,
+)
+axis.axhspan(
+    5.829, 20.372, xmin=(2 / 3), alpha=0.2, color="grey", zorder=0, hatch="//", lw=0
+)
+axis.axhspan(
+    3.081522 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    10.2674277 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    alpha=0.3,
+    color="#FBBB2C",
+    zorder=0,
+    hatch="\\\\",
+    label="PV-RO",
+    lw=0,
+)
+axis.legend(loc="upper right")
+
+
+plt.savefig(
+    "specific_costs_comparison_15_10_percent_error.png",
+    transparent=True,
+    dpi=300,
+    bbox_inches="tight",
+)
+
+sns.set_palette(colorblind_palette)
+
+plt.show()
+
+
 # Plot a bar plot of the component costs broken down for each plant.
 
 fig, axes = plt.subplots(2, 2, figsize=(48 / 5, 32 / 5))
 fig.subplots_adjust(hspace=0.35)
 
-K_DEPTH: int = 3
 
+# Generate a color-map palette in-keeping with the colorblind colour scheme
+colorblind_cmap_traffic_lights = sns.color_palette(
+    [
+        "#006264",  # Green
+        "#52C0AD",  # Pale green
+        "#F09F52",  # Pale orange
+        "#E04606",  # Orange
+        "#D8247C",  # Pink
+        "#EDEDED",  # Pale pink
+        "#E7DFBE",  # Pale yellow
+        "#FBBB2C",  # Yellow
+    ],
+    as_cmap=True,
+)
+
+sns.set_palette(colorblind_cmap_traffic_lights)
+
+K_DEPTH: int = 3
+MED_COSTS_ERROR_OFFSET: float = 1.1
 WEATHER_TYPE: str = "average_weather_conditions"
 # WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
 # WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
@@ -7968,21 +8376,61 @@ data_to_plot = (
         {
             "Small": (
                 frame := specific_costs_boxen_frame(abu_dhabi_joo, plant=Plant.JOO)
-            ).loc[frame["Total"].idxmin()],
+            ).loc[(min_cost_id_joo := frame["Total"].idxmin())],
             "Medium": (
                 frame := specific_costs_boxen_frame(abu_dhabi_el, plant=Plant.EL_NASHAR)
-            ).loc[frame["Total"].idxmin()],
+            ).loc[(min_cost_id_el := frame["Total"].idxmin())],
             "Large": (
                 frame := specific_costs_boxen_frame(
                     abu_dhabi_rahimi, plant=Plant.RAHIMI
                 )
-            ).loc[frame["Total"].idxmin()],
+            ).loc[(min_cost_id_rahimi := frame["Total"].idxmin())],
         }
     )
     .drop("Total")
     .transpose()
 )
 data_to_plot.plot.bar(ax=(axis := axes[0, 0]), rot=0, stacked=True, edgecolor="none")
+y_max = [
+    MED_COSTS_ERROR_OFFSET
+    * specific_costs_boxen_frame(
+        abu_dhabi_joo,
+        plant=Plant.JOO,
+        weather_type=(max_y_weather_type := "lower_error_bar_weather_conditions"),
+    ).loc[min_cost_id_joo]["Total"],
+    MED_COSTS_ERROR_OFFSET
+    * specific_costs_boxen_frame(
+        abu_dhabi_el, plant=Plant.EL_NASHAR, weather_type=max_y_weather_type
+    ).loc[min_cost_id_el]["Total"],
+    MED_COSTS_ERROR_OFFSET
+    * specific_costs_boxen_frame(
+        abu_dhabi_rahimi, plant=Plant.RAHIMI, weather_type=max_y_weather_type
+    ).loc[min_cost_id_rahimi]["Total"],
+]
+y_min = [
+    1
+    * specific_costs_boxen_frame(
+        abu_dhabi_joo,
+        plant=Plant.JOO,
+        weather_type=(max_y_weather_type := "upper_error_bar_weather_conditions"),
+    ).loc[min_cost_id_joo]["Total"],
+    1
+    * specific_costs_boxen_frame(
+        abu_dhabi_el, plant=Plant.EL_NASHAR, weather_type=max_y_weather_type
+    ).loc[min_cost_id_el]["Total"],
+    1
+    * specific_costs_boxen_frame(
+        abu_dhabi_rahimi, plant=Plant.RAHIMI, weather_type=max_y_weather_type
+    ).loc[min_cost_id_rahimi]["Total"],
+]
+axis.errorbar(
+    x=data_to_plot.index,
+    y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
+    yerr=[abs(max_entry - y_min[index]) for index, max_entry in enumerate(y_max)],
+    capsize=10,
+    color="#1A0801",
+    fmt="none",
+)
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
@@ -8001,7 +8449,7 @@ axis.text(
     ha="right",
 )
 axis.axhspan(
-    0.156, 0.546, alpha=0.3, color="grey", zorder=0, hatch="//", label="Grid-RO"
+    0.156, 0.546, alpha=0.2, color="grey", zorder=0, hatch="//", label="Grid-RO"
 )
 axis.legend()
 
@@ -8010,23 +8458,63 @@ data_to_plot = (
         {
             "Small": (
                 frame := specific_costs_boxen_frame(gran_canaria_joo, plant=Plant.JOO)
-            ).loc[frame["Total"].idxmin()],
+            ).loc[(min_cost_id_joo := frame["Total"].idxmin())],
             "Medium": (
                 frame := specific_costs_boxen_frame(
                     gran_canaria_el, plant=Plant.EL_NASHAR
                 )
-            ).loc[frame["Total"].idxmin()],
+            ).loc[(min_cost_id_el := frame["Total"].idxmin())],
             "Large": (
                 frame := specific_costs_boxen_frame(
                     gran_canaria_rahimi, plant=Plant.RAHIMI
                 )
-            ).loc[frame["Total"].idxmin()],
+            ).loc[(min_cost_id_rahimi := frame["Total"].idxmin())],
         }
     )
     .drop("Total")
     .transpose()
 )
 data_to_plot.plot.bar(ax=(axis := axes[0, 1]), rot=0, stacked=True, edgecolor="none")
+y_max = [
+    MED_COSTS_ERROR_OFFSET
+    * specific_costs_boxen_frame(
+        gran_canaria_joo,
+        plant=Plant.JOO,
+        weather_type=(max_y_weather_type := "lower_error_bar_weather_conditions"),
+    ).loc[min_cost_id_joo]["Total"],
+    MED_COSTS_ERROR_OFFSET
+    * specific_costs_boxen_frame(
+        gran_canaria_el, plant=Plant.EL_NASHAR, weather_type=max_y_weather_type
+    ).loc[min_cost_id_el]["Total"],
+    MED_COSTS_ERROR_OFFSET
+    * specific_costs_boxen_frame(
+        gran_canaria_rahimi, plant=Plant.RAHIMI, weather_type=max_y_weather_type
+    ).loc[min_cost_id_rahimi]["Total"],
+]
+y_min = [
+    1
+    * specific_costs_boxen_frame(
+        gran_canaria_joo,
+        plant=Plant.JOO,
+        weather_type=(max_y_weather_type := "upper_error_bar_weather_conditions"),
+    ).loc[min_cost_id_joo]["Total"],
+    1
+    * specific_costs_boxen_frame(
+        gran_canaria_el, plant=Plant.EL_NASHAR, weather_type=max_y_weather_type
+    ).loc[min_cost_id_el]["Total"],
+    1
+    * specific_costs_boxen_frame(
+        gran_canaria_rahimi, plant=Plant.RAHIMI, weather_type=max_y_weather_type
+    ).loc[min_cost_id_rahimi]["Total"],
+]
+axis.errorbar(
+    x=data_to_error_bar.index,
+    y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
+    yerr=[abs(max_entry - y_min[index]) for index, max_entry in enumerate(y_max)],
+    capsize=10,
+    color="#1A0801",
+    fmt="none",
+)
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
@@ -8044,7 +8532,7 @@ axis.text(
 )
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 axis.axhspan(
-    0.292, 1.022, alpha=0.3, color="grey", zorder=0, hatch="//", label="Grid-RO"
+    0.292, 1.022, alpha=0.2, color="grey", zorder=0, hatch="//", label="Grid-RO"
 )
 axis.axhspan(
     5.6139387,
@@ -8054,7 +8542,7 @@ axis.axhspan(
     alpha=0.3,
     color="#FBBB2C",
     zorder=0,
-    hatch="//",
+    hatch="\\\\",
     label="PV-RO",
     lw=0,
 )
@@ -8065,19 +8553,59 @@ data_to_plot = (
         {
             "Small": (
                 frame := specific_costs_boxen_frame(tijuana_joo, plant=Plant.JOO)
-            ).loc[frame["Total"].idxmin()],
+            ).loc[(min_cost_id_joo := frame["Total"].idxmin())],
             "Medium": (
                 frame := specific_costs_boxen_frame(tijuana_el, plant=Plant.EL_NASHAR)
-            ).loc[frame["Total"].idxmin()],
+            ).loc[(min_cost_id_el := frame["Total"].idxmin())],
             "Large": (
                 frame := specific_costs_boxen_frame(tijuana_rahimi, plant=Plant.RAHIMI)
-            ).loc[frame["Total"].idxmin()],
+            ).loc[(min_cost_id_rahimi := frame["Total"].idxmin())],
         }
     )
     .drop("Total")
     .transpose()
 )
 data_to_plot.plot.bar(ax=(axis := axes[1, 0]), rot=0, stacked=True, edgecolor="none")
+y_max = [
+    MED_COSTS_ERROR_OFFSET
+    * specific_costs_boxen_frame(
+        tijuana_joo,
+        plant=Plant.JOO,
+        weather_type=(max_y_weather_type := "lower_error_bar_weather_conditions"),
+    ).loc[min_cost_id_joo]["Total"],
+    MED_COSTS_ERROR_OFFSET
+    * specific_costs_boxen_frame(
+        tijuana_el, plant=Plant.EL_NASHAR, weather_type=max_y_weather_type
+    ).loc[min_cost_id_el]["Total"],
+    MED_COSTS_ERROR_OFFSET
+    * specific_costs_boxen_frame(
+        tijuana_rahimi, plant=Plant.RAHIMI, weather_type=max_y_weather_type
+    ).loc[min_cost_id_rahimi]["Total"],
+]
+y_min = [
+    1
+    * specific_costs_boxen_frame(
+        tijuana_joo,
+        plant=Plant.JOO,
+        weather_type=(max_y_weather_type := "upper_error_bar_weather_conditions"),
+    ).loc[min_cost_id_joo]["Total"],
+    1
+    * specific_costs_boxen_frame(
+        tijuana_el, plant=Plant.EL_NASHAR, weather_type=max_y_weather_type
+    ).loc[min_cost_id_el]["Total"],
+    1
+    * specific_costs_boxen_frame(
+        tijuana_rahimi, plant=Plant.RAHIMI, weather_type=max_y_weather_type
+    ).loc[min_cost_id_rahimi]["Total"],
+]
+axis.errorbar(
+    x=data_to_plot.index,
+    y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
+    yerr=[abs(max_entry - y_min[index]) for index, max_entry in enumerate(y_max)],
+    capsize=10,
+    color="#1A0801",
+    fmt="none",
+)
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
@@ -8098,7 +8626,7 @@ axis.axhspan(
     5.587,
     17.917,
     xmax=(1 / 3),
-    alpha=0.3,
+    alpha=0.2,
     color="grey",
     zorder=0,
     hatch="//",
@@ -8110,14 +8638,14 @@ axis.axhspan(
     5.959,
     xmin=(1 / 3),
     xmax=(2 / 3),
-    alpha=0.3,
+    alpha=0.2,
     color="grey",
     zorder=0,
     hatch="//",
     lw=0,
 )
 axis.axhspan(
-    1.667, 5.807, xmin=(2 / 3), alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
+    1.667, 5.807, xmin=(2 / 3), alpha=0.2, color="grey", zorder=0, hatch="//", lw=0
 )
 axis.legend(loc="upper right")
 
@@ -8126,19 +8654,59 @@ data_to_plot = (
         {
             "Small": (
                 frame := specific_costs_boxen_frame(la_paz_joo, plant=Plant.JOO)
-            ).loc[frame["Total"].idxmin()],
+            ).loc[(min_cost_id_joo := frame["Total"].idxmin())],
             "Medium": (
                 frame := specific_costs_boxen_frame(la_paz_el, plant=Plant.EL_NASHAR)
-            ).loc[frame["Total"].idxmin()],
+            ).loc[(min_cost_id_el := frame["Total"].idxmin())],
             "Large": (
                 frame := specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)
-            ).loc[frame["Total"].idxmin()],
+            ).loc[(min_cost_id_rahimi := frame["Total"].idxmin())],
         }
     )
     .drop("Total")
     .transpose()
 )
 data_to_plot.plot.bar(ax=(axis := axes[1, 1]), rot=0, stacked=True, edgecolor="none")
+y_max = [
+    MED_COSTS_ERROR_OFFSET
+    * specific_costs_boxen_frame(
+        la_paz_joo,
+        plant=Plant.JOO,
+        weather_type=(max_y_weather_type := "lower_error_bar_weather_conditions"),
+    ).loc[min_cost_id_joo]["Total"],
+    MED_COSTS_ERROR_OFFSET
+    * specific_costs_boxen_frame(
+        la_paz_el, plant=Plant.EL_NASHAR, weather_type=max_y_weather_type
+    ).loc[min_cost_id_el]["Total"],
+    MED_COSTS_ERROR_OFFSET
+    * specific_costs_boxen_frame(
+        la_paz_rahimi, plant=Plant.RAHIMI, weather_type=max_y_weather_type
+    ).loc[min_cost_id_rahimi]["Total"],
+]
+y_min = [
+    1
+    * specific_costs_boxen_frame(
+        la_paz_joo,
+        plant=Plant.JOO,
+        weather_type=(max_y_weather_type := "upper_error_bar_weather_conditions"),
+    ).loc[min_cost_id_joo]["Total"],
+    1
+    * specific_costs_boxen_frame(
+        la_paz_el, plant=Plant.EL_NASHAR, weather_type=max_y_weather_type
+    ).loc[min_cost_id_el]["Total"],
+    1
+    * specific_costs_boxen_frame(
+        la_paz_rahimi, plant=Plant.RAHIMI, weather_type=max_y_weather_type
+    ).loc[min_cost_id_rahimi]["Total"],
+]
+axis.errorbar(
+    x=data_to_plot.index,
+    y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
+    yerr=[abs(max_entry - y_min[index]) for index, max_entry in enumerate(y_max)],
+    capsize=10,
+    color="#1A0801",
+    fmt="none",
+)
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
@@ -8159,7 +8727,7 @@ axis.axhspan(
     8.289,
     27.347,
     xmax=(1 / 3),
-    alpha=0.3,
+    alpha=0.2,
     color="grey",
     zorder=0,
     hatch="//",
@@ -8171,21 +8739,23 @@ axis.axhspan(
     20.525,
     xmin=(1 / 3),
     xmax=(2 / 3),
-    alpha=0.3,
+    alpha=0.2,
     color="grey",
     zorder=0,
     hatch="//",
     lw=0,
 )
 axis.axhspan(
-    5.829, 20.372, xmin=(2 / 3), alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
+    5.829, 20.372, xmin=(2 / 3), alpha=0.2, color="grey", zorder=0, hatch="//", lw=0
 )
 axis.legend(loc="upper right")
 
 
 plt.savefig(
-    "specific_costs_comparison_13.png", transparent=True, dpi=300, bbox_inches="tight"
+    "specific_costs_comparison_14.png", transparent=True, dpi=300, bbox_inches="tight"
 )
+
+sns.set_palette(colorblind_palette)
 
 plt.show()
 
@@ -8265,7 +8835,7 @@ axis.text(
     ha="right",
 )
 axis.axhspan(
-    0.156, 0.546, alpha=0.3, color="grey", zorder=0, hatch="//", label="Grid-RO"
+    0.156, 0.546, alpha=0.2, color="grey", zorder=0, hatch="//", label="Grid-RO"
 )
 axis.legend()
 
@@ -8304,7 +8874,7 @@ axis.text(
 )
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 axis.axhspan(
-    0.292, 1.022, alpha=0.3, color="grey", zorder=0, hatch="//", label="Grid-RO"
+    0.292, 1.022, alpha=0.2, color="grey", zorder=0, hatch="//", label="Grid-RO"
 )
 axis.legend()
 
@@ -8346,7 +8916,7 @@ axis.axhspan(
     5.587,
     17.917,
     xmax=(1 / 3),
-    alpha=0.3,
+    alpha=0.2,
     color="grey",
     zorder=0,
     hatch="//",
@@ -8358,14 +8928,14 @@ axis.axhspan(
     5.959,
     xmin=(1 / 3),
     xmax=(2 / 3),
-    alpha=0.3,
+    alpha=0.2,
     color="grey",
     zorder=0,
     hatch="//",
     lw=0,
 )
 axis.axhspan(
-    1.667, 5.807, xmin=(2 / 3), alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
+    1.667, 5.807, xmin=(2 / 3), alpha=0.2, color="grey", zorder=0, hatch="//", lw=0
 )
 axis.legend(loc="upper right")
 
@@ -8407,7 +8977,7 @@ axis.axhspan(
     8.289,
     27.347,
     xmax=(1 / 3),
-    alpha=0.3,
+    alpha=0.2,
     color="grey",
     zorder=0,
     hatch="//",
@@ -8419,14 +8989,14 @@ axis.axhspan(
     20.525,
     xmin=(1 / 3),
     xmax=(2 / 3),
-    alpha=0.3,
+    alpha=0.2,
     color="grey",
     zorder=0,
     hatch="//",
     lw=0,
 )
 axis.axhspan(
-    5.829, 20.372, xmin=(2 / 3), alpha=0.3, color="grey", zorder=0, hatch="//", lw=0
+    5.829, 20.372, xmin=(2 / 3), alpha=0.2, color="grey", zorder=0, hatch="//", lw=0
 )
 axis.legend(loc="upper right")
 
@@ -8601,9 +9171,7 @@ data_to_error_bar = pd.DataFrame(
         ],
     }
 ).transpose()
-data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
-data_to_plot.plot.bar(ax=(axis := axes[0, 0]), rot=0, stacked=True, edgecolor="none")
-axis.errorbar(
+(axis := axes[0, 0]).errorbar(
     x=data_to_error_bar.index,
     y=[
         (
@@ -8673,6 +9241,8 @@ axis.errorbar(
     color="#1A0801",
     fmt="none",
 )
+data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
+data_to_plot.plot.bar(ax=axis, rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
@@ -8693,11 +9263,21 @@ axis.text(
 axis.axhspan(
     0.9237 + RO_MEMBRANE_ETC_LOWERBOUND,
     3.233 + RO_MEMBRANE_ETC_UPPERBOUND,
-    alpha=0.3,
+    alpha=0.2,
     color="grey",
     zorder=0,
     hatch="//",
     label="Grid-RO",
+)
+axis.axhspan(
+    2.04254185693 + RO_MEMBRANE_ETC_LOWERBOUND,
+    9.4605936 + RO_MEMBRANE_ETC_UPPERBOUND,
+    alpha=0.3,
+    color="#FBBB2C",
+    zorder=0,
+    hatch="\\\\",
+    label="PV-RO",
+    lw=0,
 )
 axis.legend()
 
@@ -8731,9 +9311,7 @@ data_to_error_bar = pd.DataFrame(
         ],
     }
 ).transpose()
-data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
-data_to_plot.plot.bar(ax=(axis := axes[0, 1]), rot=0, stacked=True, edgecolor="none")
-axis.errorbar(
+(axis := axes[0, 1]).errorbar(
     x=data_to_error_bar.index,
     y=[
         (
@@ -8803,6 +9381,8 @@ axis.errorbar(
     color="#1A0801",
     fmt="none",
 )
+data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
+data_to_plot.plot.bar(ax=axis, rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
@@ -8822,21 +9402,19 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 axis.axhspan(
     1.15308 + RO_MEMBRANE_ETC_LOWERBOUND,
     4.03579 + RO_MEMBRANE_ETC_UPPERBOUND,
-    alpha=0.3,
+    alpha=0.2,
     color="grey",
     zorder=0,
     hatch="//",
     label="Grid-RO",
 )
 axis.axhspan(
-    3.0562172 + RO_MEMBRANE_ETC_LOWERBOUND,
-    10.6879611 + RO_MEMBRANE_ETC_UPPERBOUND,
-    xmin=(0 / 3),
-    xmax=(1 / 3),
+    2.4435693 + RO_MEMBRANE_ETC_LOWERBOUND,
+    8.2077929 + RO_MEMBRANE_ETC_UPPERBOUND,
     alpha=0.3,
     color="#FBBB2C",
     zorder=0,
-    hatch="//",
+    hatch="\\\\",
     label="PV-RO",
     lw=0,
 )
@@ -8867,9 +9445,7 @@ data_to_error_bar = pd.DataFrame(
         ],
     }
 ).transpose()
-data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
-data_to_plot.plot.bar(ax=(axis := axes[1, 0]), rot=0, stacked=True, edgecolor="none")
-axis.errorbar(
+(axis := axes[1, 0]).errorbar(
     x=data_to_error_bar.index,
     y=[
         (
@@ -8939,6 +9515,8 @@ axis.errorbar(
     color="#1A0801",
     fmt="none",
 )
+data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
+data_to_plot.plot.bar(ax=axis, rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
@@ -8958,11 +9536,21 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 axis.axhspan(
     0.62 + RO_MEMBRANE_ETC_LOWERBOUND,
     2.17 + RO_MEMBRANE_ETC_UPPERBOUND,
-    alpha=0.3,
+    alpha=0.2,
     color="grey",
     zorder=0,
     hatch="//",
     label="Grid-RO",
+)
+axis.axhspan(
+    2.91270928463 + RO_MEMBRANE_ETC_LOWERBOUND,
+    9.99708523592 + RO_MEMBRANE_ETC_UPPERBOUND,
+    alpha=0.3,
+    color="#FBBB2C",
+    zorder=0,
+    hatch="\\\\",
+    label="PV-RO",
+    lw=0,
 )
 axis.legend()
 
@@ -8991,9 +9579,7 @@ data_to_error_bar = pd.DataFrame(
         ],
     }
 ).transpose()
-data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
-data_to_plot.plot.bar(ax=(axis := axes[1, 1]), rot=0, stacked=True, edgecolor="none")
-axis.errorbar(
+(axis := axes[1, 1]).errorbar(
     x=data_to_error_bar.index,
     y=[
         (
@@ -9063,6 +9649,8 @@ axis.errorbar(
     color="#1A0801",
     fmt="none",
 )
+data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
+data_to_plot.plot.bar(ax=axis, rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
@@ -9082,20 +9670,33 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 axis.axhspan(
     1.78 + RO_MEMBRANE_ETC_LOWERBOUND,
     6.23 + RO_MEMBRANE_ETC_UPPERBOUND,
-    alpha=0.3,
+    alpha=0.2,
     color="grey",
     zorder=0,
     hatch="//",
     label="Grid-RO",
 )
+axis.axhspan(
+    2.11065449011 + RO_MEMBRANE_ETC_LOWERBOUND,
+    7.22996194 + RO_MEMBRANE_ETC_UPPERBOUND,
+    alpha=0.3,
+    color="#FBBB2C",
+    zorder=0,
+    hatch="\\\\",
+    label="PV-RO",
+    lw=0,
+)
 axis.legend()
 
 plt.savefig(
-    "specific_emissions_comparison_14.png",
+    "specific_emissions_comparison_15.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
 )
+
+sns.set_palette(colorblind_palette)
+
 plt.show()
 
 
