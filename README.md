@@ -1,13 +1,15 @@
 # HEATDesalination
 Simulation and optimisation of hybrid electric and thermal powered desalination systems
 
+The `HEATDesalination` model provides the ability to simulate, and optimise, energy systems for the provision of both heat and electricity to thermally-driven desalination plants. Case-studies have been conducted for multi-effect distillation (MED) plants, but the software is capable of simulating any plants which require both heat and electricity as inputs.
+
 #### Table Of Contents
 
 :link: [Dependencies](Dependencies)
 
 :clap: [Acknowledgements](Acknowledgements)
 
-[Downloading HEATDesalination](#downloading-heatdesalination)
+[Downloading HEATDesalination](#1.-downloading-heatdesalination)
 
 🐍 [Setting up your Python environment](#setting-up-your-python-environment)
   * [Anaconda method](#anaconda-method)
@@ -38,20 +40,19 @@ This module integrates with the open-source PVGIS framework, developed by Huld e
 ## Acknowledgements
 This repository uses code developed by the [CLOVER-energy](https://github.com/CLOVER-energy) team by Winchester et al. [(2022)](#3). Thanks to all at the [@CLOVER-energy/clover-development-team](https://github.com/orgs/CLOVER-energy/teams/clover-development-team) for their work.
 
-## Downloading HEATDesalination
+## 1. Downloading HEATDesalination
 
-`heat-desalination` is best installed from [pypi](https://pypi.org/project/heat-desalination/):
+`HEATDesalination` is best installed from [pypi](https://pypi.org/project/heat-desalination/):
 
 ```bash
 python -m pip install heat-desalination
 ```
 
-should be run from a terminal or powershell window. This will fetch and install the latest version of `heat-desalination` along with all of its dependencies. `heat-desalination` runs best in [Python 3.10](https://www.python.org/downloads/release/python-3100/). 
+should be run from a terminal or powershell window. This will fetch and install the latest version of `HEATDesalination` along with all of its dependencies. `HEATDesalination` runs best in [Python 3.10](https://www.python.org/downloads/release/python-3100/). 
 
 ### Working as a developer
 
 If you wish to help develop and work on the project, or, if you have any modifications that you wish to make to the code, the best approach is to run a git clone of the reposiroty. This will ensure that you have an up-to-date copy of the code which you can use to make changes, push commits and open pull requests within the repository:
-
 
 ```bash
 git clone https://github.com/BenWinchester/HEATDesalination
@@ -59,7 +60,7 @@ git clone https://github.com/BenWinchester/HEATDesalination
 
 #### Setting up your Python environment
 
-`heat-desalination` uses [Python 3.10](https://www.python.org/downloads/release/python-3100/). If you have installed the package `heat-desalination` following the instructions in the [Downloading HEATDesalination](#downloading-heatdesalination) section, then you should already have everything that you need. Otherwise, you will need to install the required dependencies.
+`HEATDesalination` uses [Python 3.10](https://www.python.org/downloads/release/python-3100/). If you have installed the package `HEATDesalination` following the instructions in the [Downloading HEATDesalination](#downloading-heatdesalination) section, then you should already have everything that you need. Otherwise, you will need to install the required dependencies.
 
 ##### Anaconda method
 
@@ -83,9 +84,9 @@ If you feel more comfortable using [`pip`](https://pypi.org/project/pip/), the P
 python -m pip install -r requirements.txt
 ```
 
-## PVGIS
+## 2. PVGIS
 
-`heat-desalination` relies on the package [`pvlib.iotools.pvgis`](https://pvlib-python.readthedocs.io/en/stable/_modules/pvlib/iotools/pvgis.html) [[1]]. This package is responsible for fetching weather data from the [Photovoltaic Geographical Information System](https://joint-research-centre.ec.europa.eu/pvgis-online-tool_en) (PVGIS). This data is used in the internal models to assess the performance of the solar collectors considered in the system. No API tokens or login keys are needed in order to use this API.
+`HEATDesalination` relies on the package [`pvlib.iotools.pvgis`](https://pvlib-python.readthedocs.io/en/stable/_modules/pvlib/iotools/pvgis.html) [[1]]. This package is responsible for fetching weather data from the [Photovoltaic Geographical Information System](https://joint-research-centre.ec.europa.eu/pvgis-online-tool_en) (PVGIS). This data is used in the internal models to assess the performance of the solar collectors considered in the system. No API tokens or login keys are needed in order to use this API.
 
 In order to download weather related data for your given location, simply run
 
@@ -99,7 +100,7 @@ or
 heat-desalination-weather -lat <latitude> -lon -<longitude> -t <timezone>
 ```
 
-from your command-line interface, provided that you have installed the `heat-desalination` package, where `<latitude>` and `<longitude>` are floating-point (i.e., decimal) numbers that give the latitude and longitude of the location for which you wish to download data respectively and `<timezone>` is the decimal timezone offset, e.g., `5.5` for a 5-and-a-half hour time difference from UTC.
+from your command-line interface, provided that you have installed the `HEATDesalination` package, where `<latitude>` and `<longitude>` are floating-point (i.e., decimal) numbers that give the latitude and longitude of the location for which you wish to download data respectively and `<timezone>` is the decimal timezone offset, e.g., `5.5` for a 5-and-a-half hour time difference from UTC.
 
 If you have downloaded the code from Github, you will need to run
 
@@ -109,13 +110,15 @@ python -m src.heatdesalination.weather -lat <latitude> -lon -<longitude> -t <tim
 
 from your command-line interface.
 
-## Completing input files
+## 3. Completing input files
+
+There are several input files which the `HEATDesalination` program requires in order to run. Some of these provide information about the configuration of your specific system whilst others are helpful in telling the program which simulations and optimisations you wish to run. These can broadly be grouped into [location-based files](#location-based-files) and [system-based files](#system-based-files).
 
 ### Location-based files
 
 ### System-based files
 
-## Running HEATDesalination
+## 4. Running HEATDesalination
 
 ### Fetching weather data
 
@@ -125,7 +128,11 @@ from your command-line interface.
 
 ### Parallel simulation and optimisation
 
+---
+
 ## Running HEATDesalination on Imperial College London's high-performance computers
+
+---
 
 ## References
 <a id="1">[1]</a> 
