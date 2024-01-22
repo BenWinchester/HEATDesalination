@@ -1,0 +1,13 @@
+---
+################################################################################
+# _config.yml - GitHub Pages Configuration File                                #
+#                                                                              #
+# Author: Benedict Winchester                                                  #
+# Date Created: 14/04/2023                                                     #
+# License: MIT                                                                 #
+#                                                                              #
+################################################################################
+
+theme: jekyll-theme-minimal
+title: HEATDesalination
+description: Website and documentation with updates for HEATDesalination.
