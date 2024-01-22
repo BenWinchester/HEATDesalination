@@ -313,7 +313,7 @@ output_name: str = "8_mar_debug"
 
 ALPHA = 0.9
 sns.set_style("whitegrid")
-sns.set_context("notebook")
+sns.set_context("poster")
 
 colorblind_palette = sns.color_palette(
     [
@@ -2949,7 +2949,7 @@ colorblind_palette = sns.color_palette(
 sns.set_palette(colorblind_palette)
 
 # Read input data
-with open("31_mar_23_v2.json", "r", encoding="UTF-8") as f:
+with open("clean_water_optimisations_data.json", "r", encoding="UTF-8") as f:
     full_data = json.load(f)
 
 data = {
@@ -7928,7 +7928,7 @@ print(json.dumps(mean_component_numbers, indent=4))
 
 # Plot using an added 10% height ONLY to the error bars
 
-fig, axes = plt.subplots(2, 2, figsize=(48 / 5, 32 / 5))
+fig, axes = plt.subplots(2, 2, figsize=(15, 10))
 fig.subplots_adjust(hspace=0.35)
 
 
@@ -8079,7 +8079,7 @@ y_min = [
 data_to_plot = data_to_plot.drop("Total").transpose()
 data_to_plot.plot.bar(ax=(axis := axes[0, 1]), rot=0, stacked=True, edgecolor="none")
 axis.errorbar(
-    x=data_to_error_bar.index,
+    x=data_to_plot.index,
     y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
     yerr=[abs(max_entry - y_min[index]) / 2 for index, max_entry in enumerate(y_max)],
     capsize=10,
@@ -8305,9 +8305,9 @@ axis.legend(loc="upper right")
 
 
 plt.savefig(
-    "specific_costs_comparison_15_10_percent_error.png",
+    "specific_costs_comparison_poster_15_10_percent_error.png",
     transparent=True,
-    dpi=300,
+    dpi=1200,
     bbox_inches="tight",
 )
 
@@ -9012,7 +9012,7 @@ plt.show()
 
 import math
 
-fig, axes = plt.subplots(2, 2, figsize=(48 / 5, 32 / 5))
+fig, axes = plt.subplots(2, 2, figsize=(15, 10))
 fig.subplots_adjust(hspace=0.35)
 
 K_DEPTH: int = 3
@@ -9245,14 +9245,14 @@ data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
 data_to_plot.plot.bar(ax=axis, rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
-axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axis.set_ylabel("Spec. emissions / kg CO$_2$eq/m$^3$")
 axis.set_title("Abu Dhabi, UAE")
 axis.yaxis.set_minor_formatter(ticker.ScalarFormatter())
 axis.yaxis.set_major_formatter(ticker.ScalarFormatter())
 axis.set_ylim(0, specific_emissions_y_lim)
 axis.text(
-    -0.08,
-    1.1,
+    0,
+    1.15,
     "a.",
     transform=axis.transAxes,
     fontsize=16,
@@ -9385,12 +9385,12 @@ data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
 data_to_plot.plot.bar(ax=axis, rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
-axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axis.set_ylabel("Spec. emissions / kg CO$_2$eq/m$^3$")
 axis.set_title("Gando, Gran Canaria")
 axis.set_ylim(0, specific_emissions_y_lim)
 axis.text(
-    -0.08,
-    1.1,
+    0,
+    1.15,
     "b.",
     transform=axis.transAxes,
     fontsize=16,
@@ -9519,12 +9519,12 @@ data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
 data_to_plot.plot.bar(ax=axis, rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
-axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axis.set_ylabel("Spec. emissions / kg CO$_2$eq/m$^3$")
 axis.set_ylim(0, specific_emissions_y_lim)
 axis.set_title("Tijuana, Mexico")
 axis.text(
-    -0.08,
-    1.1,
+    0,
+    1.15,
     "c.",
     transform=axis.transAxes,
     fontsize=16,
@@ -9653,12 +9653,12 @@ data_to_plot = data_to_error_bar.transpose().drop("Total").transpose()
 data_to_plot.plot.bar(ax=axis, rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
-axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axis.set_ylabel("Spec. emissions / kg CO$_2$eq/m$^3$")
 axis.set_ylim(0, specific_emissions_y_lim)
 axis.set_title("La Paz, Mexico")
 axis.text(
-    -0.08,
-    1.1,
+    0,
+    1.15,
     "d.",
     transform=axis.transAxes,
     fontsize=16,
@@ -9691,7 +9691,7 @@ axis.legend()
 plt.savefig(
     "specific_emissions_comparison_15.png",
     transparent=True,
-    dpi=300,
+    dpi=1200,
     bbox_inches="tight",
 )
 
@@ -11278,7 +11278,7 @@ axis.scatter(
 )
 
 axis.set_xlabel("Specific cost / USD/m$^3$")
-axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axis.set_ylabel("Spec. emissions / kg CO$_2$eq/m$^3$")
 axis.set_title("Smallest-capacity plant")
 locmin = mticker.LogLocator(base=10, subs=np.arange(0.1, 10, 0.1), numticks=100)
 
@@ -11525,7 +11525,7 @@ sns.kdeplot(
     bw_adjust=bw_adjust,
 )
 axis.set_xlabel("Specific cost / USD/m$^3$")
-axes[0].set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axes[0].set_ylabel("Spec. emissions / kg CO$_2$eq/m$^3$")
 axis.set_title("Medium-capacity plant")
 axis.set_ylabel("")
 
@@ -11711,7 +11711,7 @@ axis.scatter(
 )
 
 axis.set_xlabel("Specific cost / USD/m$^3$")
-axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axis.set_ylabel("Spec. emissions / kg CO$_2$eq/m$^3$")
 axis.set_title("Medium-capacity plant")
 
 axis.legend()
@@ -11956,7 +11956,7 @@ sns.kdeplot(
     bw_adjust=bw_adjust,
 )
 axis.set_xlabel("Specific cost / USD/m$^3$")
-axes[0].set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axes[0].set_ylabel("Spec. emissions / kg CO$_2$eq/m$^3$")
 # axis.set_title("Medium-capacity plant")
 axis.set_ylabel("")
 
@@ -12143,7 +12143,7 @@ axis.scatter(
 )
 
 axis.set_xlabel("Specific cost / USD/m$^3$")
-axis.set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axis.set_ylabel("Spec. emissions / kg CO$_2$eq/m$^3$")
 axis.set_title("Medium-capacity plant")
 
 axis.legend()
@@ -12396,7 +12396,7 @@ plt.figtext(
     ha="center",
     va="center",
 )
-axes[0].set_ylabel("Specific emissions / kg CO$_2$eq/m$^3$")
+axes[0].set_ylabel("Spec. emissions / kg CO$_2$eq/m$^3$")
 plt.figtext(
     0.5,
     axis.get_position().y1 + 0.014,
