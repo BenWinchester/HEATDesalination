@@ -854,6 +854,7 @@ def run_simulation(  # pylint: disable=too-many-statements
                 ambient_temperatures[hour],
                 auxiliary_heating_demand,
                 heat_pump,
+                desalination_plant.pinch_point_temperature_difference,
             )
 
             auxiliary_heating_electricity_demand: float = max(

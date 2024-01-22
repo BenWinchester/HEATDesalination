@@ -49,6 +49,10 @@ OPERATING_HOURS: str = "operating_hours"
 #   Keyword for plant outputs.
 OUTPUTS: str = "outputs"
 
+# PINCH_POINT_TEMPERATURE_DIFFERENCE:
+#   Keyword for the pinch-point temperature difference.
+PINCH_POINT_TEMPERATURE_DIFFERENCE: str = "pinch_point_temperature_difference"
+
 # PLANT_DISABLED:
 #   Keyword for when the plant is disabled, i.e., not operating.
 PLANT_DISABLED: str = "plant_disabled"
@@ -149,6 +153,11 @@ class DesalinationPlant:
     .. attribute:: operating_hours
         The number of hours a day that the plant is operating.
 
+    .. attribute:: pinch_point_temperature_difference
+        The temperature difference between the desired condensation and evaporation
+        temperatures and the real temperatures achieved, dictated by the effective
+        possible rate of heat transfer across the heat exchangers in the system.
+
     .. attribute:: plant_outputs
         The outputs of the plant when in operation (True) and not in operation (False).
 
@@ -165,6 +174,7 @@ class DesalinationPlant:
         self,
         name: str,
         operating_hours: int,
+        pinch_point_temperature_difference: float,
         plant_outputs: dict[bool, PlantOutputs],
         plant_requirements: dict[bool, PlantRequirements],
         start_hour: int,
@@ -177,6 +187,11 @@ class DesalinationPlant:
                 The name of the desalination plant.
             - operating_hours:
                 The number of hours a day that the plant is in operation.
+            - pinch_point_temperature_difference:
+                The temperature difference between the desired condensation and
+                evaporation temperatures and the real temperatures achieved, dictated by
+                the effective possible rate of heat transfer across the heat exchangers
+                in the system.
             - plant_outputs:
                 The outputs from the desalination plant.
             - plant_reqiurements:
@@ -191,6 +206,9 @@ class DesalinationPlant:
         )
         self.name: str = name
         self.operating_hours = operating_hours
+        self.pinch_point_temperature_difference: float = (
+            pinch_point_temperature_difference
+        )
         self.plant_outputs: dict[bool, PlantOutputs] = plant_outputs
         self.plant_requirements: dict[bool, PlantRequirements] = plant_requirements
         self.start_hour: int = start_hour
@@ -264,6 +282,7 @@ class DesalinationPlant:
         return cls(
             input_data[NAME],
             input_data[OPERATING_HOURS],
+            input_data.get(PINCH_POINT_TEMPERATURE_DIFFERENCE, 0),
             plant_outputs,
             plant_requirements,
             start_hour,
