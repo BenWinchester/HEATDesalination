@@ -11,6 +11,7 @@
 desalination_plants:
   - name: default_med
     operating_hours: !!int 10  # Number of operating hours per day
+    pinch_point_temperature_difference: !!float 1
     plant_disabled:
       requirements:
         electricity: !!float 30  # [kW] Electricity requirements
@@ -39,6 +40,7 @@ desalination_plants:
   # NOTE: This plant is capable of producing 3 m^3 of desalinated water per day.
   - name: !!str joo_med_24_hour
     operating_hours: !!int 24  # Number of operating hours per day
+    pinch_point_temperature_difference: !!float 1
     plant_disabled:
       requirements:
         electricity: !!float 0  # [kW] Electricity requirements
@@ -67,6 +69,7 @@ desalination_plants:
   # day and runs for 24 hours of the day.
   - name: !!str el_nashar_24_hour
     operating_hours: !!int 24  # Number of operating hours per day
+    pinch_point_temperature_difference: !!float 1
     plant_disabled:
       requirements:
         electricity: !!float 0  # [kW] Electricity requirements
@@ -96,6 +99,7 @@ desalination_plants:
   # day and runs for 24 hours of the day.
   - name: !!str rahimi_24_hour
     operating_hours: !!int 24  # Number of operating hours per day
+    pinch_point_temperature_difference: !!float 1
     plant_disabled:
       requirements:
         electricity: !!float 0  # [kW] Electricity requirements
