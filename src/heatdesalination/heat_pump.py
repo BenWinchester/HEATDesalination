@@ -110,6 +110,7 @@ class HeatPump:
 def _coefficient_of_performance(
     condensation_temperature: float,
     evaporation_temperature: float,
+    pinch_point_temperature_difference: float,
     system_efficiency: float,
 ) -> float:
     """
@@ -135,6 +136,10 @@ def _coefficient_of_performance(
             the temperature at which heat is absorbed from the environment in order to
             evaporate the heat-transfer fluid (refrigerant) within the heat pump,
             measured in degrees Kelvin.
+        - pinch_point_temperature_difference:
+            The temperature difference between the desired condensation and evaporation
+            temperatures and the real temperatures achieved, dictated by the effective
+            possible rate of heat transfer across the heat exchangers in the system.
         - system_efficiency:
             The efficiency of the heat pump system given as a fraction of its efficiency
             against the Carnot efficiency.
@@ -146,7 +151,7 @@ def _coefficient_of_performance(
 
     return (
         system_efficiency
-        * condensation_temperature
+        * (condensation_temperature + pinch_point_temperature_difference)
         / (condensation_temperature - evaporation_temperature)
     )
 
@@ -156,6 +161,7 @@ def calculate_heat_pump_electricity_consumption_and_cost_and_emissions(
     evaporation_temperature: float,
     heat_demand: float,
     heat_pump: HeatPump,
+    pinch_point_temperature_difference,
 ) -> Tuple[float, float, float]:
     """
     Calculate the electricity comsumption and the cost and emissions of the heat pump.
@@ -189,6 +195,10 @@ def calculate_heat_pump_electricity_consumption_and_cost_and_emissions(
             The heat demand flux, measured in kiloWatts.
         - heat_pump:
             The heat pump currently being considered.
+        - pinch_point_temperature_difference:
+            The temperature difference between the desired condensation and evaporation
+            temperatures and the real temperatures achieved, dictated by the effective
+            possible rate of heat transfer across the heat exchangers in the system.
 
     Outputs:
         - The cost of the heat pump in USD,
@@ -199,7 +209,10 @@ def calculate_heat_pump_electricity_consumption_and_cost_and_emissions(
 
     power_consumption = heat_demand / (
         cop := _coefficient_of_performance(
-            condensation_temperature, evaporation_temperature, heat_pump.efficiency
+            condensation_temperature,
+            evaporation_temperature,
+            pinch_point_temperature_difference,
+            heat_pump.efficiency,
         )
     )
     cost = heat_pump.get_cost(cop, heat_demand)
