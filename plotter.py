@@ -2921,6 +2921,7 @@ from matplotlib import rc
 from matplotlib import ticker
 from typing import Any
 
+TOTEX_HEADER: str = "TOTEX (excluding energy)"
 
 rc("font", **{"family": "sans-serif", "sans-serif": ["Arial"]})
 sns.set_context("paper")
@@ -3423,14 +3424,18 @@ def specific_costs_boxen_frame(
     plant: Plant,
 ):
     if plant == Plant.JOO:
-        return costs_boxen_frame(data_to_boxen, 32872.5, tank_index, unit, weather_type)
+        _boxen_frame =  costs_boxen_frame(data_to_boxen, 32872.5, tank_index, unit, weather_type)
+        _boxen_frame[TOTEX_HEADER] = 0.65375
     if plant == Plant.EL_NASHAR:
-        return costs_boxen_frame(data_to_boxen, 1314900, tank_index, unit, weather_type)
+        _boxen_frame =  costs_boxen_frame(data_to_boxen, 1314900, tank_index, unit, weather_type)
+        _boxen_frame[TOTEX_HEADER] = 0.60581
     if plant == Plant.RAHIMI:
-        return costs_boxen_frame(
+        _boxen_frame = costs_boxen_frame(
             data_to_boxen, 18562005, tank_index, unit, weather_type
         )
-    raise Exception("Unsupported plant type, %s, specified.", plant)
+        _boxen_frame[TOTEX_HEADER] = 0.57399
+    return _boxen_frame
+
 
 
 def specific_emissions_boxen_frame(
@@ -7931,17 +7936,25 @@ print(json.dumps(mean_component_numbers, indent=4))
 fig, axes = plt.subplots(2, 2, figsize=(15, 10))
 fig.subplots_adjust(hspace=0.35)
 
+# RO Specific Lowerbound:
+#   The lowerbound specific cost for PV-RO
+PV_RO_SPECIFIC_LOWERBOUND: float = 1.518
+
+# RO Specific Upperbound:
+#   The upperbound specific cost for PV-RO
+PV_RO_SPECIFIC_UPPERBOUND: float = 3.808
 
 # Generate a color-map palette in-keeping with the colorblind colour scheme
 colorblind_cmap_traffic_lights = sns.color_palette(
     [
         "#006264",  # Green
         "#52C0AD",  # Pale green
+        "#B8DBA7",  # Suggested by colormind.io
         "#F09F52",  # Pale orange
         "#E04606",  # Orange
-        "#D8247C",  # Pink
-        "#EDEDED",  # Pale pink
         "#E7DFBE",  # Pale yellow
+        "#EDEDED",  # Pale pink
+        "#D8247C",  # Pink
         "#FBBB2C",  # Yellow
     ],
     as_cmap=True,
@@ -7980,7 +7993,7 @@ Y_SCALE = "linear"
 #         min(specific_costs_boxen_frame(la_paz_rahimi, plant=Plant.RAHIMI)["Total"]),
 #     )
 # )
-specific_costs_y_lim: float = 9
+specific_costs_y_lim: float = 10
 
 data_to_plot = pd.DataFrame(
     {
@@ -8007,14 +8020,14 @@ y_min = [
 ]
 data_to_plot = data_to_plot.drop("Total").transpose()
 data_to_plot.plot.bar(ax=(axis := axes[0, 0]), rot=0, stacked=True, edgecolor="none")
-axis.errorbar(
-    x=data_to_plot.index,
-    y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
-    yerr=[abs(max_entry - y_min[index]) / 2 for index, max_entry in enumerate(y_max)],
-    capsize=10,
-    color="#1A0801",
-    fmt="none",
-)
+# axis.errorbar(
+#     x=data_to_plot.index,
+#     y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
+#     yerr=[abs(max_entry - y_min[index]) / 2 for index, max_entry in enumerate(y_max)],
+#     capsize=10,
+#     color="#1A0801",
+#     fmt="none",
+# )
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
@@ -8042,8 +8055,8 @@ axis.axhspan(
     label="Grid-RO",
 )
 axis.axhspan(
-    2.728423 + RO_SPECIFIC_NON_ENERGY_COSTS,
-    10.4888 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    PV_RO_SPECIFIC_LOWERBOUND,
+    PV_RO_SPECIFIC_UPPERBOUND,
     alpha=0.3,
     color="#FBBB2C",
     zorder=0,
@@ -8078,6 +8091,7 @@ y_min = [
 ]
 data_to_plot = data_to_plot.drop("Total").transpose()
 data_to_plot.plot.bar(ax=(axis := axes[0, 1]), rot=0, stacked=True, edgecolor="none")
+<<<<<<< Updated upstream
 axis.errorbar(
     x=data_to_plot.index,
     y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
@@ -8086,6 +8100,16 @@ axis.errorbar(
     color="#1A0801",
     fmt="none",
 )
+=======
+# axis.errorbar(
+#     x=data_to_error_bar.index,
+#     y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
+#     yerr=[abs(max_entry - y_min[index]) / 2 for index, max_entry in enumerate(y_max)],
+#     capsize=10,
+#     color="#1A0801",
+#     fmt="none",
+# )
+>>>>>>> Stashed changes
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
@@ -8112,8 +8136,8 @@ axis.axhspan(
     label="Grid-RO",
 )
 axis.axhspan(
-    3.469907 + RO_SPECIFIC_NON_ENERGY_COSTS,
-    13.530135 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    PV_RO_SPECIFIC_LOWERBOUND,
+    PV_RO_SPECIFIC_UPPERBOUND,
     alpha=0.3,
     color="#FBBB2C",
     zorder=0,
@@ -8149,14 +8173,14 @@ y_min = [
 ]
 data_to_plot = data_to_plot.drop("Total").transpose()
 data_to_plot.plot.bar(ax=(axis := axes[1, 0]), rot=0, stacked=True, edgecolor="none")
-axis.errorbar(
-    x=data_to_plot.index,
-    y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
-    yerr=[abs(max_entry - y_min[index]) / 2 for index, max_entry in enumerate(y_max)],
-    capsize=10,
-    color="#1A0801",
-    fmt="none",
-)
+# axis.errorbar(
+#     x=data_to_plot.index,
+#     y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
+#     yerr=[abs(max_entry - y_min[index]) / 2 for index, max_entry in enumerate(y_max)],
+#     capsize=10,
+#     color="#1A0801",
+#     fmt="none",
+# )
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
@@ -8206,8 +8230,8 @@ axis.axhspan(
     lw=0,
 )
 axis.axhspan(
-    3.8273 + RO_SPECIFIC_NON_ENERGY_COSTS,
-    13.136170 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    PV_RO_SPECIFIC_LOWERBOUND,
+    PV_RO_SPECIFIC_UPPERBOUND,
     alpha=0.3,
     color="#FBBB2C",
     zorder=0,
@@ -8242,14 +8266,14 @@ y_min = [
 ]
 data_to_plot = data_to_plot.drop("Total").transpose()
 data_to_plot.plot.bar(ax=(axis := axes[1, 1]), rot=0, stacked=True, edgecolor="none")
-axis.errorbar(
-    x=data_to_plot.index,
-    y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
-    yerr=[abs(max_entry - y_min[index]) / 2 for index, max_entry in enumerate(y_max)],
-    capsize=10,
-    color="#1A0801",
-    fmt="none",
-)
+# axis.errorbar(
+#     x=data_to_plot.index,
+#     y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
+#     yerr=[abs(max_entry - y_min[index]) / 2 for index, max_entry in enumerate(y_max)],
+#     capsize=10,
+#     color="#1A0801",
+#     fmt="none",
+# )
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
@@ -8292,8 +8316,8 @@ axis.axhspan(
     5.829, 20.372, xmin=(2 / 3), alpha=0.2, color="grey", zorder=0, hatch="//", lw=0
 )
 axis.axhspan(
-    3.081522 + RO_SPECIFIC_NON_ENERGY_COSTS,
-    10.2674277 + RO_SPECIFIC_NON_ENERGY_COSTS,
+    PV_RO_SPECIFIC_LOWERBOUND,
+    PV_RO_SPECIFIC_UPPERBOUND,
     alpha=0.3,
     color="#FBBB2C",
     zorder=0,
@@ -8305,7 +8329,11 @@ axis.legend(loc="upper right")
 
 
 plt.savefig(
+<<<<<<< Updated upstream
     "specific_costs_comparison_poster_15_10_percent_error.png",
+=======
+    "specific_costs_comparison_17.png",
+>>>>>>> Stashed changes
     transparent=True,
     dpi=1200,
     bbox_inches="tight",

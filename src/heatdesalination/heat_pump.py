@@ -41,10 +41,6 @@ class HeatPump:
     .. attribute:: cop_data
         The data points for interpolation for COP.
 
-    .. attribute:: efficiency
-        The system efficiency of the heat pump installed, expressed as a fraction of the
-        Carnot efficiency.
-
     .. attribute:: name
         The name of the heat pump.
 
@@ -59,7 +55,6 @@ class HeatPump:
     #
 
     cop_data: list[float]
-    efficiency: float
     name: str
     specific_costs_data: str
     _interpolator: interpolate.PchipInterpolator | None = None
@@ -110,8 +105,7 @@ class HeatPump:
 def _coefficient_of_performance(
     condensation_temperature: float,
     evaporation_temperature: float,
-    pinch_point_temperature_difference: float,
-    system_efficiency: float,
+    pinch_point_temperature_difference: float,  # pylint: disable=unused-argument
 ) -> float:
     """
     Calculate the coefficient of performance of the heat pump.
@@ -119,11 +113,26 @@ def _coefficient_of_performance(
     The coefficient of performance of the heat pump can be calculated based on the
     difference between the temperatures of the condensation and evaporation resevoirs:
 
-        COP = system_efficiency * T_condensation / (T_condensation - T_evaporation)
+        COP_Carnot = T_condensation / (T_condensation - T_evaporation)
 
     in such a way that, as the two temperatures appraoch one another, the COP increases
     as there is less of a temperature range to span. The system efficiency is the
     fraction of this ideal Carnot efficiency which can be achieved.
+
+    The above COP is the Carnot COP, that is, the COP of an ideal heat pump operating a
+    Carnot cycle between the two temperature resevoirs. In reality, the COP of the heat
+    pump will differ from the ideal Carnot COP. Here, we use an empirically-derived
+    relationship from
+        Gangar N, Macchietto S, Markides CN (2020)
+        Recovery and Utilization of Low-Grade Waste Heat in the Oil-Refining Industry
+        Using Heat Engines and Heat Pumps: An International Technoeconomic Comparison.
+        Energies 13:2560
+    which gives the COP as:
+
+        COP_real = 1 / (
+            (1.79 / COP_Carnot)
+            + 0.11
+        )
 
     Inputs:
         - condensation_temperature:
@@ -149,11 +158,14 @@ def _coefficient_of_performance(
 
     """
 
-    return (
-        system_efficiency
-        * (condensation_temperature + pinch_point_temperature_difference)
-        / (condensation_temperature - evaporation_temperature)
-    )
+    _cop_carnot = (
+        condensation_temperature
+        # + pinch_point_temperature_difference
+    ) / (condensation_temperature - evaporation_temperature)
+
+    _cop_real = 1 / ((1.79 / _cop_carnot) + 0.11)
+
+    return _cop_real
 
 
 def calculate_heat_pump_electricity_consumption_and_cost_and_emissions(
@@ -212,7 +224,6 @@ def calculate_heat_pump_electricity_consumption_and_cost_and_emissions(
             condensation_temperature,
             evaporation_temperature,
             pinch_point_temperature_difference,
-            heat_pump.efficiency,
         )
     )
     cost = heat_pump.get_cost(cop, heat_demand)
