@@ -15,7 +15,6 @@
 
 heat_pumps:
   - name: R410a
-    efficiency: 0.5
     specific_costs_data:
       - 487.38
       - 492.23
@@ -33,7 +32,6 @@ heat_pumps:
       - 3.17
       - 3.28
   - name: R32
-    efficiency: 0.5
     specific_costs_data:
       - 472.83
       - 476.47
@@ -53,7 +51,6 @@ heat_pumps:
       - 3.44
       - 3.49
   - name: ammonia
-    efficiency: 0.5
     specific_costs_data:
       - 494.66
       - 498.29
@@ -71,7 +68,6 @@ heat_pumps:
       - 3.67
       - 3.78
   - name: propane
-    efficiency: 0.5
     specific_costs_data:
       - 518.91
       - 524.97
