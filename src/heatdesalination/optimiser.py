@@ -58,7 +58,7 @@ from .water_pump import num_water_pumps, WaterPump
 
 # UPPER_LIMIT:
 #   Value used to throw the optimizer off of solutions that have a flow-rate error.
-UPPER_LIMIT: float = 10**8
+UPPER_LIMIT: float = 10 ** 8
 
 
 def _get_pv_and_pv_t_system_sizes(
@@ -169,12 +169,15 @@ def _inverter_cost(
     )
 
     # Determine the inverter sizing and costs associated
-    inverter_cost = _inverter_capacity(
-        scenario.inverter_lifetime,
-        scenario.inverter_unit,
-        pv_system_size + pv_t_system_size,
-        system_lifetime,
-    ) * (scenario.inverter_cost * (1 + scenario.fractional_inverter_cost_change))
+    inverter_cost = (
+        _inverter_capacity(
+            scenario.inverter_lifetime,
+            scenario.inverter_unit,
+            pv_system_size + pv_t_system_size,
+            system_lifetime,
+        )
+        * (scenario.inverter_cost * (1 + scenario.fractional_inverter_cost_change))
+    )
 
     return inverter_cost
 
@@ -1597,7 +1600,7 @@ def _simulate_and_calculate_criterion(
         Criterion.calculate_value_map[optimisation_criterion](
             component_sizes, logger, scenario, steady_state_solution, system_lifetime
         )
-        / 10**6
+        / 10 ** 6
     ) ** 3
 
 
@@ -1936,7 +1939,7 @@ def _run_integer_simulations(
                                 integer_simulation_result,
                                 system_lifetime,
                             )
-                            / 10**6
+                            / 10 ** 6
                         ) ** 3
 
                         integer_valued_simulations[criterion_value] = (

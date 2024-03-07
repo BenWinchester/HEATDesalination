@@ -106,7 +106,7 @@ class TestCollectorMassFlowRate(unittest.TestCase):
         )
 
         # Mock solution to the simulation.
-        self.solution = MockSolution({hour: hour**2 for hour in range(24)})
+        self.solution = MockSolution({hour: hour ** 2 for hour in range(24)})
         self.no_grid_solution = MockSolution({hour: 0 for hour in range(24)})
 
         # Lifetime of the system in years.

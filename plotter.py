@@ -330,6 +330,19 @@ colorblind_palette = sns.color_palette(
 
 sns.set_palette(colorblind_palette)
 
+thesis_palette = sns.color_palette(
+    [
+        "#E04606",
+        "#F9A130",
+        "#EFF2DD",
+        "#27BFE6",  # SDG 6
+        "#144E56",
+        "#D8247C",  # Pink
+        "#EDEDED",  # Pale pink
+        "#E7DFBE",  # Pale yellow
+    ]
+)
+
 with open(
     os.path.join("simulation_outputs", f"{output_name}_average_weather_conditions.csv"),
     "r",
@@ -2921,7 +2934,7 @@ from matplotlib import rc
 from matplotlib import ticker
 from typing import Any
 
-TOTEX_HEADER: str = "TOTEX (excluding energy)"
+TOTEX_HEADER: str = "Other TOTEX"
 
 rc("font", **{"family": "sans-serif", "sans-serif": ["Arial"]})
 sns.set_context("paper")
@@ -2950,7 +2963,7 @@ colorblind_palette = sns.color_palette(
 sns.set_palette(colorblind_palette)
 
 # Read input data
-with open("clean_water_optimisations_data.json", "r", encoding="UTF-8") as f:
+with open("31_jan_24.json", "r", encoding="UTF-8") as f:
     full_data = json.load(f)
 
 data = {
@@ -3425,15 +3438,16 @@ def specific_costs_boxen_frame(
 ):
     if plant == Plant.JOO:
         _boxen_frame =  costs_boxen_frame(data_to_boxen, 32872.5, tank_index, unit, weather_type)
-        _boxen_frame[TOTEX_HEADER] = 0.65375
+        _boxen_frame[TOTEX_HEADER] = (_specific_cost:=0.65375)
     if plant == Plant.EL_NASHAR:
         _boxen_frame =  costs_boxen_frame(data_to_boxen, 1314900, tank_index, unit, weather_type)
-        _boxen_frame[TOTEX_HEADER] = 0.60581
+        _boxen_frame[TOTEX_HEADER] = (_specific_cost:=0.60581)
     if plant == Plant.RAHIMI:
         _boxen_frame = costs_boxen_frame(
             data_to_boxen, 18562005, tank_index, unit, weather_type
         )
-        _boxen_frame[TOTEX_HEADER] = 0.57399
+        _boxen_frame[TOTEX_HEADER] = (_specific_cost:=0.57399)
+    _boxen_frame["Total"] += _specific_cost
     return _boxen_frame
 
 
@@ -3650,7 +3664,7 @@ sns.violinplot(
     cut=0,
     inner="stick",
 )
-axis.set_title("Abu Dhabi, UAE")
+axis.set_title("Abu Dhabi, UAE", weight="bold")
 axis.set_ylim(
     max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8),
     1.05,
@@ -3676,7 +3690,7 @@ sns.violinplot(
     cut=0,
     inner="stick",
 )
-axis.set_title("Gando, Gran Canaria")
+axis.set_title("Gando, Gran Canaria", weight="bold")
 axis.set_ylim(
     max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8),
     1.05,
@@ -3700,7 +3714,7 @@ sns.violinplot(
     cut=0,
     inner="stick",
 )
-axis.set_title("Tijuana, Mexico")
+axis.set_title("Tijuana, Mexico", weight="bold")
 axis.set_ylim(
     max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
 )
@@ -3723,7 +3737,7 @@ sns.violinplot(
     cut=0,
     inner="stick",
 )
-axis.set_title("La Paz, Mexico")
+axis.set_title("La Paz, Mexico", weight="bold")
 axis.set_ylim(
     max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
 )
@@ -3741,7 +3755,7 @@ axis.text(
 
 
 plt.savefig(
-    "fractions_11_violin.png",
+    "fractions_thesis_1_violin.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -3752,6 +3766,7 @@ plt.show()
 # Fractions violin plot with observations
 
 fig, axes = plt.subplots(2, 2, figsize=(48 / 5, 32 / 5))
+plt.subplots_adjust(hspace=0.3)
 ALPHA = 0.2
 K_DEPTH: int = 4
 WEATHER_TYPE: str = "average_weather_conditions"
@@ -3773,7 +3788,7 @@ sns.violinplot(
 )
 sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
 sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
-axis.set_title("Abu Dhabi, UAE")
+axis.set_title("Abu Dhabi, UAE", weight="bold")
 axis.set_ylim(
     max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8),
     1.05,
@@ -3803,7 +3818,7 @@ sns.violinplot(
 )
 sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
 sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
-axis.set_title("Gando, Gran Canaria")
+axis.set_title("Gando, Gran Canaria", weight="bold")
 axis.set_ylim(
     max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8),
     1.05,
@@ -3833,7 +3848,7 @@ sns.violinplot(
 )
 sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
 sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
-axis.set_title("Tijuana, Mexico")
+axis.set_title("Tijuana, Mexico", weight="bold")
 axis.set_ylim(
     max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
 )
@@ -3862,7 +3877,7 @@ sns.violinplot(
 )
 sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
-axis.set_title("La Paz, Mexico")
+axis.set_title("La Paz, Mexico", weight="bold")
 axis.set_ylim(
     max(min(min(boxen_frame(data)["Aux. heating"]) - 0.05, -0.05), -0.8), 1.05
 )
@@ -3880,7 +3895,7 @@ axis.text(
 
 
 plt.savefig(
-    "fractions_13_violin_with_strip.png",
+    "fractions_talk_1_violin_with_strip.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -4392,7 +4407,7 @@ plt.show()
 
 
 # Joo Plot violin with obvs
-gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.45, 1, 1]}
+gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.65, 1, 1]}
 fig, axes = plt.subplots(5, 2, figsize=(48 / 5, 32 / 5), gridspec_kw=gridspec)
 fig.subplots_adjust(hspace=0, wspace=0.25)
 
@@ -4439,6 +4454,7 @@ upper_axis = axes[0, 0]
 lower_axis = axes[1, 0]
 
 upper_axis.set_ylim(*upper_y_limits)
+upper_axis.xaxis.set_tick_params(labelbottom=False)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
@@ -4457,13 +4473,13 @@ for axis in (upper_axis, lower_axis):
     sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
     sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("Abu Dhabi, UAE")
+upper_axis.set_title("Abu Dhabi, UAE", weight="bold")
 upper_axis.text(
     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
 )
 lower_axis.set_xlabel("Component")
 upper_axis.text(
-    -0.1,
+    -0.05,
     y_text_position,
     "a.",
     transform=axis.transAxes,
@@ -4480,6 +4496,7 @@ upper_axis = axes[0, 1]
 lower_axis = axes[1, 1]
 
 upper_axis.set_ylim(*upper_y_limits)
+upper_axis.xaxis.set_tick_params(labelbottom=False)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
@@ -4498,13 +4515,13 @@ for axis in (upper_axis, lower_axis):
     sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
     sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("Gando, Gran Canaria")
+upper_axis.set_title("Gando, Gran Canaria", weight="bold")
 upper_axis.text(
     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
 )
 lower_axis.set_xlabel("Component")
 upper_axis.text(
-    -0.1,
+    -0.05,
     y_text_position,
     "b.",
     transform=axis.transAxes,
@@ -4521,6 +4538,7 @@ upper_axis = axes[3, 0]
 lower_axis = axes[4, 0]
 
 upper_axis.set_ylim(*upper_y_limits)
+upper_axis.xaxis.set_tick_params(labelbottom=False)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
@@ -4539,13 +4557,13 @@ for axis in (upper_axis, lower_axis):
     sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
     sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("Tijuana, Mexico")
+upper_axis.set_title("Tijuana, Mexico", weight="bold")
 upper_axis.text(
     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
 )
 lower_axis.set_xlabel("Component")
 upper_axis.text(
-    -0.1,
+    -0.05,
     y_text_position,
     "c.",
     transform=axis.transAxes,
@@ -4562,6 +4580,7 @@ upper_axis = axes[3, 1]
 lower_axis = axes[4, 1]
 
 upper_axis.set_ylim(*upper_y_limits)
+upper_axis.xaxis.set_tick_params(labelbottom=False)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
@@ -4580,13 +4599,13 @@ for axis in (upper_axis, lower_axis):
     sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
     sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("La Paz, Mexico")
+upper_axis.set_title("La Paz, Mexico", weight="bold")
 lower_axis.set_xlabel("Component")
 upper_axis.text(
     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
 )
 upper_axis.text(
-    -0.1,
+    -0.05,
     y_text_position,
     "d.",
     transform=axis.transAxes,
@@ -4651,7 +4670,7 @@ upper_axis.add_patch(rect)
 
 
 plt.savefig(
-    "joo_component_sizes_13_violin_with_obvs.png",
+    "joo_component_sizes_talk_1_violin_with_obvs.png",
     transparent=True,
     dpi=1200,
     bbox_inches="tight",
@@ -4920,7 +4939,7 @@ upper_axis.add_patch(rect)
 
 
 plt.savefig(
-    "el_nashar_component_sizes_11.png",
+    "el_nashar_component_sizes_thesis_1.png",
     transparent=True,
     dpi=600,
     bbox_inches="tight",
@@ -4930,7 +4949,7 @@ plt.show()
 
 
 # El-Nashar Plot violin with obvs
-gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.45, 1, 1]}
+gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.65, 1, 1]}
 fig, axes = plt.subplots(5, 2, figsize=(48 / 5, 32 / 5), gridspec_kw=gridspec)
 fig.subplots_adjust(hspace=0, wspace=0.25)
 
@@ -4965,7 +4984,7 @@ max_y_lim = max(
 )
 
 # Determine the break y limit
-break_y_lim = 750
+break_y_lim = 800
 y_text_position: float = 2.25
 y_x_label_coord: float = -1.25
 
@@ -4977,6 +4996,7 @@ upper_axis = axes[0, 0]
 lower_axis = axes[1, 0]
 
 upper_axis.set_ylim(*upper_y_limits)
+upper_axis.xaxis.set_tick_params(labelbottom=False)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
@@ -4995,9 +5015,9 @@ for axis in (upper_axis, lower_axis):
     sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
     sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("Abu Dhabi, UAE")
-upper_axis.text(
-    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+upper_axis.set_title("Abu Dhabi, UAE", weight="bold")
+lower_axis.text(
+    y_x_label_coord, y_label_coord - 4000, "Number of components", rotation="vertical"
 )
 lower_axis.set_xlabel("Component")
 upper_axis.text(
@@ -5018,6 +5038,7 @@ upper_axis = axes[0, 1]
 lower_axis = axes[1, 1]
 
 upper_axis.set_ylim(*upper_y_limits)
+upper_axis.xaxis.set_tick_params(labelbottom=False)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
@@ -5036,9 +5057,9 @@ for axis in (upper_axis, lower_axis):
     sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
     sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("Gando, Gran Canaria")
-upper_axis.text(
-    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+upper_axis.set_title("Gando, Gran Canaria", weight="bold")
+lower_axis.text(
+    y_x_label_coord, y_label_coord - 3000, "Number of components", rotation="vertical"
 )
 lower_axis.set_xlabel("Component")
 upper_axis.text(
@@ -5059,6 +5080,7 @@ upper_axis = axes[3, 0]
 lower_axis = axes[4, 0]
 
 upper_axis.set_ylim(*upper_y_limits)
+upper_axis.xaxis.set_tick_params(labelbottom=False)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
@@ -5077,9 +5099,9 @@ for axis in (upper_axis, lower_axis):
     sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
     sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("Tijuana, Mexico")
-upper_axis.text(
-    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+upper_axis.set_title("Tijuana, Mexico", weight="bold")
+lower_axis.text(
+    y_x_label_coord, y_label_coord - 2000, "Number of components", rotation="vertical"
 )
 lower_axis.set_xlabel("Component")
 upper_axis.text(
@@ -5100,6 +5122,7 @@ upper_axis = axes[3, 1]
 lower_axis = axes[4, 1]
 
 upper_axis.set_ylim(*upper_y_limits)
+upper_axis.xaxis.set_tick_params(labelbottom=False)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
@@ -5118,10 +5141,10 @@ for axis in (upper_axis, lower_axis):
     sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
     sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("La Paz, Mexico")
+upper_axis.set_title("La Paz, Mexico", weight="bold")
 lower_axis.set_xlabel("Component")
-upper_axis.text(
-    y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
+lower_axis.text(
+    y_x_label_coord, y_label_coord - 1000, "Number of components", rotation="vertical"
 )
 upper_axis.text(
     -0.1,
@@ -5188,7 +5211,7 @@ rect = mpatches.Rectangle(
 upper_axis.add_patch(rect)
 
 plt.savefig(
-    "el_nashar_component_sizes_13_violin_with_obvs.png",
+    "el_nashar_component_sizes_thesis_1_violin_with_obvs.png",
     transparent=True,
     dpi=1200,
     bbox_inches="tight",
@@ -5213,7 +5236,7 @@ def millions(x, pos):
 formatter = FuncFormatter(millions)
 
 
-gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.4, 1, 1]}
+gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.6, 1, 1]}
 fig, axes = plt.subplots(5, 2, figsize=(48 / 5, 32 / 5), gridspec_kw=gridspec)
 fig.subplots_adjust(hspace=0, wspace=0.25)
 
@@ -5281,7 +5304,7 @@ for axis in (upper_axis, lower_axis):
         k_depth=K_DEPTH,
     )
 
-upper_axis.set_title("Abu Dhabi, UAE")
+upper_axis.set_title("Abu Dhabi, UAE", weight="bold")
 # upper_axis.text(
 #     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
 # )
@@ -5319,7 +5342,7 @@ for axis in (upper_axis, lower_axis):
         k_depth=K_DEPTH,
     )
 
-upper_axis.set_title("Gando, Gran Canaria")
+upper_axis.set_title("Gando, Gran Canaria", weight="bold")
 # upper_axis.text(
 #     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
 # )
@@ -5366,7 +5389,7 @@ for axis in (upper_axis, lower_axis):
         k_depth=K_DEPTH,
     )
 
-upper_axis.set_title("Tijuana, Mexico")
+upper_axis.set_title("Tijuana, Mexico", weight="bold")
 # upper_axis.text(
 #     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
 # )
@@ -5400,7 +5423,7 @@ for axis in (upper_axis, lower_axis):
         k_depth=K_DEPTH,
     )
 
-upper_axis.set_title("La Paz, Mexico")
+upper_axis.set_title("La Paz, Mexico", weight="bold")
 lower_axis.set_xlabel("Component")
 # upper_axis.text(
 #     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
@@ -5514,7 +5537,7 @@ upper_axis.add_patch(rect)
 
 
 plt.savefig(
-    "rahimi_component_sizes_11.png",
+    "rahimi_component_sizes_20.png",
     transparent=True,
     dpi=1200,
     bbox_inches="tight",
@@ -5530,7 +5553,7 @@ plt.show()
 formatter = FuncFormatter(millions)
 
 
-gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.45, 1, 1]}
+gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.65, 1, 1]}
 fig, axes = plt.subplots(5, 2, figsize=(48 / 5, 32 / 5), gridspec_kw=gridspec)
 fig.subplots_adjust(hspace=0, wspace=0.25)
 
@@ -5587,6 +5610,7 @@ upper_axis = axes[0, 0]
 lower_axis = axes[1, 0]
 
 upper_axis.set_ylim(*upper_y_limits)
+upper_axis.xaxis.set_tick_params(labelbottom=False)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
@@ -5605,7 +5629,7 @@ for axis in (upper_axis, lower_axis):
     sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
     sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("Abu Dhabi, UAE")
+upper_axis.set_title("Abu Dhabi, UAE", weight="bold")
 upper_axis.text(
     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
 )
@@ -5628,6 +5652,7 @@ upper_axis = axes[0, 1]
 lower_axis = axes[1, 1]
 
 upper_axis.set_ylim(*upper_y_limits)
+upper_axis.xaxis.set_tick_params(labelbottom=False)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
@@ -5646,7 +5671,7 @@ for axis in (upper_axis, lower_axis):
     sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
     sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("Gando, Gran Canaria")
+upper_axis.set_title("Gando, Gran Canaria", weight="bold")
 upper_axis.text(
     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
 )
@@ -5669,6 +5694,7 @@ upper_axis = axes[3, 0]
 lower_axis = axes[4, 0]
 
 upper_axis.set_ylim(*upper_y_limits)
+upper_axis.xaxis.set_tick_params(labelbottom=False)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
@@ -5687,7 +5713,7 @@ for axis in (upper_axis, lower_axis):
     sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
     sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("Tijuana, Mexico")
+upper_axis.set_title("Tijuana, Mexico", weight="bold")
 upper_axis.text(
     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
 )
@@ -5710,6 +5736,7 @@ upper_axis = axes[3, 1]
 lower_axis = axes[4, 1]
 
 upper_axis.set_ylim(*upper_y_limits)
+upper_axis.xaxis.set_tick_params(labelbottom=False)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
@@ -5728,7 +5755,7 @@ for axis in (upper_axis, lower_axis):
     sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
     sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("La Paz, Mexico")
+upper_axis.set_title("La Paz, Mexico", weight="bold")
 lower_axis.set_xlabel("Component")
 upper_axis.text(
     y_x_label_coord, y_label_coord, "Number of components", rotation="vertical"
@@ -5799,7 +5826,7 @@ upper_axis.add_patch(rect)
 
 
 plt.savefig(
-    "rahimi_component_sizes_13_violin_with_obvs.png",
+    "rahimi_component_sizes_thesis_1_violin_with_obvs.png",
     transparent=True,
     dpi=1200,
     bbox_inches="tight",
@@ -5808,26 +5835,30 @@ plt.savefig(
 plt.show()
 
 # Plotting the variations
-
 fig, axes = plt.subplots(3, 1, figsize=(8, 12))
-fig.subplots_adjust(hspace=0.25)
+fig.subplots_adjust(hspace=0.35)
 
 K_DEPTH = 4
 TANK_INDEX = None
 WEATHER_TYPE = "average_weather_conditions"
 Y_SCALE = "linear"
 
-data_to_variation_plot = tijuana_data.copy()
+data_to_variation_plot = abu_dhabi_data.copy()
 
-sns.boxenplot(
-    cost_by_tech_frame(
+sns.violinplot(
+    (data_to_plot:=cost_by_tech_frame(
         {key: value for key, value in data_to_variation_plot.items() if "joo" in key},
         cost_key="Total",
-    ),
+    )),
     ax=(axis := axes[0]),
-    k_depth=K_DEPTH,
+    cut=0,
+    inner=None,
+    linewidth=0,
 )
-axis.set_title("Joo et al., 3 tonnes / day")
+sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
+
+axis.set_title("Joo et al., 3 tonnes / day", weight="bold")
 axis.set_yscale(Y_SCALE)
 axis.set_ylabel("Total lifetime system cost / MUSD")
 axis.set_xlabel("Technology type specified")
@@ -5841,18 +5872,23 @@ axis.text(
     va="top",
     ha="right",
 )
-ax.yaxis.set_minor_formatter(ticker.ScalarFormatter())
-ax.yaxis.set_major_formatter(ticker.ScalarFormatter())
+axis.yaxis.set_minor_formatter(ticker.ScalarFormatter())
+axis.yaxis.set_major_formatter(ticker.ScalarFormatter())
 
-sns.boxenplot(
-    cost_by_tech_frame(
+sns.violinplot(
+    (data_to_plot:=cost_by_tech_frame(
         {key: value for key, value in data_to_variation_plot.items() if "el" in key},
         cost_key="Total",
-    ),
+    )),
     ax=(axis := axes[1]),
-    k_depth=K_DEPTH,
+    cut=0,
+    inner=None,
+    linewidth=0,
 )
-axis.set_title("El-Nashar et al., 120 tonnes / day")
+sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
+
+axis.set_title("El-Nashar et al., 120 tonnes / day", weight="bold")
 axis.set_yscale(Y_SCALE)
 axis.set_ylabel("Total lifetime system cost / MUSD")
 axis.set_xlabel("Technology type specified")
@@ -5868,19 +5904,254 @@ axis.text(
 )
 axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
-sns.boxenplot(
-    cost_by_tech_frame(
+
+sns.violinplot(
+    (data_to_plot:=cost_by_tech_frame(
         {
             key: value
             for key, value in data_to_variation_plot.items()
             if "rahimi" in key
         },
         cost_key="Total",
-    ),
+    )),
     ax=(axis := axes[2]),
-    k_depth=K_DEPTH,
+    cut=0,
+    inner=None,
+    linewidth=0,
 )
-axis.set_title("Rahimi et al., 1694 tonnes / day")
+sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
+
+axis.set_title("Rahimi et al., 1700 tonnes / day", weight="bold")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Total lifetime system cost / MUSD")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+
+# axis.set_title("La Paz, Mexico")
+# axis.set_ylim(max(min(min(boxen_frame(la_paz_data)["Aux. heating"]), -0.05), -0.45), 1.05)
+
+
+plt.savefig(
+    "abu_dhabi_technology_types.png", transparent=True, dpi=300, bbox_inches="tight"
+)
+
+plt.show()
+
+# Plotting the variations
+fig, axes = plt.subplots(3, 1, figsize=(8, 12))
+fig.subplots_adjust(hspace=0.35)
+
+K_DEPTH = 4
+TANK_INDEX = None
+WEATHER_TYPE = "average_weather_conditions"
+Y_SCALE = "linear"
+
+data_to_variation_plot = gran_canaria_data.copy()
+
+sns.violinplot(
+    (data_to_plot:=cost_by_tech_frame(
+        {key: value for key, value in data_to_variation_plot.items() if "joo" in key},
+        cost_key="Total",
+    )),
+    ax=(axis := axes[0]),
+    cut=0,
+    inner=None,
+    linewidth=0,
+)
+sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
+
+axis.set_title("Joo et al., 3 tonnes / day", weight="bold")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Total lifetime system cost / MUSD")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.yaxis.set_minor_formatter(ticker.ScalarFormatter())
+axis.yaxis.set_major_formatter(ticker.ScalarFormatter())
+
+sns.violinplot(
+    (data_to_plot:=cost_by_tech_frame(
+        {key: value for key, value in data_to_variation_plot.items() if "el" in key},
+        cost_key="Total",
+    )),
+    ax=(axis := axes[1]),
+    cut=0,
+    inner=None,
+    linewidth=0,
+)
+sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
+
+axis.set_title("El-Nashar et al., 120 tonnes / day", weight="bold")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Total lifetime system cost / MUSD")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+
+
+sns.violinplot(
+    (data_to_plot:=cost_by_tech_frame(
+        {
+            key: value
+            for key, value in data_to_variation_plot.items()
+            if "rahimi" in key
+        },
+        cost_key="Total",
+    )),
+    ax=(axis := axes[2]),
+    cut=0,
+    inner=None,
+    linewidth=0,
+)
+sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
+
+axis.set_title("Rahimi et al., 1700 tonnes / day", weight="bold")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Total lifetime system cost / MUSD")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+
+# axis.set_title("La Paz, Mexico")
+# axis.set_ylim(max(min(min(boxen_frame(la_paz_data)["Aux. heating"]), -0.05), -0.45), 1.05)
+
+
+plt.savefig(
+    "gran_canaria_technology_types.png", transparent=True, dpi=300, bbox_inches="tight"
+)
+
+plt.show()
+
+# Plotting the variations
+
+fig, axes = plt.subplots(3, 1, figsize=(8, 12))
+fig.subplots_adjust(hspace=0.35)
+
+K_DEPTH = 4
+TANK_INDEX = None
+WEATHER_TYPE = "average_weather_conditions"
+Y_SCALE = "linear"
+
+data_to_variation_plot = tijuana_data.copy()
+
+sns.violinplot(
+    (data_to_plot:=cost_by_tech_frame(
+        {key: value for key, value in data_to_variation_plot.items() if "joo" in key},
+        cost_key="Total",
+    )),
+    ax=(axis := axes[0]),
+    cut=0,
+    inner=None,
+    linewidth=0,
+)
+sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
+
+axis.set_title("Joo et al., 3 tonnes / day", weight="bold")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Total lifetime system cost / MUSD")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.yaxis.set_minor_formatter(ticker.ScalarFormatter())
+axis.yaxis.set_major_formatter(ticker.ScalarFormatter())
+
+sns.violinplot(
+    (data_to_plot:=cost_by_tech_frame(
+        {key: value for key, value in data_to_variation_plot.items() if "el" in key},
+        cost_key="Total",
+    )),
+    ax=(axis := axes[1]),
+    cut=0,
+    inner=None,
+    linewidth=0,
+)
+sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
+
+axis.set_title("El-Nashar et al., 120 tonnes / day", weight="bold")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Total lifetime system cost / MUSD")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+
+
+sns.violinplot(
+    (data_to_plot:=cost_by_tech_frame(
+        {
+            key: value
+            for key, value in data_to_variation_plot.items()
+            if "rahimi" in key
+        },
+        cost_key="Total",
+    )),
+    ax=(axis := axes[2]),
+    cut=0,
+    inner=None,
+    linewidth=0,
+)
+sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
+
+axis.set_title("Rahimi et al., 1700 tonnes / day", weight="bold")
 axis.set_yscale(Y_SCALE)
 axis.set_ylabel("Total lifetime system cost / MUSD")
 axis.set_xlabel("Technology type specified")
@@ -5902,6 +6173,121 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 plt.savefig(
     "tijuana_technology_types.png", transparent=True, dpi=300, bbox_inches="tight"
+)
+
+plt.show()
+
+
+# Plotting the variations
+fig, axes = plt.subplots(3, 1, figsize=(8, 12))
+fig.subplots_adjust(hspace=0.35)
+
+K_DEPTH = 4
+TANK_INDEX = None
+WEATHER_TYPE = "average_weather_conditions"
+Y_SCALE = "linear"
+
+data_to_variation_plot = la_paz_data.copy()
+
+sns.violinplot(
+    (data_to_plot:=cost_by_tech_frame(
+        {key: value for key, value in data_to_variation_plot.items() if "joo" in key},
+        cost_key="Total",
+    )),
+    ax=(axis := axes[0]),
+    cut=0,
+    inner=None,
+    linewidth=0,
+)
+sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
+
+axis.set_title("Joo et al., 3 tonnes / day", weight="bold")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Total lifetime system cost / MUSD")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "a.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.yaxis.set_minor_formatter(ticker.ScalarFormatter())
+axis.yaxis.set_major_formatter(ticker.ScalarFormatter())
+
+sns.violinplot(
+    (data_to_plot:=cost_by_tech_frame(
+        {key: value for key, value in data_to_variation_plot.items() if "el" in key},
+        cost_key="Total",
+    )),
+    ax=(axis := axes[1]),
+    cut=0,
+    inner=None,
+    linewidth=0,
+)
+sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
+
+axis.set_title("El-Nashar et al., 120 tonnes / day", weight="bold")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Total lifetime system cost / MUSD")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "b.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+
+
+sns.violinplot(
+    (data_to_plot:=cost_by_tech_frame(
+        {
+            key: value
+            for key, value in data_to_variation_plot.items()
+            if "rahimi" in key
+        },
+        cost_key="Total",
+    )),
+    ax=(axis := axes[2]),
+    cut=0,
+    inner=None,
+    linewidth=0,
+)
+sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
+
+axis.set_title("Rahimi et al., 1700 tonnes / day", weight="bold")
+axis.set_yscale(Y_SCALE)
+axis.set_ylabel("Total lifetime system cost / MUSD")
+axis.set_xlabel("Technology type specified")
+axis.text(
+    -0.08,
+    1.1,
+    "c.",
+    transform=axis.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+    ha="right",
+)
+axis.ticklabel_format(style="plain", axis="y", useOffset=False)
+
+# axis.set_title("La Paz, Mexico")
+# axis.set_ylim(max(min(min(boxen_frame(la_paz_data)["Aux. heating"]), -0.05), -0.45), 1.05)
+
+
+plt.savefig(
+    "la_paz_technology_types.png", transparent=True, dpi=300, bbox_inches="tight"
 )
 
 plt.show()
@@ -6140,9 +6526,9 @@ fig.subplots_adjust(hspace=0.25)
 
 K_DEPTH: int = 3
 PLANT: Plant = Plant.JOO
-# WEATHER_TYPE: str = "average_weather_conditions"
+WEATHER_TYPE: str = "average_weather_conditions"
 # WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
-WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+# WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
 
 TANK_INDEX: int | None = None
 Y_SCALE = "linear"
@@ -6277,7 +6663,7 @@ axis.ticklabel_format(style="plain", axis="y", useOffset=False)
 
 
 plt.savefig(
-    "joo_specific_technology_types_13_violin_with_scatter.png",
+    "joo_specific_technology_types_thesis_1_violin_with_scatter.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -6441,9 +6827,9 @@ def _post_process_split_axes(ax1, ax2):
 
 K_DEPTH: int = 3
 PLANT: Plant = Plant.JOO
-# WEATHER_TYPE: str = "average_weather_conditions"
+WEATHER_TYPE: str = "average_weather_conditions"
 # WEATHER_TYPE: str = "upper_error_bar_weather_conditions"
-WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
+# WEATHER_TYPE: str = "lower_error_bar_weather_conditions"
 
 TANK_INDEX: int | None = None
 Y_SCALE = "linear"
@@ -6694,7 +7080,7 @@ rect = mpatches.Rectangle(
 upper_axis.add_patch(rect)
 
 plt.savefig(
-    "joo_specific_technology_types_11.png",
+    "joo_specific_technology_types_20.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -6706,7 +7092,7 @@ plt.savefig(
 plt.show()
 
 # Joo Plot violin
-gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.45, 1, 1]}
+gridspec = {"hspace": 0.1, "height_ratios": [0.5, 1.5, 0.65, 0.5, 1.5]}
 fig, axes = plt.subplots(5, 2, figsize=(48 / 5, 32 / 5), gridspec_kw=gridspec)
 fig.subplots_adjust(hspace=0, wspace=0.25)
 
@@ -6755,26 +7141,27 @@ max_y_lim = (
 #     min(specific_cost_by_tech_frame(la_paz_joo, cost_key="Total", plant=PLANT).min()),
 # ) / 1) * 1
 
-min_y_lim = 6
+min_y_lim = 7.5
 
 break_y_lim = 12
 # break_y_lim = 8
 
 lower_y_limits = (min_y_lim, break_y_lim)
-upper_y_limits = (break_y_lim + 0.1, max_y_lim)
+upper_y_limits = (break_y_lim + 0.25, max_y_lim)
 
 # Abu Dhabi Plot
 upper_axis = axes[0, 0]
 lower_axis = axes[1, 0]
 
 upper_axis.set_ylim(*upper_y_limits)
+upper_axis.yaxis.set_major_formatter(FormatStrFormatter('%.0f'))
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
     sns.violinplot(
         data=(
             data_to_plot := specific_cost_by_tech_frame(
-                gran_canaria_joo, cost_key="Total", plant=PLANT
+                abu_dhabi_joo, cost_key="Total", plant=PLANT
             )
         ),
         alpha=0.5,
@@ -6797,7 +7184,7 @@ for axis in (upper_axis, lower_axis):
     sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
 
-upper_axis.set_title("Abu Dhabi, UAE")
+upper_axis.set_title("Abu Dhabi, UAE", weight="bold")
 lower_axis.set_xlabel("Technology type specified")
 axis.text(
     -0.08,
@@ -6813,11 +7200,17 @@ axis.text(
 sns.despine(top=True)
 _post_process_split_axes(upper_axis, lower_axis)
 
+upper_axis.axvline(x=2.5, ls="--", color="grey")
+lower_axis.axvline(x=2.5, ls="--", color="grey")
+upper_axis.axvline(x=4.5, ls="--", color="grey")
+lower_axis.axvline(x=4.5, ls="--", color="grey")
+
 # Gran Canaria Plot
 upper_axis = axes[0, 1]
 lower_axis = axes[1, 1]
 
 upper_axis.set_ylim(*upper_y_limits)
+upper_axis.yaxis.set_major_formatter(FormatStrFormatter('%.0f'))
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
@@ -6847,7 +7240,7 @@ for axis in (upper_axis, lower_axis):
     sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
 
-upper_axis.set_title("Gando, Gran Canaria")
+upper_axis.set_title("Gando, Gran Canaria", weight="bold")
 lower_axis.set_xlabel("Technology type specified")
 axis.text(
     -0.08,
@@ -6863,6 +7256,11 @@ axis.text(
 sns.despine(top=True)
 _post_process_split_axes(upper_axis, lower_axis)
 
+upper_axis.axvline(x=2.5, ls="--", color="grey")
+lower_axis.axvline(x=2.5, ls="--", color="grey")
+upper_axis.axvline(x=4.5, ls="--", color="grey")
+lower_axis.axvline(x=4.5, ls="--", color="grey")
+
 # axis.set_title("La Paz, Mexico")
 # axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
 
@@ -6871,6 +7269,7 @@ upper_axis = axes[3, 0]
 lower_axis = axes[4, 0]
 
 upper_axis.set_ylim(*upper_y_limits)
+upper_axis.yaxis.set_major_formatter(FormatStrFormatter('%.0f'))
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
@@ -6897,7 +7296,7 @@ for axis in (upper_axis, lower_axis):
     )
     sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("Tijuana, Mexico")
+upper_axis.set_title("Tijuana, Mexico", weight="bold")
 lower_axis.set_xlabel("Technology type specified")
 axis.text(
     -0.08,
@@ -6913,6 +7312,11 @@ axis.text(
 sns.despine(top=True)
 _post_process_split_axes(upper_axis, lower_axis)
 
+upper_axis.axvline(x=2.5, ls="--", color="grey")
+lower_axis.axvline(x=2.5, ls="--", color="grey")
+upper_axis.axvline(x=4.5, ls="--", color="grey")
+lower_axis.axvline(x=4.5, ls="--", color="grey")
+
 # axis.set_title("La Paz, Mexico")
 # axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
 
@@ -6921,6 +7325,7 @@ upper_axis = axes[3, 1]
 lower_axis = axes[4, 1]
 
 upper_axis.set_ylim(*upper_y_limits)
+upper_axis.yaxis.set_major_formatter(FormatStrFormatter('%.0f'))
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
@@ -6947,7 +7352,7 @@ for axis in (upper_axis, lower_axis):
     )
     sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("La Paz, Mexico")
+upper_axis.set_title("La Paz, Mexico", weight="bold")
 lower_axis.set_xlabel("Technology type specified")
 axis.text(
     -0.08,
@@ -6962,6 +7367,12 @@ axis.text(
 # axis.set_ylim(0.18, math.ceil(10 * cost_by_tech_frame(la_paz_joo, cost_key="Total").max(axis=1).max(axis=0)) / 10)
 sns.despine(top=True)
 _post_process_split_axes(upper_axis, lower_axis)
+
+upper_axis.axvline(x=2.5, ls="--", color="grey")
+lower_axis.axvline(x=2.5, ls="--", color="grey")
+upper_axis.axvline(x=4.5, ls="--", color="grey")
+lower_axis.axvline(x=4.5, ls="--", color="grey")
+
 
 # Add grey rectangles
 rect = mpatches.Rectangle(
@@ -7018,7 +7429,7 @@ rect = mpatches.Rectangle(
 upper_axis.add_patch(rect)
 
 plt.savefig(
-    "joo_specific_technology_types_13_violin_with_strip_and_min.png",
+    "joo_specific_technology_types_thesis_1_violin_with_strip_and_min.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -7031,9 +7442,11 @@ plt.show()
 
 
 # El-Nashar Plot
-gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.4, 1, 1]}
+gridspec = {"hspace": 0.1, "height_ratios": [0.5, 1.5, 0.65, 0.5, 1.5]}
 fig, axes = plt.subplots(5, 2, figsize=(48 / 5, 32 / 5), gridspec_kw=gridspec)
 fig.subplots_adjust(hspace=0, wspace=0.25)
+
+PLANT = Plant.EL_NASHAR
 
 axes[2, 0].set_visible(False)
 axes[2, 1].set_visible(False)
@@ -7078,22 +7491,22 @@ min_y_lim = (
         max(
             min(
                 specific_cost_by_tech_frame(
-                    abu_dhabi_joo, cost_key="Total", plant=PLANT
+                    abu_dhabi_el, cost_key="Total", plant=PLANT
                 ).min()
             ),
             min(
                 specific_cost_by_tech_frame(
-                    tijuana_joo, cost_key="Total", plant=PLANT
+                    tijuana_el, cost_key="Total", plant=PLANT
                 ).min()
             ),
             min(
                 specific_cost_by_tech_frame(
-                    gran_canaria_joo, cost_key="Total", plant=PLANT
+                    gran_canaria_el, cost_key="Total", plant=PLANT
                 ).min()
             ),
             min(
                 specific_cost_by_tech_frame(
-                    la_paz_joo, cost_key="Total", plant=PLANT
+                    la_paz_el, cost_key="Total", plant=PLANT
                 ).min()
             ),
         )
@@ -7104,11 +7517,11 @@ min_y_lim = (
 
 # min_y_lim = 6
 
-break_y_lim = 12
+break_y_lim = 5
 # break_y_lim = 8
 
 lower_y_limits = (min_y_lim, break_y_lim)
-upper_y_limits = (break_y_lim + 0.1, max_y_lim)
+upper_y_limits = (break_y_lim + 0.2, max_y_lim)
 
 # Abu Dhabi Plot
 upper_axis = axes[0, 0]
@@ -7118,13 +7531,35 @@ upper_axis.set_ylim(*upper_y_limits)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
-    sns.boxenplot(
-        specific_cost_by_tech_frame(abu_dhabi_el, cost_key="Total", plant=PLANT),
+    sns.violinplot(
+        data=(
+            data_to_plot := specific_cost_by_tech_frame(
+                abu_dhabi_el, cost_key="Total", plant=PLANT
+            )
+        ),
+        alpha=0.5,
         ax=axis,
-        k_depth=K_DEPTH,
+        cut=0,
+        inner=None,
+        linewidth=0,
     )
+    sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+    sns.boxplot(
+        pd.DataFrame(data_to_plot.min()).transpose(),
+        ax=axis,
+        boxprops={"edgecolor": "C0"},
+        medianprops={"color": "C0"},
+        whiskerprops={"color": "C0"},
+        capprops={"color": "C0"},
+    )
+    sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("Abu Dhabi, UAE")
+upper_axis.axvline(x=2.5, ls="--", color="grey")
+lower_axis.axvline(x=2.5, ls="--", color="grey")
+upper_axis.axvline(x=4.5, ls="--", color="grey")
+lower_axis.axvline(x=4.5, ls="--", color="grey")
+
+upper_axis.set_title("Abu Dhabi, UAE", weight="bold")
 lower_axis.set_xlabel("Technology type specified")
 axis.text(
     -0.08,
@@ -7148,13 +7583,35 @@ upper_axis.set_ylim(*upper_y_limits)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
-    sns.boxenplot(
-        specific_cost_by_tech_frame(gran_canaria_el, cost_key="Total", plant=PLANT),
+    sns.violinplot(
+        data=(
+            data_to_plot := specific_cost_by_tech_frame(
+                gran_canaria_el, cost_key="Total", plant=PLANT
+            )
+        ),
+        alpha=0.5,
         ax=axis,
-        k_depth=K_DEPTH,
+        cut=0,
+        inner=None,
+        linewidth=0,
     )
+    sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+    sns.boxplot(
+        pd.DataFrame(data_to_plot.min()).transpose(),
+        ax=axis,
+        boxprops={"edgecolor": "C0"},
+        medianprops={"color": "C0"},
+        whiskerprops={"color": "C0"},
+        capprops={"color": "C0"},
+    )
+    sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("Gando, Gran Canaria")
+upper_axis.axvline(x=2.5, ls="--", color="grey")
+lower_axis.axvline(x=2.5, ls="--", color="grey")
+upper_axis.axvline(x=4.5, ls="--", color="grey")
+lower_axis.axvline(x=4.5, ls="--", color="grey")
+
+upper_axis.set_title("Gando, Gran Canaria", weight="bold")
 lower_axis.set_xlabel("Technology type specified")
 axis.text(
     -0.08,
@@ -7181,13 +7638,35 @@ upper_axis.set_ylim(*upper_y_limits)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
-    sns.boxenplot(
-        specific_cost_by_tech_frame(tijuana_el, cost_key="Total", plant=PLANT),
+    sns.violinplot(
+        data=(
+            data_to_plot := specific_cost_by_tech_frame(
+                tijuana_el, cost_key="Total", plant=PLANT
+            )
+        ),
+        alpha=0.5,
         ax=axis,
-        k_depth=K_DEPTH,
+        cut=0,
+        inner=None,
+        linewidth=0,
     )
+    sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+    sns.boxplot(
+        pd.DataFrame(data_to_plot.min()).transpose(),
+        ax=axis,
+        boxprops={"edgecolor": "C0"},
+        medianprops={"color": "C0"},
+        whiskerprops={"color": "C0"},
+        capprops={"color": "C0"},
+    )
+    sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("Tijuana, Mexico")
+upper_axis.axvline(x=2.5, ls="--", color="grey")
+lower_axis.axvline(x=2.5, ls="--", color="grey")
+upper_axis.axvline(x=4.5, ls="--", color="grey")
+lower_axis.axvline(x=4.5, ls="--", color="grey")
+
+upper_axis.set_title("Tijuana, Mexico", weight="bold")
 lower_axis.set_xlabel("Technology type specified")
 axis.text(
     -0.08,
@@ -7214,13 +7693,35 @@ upper_axis.set_ylim(*upper_y_limits)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
-    sns.boxenplot(
-        specific_cost_by_tech_frame(la_paz_el, cost_key="Total", plant=PLANT),
+    sns.violinplot(
+        data=(
+            data_to_plot := specific_cost_by_tech_frame(
+                la_paz_el, cost_key="Total", plant=PLANT
+            )
+        ),
+        alpha=0.5,
         ax=axis,
-        k_depth=K_DEPTH,
+        cut=0,
+        inner=None,
+        linewidth=0,
     )
+    sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+    sns.boxplot(
+        pd.DataFrame(data_to_plot.min()).transpose(),
+        ax=axis,
+        boxprops={"edgecolor": "C0"},
+        medianprops={"color": "C0"},
+        whiskerprops={"color": "C0"},
+        capprops={"color": "C0"},
+    )
+    sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("La Paz, Mexico")
+upper_axis.axvline(x=2.5, ls="--", color="grey")
+lower_axis.axvline(x=2.5, ls="--", color="grey")
+upper_axis.axvline(x=4.5, ls="--", color="grey")
+lower_axis.axvline(x=4.5, ls="--", color="grey")
+
+upper_axis.set_title("La Paz, Mexico", weight="bold")
 lower_axis.set_xlabel("Technology type specified")
 axis.text(
     -0.08,
@@ -7291,7 +7792,7 @@ rect = mpatches.Rectangle(
 upper_axis.add_patch(rect)
 
 plt.savefig(
-    "el_nashar_specific_technology_types_11.png",
+    "el_nashar_specific_technology_types_thesis_1.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -7305,7 +7806,7 @@ plt.show()
 
 # Rahimi Plot
 PLANT: Plant = Plant.RAHIMI
-gridspec = {"hspace": 0.1, "height_ratios": [1, 1, 0.4, 1, 1]}
+gridspec = {"hspace": 0.1, "height_ratios": [0.5, 1.5, 0.65, 0.5, 1.5]}
 fig, axes = plt.subplots(5, 2, figsize=(48 / 5, 32 / 5), gridspec_kw=gridspec)
 fig.subplots_adjust(hspace=0, wspace=0.25)
 
@@ -7378,11 +7879,11 @@ min_y_lim = (
 
 # min_y_lim = 6
 
-break_y_lim = 3.4
+break_y_lim = 10
 # break_y_lim = 8
 
 lower_y_limits = (min_y_lim, break_y_lim)
-upper_y_limits = (break_y_lim + 0.1, max_y_lim)
+upper_y_limits = (break_y_lim + 5, max_y_lim)
 
 # Abu Dhabi Plot
 upper_axis = axes[0, 0]
@@ -7392,13 +7893,35 @@ upper_axis.set_ylim(*upper_y_limits)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
-    sns.boxenplot(
-        specific_cost_by_tech_frame(abu_dhabi_rahimi, cost_key="Total", plant=PLANT),
+    sns.violinplot(
+        data=(
+            data_to_plot := specific_cost_by_tech_frame(
+                abu_dhabi_rahimi, cost_key="Total", plant=PLANT
+            )
+        ),
+        alpha=0.5,
         ax=axis,
-        k_depth=K_DEPTH,
+        cut=0,
+        inner=None,
+        linewidth=0,
     )
+    sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+    sns.boxplot(
+        pd.DataFrame(data_to_plot.min()).transpose(),
+        ax=axis,
+        boxprops={"edgecolor": "C0"},
+        medianprops={"color": "C0"},
+        whiskerprops={"color": "C0"},
+        capprops={"color": "C0"},
+    )
+    sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("Abu Dhabi, UAE")
+upper_axis.axvline(x=2.5, ls="--", color="grey")
+lower_axis.axvline(x=2.5, ls="--", color="grey")
+upper_axis.axvline(x=4.5, ls="--", color="grey")
+lower_axis.axvline(x=4.5, ls="--", color="grey")
+
+upper_axis.set_title("Abu Dhabi, UAE", weight="bold")
 lower_axis.set_xlabel("Technology type specified")
 axis.text(
     -0.08,
@@ -7422,13 +7945,35 @@ upper_axis.set_ylim(*upper_y_limits)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
-    sns.boxenplot(
-        specific_cost_by_tech_frame(gran_canaria_rahimi, cost_key="Total", plant=PLANT),
+    sns.violinplot(
+        data=(
+            data_to_plot := specific_cost_by_tech_frame(
+                gran_canaria_rahimi, cost_key="Total", plant=PLANT
+            )
+        ),
+        alpha=0.5,
         ax=axis,
-        k_depth=K_DEPTH,
+        cut=0,
+        inner=None,
+        linewidth=0,
     )
+    sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+    sns.boxplot(
+        pd.DataFrame(data_to_plot.min()).transpose(),
+        ax=axis,
+        boxprops={"edgecolor": "C0"},
+        medianprops={"color": "C0"},
+        whiskerprops={"color": "C0"},
+        capprops={"color": "C0"},
+    )
+    sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("Gando, Gran Canaria")
+upper_axis.axvline(x=2.5, ls="--", color="grey")
+lower_axis.axvline(x=2.5, ls="--", color="grey")
+upper_axis.axvline(x=4.5, ls="--", color="grey")
+lower_axis.axvline(x=4.5, ls="--", color="grey")
+
+upper_axis.set_title("Gando, Gran Canaria", weight="bold")
 lower_axis.set_xlabel("Technology type specified")
 axis.text(
     -0.08,
@@ -7455,13 +8000,34 @@ upper_axis.set_ylim(*upper_y_limits)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
-    sns.boxenplot(
-        specific_cost_by_tech_frame(tijuana_rahimi, cost_key="Total", plant=PLANT),
+    sns.violinplot(
+        data=(
+            data_to_plot := specific_cost_by_tech_frame(
+                tijuana_rahimi, cost_key="Total", plant=PLANT
+            )
+        ),
+        alpha=0.5,
         ax=axis,
-        k_depth=K_DEPTH,
+        cut=0,
+        inner=None,
+        linewidth=0,
     )
+    sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+    sns.boxplot(
+        pd.DataFrame(data_to_plot.min()).transpose(),
+        ax=axis,
+        boxprops={"edgecolor": "C0"},
+        medianprops={"color": "C0"},
+        whiskerprops={"color": "C0"},
+        capprops={"color": "C0"},
+    )
+    sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("Tijuana, Mexico")
+upper_axis.axvline(x=2.5, ls="--", color="grey")
+lower_axis.axvline(x=2.5, ls="--", color="grey")
+upper_axis.axvline(x=4.5, ls="--", color="grey")
+lower_axis.axvline(x=4.5, ls="--", color="grey")
+upper_axis.set_title("Tijuana, Mexico", weight="bold")
 lower_axis.set_xlabel("Technology type specified")
 axis.text(
     -0.08,
@@ -7488,13 +8054,35 @@ upper_axis.set_ylim(*upper_y_limits)
 lower_axis.set_ylim(*lower_y_limits)
 
 for axis in (upper_axis, lower_axis):
-    sns.boxenplot(
-        specific_cost_by_tech_frame(la_paz_rahimi, cost_key="Total", plant=PLANT),
+    sns.violinplot(
+        data=(
+            data_to_plot := specific_cost_by_tech_frame(
+                la_paz_rahimi, cost_key="Total", plant=PLANT
+            )
+        ),
+        alpha=0.5,
         ax=axis,
-        k_depth=K_DEPTH,
+        cut=0,
+        inner=None,
+        linewidth=0,
     )
+    sns.boxplot(pd.DataFrame(data_to_plot.mean()).transpose(), ax=axis)
+    sns.boxplot(
+        pd.DataFrame(data_to_plot.min()).transpose(),
+        ax=axis,
+        boxprops={"edgecolor": "C0"},
+        medianprops={"color": "C0"},
+        whiskerprops={"color": "C0"},
+        capprops={"color": "C0"},
+    )
+    sns.stripplot(data_to_plot, ax=axis, color="0", linewidth=0, marker="D", size=3)
 
-upper_axis.set_title("La Paz, Mexico")
+upper_axis.axvline(x=2.5, ls="--", color="grey")
+lower_axis.axvline(x=2.5, ls="--", color="grey")
+upper_axis.axvline(x=4.5, ls="--", color="grey")
+lower_axis.axvline(x=4.5, ls="--", color="grey")
+
+upper_axis.set_title("La Paz, Mexico", weight="bold")
 lower_axis.set_xlabel("Technology type specified")
 axis.text(
     -0.08,
@@ -7565,7 +8153,7 @@ rect = mpatches.Rectangle(
 upper_axis.add_patch(rect)
 
 plt.savefig(
-    "rahimi_specific_technology_types_11.png",
+    "rahimi_specific_technology_types_thesis_1.png",
     transparent=True,
     dpi=300,
     bbox_inches="tight",
@@ -7933,7 +8521,7 @@ print(json.dumps(mean_component_numbers, indent=4))
 
 # Plot using an added 10% height ONLY to the error bars
 
-fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+fig, axes = plt.subplots(2, 2, figsize=(48 / 5, 32 / 5))
 fig.subplots_adjust(hspace=0.35)
 
 # RO Specific Lowerbound:
@@ -7961,6 +8549,22 @@ colorblind_cmap_traffic_lights = sns.color_palette(
 )
 
 sns.set_palette(colorblind_cmap_traffic_lights)
+
+
+thesis_traffic_lights = sns.color_palette(
+    [
+        "#144E56",
+        "#27BFE6",  # SDG 6
+        "#EFF2DD",
+        "#F9A130",
+        "#E04606",
+        "#D8247C",  # Pink
+        "#EDEDED",  # Pale pink
+        "#E7DFBE",  # Pale yellow
+    ]
+)
+
+sns.set_palette(thesis_traffic_lights)
 
 K_DEPTH: int = 3
 MED_COSTS_ERROR_OFFSET: float = 1.1
@@ -8031,12 +8635,12 @@ data_to_plot.plot.bar(ax=(axis := axes[0, 0]), rot=0, stacked=True, edgecolor="n
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
-axis.set_title("Abu Dhabi, UAE")
+axis.set_title("Abu Dhabi, UAE", weight="bold")
 axis.yaxis.set_minor_formatter(ticker.ScalarFormatter())
 axis.yaxis.set_major_formatter(ticker.ScalarFormatter())
 axis.set_ylim(0, specific_costs_y_lim)
 axis.text(
-    -0.08,
+    -0.12,
     1.1,
     "a.",
     transform=axis.transAxes,
@@ -8091,16 +8695,6 @@ y_min = [
 ]
 data_to_plot = data_to_plot.drop("Total").transpose()
 data_to_plot.plot.bar(ax=(axis := axes[0, 1]), rot=0, stacked=True, edgecolor="none")
-<<<<<<< Updated upstream
-axis.errorbar(
-    x=data_to_plot.index,
-    y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
-    yerr=[abs(max_entry - y_min[index]) / 2 for index, max_entry in enumerate(y_max)],
-    capsize=10,
-    color="#1A0801",
-    fmt="none",
-)
-=======
 # axis.errorbar(
 #     x=data_to_error_bar.index,
 #     y=[(y_min[index] + max_entry) / 2 for index, max_entry in enumerate(y_max)],
@@ -8109,14 +8703,13 @@ axis.errorbar(
 #     color="#1A0801",
 #     fmt="none",
 # )
->>>>>>> Stashed changes
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
-axis.set_title("Gando, Gran Canaria")
+axis.set_title("Gando, Gran Canaria", weight="bold")
 axis.set_ylim(0, specific_costs_y_lim)
 axis.text(
-    -0.08,
+    -0.12,
     1.1,
     "b.",
     transform=axis.transAxes,
@@ -8146,7 +8739,8 @@ axis.axhspan(
     lw=0,
 )
 
-axis.legend()
+# axis.legend()
+axis.legend().remove()
 
 data_to_plot = pd.DataFrame(
     {
@@ -8185,9 +8779,9 @@ axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
 axis.set_ylim(0, specific_costs_y_lim)
-axis.set_title("Tijuana, Mexico")
+axis.set_title("Tijuana, Mexico", weight="bold")
 axis.text(
-    -0.08,
+    -0.12,
     1.1,
     "c.",
     transform=axis.transAxes,
@@ -8239,7 +8833,8 @@ axis.axhspan(
     label="PV-RO",
     lw=0,
 )
-axis.legend(loc="upper right")
+# axis.legend(loc="upper right")
+axis.legend().remove()
 
 data_to_plot = pd.DataFrame(
     {
@@ -8278,9 +8873,9 @@ axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Specific cost / USD/m$^3$")
 axis.set_ylim(0, specific_costs_y_lim)
-axis.set_title("La Paz, Mexico")
+axis.set_title("La Paz, Mexico", weight="bold")
 axis.text(
-    -0.08,
+    -0.12,
     1.1,
     "d.",
     transform=axis.transAxes,
@@ -8325,15 +8920,11 @@ axis.axhspan(
     label="PV-RO",
     lw=0,
 )
-axis.legend(loc="upper right")
-
+# axis.legend(loc="upper right")
+axis.legend().remove()
 
 plt.savefig(
-<<<<<<< Updated upstream
-    "specific_costs_comparison_poster_15_10_percent_error.png",
-=======
-    "specific_costs_comparison_17.png",
->>>>>>> Stashed changes
+    "specific_costs_comparison_talk_1.png",
     transparent=True,
     dpi=1200,
     bbox_inches="tight",
@@ -8355,11 +8946,12 @@ colorblind_cmap_traffic_lights = sns.color_palette(
     [
         "#006264",  # Green
         "#52C0AD",  # Pale green
+        "#B8DBA7",  # Suggested by colormind.io
         "#F09F52",  # Pale orange
         "#E04606",  # Orange
-        "#D8247C",  # Pink
-        "#EDEDED",  # Pale pink
         "#E7DFBE",  # Pale yellow
+        "#EDEDED",  # Pale pink
+        "#D8247C",  # Pink
         "#FBBB2C",  # Yellow
     ],
     as_cmap=True,
@@ -9040,7 +9632,7 @@ plt.show()
 
 import math
 
-fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+fig, axes = plt.subplots(2, 2, figsize=(48 / 5, 32 / 5))
 fig.subplots_adjust(hspace=0.35)
 
 K_DEPTH: int = 3
@@ -9063,14 +9655,28 @@ colorblind_cmap_traffic_lights = sns.color_palette(
     [
         "#006264",  # Green
         "#52C0AD",  # Pale green
+        "#B8DBA7",  # Suggested by colormind.io
         "#F09F52",  # Pale orange
         "#E04606",  # Orange
-        "#D8247C",  # Pink
-        "#EDEDED",  # Pale pink
         "#E7DFBE",  # Pale yellow
+        "#EDEDED",  # Pale pink
+        "#D8247C",  # Pink
         "#FBBB2C",  # Yellow
     ],
     as_cmap=True,
+)
+
+thesis_traffic_lights = sns.color_palette(
+    [
+        "#144E56",
+        "#27BFE6",  # SDG 6
+        "#EFF2DD",
+        "#F9A130",
+        "#E04606",
+        "#D8247C",  # Pink
+        "#EDEDED",  # Pale pink
+        "#E7DFBE",  # Pale yellow
+    ]
 )
 
 colorblind_colours = [
@@ -9084,7 +9690,7 @@ colorblind_colours = [
     "#FBBB2C",  # Yellow
 ]
 
-sns.set_palette(colorblind_cmap_traffic_lights)
+# sns.set_palette(colorblind_cmap_traffic_lights)
 
 # Offset to allow for embedded plant emissions for MED
 MED_EMISSIONS_ERROR_OFFSET: float = 0.1
@@ -9274,7 +9880,7 @@ data_to_plot.plot.bar(ax=axis, rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Spec. emissions / kg CO$_2$eq/m$^3$")
-axis.set_title("Abu Dhabi, UAE")
+axis.set_title("Abu Dhabi, UAE", weight="bold")
 axis.yaxis.set_minor_formatter(ticker.ScalarFormatter())
 axis.yaxis.set_major_formatter(ticker.ScalarFormatter())
 axis.set_ylim(0, specific_emissions_y_lim)
@@ -9308,6 +9914,7 @@ axis.axhspan(
     lw=0,
 )
 axis.legend()
+
 
 
 data_to_error_bar = pd.DataFrame(
@@ -9414,7 +10021,7 @@ data_to_plot.plot.bar(ax=axis, rot=0, stacked=True, edgecolor="none")
 axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Spec. emissions / kg CO$_2$eq/m$^3$")
-axis.set_title("Gando, Gran Canaria")
+axis.set_title("Gando, Gran Canaria", weight="bold")
 axis.set_ylim(0, specific_emissions_y_lim)
 axis.text(
     0,
@@ -9446,7 +10053,9 @@ axis.axhspan(
     label="PV-RO",
     lw=0,
 )
-axis.legend()
+# axis.legend()
+axis.legend().remove()
+
 
 data_to_error_bar = pd.DataFrame(
     {
@@ -9549,7 +10158,7 @@ axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Spec. emissions / kg CO$_2$eq/m$^3$")
 axis.set_ylim(0, specific_emissions_y_lim)
-axis.set_title("Tijuana, Mexico")
+axis.set_title("Tijuana, Mexico", weight="bold")
 axis.text(
     0,
     1.15,
@@ -9580,7 +10189,8 @@ axis.axhspan(
     label="PV-RO",
     lw=0,
 )
-axis.legend()
+# axis.legend()
+axis.legend().remove()
 
 data_to_error_bar = pd.DataFrame(
     {
@@ -9683,7 +10293,7 @@ axis.grid(axis="x")
 axis.set_xlabel("MED Plant")
 axis.set_ylabel("Spec. emissions / kg CO$_2$eq/m$^3$")
 axis.set_ylim(0, specific_emissions_y_lim)
-axis.set_title("La Paz, Mexico")
+axis.set_title("La Paz, Mexico", weight="bold")
 axis.text(
     0,
     1.15,
@@ -9714,16 +10324,18 @@ axis.axhspan(
     label="PV-RO",
     lw=0,
 )
-axis.legend()
+# axis.legend()
+axis.legend().remove()
+
 
 plt.savefig(
-    "specific_emissions_comparison_15.png",
+    "specific_emissions_comparison_talk_1.png",
     transparent=True,
     dpi=1200,
     bbox_inches="tight",
 )
 
-sns.set_palette(colorblind_palette)
+# sns.set_palette(colorblind_palette)
 
 plt.show()
 
@@ -11026,7 +11638,7 @@ def _subfigure_line_plot(
             "gran_canaria": "Gando, Gran Canaria",
             "tijuana": "Tijuana, Mexico",
             "la_paz": "La Paz, Mexico",
-        }[location]
+        }[location], weight="bold"
     )
     axis.text(
         -0.08,
@@ -11042,6 +11654,266 @@ def _subfigure_line_plot(
     )
     axis.legend(loc="upper right")
 
+def _auxiliary_heating_subfigure_line_plot(
+    data_to_plot,
+    location: str,
+    plant: Plant,
+    fixed_battery_lifetime: float | None,
+    fixed_inverter_lifetime: float | None,
+    weather_conditions: str,
+    axis,
+    invert: bool,
+) -> None:
+    plant_index = {Plant.JOO: 0, Plant.EL_NASHAR: 1, Plant.RAHIMI: 2}[plant]
+    battery_lifetimes = [
+        float(regex.match(key).group("batt_cycles"))
+        for key in data_to_plot
+        if regex.match(key).group("location") == location
+    ]
+    inverter_lifetimes = [
+        float(regex.match(key).group("inverter_lifetime"))
+        for key in data_to_plot
+        if regex.match(key).group("location") == location
+    ]
+    # Determine the various variables to plot
+    auxiliary_heating_fraction = [
+        entry[plant_index][1]["average_weather_conditions"][0][
+            "auxiliary_heating_fraction"
+        ]
+        for key, entry in data_to_plot.items()
+        if regex.match(key).group("location") == location
+    ]
+    # Use the fixed battery and inverter lifetimes
+    data = pd.DataFrame(
+        {
+            (battery_key := "battery_lifetimes"): battery_lifetimes,
+            (inverter_key := "inverter_lifetimes"): inverter_lifetimes,
+            (auxiliary_key := "auxiliary_heating_fraction"): auxiliary_heating_fraction,
+        }
+    )
+    if fixed_battery_lifetime is not None:
+        data = data[data[battery_key] == fixed_battery_lifetime].sort_values(
+            inverter_key
+        )
+        x = data[inverter_key]
+        x_label: str = "Inverter lifetime / years"
+    elif fixed_inverter_lifetime is not None:
+        data = data[data[inverter_key] == fixed_inverter_lifetime].sort_values(
+            battery_key
+        )
+        x = data[battery_key]
+        x_label: str = "Battery cycle lifetime / cycles"
+    else:
+        raise Exception("Must specify battery or lifetime fixed value for line plot.")
+    data = data.reset_index(drop=True)
+    axis.plot(x, (solar_line:=[1 - entry for entry in data[auxiliary_key]]), color=f"C0", label="Solar heating")
+    axis.plot(x, [1] * len(data[auxiliary_key]), color="C2", label="Auxiliary heating")
+    axis.fill_between(x, [0] * len(data[auxiliary_key]), solar_line, color="C0", alpha=0.7)
+    axis.fill_between(x, solar_line, [1] * len(data[auxiliary_key]), color="C2", alpha=0.7)
+    axis.set_xlabel(x_label)
+    axis.set_ylabel("Fraction")
+    axis.set_title(
+        {
+            "abu_dhabi": "Abu Dhabi, UAE",
+            "gran_canaria": "Gando, Gran Canaria",
+            "tijuana": "Tijuana, Mexico",
+            "la_paz": "La Paz, Mexico",
+        }[location], weight="bold"
+    )
+    axis.text(
+        -0.08,
+        1.1,
+        {"abu_dhabi": "a.", "gran_canaria": "b.", "tijuana": "c.", "la_paz": "d."}[
+            location
+        ],
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+    axis.legend(loc="upper right")
+    axis.set_ylim(0, 1)
+
+
+def _subfigure_line_plot(
+    data_to_plot,
+    location: str,
+    plant: Plant,
+    fixed_battery_lifetime: float | None,
+    fixed_inverter_lifetime: float | None,
+    weather_conditions: str,
+    axis,
+    invert: bool,
+) -> None:
+    plant_index = {Plant.JOO: 0, Plant.EL_NASHAR: 1, Plant.RAHIMI: 2}[plant]
+    battery_lifetimes = [
+        float(regex.match(key).group("batt_cycles"))
+        for key in data_to_plot
+        if regex.match(key).group("location") == location
+    ]
+    inverter_lifetimes = [
+        float(regex.match(key).group("inverter_lifetime"))
+        for key in data_to_plot
+        if regex.match(key).group("location") == location
+    ]
+    # Determine the various variables to plot
+    storage_fraction = [
+        entry[plant_index][1]["average_weather_conditions"][0][
+            "storage_electricity_fraction"
+        ]
+        for key, entry in data_to_plot.items()
+        if regex.match(key).group("location") == location
+    ]
+    solar_fraction = [
+        entry[plant_index][1]["average_weather_conditions"][0][
+            "solar_electricity_fraction"
+        ]
+        for key, entry in data_to_plot.items()
+        if regex.match(key).group("location") == location
+    ]
+    grid_fraction = [
+        entry[plant_index][1]["average_weather_conditions"][0][
+            "grid_electricity_fraction"
+        ]
+        for key, entry in data_to_plot.items()
+        if regex.match(key).group("location") == location
+    ]
+    # Use the fixed battery and inverter lifetimes
+    data = pd.DataFrame(
+        {
+            (battery_key := "battery_lifetimes"): battery_lifetimes,
+            (inverter_key := "inverter_lifetimes"): inverter_lifetimes,
+            (storage_key := "storage_fraction"): storage_fraction,
+            (solar_key := "solar_fraction"): solar_fraction,
+            (grid_key := "grid_fraction"): grid_fraction,
+        }
+    )
+    if fixed_battery_lifetime is not None:
+        data = data[data[battery_key] == fixed_battery_lifetime].sort_values(
+            inverter_key
+        )
+        x = data[inverter_key]
+        x_label: str = "Inverter lifetime / years"
+    elif fixed_inverter_lifetime is not None:
+        data = data[data[inverter_key] == fixed_inverter_lifetime].sort_values(
+            battery_key
+        )
+        x = data[battery_key]
+        x_label: str = "Battery cycle lifetime / cycles"
+    else:
+        raise Exception("Must specify battery or lifetime fixed value for line plot.")
+    data = data.reset_index(drop=True)
+    if not invert:
+        axis.plot(
+            x,
+            (
+                grid_line := [
+                    data[solar_key][index]
+                    + data[grid_key][index]
+                    + data[storage_key][index]
+                    for index in range(len(x))
+                ]
+            ),
+            color=f"C2",
+            label="Grid",
+        )
+        axis.plot(
+            x,
+            (
+                solar_line := [
+                    data[storage_key][index] + data[solar_key][index]
+                    for index in range(len(x))
+                ]
+            ),
+            color=f"C1",
+            label="Solar",
+        )
+        # axis.plot(x, data[solar_key], color=f"C1", label="Solar")
+        # axis.plot(
+        #     x,
+        #     (
+        #         storage_line := [
+        #             data[storage_key][index] + data[solar_key][index]
+        #             for index in range(len(x))
+        #         ]
+        #     ),
+        #     color=f"C0",
+        #     label="Storage",
+        # )
+        axis.plot(x, data[storage_key], color=f"C0", label="Storage")
+        axis.fill_between(x, [0] * len(x), data[storage_key], color="C0", alpha=0.7)
+        axis.fill_between(x, data[storage_key], solar_line, color="C1", alpha=0.7)
+        axis.fill_between(x, solar_line, grid_line, color="C2", alpha=0.7)
+        # axis.fill_between(x, [0] * len(x), data[solar_key], color="C1", alpha=0.7)
+        # axis.fill_between(x, data[solar_key], storage_line, color="C0", alpha=0.7)
+        # axis.fill_between(x, storage_line, grid_line, color="C2", alpha=0.7)
+    else:
+        axis.plot(
+            x,
+            (
+                grid_line := [
+                    data[solar_key][index]
+                    + data[grid_key][index]
+                    + data[storage_key][index]
+                    for index in range(len(x))
+                ]
+            ),
+            color=f"C2",
+            label="Grid",
+        )
+        axis.plot(
+            x,
+            (
+                storage_line := [
+                    data[storage_key][index] + data[solar_key][index]
+                    for index in range(len(x))
+                ]
+            ),
+            color=f"C0",
+            label="Storage",
+        )
+        # axis.plot(x, data[solar_key], color=f"C1", label="Solar")
+        # axis.plot(
+        #     x,
+        #     (
+        #         storage_line := [
+        #             data[storage_key][index] + data[solar_key][index]
+        #             for index in range(len(x))
+        #         ]
+        #     ),
+        #     color=f"C0",
+        #     label="Storage",
+        # )
+        axis.plot(x, data[solar_key], color=f"C1", label="Solar")
+        axis.fill_between(x, [0] * len(x), data[solar_key], color="C1", alpha=0.7)
+        axis.fill_between(x, data[solar_key], storage_line, color="C0", alpha=0.7)
+        axis.fill_between(x, storage_line, grid_line, color="C2", alpha=0.7)
+        # axis.fill_between(x, [0] * len(x), data[solar_key], color="C1", alpha=0.7)
+        # axis.fill_between(x, data[solar_key], storage_line, color="C0", alpha=0.7)
+    axis.set_xlabel(x_label)
+    axis.set_ylabel("Fraction")
+    axis.set_title(
+        {
+            "abu_dhabi": "Abu Dhabi, UAE",
+            "gran_canaria": "Gando, Gran Canaria",
+            "tijuana": "Tijuana, Mexico",
+            "la_paz": "La Paz, Mexico",
+        }[location], weight="bold"
+    )
+    axis.text(
+        -0.08,
+        1.1,
+        {"abu_dhabi": "a.", "gran_canaria": "b.", "tijuana": "c.", "la_paz": "d."}[
+            location
+        ],
+        transform=axis.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
+    axis.legend(loc="upper right")
 
 def plot_battery_inverter_line_plot(
     data_to_plot,
@@ -11106,7 +11978,71 @@ def plot_battery_inverter_line_plot(
         transparent=True,
         bbox_inches="tight",
     )
-    plt.show()
+
+
+def plot_battery_inverter_auxiliary_heating_plot(
+    data_to_plot,
+    *,
+    plant: Plant,
+    save_fig_name: str,
+    fixed_battery_lifetime: float | None = None,
+    fixed_inverter_lifetime: float | None = None,
+    weather_conditions: str = "average_weather_conditions",
+    invert: bool = False,
+):
+    """Plot a line plot for the subfigure showing the changing electricity fractions."""
+    fig, axes = plt.subplots(2, 2, figsize=(48 / 5, 32 / 5))
+    fig.subplots_adjust(hspace=0.35)
+    # Abu dhabi
+    _auxiliary_heating_subfigure_line_plot(
+        data_to_plot,
+        "abu_dhabi",
+        plant,
+        fixed_battery_lifetime,
+        fixed_inverter_lifetime,
+        weather_conditions,
+        axis=axes[0, 0],
+        invert=invert,
+    )
+    # Gran Canaria
+    _auxiliary_heating_subfigure_line_plot(
+        data_to_plot,
+        "gran_canaria",
+        plant,
+        fixed_battery_lifetime,
+        fixed_inverter_lifetime,
+        weather_conditions,
+        axis=axes[0, 1],
+        invert=invert,
+    )
+    # Tijuana
+    _auxiliary_heating_subfigure_line_plot(
+        data_to_plot,
+        "tijuana",
+        plant,
+        fixed_battery_lifetime,
+        fixed_inverter_lifetime,
+        weather_conditions,
+        axis=axes[1, 0],
+        invert=invert,
+    )
+    # La Paz
+    _auxiliary_heating_subfigure_line_plot(
+        data_to_plot,
+        "la_paz",
+        plant,
+        fixed_battery_lifetime,
+        fixed_inverter_lifetime,
+        weather_conditions,
+        axis=axes[1, 1],
+        invert=invert,
+    )
+    plt.savefig(
+        f"{save_fig_name}",
+        dpi=DPI,
+        transparent=True,
+        bbox_inches="tight",
+    )
 
 
 def plot_battery_inverter_line_map(
@@ -11201,6 +12137,10 @@ def plot_battery_inverter_line_map(
         va="top",
         ha="right",
     )
+
+
+DPI = 450
+
 
 
 plt.show()
@@ -11840,7 +12780,7 @@ axis.scatter(
     (frame := gran_canaria_el_costs_emissions_frame)["costs"],
     frame["emissions"],
     marker="x",
-    label="Gran Canaria",
+    label="Gando",
     color="C1",
 )
 axis.errorbar(
@@ -11988,6 +12928,33 @@ axes[0].set_ylabel("Spec. emissions / kg CO$_2$eq/m$^3$")
 # axis.set_title("Medium-capacity plant")
 axis.set_ylabel("")
 
+axes[0].scatter(
+    *(mean_coords := (2.663, 6.061)), marker="v", color="C4", label="PV-RO"
+)
+axes[0].errorbar(
+    *mean_coords,
+    xerr=1.145,
+    yerr=3.718,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C4",
+    fmt="none",
+)
+
+axes[1].scatter(
+    *(mean_coords := (2.663, 6.061)), marker="v", color="C4", label="PV-RO"
+)
+axes[1].errorbar(
+    *mean_coords,
+    xerr=1.145,
+    yerr=3.718,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C4",
+    fmt="none",
+)
+
+
 axis.set_xlim(
     0.5 * math.floor((lim := axis.set_xlim(auto=True))[0] / 0.5),
     # 0,f
@@ -12003,25 +12970,27 @@ for ax in axes:
     all_labels.extend(labels)
 
 all_handles = [
-    all_handles[2],
-    all_handles[0],
     all_handles[3],
-    all_handles[1],
+    all_handles[0],
     all_handles[4],
-    all_handles[6],
+    all_handles[1],
     all_handles[5],
-    all_handles[7],
+    all_handles[8],
+    all_handles[6],
+    all_handles[9],
+    all_handles[2],
 ]
 
 all_labels = [
-    all_labels[2],
-    all_labels[0],
     all_labels[3],
-    all_labels[1],
+    all_labels[0],
     all_labels[4],
-    all_labels[6],
+    all_labels[1],
     all_labels[5],
-    all_labels[7],
+    all_labels[8],
+    all_labels[6],
+    all_labels[9],
+    all_labels[2],
 ]
 
 axes[2].legend(all_handles, all_labels, loc="upper center")
@@ -12069,8 +13038,11 @@ axes[1].tick_params(labelleft=False, labelright=False)
 axes[0].xaxis.tick_bottom()
 axes[0].yaxis.tick_left()
 
+axes[0].set_xlim(0, 3)
+axes[1].set_xlim(3.25, 8)
+
 plt.savefig(
-    "el_nashar_specific_costs_emissions_kde_13.png",
+    "el_nashar_specific_costs_emissions_kde_23.png",
     dpi=1200,
     transparent=True,
     bbox_inches="tight",
@@ -12155,7 +13127,7 @@ axis.scatter(
     (frame := gran_canaria_rahimi_costs_emissions_frame)["costs"],
     frame["emissions"],
     marker="x",
-    label="Gran Canaria",
+    label="Gando",
 )
 axis.scatter(
     (frame := tijuana_rahimi_costs_emissions_frame)["costs"],
@@ -12269,11 +13241,25 @@ axes[0].errorbar(
     fmt="none",
 )
 
+axes[0].scatter(
+    *(mean_coords := (2.663, 6.061)), marker="v", color="C4", label="PV-RO"
+)
+axes[0].errorbar(
+    *mean_coords,
+    xerr=1.145,
+    yerr=3.718,
+    alpha=errorbar_alpha,
+    capsize=capsize,
+    color="C4",
+    fmt="none",
+)
+
+
 axis.scatter(
     (frame := gran_canaria_rahimi_costs_emissions_frame)["costs"],
     frame["emissions"],
     marker="x",
-    label="Gran Canaria",
+    label="Gando",
     color="C1",
 )
 axis.errorbar(
@@ -12555,6 +13541,6 @@ with ensure_optimisations_output_dir():
             continue
         with open(filename, "r", encoding="UTF-8") as f:
             data[filename] = json.load(f)
-    with open((output_filename := "31_mar_23_v2.json"), "w", encoding="UTF-8") as f:
+    with open((output_filename := "31_jan_24.json"), "w", encoding="UTF-8") as f:
         json.dump(data, f)
     shutil.copy2(output_filename, os.path.join("..", output_filename))

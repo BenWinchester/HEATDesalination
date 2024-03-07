@@ -111,7 +111,7 @@ STAGNATION_TEMPERATURE: str = "stagnation_temperature"
 
 # STEFAN_BOLTZMAN_CONSTANT:
 #   The Stefan-Boltzman constant in SI units.
-STEFAN_BOLTZMAN_CONSTANT: float = 5.670374419 * (10**-8)
+STEFAN_BOLTZMAN_CONSTANT: float = 5.670374419 * (10 ** -8)
 
 # THERMAL_COEFFICIENT:
 #   Keyword for the temperature coefficient for the performance of a PV panel.
@@ -172,7 +172,7 @@ def _sky_temperature(ambient_temperature: float) -> float:
 
     """
 
-    return float(0.0552 * (ambient_temperature**1.5))
+    return float(0.0552 * (ambient_temperature ** 1.5))
 
 
 def _radiation_to_sky_coefficient(
@@ -197,7 +197,7 @@ def _radiation_to_sky_coefficient(
     return (
         STEFAN_BOLTZMAN_CONSTANT  # [W/m^2*K^4]
         * collector_emissivity
-        * (collector_temperature**2 + sky_temperature**2)  # [K^2]
+        * (collector_temperature ** 2 + sky_temperature ** 2)  # [K^2]
         * (collector_temperature + sky_temperature)  # [K]
     )
 
@@ -442,9 +442,9 @@ def _thermal_performance(
     # Use numpy or Pandas to solve the quadratic to determine the performance of
     # the collector
     positive_root: float = (  # pylint: disable=unused-variable
-        -b + math.sqrt(b**2 - 4 * a * c)
+        -b + math.sqrt(b ** 2 - 4 * a * c)
     ) / (2 * a)
-    negative_root: float = float((-b - math.sqrt(b**2 - 4 * a * c)) / (2 * a))
+    negative_root: float = float((-b - math.sqrt(b ** 2 - 4 * a * c)) / (2 * a))
 
     return positive_root, negative_root
 
@@ -1595,7 +1595,7 @@ class SolarThermalPanel(SolarPanel, panel_type=SolarPanelType.SOLAR_THERMAL):
             + self.thermal_performance_curve.c_1 * reduced_collector_temperature
             + self.thermal_performance_curve.c_2
             * solar_irradiance
-            * reduced_collector_temperature**2
+            * reduced_collector_temperature ** 2
         )
 
         return (

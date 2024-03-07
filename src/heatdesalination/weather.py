@@ -307,12 +307,15 @@ def main(  # pylint: disable=too-many-statements
     unindexed_profiles: list[pd.DataFrame] = [
         profile.reset_index(drop=True) for profile in daily_weather_profiles.values()
     ]
-    average_profile: pd.DataFrame = pd.DataFrame(  # type: ignore [assignment,operator]
-        functools.reduce(
-            lambda x, y: x.add(y, fill_value=0),  # type: ignore [no-any-return,operator]
-            unindexed_profiles,
+    average_profile: pd.DataFrame = (
+        pd.DataFrame(  # type: ignore [assignment,operator]
+            functools.reduce(
+                lambda x, y: x.add(y, fill_value=0),  # type: ignore [no-any-return,operator]
+                unindexed_profiles,
+            )
         )
-    ) / len(unindexed_profiles)
+        / len(unindexed_profiles)
+    )
 
     # Determine the standard deviation.
     standard_deviation: pd.DataFrame = pd.DataFrame(

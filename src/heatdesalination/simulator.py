@@ -574,14 +574,17 @@ def _calculate_storage_profile(
     if battery_system_size == 0 or battery is None or battery_system_size is None:
         return 0, None, None, None, solar_power_supplied_map
 
-    return _recursive_degraded_storage_solver(
-        battery,
-        battery_system_size,
-        solution,
-        system_lifetime,
-        total_collector_generation_profile,
-        input_lifetime_degradation=0,
-    ) + (solar_power_supplied_map,)
+    return (
+        _recursive_degraded_storage_solver(
+            battery,
+            battery_system_size,
+            solution,
+            system_lifetime,
+            total_collector_generation_profile,
+            input_lifetime_degradation=0,
+        )
+        + (solar_power_supplied_map,)
+    )
 
 
 def _collector_mass_flow_rate(
